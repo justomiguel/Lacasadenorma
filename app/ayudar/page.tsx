@@ -29,6 +29,13 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * 3. **Explica qué pasa después de transferir**, porque si el total publicado no
  *    se mueve al día siguiente, la duda razonable es si el aporte llegó.
  */
+/**
+ * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
+ * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
+ * al instante; esto es el piso para lo que se cambie fuera del backoffice.
+ */
+export const revalidate = 300;
+
 export const metadata = pageMetadata({
   title: help.title,
   description:

@@ -1,3 +1,4 @@
+export * from "./audit";
 export * from "./campaign";
 export * from "./contribution";
 export * from "./expense";

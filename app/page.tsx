@@ -35,6 +35,13 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * Las cifras salen de un único caso de uso. Cinco lecturas independientes darían
  * cinco oportunidades de mostrar una parte y omitir otra sin motivo visible.
  */
+/**
+ * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
+ * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
+ * al instante; esto es el piso para lo que se cambie fuera del backoffice.
+ */
+export const revalidate = 300;
+
 export default async function HomePage() {
   const dataLayer = getPublicDataLayer();
 

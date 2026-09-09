@@ -28,3 +28,15 @@ export interface BudgetItem {
   readonly estimatedAmount: Money | null;
   readonly sortOrder: number;
 }
+
+/**
+ * El mismo rubro visto desde el backoffice.
+ *
+ * Sólo agrega `publishedAt`, y agregarlo es lo que permite que la pantalla diga si un
+ * rubro está a la vista del público. El tipo público no lo lleva a propósito: quien
+ * lee la lista pública ya sabe que todo lo que ve está publicado, y ofrecer el campo
+ * ahí invitaría a filtrar en la capa equivocada.
+ */
+export interface BudgetItemAdminRecord extends BudgetItem {
+  readonly publishedAt: string | null;
+}

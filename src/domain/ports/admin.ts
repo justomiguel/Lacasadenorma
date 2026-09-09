@@ -1,13 +1,16 @@
 import type {
-  BudgetItem,
+  AuditAction,
+  BudgetItemAdminRecord,
   Campaign,
   ContributionAdminRecord,
   ExpenseAdminRecord,
   ExpenseCategory,
+  ExpenseReceiptRecord,
   MediaAsset,
-  MilestoneRecord,
+  MilestoneAdminRecord,
   MilestoneStatus,
   PaymentMethod,
+  PaymentMethodAdminRecord,
   UpdateRecord,
 } from "../entities";
 import type { AppRole } from "../entities/role";
@@ -40,11 +43,8 @@ import type { Money } from "../money";
 export interface AdminCampaignPort {
   /** La campaña sin filtrar por estado: el backoffice ve borradores. */
   getCampaign(): Promise<Campaign | null>;
-  listBudgetItems(campaignId: string): Promise<BudgetItem[]>;
-  updateGoal(input: {
-    campaignId: string;
-    goal: Money | null;
-  }): Promise<void>;
+  listBudgetItems(campaignId: string): Promise<BudgetItemAdminRecord[]>;
+  updateGoal(input: { campaignId: string; goal: Money | null }): Promise<void>;
   saveBudgetItem(input: {
     campaignId: string;
     id: string | null;
@@ -92,6 +92,8 @@ export interface AdminExpensePort {
    * diría que hay respaldo donde no hay.
    */
   uploadReceipt(input: { expenseId: string; file: File }): Promise<{ fileName: string }>;
+  listReceipts(expenseId: string): Promise<ExpenseReceiptRecord[]>;
+  findReceipt(id: string): Promise<ExpenseReceiptRecord | null>;
   /** URL firmada de corta duración. El bucket nunca es público (amenaza I1). */
   createReceiptLink(input: {
     storagePath: string;
@@ -129,7 +131,7 @@ export interface AdminUpdatePort {
 }
 
 export interface AdminMilestonePort {
-  listMilestones(campaignId: string): Promise<MilestoneRecord[]>;
+  listMilestones(campaignId: string): Promise<MilestoneAdminRecord[]>;
   saveMilestone(input: {
     campaignId: string;
     id: string | null;
@@ -145,7 +147,7 @@ export interface AdminMilestonePort {
 // ── Cuentas bancarias ───────────────────────────────────────────────────────
 
 export interface AdminPaymentMethodPort {
-  listMethods(campaignId: string): Promise<PaymentMethod[]>;
+  listMethods(campaignId: string): Promise<PaymentMethodAdminRecord[]>;
   saveMethod(input: {
     campaignId: string;
     id: string | null;
@@ -164,6 +166,11 @@ export interface AdminPaymentMethodPort {
 export interface AuditEntry {
   readonly id: string;
   readonly actorId: string | null;
+  /**
+   * Sin tipar contra `AuditAction`: el registro es permanente y puede contener
+   * acciones escritas por versiones anteriores del código. Se describe con
+   * `describeAuditAction`, que sabe qué hacer con una que no reconoce.
+   */
   readonly action: string;
   readonly entityTable: string;
   readonly entityId: string | null;
@@ -174,7 +181,7 @@ export interface AuditEntry {
 export interface AuditPort {
   /** Sólo agrega. No hay `update` ni `delete`, igual que en la tabla. */
   append(input: {
-    action: string;
+    action: AuditAction;
     entityTable: string;
     entityId: string | null;
     diff: Record<string, unknown> | null;
@@ -182,8 +189,22 @@ export interface AuditPort {
   list(limit: number): Promise<AuditEntry[]>;
 }
 
+/**
+ * Quién tiene qué rol.
+ *
+ * **No devuelve correos**, y la ausencia es la decisión. El registro de auditoría
+ * guarda el `uuid` de quien hizo cada cambio, y para leerlo hace falta traducir ese
+ * `uuid` a algo que una persona reconozca. Traducirlo a un correo requeriría exponer
+ * `auth.users`, que hoy no es legible por nadie del backoffice, y pondría los correos
+ * del equipo a la vista de un rol de auditoría externo. El rol alcanza para lo que la
+ * pantalla contesta —"esto lo cambió un admin, no vos"— y no agrega un dato personal
+ * más a la circulación (principio V, mínimo privilegio).
+ *
+ * Sólo `admin` y `owner` pueden leer esta tabla, así que un `auditor` ve la auditoría
+ * sin poder resolver los actores. Es correcto: su trabajo es verificar los números.
+ */
 export interface AdminRolePort {
-  listRoles(): Promise<readonly { userId: string; email: string | null; role: AppRole }[]>;
+  listRoles(): Promise<readonly { userId: string; role: AppRole }[]>;
 }
 
 /** Todo el backoffice en un objeto, para que la composición ocurra en un solo lugar. */
@@ -195,4 +216,5 @@ export interface AdminGateway {
   readonly milestones: AdminMilestonePort;
   readonly paymentMethods: AdminPaymentMethodPort;
   readonly audit: AuditPort;
+  readonly roles: AdminRolePort;
 }

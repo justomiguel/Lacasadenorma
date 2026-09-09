@@ -15,7 +15,8 @@ export { saveBudgetItem, updateGoal } from "./campaign";
 export { markReconciled, recordContribution, voidContribution } from "./contributions";
 export {
   attachExpenseReceipt,
-  createReceiptLink,
+  openReceipt,
+  ReceiptNotFoundError,
   recordExpense,
   voidExpense,
 } from "./expenses";

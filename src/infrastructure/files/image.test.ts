@@ -70,7 +70,9 @@ describe("sniffFileType", () => {
   it("no reconoce un SVG", () => {
     // Un SVG es XML, no tiene firma binaria, y cae en el `null` por construcción.
     // No hace falta una regla que lo nombre: la lista es blanca.
-    const svg = new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    const svg = new TextEncoder().encode(
+      '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
+    );
 
     expect(sniffFileType(svg)).toBeNull();
   });
@@ -89,7 +91,9 @@ describe("inspectImage", () => {
   });
 
   it("encuentra el SOF de un JPEG aunque haya metadatos antes", async () => {
-    const info = await inspectImage(fileOf(jpegBytes(800, 600), "obra.jpg", "image/jpeg"));
+    const info = await inspectImage(
+      fileOf(jpegBytes(800, 600), "obra.jpg", "image/jpeg"),
+    );
 
     expect(info).toEqual({ mimeType: "image/jpeg", width: 800, height: 600 });
   });
@@ -120,9 +124,9 @@ describe("inspectImage", () => {
     // `next/image`, que no lo puede mostrar.
     const pdf = new TextEncoder().encode("%PDF-1.7\n");
 
-    await expect(inspectImage(fileOf(pdf, "factura.pdf", "application/pdf"))).rejects.toThrow(
-      /JPEG, PNG y WebP/,
-    );
+    await expect(
+      inspectImage(fileOf(pdf, "factura.pdf", "application/pdf")),
+    ).rejects.toThrow(/JPEG, PNG y WebP/);
   });
 
   it("rechaza un archivo vacío", async () => {

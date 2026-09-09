@@ -1,13 +1,15 @@
 import type {
-  BudgetItem,
+  BudgetItemAdminRecord,
   Campaign,
   ContributionAdminRecord,
   ExpenseAdminRecord,
+  ExpenseReceiptRecord,
   MediaAsset,
-  MilestoneRecord,
-  PaymentMethod,
+  MilestoneAdminRecord,
+  PaymentMethodAdminRecord,
   UpdateRecord,
 } from "@/src/domain/entities";
+import { roleRank, type AppRole } from "@/src/domain/entities/role";
 import type { AdminGateway, AuditEntry } from "@/src/domain/ports/admin";
 
 import {
@@ -54,7 +56,7 @@ const CAMPAIGN_COLUMNS =
   "id, slug, title, summary, goal_amount_minor, goal_currency, status, reconciled_at";
 
 const BUDGET_ITEM_COLUMNS =
-  "id, title, description, estimated_amount_minor, currency, sort_order";
+  "id, title, description, estimated_amount_minor, currency, sort_order, published_at";
 
 const CONTRIBUTION_COLUMNS =
   "id, amount_minor, currency, received_at, payment_method_id, source_note, is_anonymous, voided_at, void_reason, recorded_by";
@@ -62,10 +64,13 @@ const CONTRIBUTION_COLUMNS =
 const EXPENSE_ADMIN_COLUMNS =
   "id, amount_minor, currency, spent_at, concept, category, supplier, budget_item_id, receipt_count, voided_at, void_reason, published_at, recorded_by";
 
-const MILESTONE_COLUMNS = "id, title, description, status, happened_on, sort_order";
+const MILESTONE_COLUMNS =
+  "id, title, description, status, happened_on, sort_order, published_at";
 
 const PAYMENT_METHOD_COLUMNS =
-  "id, kind, country_code, currency, label, fields, instructions, sort_order";
+  "id, kind, country_code, currency, label, fields, instructions, sort_order, published_at";
+
+const RECEIPT_COLUMNS = "id, expense_id, storage_path, file_name, mime_type, size_bytes";
 
 const MEDIA_COLUMNS =
   "id, storage_path, alt_text, caption, credit, width, height, taken_on";
@@ -74,6 +79,26 @@ const UPDATE_COLUMNS = `id, slug, title, body, published_at, update_media(sort_o
 
 const PHOTO_BUCKET = "fotos";
 const RECEIPT_BUCKET = "comprobantes";
+
+interface ReceiptRow {
+  id: string;
+  expense_id: string;
+  storage_path: string;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+}
+
+function mapReceipt(row: ReceiptRow): ExpenseReceiptRecord {
+  return {
+    id: row.id,
+    expenseId: row.expense_id,
+    storagePath: row.storage_path,
+    fileName: row.file_name,
+    mimeType: row.mime_type,
+    sizeBytes: row.size_bytes,
+  };
+}
 
 export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
   const publicUrlFor = (storagePath: string): string =>
@@ -124,7 +149,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
         return data === null ? null : mapCampaign(data);
       },
 
-      async listBudgetItems(campaignId): Promise<BudgetItem[]> {
+      async listBudgetItems(campaignId): Promise<BudgetItemAdminRecord[]> {
         const { data, error } = await client
           .from("budget_items")
           .select(BUDGET_ITEM_COLUMNS)
@@ -135,7 +160,10 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
           throw new QueryError("leer los rubros", error);
         }
 
-        return data.map(mapBudgetItem);
+        return data.map((row) => ({
+          ...mapBudgetItem(row),
+          publishedAt: row.published_at,
+        }));
       },
 
       async updateGoal({ campaignId, goal }): Promise<void> {
@@ -355,6 +383,34 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
         return { fileName: file.name };
       },
 
+      async listReceipts(expenseId): Promise<ExpenseReceiptRecord[]> {
+        const { data, error } = await client
+          .from("expense_receipts")
+          .select(RECEIPT_COLUMNS)
+          .eq("expense_id", expenseId)
+          .order("uploaded_at", { ascending: true });
+
+        if (error !== null) {
+          throw new QueryError("leer los comprobantes", error);
+        }
+
+        return data.map(mapReceipt);
+      },
+
+      async findReceipt(id): Promise<ExpenseReceiptRecord | null> {
+        const { data, error } = await client
+          .from("expense_receipts")
+          .select(RECEIPT_COLUMNS)
+          .eq("id", id)
+          .maybeSingle();
+
+        if (error !== null) {
+          throw new QueryError("leer el comprobante", error);
+        }
+
+        return data === null ? null : mapReceipt(data);
+      },
+
       /**
        * URL firmada y de vida corta. El bucket de comprobantes **nunca** es público:
        * una factura suele traer el nombre y el domicilio de un proveedor, y publicar
@@ -499,7 +555,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     },
 
     milestones: {
-      async listMilestones(campaignId): Promise<MilestoneRecord[]> {
+      async listMilestones(campaignId): Promise<MilestoneAdminRecord[]> {
         const { data, error } = await client
           .from("milestones")
           .select(MILESTONE_COLUMNS)
@@ -510,7 +566,10 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
           throw new QueryError("leer los hitos", error);
         }
 
-        return data.map(mapMilestone);
+        return data.map((row) => ({
+          ...mapMilestone(row),
+          publishedAt: row.published_at,
+        }));
       },
 
       async saveMilestone(input): Promise<string> {
@@ -543,7 +602,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     },
 
     paymentMethods: {
-      async listMethods(campaignId): Promise<PaymentMethod[]> {
+      async listMethods(campaignId): Promise<PaymentMethodAdminRecord[]> {
         const { data, error } = await client
           .from("payment_methods")
           .select(PAYMENT_METHOD_COLUMNS)
@@ -554,7 +613,10 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
           throw new QueryError("leer las cuentas", error);
         }
 
-        return data.map(mapPaymentMethod);
+        return data.map((row) => ({
+          ...mapPaymentMethod(row),
+          publishedAt: row.published_at,
+        }));
       },
 
       async saveMethod(input): Promise<string> {
@@ -646,6 +708,36 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
               : null,
           occurredAt: row.occurred_at,
         }));
+      },
+    },
+
+    roles: {
+      /**
+       * Un rol por persona: el de mayor rango, igual que resuelve el hook del token.
+       * Una persona puede tener varias filas y lo que importa es con qué permisos
+       * actuó, que es siempre el más alto.
+       *
+       * Devuelve una lista vacía para un `auditor`: la policy de `user_roles` pide
+       * `admin`, así que no es un error sino la respuesta correcta para ese rol.
+       */
+      async listRoles(): Promise<readonly { userId: string; role: AppRole }[]> {
+        const { data, error } = await client.from("user_roles").select("user_id, role");
+
+        if (error !== null) {
+          throw new QueryError("leer los roles", error);
+        }
+
+        const highest = new Map<string, AppRole>();
+
+        for (const row of data) {
+          const current = highest.get(row.user_id);
+
+          if (current === undefined || roleRank(row.role) > roleRank(current)) {
+            highest.set(row.user_id, row.role);
+          }
+        }
+
+        return [...highest].map(([userId, role]) => ({ userId, role }));
       },
     },
   };

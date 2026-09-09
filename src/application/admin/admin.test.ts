@@ -14,7 +14,9 @@ const CAMPAIGN = "11111111-1111-4111-8111-111111111111";
 const RECORD = "44444444-4444-4444-8444-444444444444";
 
 function deps(
-  role: AdminDeps["actor"] extends null ? never : "owner" | "admin" | "editor" | "auditor",
+  role: AdminDeps["actor"] extends null
+    ? never
+    : "owner" | "admin" | "editor" | "auditor",
   gateway = fakeAdminGateway(),
 ): { deps: AdminDeps; fake: ReturnType<typeof fakeAdminGateway> } {
   return {
@@ -137,7 +139,9 @@ describe("gastos", () => {
     const result = await recordExpense(admin, { ...validExpense, amount: "mil pesos" });
 
     expect(result).toMatchObject({ status: "invalid" });
-    expect(result.status === "invalid" ? result.fieldErrors : {}).toHaveProperty("amount");
+    expect(result.status === "invalid" ? result.fieldErrors : {}).toHaveProperty(
+      "amount",
+    );
     expect(fake.calls).toEqual([]);
   });
 
@@ -437,6 +441,46 @@ describe("cuentas de aporte", () => {
     const result = await savePaymentMethod(owner, {
       ...account,
       fields: [{ label: "CBU", value: "PENDIENTE", copyable: "on" }],
+    });
+
+    expect(result.status).toBe("invalid");
+    expect(fake.calls).toEqual([]);
+  });
+
+  /**
+   * El formulario manda los renglones con nombres repetidos, así que el error no tiene
+   * un control propio al que colgarse: tiene que nombrar el dato. Si el mensaje dijera
+   * "renglón 3", quien lo lee tendría que contar los campos de la pantalla.
+   */
+  it("nombra los datos que están mal, porque no hay un campo por renglón", async () => {
+    const { deps: owner } = deps("owner");
+    const result = await savePaymentMethod(owner, {
+      ...account,
+      fields: [
+        { label: "Alias", value: "casa.de.norma", copyable: "on" },
+        { label: "CBU", value: "PENDIENTE", copyable: "on" },
+        { label: "CUIT", value: "TBD", copyable: "on" },
+      ],
+    });
+
+    expect(result.status).toBe("invalid");
+
+    const message =
+      result.status === "invalid" ? (result.fieldErrors["fields"] ?? "") : "";
+
+    expect(message).toContain("CBU");
+    expect(message).toContain("CUIT");
+    expect(message).not.toContain("Alias");
+  });
+
+  it("rechaza dos renglones con la misma etiqueta", async () => {
+    const { deps: owner, fake } = deps("owner");
+    const result = await savePaymentMethod(owner, {
+      ...account,
+      fields: [
+        { label: "CBU", value: "0170099220000067797", copyable: "on" },
+        { label: "CBU", value: "0170099220000067798", copyable: "on" },
+      ],
     });
 
     expect(result.status).toBe("invalid");

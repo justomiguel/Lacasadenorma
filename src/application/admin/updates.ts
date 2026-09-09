@@ -3,7 +3,13 @@ import { z } from "zod";
 import { parseRichText } from "@/src/domain/rich-text";
 
 import { perform, type AdminDeps, type AdminResult } from "./core";
-import { optionalPastDate, optionalText, optionalUuid, requiredText, slug } from "./fields";
+import {
+  optionalPastDate,
+  optionalText,
+  optionalUuid,
+  requiredText,
+  slug,
+} from "./fields";
 
 /**
  * Novedades y fotos.

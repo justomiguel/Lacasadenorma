@@ -1,5 +1,6 @@
 import type { z } from "zod";
 
+import type { AuditAction } from "@/src/domain/entities/audit";
 import { NotAuthorizedError } from "@/src/domain/errors";
 import { can, type Permission } from "@/src/domain/permissions";
 import type { AppRole } from "@/src/domain/entities/role";
@@ -55,7 +56,7 @@ export type AdminResult<T> =
 
 /** Qué se guarda en el registro de auditoría cuando la operación toca plata o cuentas. */
 export interface AuditTrail {
-  readonly action: string;
+  readonly action: AuditAction;
   readonly entityTable: string;
   readonly entityId: string | null;
   readonly diff: Record<string, unknown> | null;

@@ -3,7 +3,14 @@ import { z } from "zod";
 import { COUNTRY_CODES } from "@/src/domain/entities";
 
 import { perform, type AdminDeps, type AdminResult } from "./core";
-import { checkbox, currency, optionalText, requiredText, sortOrder, uuid } from "./fields";
+import {
+  checkbox,
+  currency,
+  optionalText,
+  requiredText,
+  sortOrder,
+  uuid,
+} from "./fields";
 
 /**
  * Cuentas de aporte.
@@ -27,19 +34,58 @@ const PLACEHOLDER = /\b(PENDIENTE|TODO|FIXME|XXXX|PLACEHOLDER|EJEMPLO|TBD)\b/i;
 
 const fieldSchema = z.object({
   label: requiredText("la etiqueta del dato", 60),
-  value: z
-    .string({ error: "Falta el dato." })
-    .trim()
-    .min(1, "Falta el dato.")
-    .max(120, "El dato no puede pasar de 120 caracteres.")
-    .refine(
-      (value) => !PLACEHOLDER.test(value),
-      "Ese valor es un marcador de relleno. Cargá el dato real o dejá la cuenta sin publicar.",
-    ),
+  value: z.string({ error: "Falta el dato." }).trim().min(1, "Falta el dato."),
   /** Un CBU se copia; el nombre del titular se lee. */
   copyable: checkbox,
   hint: optionalText(160),
 });
+
+/**
+ * Los datos de la cuenta se validan **como lista**, no dato por dato.
+ *
+ * La razón es que el formulario manda los renglones con nombres repetidos, así que un
+ * error en el tercero no tiene ningún control propio al que colgarse: `fields.2.value`
+ * no existe como campo en la pantalla. Validando la lista entera, el mensaje puede
+ * nombrar el dato que está mal —"CBU", no "renglón 3"— y aparece una sola vez arriba
+ * de los renglones. Es la única forma de que el mensaje sea accionable.
+ */
+const fieldsSchema = z
+  .array(fieldSchema)
+  .min(1, "Una cuenta necesita al menos un dato para poder transferir.")
+  .max(8, "Ocho datos es el máximo: más no se leen.")
+  .superRefine((fields, ctx) => {
+    const named = (predicate: (value: string) => boolean): string[] =>
+      fields.filter((field) => predicate(field.value)).map((field) => field.label);
+
+    const relleno = named((value) => PLACEHOLDER.test(value));
+
+    if (relleno.length > 0) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Estos datos tienen un marcador de relleno en lugar del valor real: ${relleno.join(", ")}. Cargá el dato o dejá el renglón vacío.`,
+      });
+    }
+
+    const largos = named((value) => value.length > 120);
+
+    if (largos.length > 0) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Estos datos pasan los 120 caracteres: ${largos.join(", ")}.`,
+      });
+    }
+
+    const repetidos = fields
+      .map((field) => field.label)
+      .filter((label, index, all) => all.indexOf(label) !== index);
+
+    if (repetidos.length > 0) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Hay dos renglones con la misma etiqueta: ${[...new Set(repetidos)].join(", ")}.`,
+      });
+    }
+  });
 
 const saveSchema = z.object({
   campaignId: uuid("la campaña"),
@@ -51,10 +97,7 @@ const saveSchema = z.object({
   countryCode: z.enum(COUNTRY_CODES, { error: "Elegí el país." }),
   currency,
   label: requiredText("el nombre de la cuenta", 120),
-  fields: z
-    .array(fieldSchema)
-    .min(1, "Una cuenta necesita al menos un dato para poder transferir.")
-    .max(8, "Ocho datos es el máximo: más no se leen."),
+  fields: fieldsSchema,
   instructions: optionalText(500),
   sortOrder,
 });

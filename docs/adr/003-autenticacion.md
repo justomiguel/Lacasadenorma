@@ -17,8 +17,11 @@ request**, y la verificación se hace con **`getClaims()`**.
 redirect optimista. **No es una frontera de seguridad**: cada página y cada acción de `/admin`
 revalida por su cuenta.
 
-Los headers que `@supabase/ssr` entrega como segundo argumento de `setAll` se copian a la respuesta,
-siempre.
+Los headers que `@supabase/ssr` entrega como segundo argumento de `setAll` se copian a la respuesta
+**donde hay una respuesta**, que es `proxy.ts`. Un Server Component o una Server Action no tienen
+una respuesta HTTP a la que ponérselas; escribirlas en el almacén de cookies —que es lo que parece
+razonable a primera vista— crea una cookie llamada `Cache-Control` que no hace nada. Como el
+refresco del token ocurre en el proxy, ahí es donde las cabeceras importan.
 
 ## Alternativas descartadas
 
@@ -38,9 +41,12 @@ para nada.
 
 **Malas y aceptadas.**
 
-- Hay que recordar copiar los headers de `setAll`. Si se olvidan, un CDN puede cachear un
-  `Set-Cookie` y **servir la sesión de una persona a otra**. Queda como comentario explícito en el
+- Hay que recordar copiar los headers de `setAll` en `proxy.ts`. Si se olvidan, un CDN puede cachear
+  un `Set-Cookie` y **servir la sesión de una persona a otra**. Queda como comentario explícito en el
   código, porque es el tipo de línea que alguien borra por parecer innecesaria.
+- Recuperar una contraseña olvidada se hace desde el panel de Supabase, no desde el sitio: un flujo
+  de recuperación por correo es una superficie más para cinco personas que se conocen entre sí. Está
+  documentado en `docs/runbook.md`, y se revisa cuando el backoffice tenga más gente.
 - Un cliente por request no es opcional: los headers se entregan sólo en la primera escritura de
   cookie de cada cliente.
 - Sin doble factor obligatorio en esta versión; depende del proveedor de identidad. Declarado como

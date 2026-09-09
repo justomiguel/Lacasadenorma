@@ -40,6 +40,13 @@ async function readUpdate(slug: string) {
   return findUpdate({ dataLayer: getPublicDataLayer(), logger, slug });
 }
 
+/**
+ * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
+ * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
+ * al instante; esto es el piso para lo que se cambie fuera del backoffice.
+ */
+export const revalidate = 300;
+
 export async function generateMetadata({
   params,
 }: {

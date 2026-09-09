@@ -30,6 +30,13 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  * total publicado, y dos consultas pueden divergir entre sí sin que nadie se
  * entere.
  */
+/**
+ * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
+ * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
+ * al instante; esto es el piso para lo que se cambie fuera del backoffice.
+ */
+export const revalidate = 300;
+
 export const metadata = pageMetadata({
   title: content.title,
   description:

@@ -42,3 +42,14 @@ export interface PaymentMethod {
   readonly instructions: string | null;
   readonly sortOrder: number;
 }
+
+/**
+ * Una cuenta vista desde el backoffice.
+ *
+ * `publishedAt` es acá el dato más importante de la pantalla: una cuenta guardada y
+ * sin publicar no recibe nada, y una publicada recibe todo. Que el estado se vea en
+ * la lista es lo que evita las dos equivocaciones posibles.
+ */
+export interface PaymentMethodAdminRecord extends PaymentMethod {
+  readonly publishedAt: string | null;
+}

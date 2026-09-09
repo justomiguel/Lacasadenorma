@@ -105,6 +105,33 @@ export default defineConfig([
     },
   },
 
+  /**
+   * Un test de equivalencia entre el adaptador REST y el caso de uso tiene que
+   * importar las dos puntas: es el nivel de "integración de aplicación" de
+   * `testing-strategy.md` y la única verificación posible de la amenaza A5. Por
+   * eso los tests de `application/` pueden importar un adaptador de `app/`, y
+   * siguen sin poder importar infraestructura ni componentes. El código de
+   * producción de la capa mantiene la frontera completa: es ahí donde una
+   * dependencia invertida hace daño.
+   */
+  {
+    files: ["src/application/**/*.{test,spec}.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/src/infrastructure/*", "@/components/*"],
+              message:
+                "application/ depende de puertos de domain, no de infrastructure ni de UI (ADR-005).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // La presentación no habla con la base de datos: llama casos de uso.
   {
     files: ["components/**/*.{ts,tsx}"],

@@ -69,7 +69,7 @@ describe("CopyField", () => {
     // no lo anunciarían nunca: quien no ve el cambio de texto no se enteraría de
     // que el dato ya está copiado.
     expect(live).not.toBeNull();
-    expect(live).toHaveTextContent("");
+    expect(live).toBeEmptyDOMElement();
 
     await user.click(screen.getByRole("button", { name: /copiar/i }));
 

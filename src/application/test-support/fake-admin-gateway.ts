@@ -56,6 +56,8 @@ export function fakeAdminGateway(
       voidExpense: (input) => record("voidExpense", input, undefined),
       uploadReceipt: (input) =>
         record("uploadReceipt", input, { fileName: input.file.name }),
+      listReceipts: () => record("listReceipts", null, []),
+      findReceipt: () => record("findReceipt", null, null),
       createReceiptLink: (input) =>
         record("createReceiptLink", input, "https://ejemplo.test/firmado"),
     },
@@ -75,8 +77,7 @@ export function fakeAdminGateway(
           height: 1200,
           takenOn: input.takenOn,
         }),
-      attachMediaToUpdate: (input) =>
-        record("attachMediaToUpdate", input, undefined),
+      attachMediaToUpdate: (input) => record("attachMediaToUpdate", input, undefined),
     },
     milestones: {
       listMilestones: () => record("listMilestones", null, []),
@@ -108,6 +109,9 @@ export function fakeAdminGateway(
         return Promise.resolve();
       },
       list: () => Promise.resolve(audit),
+    },
+    roles: {
+      listRoles: () => record("listRoles", null, []),
     },
   };
 

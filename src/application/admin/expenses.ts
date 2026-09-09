@@ -149,37 +149,69 @@ export async function attachExpenseReceipt(
   });
 }
 
-const receiptLinkSchema = z.object({
-  storagePath: requiredText("el comprobante", 500),
-});
+const openReceiptSchema = z.object({ id: uuid("el comprobante") });
+
+/** Un minuto de vida para la URL firmada: alcanza para que el servidor la use. */
+const RECEIPT_LINK_SECONDS = 60;
 
 /**
- * Un enlace firmado de cinco minutos. No queda en el historial de auditoría de
- * escrituras pero sí se registra: mirar un comprobante es un acceso a un dato
- * privado de un tercero, y quién lo miró es parte de la rendición de cuentas.
+ * Abrir un comprobante.
+ *
+ * Devuelve una URL firmada de un minuto, pensada para que **el servidor** la use y no
+ * para entregarla al navegador: una URL firmada es una credencial, y una credencial en
+ * el historial del navegador o en el log de un intermediario deja de ser de corta vida.
+ * Quien la consume es el manejador de `/admin/comprobantes/[id]`, que descarga el
+ * archivo y lo devuelve él mismo.
+ *
+ * Mirar un comprobante **se registra**. No es una mutación, pero es un acceso a un dato
+ * privado de un tercero —una factura trae el nombre y el domicilio de un proveedor— y
+ * quién lo miró es parte de la rendición de cuentas (amenaza I1).
  */
-export async function createReceiptLink(
+export async function openReceipt(
   deps: AdminDeps,
   input: unknown,
-): Promise<AdminResult<{ url: string }>> {
+): Promise<AdminResult<{ url: string; fileName: string; mimeType: string }>> {
   return perform({
     deps,
     permission: "finanzas.leer",
     describe: "abrir el comprobante",
-    schema: receiptLinkSchema,
+    schema: openReceiptSchema,
     input,
-    run: async (data) => ({
-      url: await deps.gateway.expenses.createReceiptLink({
-        storagePath: data.storagePath,
-        expiresInSeconds: 300,
-      }),
-    }),
-    success: () => "Enlace válido por cinco minutos.",
+    run: async (data) => {
+      const receipt = await deps.gateway.expenses.findReceipt(data.id);
+
+      if (receipt === null) {
+        throw new ReceiptNotFoundError();
+      }
+
+      return {
+        url: await deps.gateway.expenses.createReceiptLink({
+          storagePath: receipt.storagePath,
+          expiresInSeconds: RECEIPT_LINK_SECONDS,
+        }),
+        fileName: receipt.fileName,
+        mimeType: receipt.mimeType,
+      };
+    },
+    success: () => "Comprobante abierto.",
     audit: (data) => ({
       action: "expense.receipt_viewed",
       entityTable: "expense_receipts",
-      entityId: null,
-      diff: { storagePath: data.storagePath },
+      entityId: data.id,
+      diff: null,
     }),
   });
+}
+
+/**
+ * Existe como error propio para que el manejador pueda responder 404 en lugar de 500.
+ * También cubre el caso de un comprobante que existe pero que la policy no deja leer:
+ * la base devuelve cero filas, y desde acá los dos casos son indistinguibles, que es
+ * exactamente lo que conviene contestar.
+ */
+export class ReceiptNotFoundError extends Error {
+  constructor() {
+    super("Ese comprobante no existe o no lo podés ver.");
+    this.name = "ReceiptNotFoundError";
+  }
 }

@@ -63,8 +63,7 @@ export const optionalPastDate = z
     "La fecha no puede ser futura.",
   );
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 
 export const uuid = (label: string) =>
   z.string({ error: `Falta ${label}.` }).regex(UUID_PATTERN, `${label} no es válido.`);

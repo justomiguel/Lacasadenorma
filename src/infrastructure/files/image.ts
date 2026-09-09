@@ -105,7 +105,10 @@ export function sniffFileType(bytes: Uint8Array): AllowedReceiptType | null {
  * se le pide a quien sube que convierta el archivo, que es una molestia razonable
  * frente a cien líneas de parser en el camino de una subida.
  */
-function readDimensions(bytes: Uint8Array, type: AllowedImageType): {
+function readDimensions(
+  bytes: Uint8Array,
+  type: AllowedImageType,
+): {
   width: number;
   height: number;
 } | null {

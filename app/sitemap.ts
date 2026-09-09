@@ -22,6 +22,13 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * falso y además le enseña al buscador a no confiar en el campo. Las novedades sí
  * la tienen, porque ahí la fecha existe de verdad.
  */
+/**
+ * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
+ * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
+ * al instante; esto es el piso para lo que se cambie fuera del backoffice.
+ */
+export const revalidate = 300;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 

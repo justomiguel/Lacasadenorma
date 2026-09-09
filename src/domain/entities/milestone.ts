@@ -17,3 +17,7 @@ export interface MilestoneRecord {
   readonly happenedOn: string | null;
   readonly sortOrder: number;
 }
+
+export interface MilestoneAdminRecord extends MilestoneRecord {
+  readonly publishedAt: string | null;
+}
