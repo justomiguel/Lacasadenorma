@@ -4,8 +4,15 @@ import { Container, Section } from "@/components/design-system/layout";
 import { ReservedSpace } from "@/components/design-system/photo";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
+import { StructuredData } from "@/components/site/structured-data";
 import { norma, site } from "@/content";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
+import {
+  breadcrumbSchema,
+  graph,
+  personSchema,
+  webPageSchema,
+} from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 /**
@@ -23,8 +30,28 @@ export const metadata = pageMetadata({
 });
 
 export default function NormaPage() {
+  const siteUrl = getSiteUrl();
+
   return (
     <>
+      {/* `Person` sin `birthDate` ni `deathDate`: el contenido los tiene en nulo
+          porque la familia no los publicó, y una fecha aproximada no es una fecha. */}
+      <StructuredData
+        json={graph([
+          webPageSchema({
+            siteUrl,
+            path: "/norma",
+            name: `Quién fue ${norma.fullName}`,
+            description: norma.summary,
+          }),
+          personSchema(siteUrl),
+          breadcrumbSchema(siteUrl, [
+            { name: "Inicio", path: "/" },
+            { name: `Quién fue ${norma.fullName}`, path: "/norma" },
+          ]),
+        ])}
+      />
+
       <PageHeader
         label={norma.roleLabel}
         title={`Quién fue ${norma.fullName}`}
@@ -71,7 +98,7 @@ export default function NormaPage() {
           <h2 className="font-prose text-heading">Compartir su historia</h2>
           <ShareBlock
             className="mt-lg"
-            url={`${getSiteUrl()}/norma`}
+            url={`${siteUrl}/norma`}
             route="/norma"
             title={`Quién fue ${norma.fullName} — ${site.name}`}
             text={norma.summary}

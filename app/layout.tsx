@@ -3,7 +3,14 @@ import type { Metadata, Viewport } from "next";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { HelpBar } from "@/components/site/help-bar";
+import { StructuredData } from "@/components/site/structured-data";
+import { WebMcpTools } from "@/components/site/webmcp";
 import { site } from "@/content";
+import {
+  graph,
+  organizationSchema,
+  webSiteSchema,
+} from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 import { archivo, newsreader } from "./fonts";
@@ -48,12 +55,20 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const siteUrl = getSiteUrl();
+
   return (
     <html lang="es-AR" className={`${newsreader.variable} ${archivo.variable}`}>
       <head>
         {/* Resumen del sitio para agentes y motores de respuesta. No sustituye al
             SEO tradicional; es un archivo más, barato de mantener. */}
         <link rel="describedby" href="/llms.txt" type="text/plain" />
+
+        {/* La organización y el sitio se declaran una vez, en el layout: son los
+            dos nodos a los que se refieren todos los demás por `@id`. */}
+        <StructuredData
+          json={graph([organizationSchema(siteUrl), webSiteSchema(siteUrl)])}
+        />
       </head>
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <a
@@ -69,6 +84,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <SiteFooter />
         <HelpBar />
+        <WebMcpTools />
       </body>
     </html>
   );

@@ -12,7 +12,7 @@
 --     más la ausencia del GRANT (amenaza T2).
 
 begin;
-select plan(21);
+select plan(22);
 
 -- ── Fixture ─────────────────────────────────────────────────────────────────
 
@@ -290,7 +290,54 @@ select lives_ok(
   'una cuenta de aporte con un CBU real se publica'
 );
 
--- ── Hueco conocido: el contador de comprobantes se puede escribir a mano ────
+-- ════════════════════════════════════════════════════════════════════════════
+-- Huecos conocidos
+-- ════════════════════════════════════════════════════════════════════════════
+-- Las dos aserciones que siguen fijan lo que el esquema hace hoy y **no** lo que
+-- debería hacer. Están acá, y con el nombre gritado, porque un hueco que sólo vive
+-- en el mensaje de un pull request desaparece cuando el pull request se mergea.
+-- El día que cualquiera de los dos se corrija, la prueba correspondiente falla y
+-- obliga a pasar por este archivo: es la forma de que la corrección sea
+-- deliberada y no un efecto colateral que nadie mire.
+
+-- ── Hueco 1: el registro de auditoría no ata al actor con la sesión ─────────
+--
+-- `audit_log_insert` sólo exige `private.has_min_role('admin')`. No compara
+-- `actor_id` con `(select auth.uid())`, ni acota `occurred_at`. Una sesión de
+-- `admin` puede entonces escribir una entrada que le atribuye a `owner` una acción
+-- que no hizo, con la fecha que quiera.
+--
+-- La amenaza R1 dice "no se puede saber quién cambió una cifra" y la mitigación es
+-- este registro. Append-only sí es: nadie borra ni reescribe (eso está probado más
+-- arriba). Pero **agregar una entrada falsa sigue siendo posible**, y una credencial
+-- de `admin` robada —que el modelo de amenazas lista como actor— alcanza para
+-- dejar el rastro apuntando a otra persona.
+--
+-- La corrección es de una línea en la policy:
+--   with check (private.has_min_role('admin') and actor_id = (select auth.uid()))
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000003","role":"authenticated","app_metadata":{"user_role":"admin"}}';
+
+insert into public.audit_log (actor_id, action, entity_table, occurred_at)
+values ('10000000-0000-4000-8000-000000000004', 'payment_method.updated', 'payment_methods',
+        timestamptz '2020-01-01');
+
+reset role;
+
+select results_eq(
+  $q$
+    select actor_id::text, occurred_at
+      from public.audit_log
+     where action = 'payment_method.updated'
+  $q$,
+  $q$ values ('10000000-0000-4000-8000-000000000004', timestamptz '2020-01-01') $q$,
+  'HUECO CONOCIDO: una sesión de admin escribe en audit_log una acción atribuida a owner y fechada en 2020; la policy de INSERT no ata actor_id a auth.uid() (R1)'
+);
+
+-- ── Hueco 2: el contador de comprobantes se puede escribir a mano ───────────
 --
 -- La migración 20260909120700 dice, y con razón, que `expenses.receipt_count` es
 -- un dato derivado que nadie escribe a mano, y termina con:

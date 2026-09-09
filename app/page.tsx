@@ -11,11 +11,18 @@ import { Container, Section } from "@/components/design-system/layout";
 import { ReservedSpace } from "@/components/design-system/photo";
 import { Stat, StatGroup } from "@/components/design-system/figures";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
+import { StructuredData } from "@/components/site/structured-data";
 import { legacy, norma, reconstruction, site, whatHappened } from "@/content";
 import { getCampaignOverview } from "@/src/application/use-cases/get-campaign-overview";
 import { getDonationMethods } from "@/src/application/use-cases/get-donation-methods";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
 import { logger } from "@/src/infrastructure/logging/logger";
+import {
+  donateActionSchema,
+  faqSchema,
+  graph,
+  webPageSchema,
+} from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 /**
@@ -40,6 +47,21 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* `FAQPage` es legítimo acá y sólo acá: las nueve preguntas están visibles
+          más abajo en esta misma página, con la misma redacción. */}
+      <StructuredData
+        json={graph([
+          webPageSchema({
+            siteUrl,
+            path: "/",
+            name: `${site.name} — ${site.tagline}`,
+            description: site.shortDescription,
+          }),
+          faqSchema(),
+          donateActionSchema(siteUrl),
+        ])}
+      />
+
       <Hero />
 
       {/* 2. Quién fue Norma */}
