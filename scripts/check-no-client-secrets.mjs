@@ -24,7 +24,8 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const FORBIDDEN_IN_PUBLIC_NAMES = /^NEXT_PUBLIC_.*(SECRET|SERVICE_ROLE|PRIVATE|PASSWORD|TOKEN)/;
+const FORBIDDEN_IN_PUBLIC_NAMES =
+  /^NEXT_PUBLIC_.*(SECRET|SERVICE_ROLE|PRIVATE|PASSWORD|TOKEN)/;
 
 const SOURCE_DIRS = ["app", "components", "src", "content"];
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".mts"]);
@@ -33,7 +34,9 @@ const CLIENT_BUNDLE_DIR = ".next/static";
 const problems = [];
 
 async function filesUnder(dir, keep) {
-  const entries = await readdir(dir, { withFileTypes: true, recursive: true }).catch(() => null);
+  const entries = await readdir(dir, { withFileTypes: true, recursive: true }).catch(
+    () => null,
+  );
 
   if (entries === null) {
     return [];
@@ -47,7 +50,9 @@ async function filesUnder(dir, keep) {
 // ── 1 y 2: el código fuente ──────────────────────────────────────────────────
 
 for (const dir of SOURCE_DIRS) {
-  for (const file of await filesUnder(dir, (name) => SOURCE_EXTENSIONS.has(path.extname(name)))) {
+  for (const file of await filesUnder(dir, (name) =>
+    SOURCE_EXTENSIONS.has(path.extname(name)),
+  )) {
     const source = await readFile(file, "utf8");
     const isClientModule = /^\s*["']use client["']/m.test(source);
 
@@ -93,7 +98,9 @@ if (bundleFiles.length === 0) {
     }
   }
 
-  console.log(`Revisados ${String(bundleFiles.length)} archivos del bundle del navegador.`);
+  console.log(
+    `Revisados ${String(bundleFiles.length)} archivos del bundle del navegador.`,
+  );
 }
 
 if (problems.length > 0) {

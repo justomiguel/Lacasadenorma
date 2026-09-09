@@ -35,7 +35,9 @@ const HEADER = `/**
 const [outFile, flag] = process.argv.slice(2);
 
 if (outFile === undefined) {
-  console.error("Falta el archivo de salida: node scripts/gen-types.mjs <archivo> [--check]");
+  console.error(
+    "Falta el archivo de salida: node scripts/gen-types.mjs <archivo> [--check]",
+  );
   process.exit(1);
 }
 

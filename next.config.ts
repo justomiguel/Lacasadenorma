@@ -20,7 +20,11 @@ const contentSecurityPolicy = [
   // arquitectura de nonces para estilos. Declarado como deuda conocida en
   // specs/001-sitio-publico-campana/threat-model.md.
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline'",
+  // `'unsafe-eval'` sólo en desarrollo. React lo necesita para reconstruir stacks
+  // entre entornos y para el refresco en caliente; en producción no lo usa nunca.
+  // Sin esta distinción, la consola de desarrollo se llena de errores de CSP y el
+  // ruido esconde los errores de verdad (principio X).
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
   "manifest-src 'self'",
   "upgrade-insecure-requests",
@@ -53,11 +57,15 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [70, 80],
+    // El protocolo sale de la URL configurada y no está fijado en `https`: la API
+    // local de desarrollo es `http` en 127.0.0.1, y fijarlo haría que las fotos no
+    // cargaran localmente por un motivo que no se ve en ninguna parte.
     ...(supabaseOrigin
       ? {
           remotePatterns: [
             {
-              protocol: "https" as const,
+              protocol: new URL(supabaseOrigin).protocol.replace(":", "") as
+                "http" | "https",
               hostname: new URL(supabaseOrigin).hostname,
               pathname: "/storage/v1/object/public/**",
             },

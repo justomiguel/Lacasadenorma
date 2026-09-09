@@ -17,7 +17,11 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "lcov"],
       include: ["src/**", "components/**", "content/**"],
-      exclude: ["**/*.test.*", "**/*.spec.*", "src/infrastructure/supabase/database.types.ts"],
+      exclude: [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "src/infrastructure/supabase/database.types.ts",
+      ],
       thresholds: {
         // Umbrales por área: un porcentaje global alto con el dominio flojo
         // sería una mentira estadística (testing-strategy.md).

@@ -16,9 +16,13 @@ test-results/
 blob-report/
 playwright/.cache/
 
+# lighthouse ci
+.lighthouseci/
+lighthouse-report.*
+
 # env
-.env
-.env*.local
+# Cualquier variante (.env, .env.local, .env.production…) menos la plantilla.
+.env*
 !.env.example
 
 # vercel
@@ -43,3 +47,4 @@ yarn-error.log*
 # local database artifacts
 supabase/.temp/
 supabase/.branches/
+.local/

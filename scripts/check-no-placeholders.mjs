@@ -95,7 +95,9 @@ for (const file of await filesUnder(CONTENT_DIR, (name) => name.endsWith(".json"
 }
 
 for (const dir of CODE_DIRS) {
-  for (const file of await filesUnder(dir, (name) => CODE_EXTENSIONS.has(path.extname(name)))) {
+  for (const file of await filesUnder(dir, (name) =>
+    CODE_EXTENSIONS.has(path.extname(name)),
+  )) {
     if (file.includes(".test.") || file.includes(".spec.")) {
       continue;
     }
