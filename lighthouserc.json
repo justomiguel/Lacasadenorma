@@ -1,0 +1,67 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "url": [
+        "http://127.0.0.1:3000/",
+        "http://127.0.0.1:3000/norma",
+        "http://127.0.0.1:3000/que-paso",
+        "http://127.0.0.1:3000/reconstruccion",
+        "http://127.0.0.1:3000/ayudar",
+        "http://127.0.0.1:3000/transparencia",
+        "http://127.0.0.1:3000/novedades",
+        "http://127.0.0.1:3000/legado",
+        "http://127.0.0.1:3000/riacho-conecta"
+      ],
+      "settings": {
+        "budgets": [
+          {
+            "path": "/*",
+            "resourceSizes": [
+              { "resourceType": "script", "budget": 50 },
+              { "resourceType": "total", "budget": 800 }
+            ],
+            "resourceCounts": [{ "resourceType": "third-party", "budget": 0 }]
+          }
+        ]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "error",
+          { "minScore": 0.95, "aggregationMethod": "median" }
+        ],
+        "categories:accessibility": [
+          "error",
+          { "minScore": 0.95, "aggregationMethod": "median" }
+        ],
+        "categories:best-practices": [
+          "error",
+          { "minScore": 0.95, "aggregationMethod": "median" }
+        ],
+        "categories:seo": ["error", { "minScore": 0.95, "aggregationMethod": "median" }],
+        "resource-summary:script:size": [
+          "error",
+          { "maxNumericValue": 51200, "aggregationMethod": "median" }
+        ],
+        "resource-summary:third-party:count": [
+          "error",
+          { "maxNumericValue": 0, "aggregationMethod": "median" }
+        ],
+        "largest-contentful-paint": [
+          "error",
+          { "maxNumericValue": 2500, "aggregationMethod": "median" }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          { "maxNumericValue": 0.05, "aggregationMethod": "median" }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+name: Algo no funciona
+description: El sitio hace algo distinto de lo que debería hacer.
+title: "Bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Si lo que está mal es un dato publicado —una cifra, una fecha, un nombre— usá
+        **Corrección de contenido**, que pregunta lo que hace falta para arreglarlo.
+
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Cómo se reproduce
+      description: Los pasos, uno por línea, desde abrir el sitio.
+      placeholder: |
+        1. Entrar a /ayudar
+        2. Cambiar la solapa a Uruguay
+        3. Tocar "Copiar" en el número de cuenta
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas que pasara
+    validations:
+      required: true
+
+  - type: textarea
+    id: paso
+    attributes:
+      label: Qué pasó en cambio
+      description: Si hubo un mensaje de error, copialo tal cual.
+    validations:
+      required: true
+
+  - type: input
+    id: donde
+    attributes:
+      label: Dónde
+      description: Dirección de la página, navegador y si fue en celular o en computadora.
+      placeholder: /transparencia · Safari en iPhone
+    validations:
+      required: true
+
+  - type: dropdown
+    id: alcance
+    attributes:
+      label: Qué tan roto está
+      options:
+        - No se puede usar el sitio o una página entera
+        - Un flujo importante no se puede completar
+        - Molesta pero hay forma de seguir
+        - Detalle visual
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: accesibilidad
+    attributes:
+      label: Accesibilidad
+      description:
+        Marcá sólo si corresponde. Un problema de accesibilidad se trata como un bug,
+        no como una mejora.
+      options:
+        - label: Lo encontré usando teclado, lector de pantalla, zoom o alto contraste.
+
+  - type: textarea
+    id: capturas
+    attributes:
+      label: Capturas
+      description:
+        Arrastrá acá las imágenes o el video, si tenés. Revisá que no se vean datos
+        personales tuyos ni de terceros.

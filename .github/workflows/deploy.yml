@@ -1,0 +1,321 @@
+name: Despliegue
+
+# El despliegue lo maneja GitHub Actions y no el hook de Git de Vercel, para que
+# el repositorio siga siendo la fuente de verdad: lo que llega a producción pasó
+# antes por las mismas compuertas que cualquier otro cambio, y queda registrado
+# acá con quién lo aprobó.
+#
+# Dos caminos:
+#
+#   · pull request  → preview. Sirve para revisar y para el loop de revisión visual.
+#   · push a `main` → producción, y sólo si `CI` y `E2E` terminaron en verde para
+#     ese mismo commit. De ahí que el disparador sea `workflow_run` y no `push`:
+#     `push` correría en paralelo con las compuertas, o sea sin compuertas.
+#
+# Los secretos (`VERCEL_TOKEN`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`)
+# se pasan siempre por `env:` a un comando que los lee del entorno. Nunca se
+# interpolan dentro de un `echo`, de un `curl` ni de la salida de un paso.
+#
+# No se usa `pull_request_target`: ese disparador corre el workflow del repositorio
+# base con los secretos disponibles y el código del fork a mano, que es la receta
+# conocida para que un fork se lleve el token de despliegue. Consecuencia aceptada:
+# un pull request desde un fork no recibe preview, y hay que revisarlo local.
+
+on:
+  pull_request:
+  workflow_run:
+    workflows: [CI, E2E]
+    types: [completed]
+    branches: [main]
+
+# Un preview superado por un push nuevo se cancela; un despliegue de producción no
+# se cancela nunca a mitad de camino. Como los dos workflows de compuerta terminan
+# por separado, el evento `workflow_run` puede llegar dos veces para el mismo
+# commit: el grupo por SHA hace que se atiendan de a uno.
+concurrency:
+  group: >-
+    despliegue-${{ github.event.workflow_run.head_sha || github.event.pull_request.number }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar-preview:
+    name: Preview para revisar el pull request
+    # Un pull request desde un fork no tiene acceso a los secretos: el job se
+    # saltea en lugar de fallar con un error que no dice nada.
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Traer la configuración del proyecto de Vercel
+        run: npx --yes vercel@59 pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Construir el sitio con la configuración de preview
+        run: npx --yes vercel@59 build --token="$VERCEL_TOKEN"
+
+      # La URL que devuelve el comando no es secreta y sirve para revisar; el token
+      # nunca aparece en la salida porque viaja por el entorno.
+      - name: Publicar el preview
+        run: |
+          url="$(npx --yes vercel@59 deploy --prebuilt --token="$VERCEL_TOKEN" | tail --lines 1)"
+          {
+            echo "## Preview"
+            echo ""
+            echo "$url"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  compuertas:
+    name: Comprobar que CI y E2E quedaron en verde
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    # `actions: read` es para poder consultar el resultado del OTRO workflow.
+    permissions:
+      contents: read
+      actions: read
+
+    outputs:
+      listo: ${{ steps.revisar.outputs.listo }}
+
+    steps:
+      # Este job corre una vez por cada workflow de compuerta que termina, así que
+      # la primera vez casi siempre ve al otro todavía corriendo y contesta que no.
+      # Es correcto: la corrida que sirve es la última, cuando los dos terminaron.
+      # Un `false` acá no es una falla, es "todavía no".
+      - name: Revisar el resultado de CI y de E2E para este commit
+        id: revisar
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const requeridos = ["CI", "E2E"];
+            const sha = context.payload.workflow_run.head_sha;
+
+            const corridas = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner: context.repo.owner, repo: context.repo.repo, head_sha: sha, per_page: 100 },
+            );
+
+            const ultima = new Map();
+            for (const corrida of corridas) {
+              if (!requeridos.includes(corrida.name)) continue;
+              const previa = ultima.get(corrida.name);
+              if (!previa || new Date(corrida.created_at) > new Date(previa.created_at)) {
+                ultima.set(corrida.name, corrida);
+              }
+            }
+
+            const faltan = requeridos.filter(
+              (nombre) => ultima.get(nombre)?.conclusion !== "success",
+            );
+
+            core.setOutput("listo", faltan.length === 0 ? "true" : "false");
+
+            if (faltan.length > 0) {
+              core.notice(
+                `Todavía no se despliega ${sha.slice(0, 7)}: falta que termine en verde ` +
+                  faltan.join(" y ") + ".",
+              );
+            }
+
+  migraciones-plan:
+    name: Ver qué le haría a la base de producción
+    needs: compuertas
+    if: needs.compuertas.outputs.listo == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    outputs:
+      pendientes: ${{ steps.simulacro.outputs.pendientes }}
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+    steps:
+      - name: Traer el commit que ya pasó las compuertas
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      # El CLI de Supabase es una devDependency fijada en el lockfile: usar esa
+      # versión y no la última publicada mantiene CI igual que la máquina local.
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      - name: Enlazar el proyecto de producción
+        run: npx --no-install supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      # El shim local de Postgres es deliberadamente parcial (ADR-013): no tiene
+      # GoTrue ni PostgREST, así que una migración puede pasar en `db.yml` y hacer
+      # otra cosa en el proyecto real. Este simulacro es la última oportunidad de
+      # ver el SQL exacto que se va a ejecutar antes de que sea irreversible.
+      - name: Simular el push de migraciones sin tocar nada
+        id: simulacro
+        run: |
+          salida="$(npx --no-install supabase db push --linked --dry-run 2>&1)"
+          echo "$salida"
+          {
+            echo "## Migraciones que se aplicarían a producción"
+            echo ""
+            echo '```'
+            echo "$salida"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Ante cualquier salida que no diga explícitamente que no hay nada que
+          # hacer, se asume que sí hay: el error seguro es pedir una aprobación de
+          # más, no aplicar una migración sin que nadie la haya mirado.
+          if grep --quiet "Remote database is up to date" <<< "$salida"; then
+            echo "pendientes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "pendientes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  migraciones-aplicar:
+    name: Aplicar las migraciones a producción
+    needs: [compuertas, migraciones-plan]
+    if: needs.migraciones-plan.outputs.pendientes == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    # ESTA LÍNEA ES LA COMPUERTA. El entorno `production` tiene que estar
+    # configurado en GitHub con revisores obligatorios (Settings → Environments):
+    # con eso, el job queda detenido hasta que una persona lea el simulacro del job
+    # anterior y apruebe. Es el único paso de todo el repositorio que no se puede
+    # deshacer: un `drop column` aplicado ya se llevó los datos, y no hay revert de
+    # commit que los traiga de vuelta. Sin revisores configurados, esta línea no
+    # protege nada; está documentado en docs/deployment.md como requisito previo.
+    environment: production
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+    steps:
+      - name: Traer el commit que ya pasó las compuertas
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      - name: Enlazar el proyecto de producción
+        run: npx --no-install supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Aplicar las migraciones aprobadas
+        run: npx --no-install supabase db push --linked
+
+      # Los advisors sobre el proyecto real son la verificación que el shim local
+      # no puede dar: si una policy quedó floja, se entera acá y no una persona
+      # mirando datos que no le tocan. Se lee, no se bloquea: a esta altura la
+      # migración ya está aplicada y hacer fallar el job no la desharía. La versión
+      # que sí corta es la de `db.yml`, con `--fail-on warn`, que corre en el pull
+      # request cuando todavía se puede corregir.
+      - name: Informar los advisors de seguridad del proyecto real
+        run: npx --no-install supabase db advisors --linked --type security --level warn
+
+  desplegar-produccion:
+    name: Producción en Vercel
+    needs: [compuertas, migraciones-plan, migraciones-aplicar]
+    # El sitio se despliega después de que el esquema esté al día, no antes: al
+    # revés, el código nuevo consultaría columnas que todavía no existen.
+    # `migraciones-aplicar` puede quedar en `skipped` cuando no hay nada pendiente,
+    # y eso no debe frenar el despliegue; lo que sí lo frena es que haya fallado.
+    if: >-
+      ${{ !cancelled()
+      && needs.compuertas.outputs.listo == 'true'
+      && needs.migraciones-plan.result == 'success'
+      && needs.migraciones-aplicar.result != 'failure' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    # A propósito sin `environment: production`: la aprobación manual existe para
+    # lo irreversible, que es la migración. Pedirla también para publicar HTML
+    # convertiría la compuerta en un trámite, y un trámite se aprueba sin leer.
+    # Un despliegue equivocado se revierte promoviendo el anterior en Vercel.
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Traer el commit que ya pasó las compuertas
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Traer la configuración de producción del proyecto de Vercel
+        run: npx --yes vercel@59 pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Construir el sitio con la configuración de producción
+        run: npx --yes vercel@59 build --prod --token="$VERCEL_TOKEN"
+
+      - name: Publicar en el dominio de producción
+        id: publicar
+        run: |
+          url="$(npx --yes vercel@59 deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tail --lines 1)"
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Producción"
+            echo ""
+            echo "$url"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Verificación mínima de que lo que se acaba de publicar está vivo
+      # (principio X). Se consulta la URL del despliegue y no el dominio final:
+      # así se comprueba este despliegue en particular, sin depender de que el
+      # alias ya haya propagado.
+      - name: Comprobar que el despliegue contesta
+        env:
+          SITIO: ${{ steps.publicar.outputs.url }}
+        run: |
+          for _ in $(seq 1 10); do
+            if curl --silent --fail --output /dev/null "${SITIO}/api/health"; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "El health endpoint de ${SITIO} no contestó."
+          exit 1

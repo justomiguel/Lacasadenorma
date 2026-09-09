@@ -1,0 +1,22 @@
+# Quién tiene que revisar cada cambio.
+#
+# FALTA COMPLETAR: reemplazá el marcador de abajo por el usuario u organización de
+# GitHub que sea dueño del repositorio, con la arroba adelante (por ejemplo
+# `@nombre-de-usuario` o `@organizacion/equipo`).
+#
+# Hasta que eso pase, este archivo no hace nada: GitHub ignora las líneas cuyo
+# dueño no puede resolver, y la regla de protección de rama "Require review from
+# Code Owners" no se puede activar. O sea que el orden correcto es: completar el
+# handle, verificar que GitHub lo muestra como dueño válido en la pestaña de
+# Insights, y recién ahí habilitar la protección de `main`. Si se habilita antes,
+# la protección queda declarada pero sin nadie que revise.
+#
+# No se inventa un usuario acá a propósito. Un handle que no existe se ve igual
+# que uno que sí, y el resultado es una compuerta que parece puesta y no lo está.
+#
+# El marcador está fuera del alcance de `scripts/check-no-placeholders.mjs`, que
+# sólo recorre `content/`, `app/` y `components/`: acá no hay nada que pueda
+# llegar a la pantalla de una persona, así que la verificación es esta nota.
+
+# Todo el repositorio, incluidos los workflows, las migraciones y el contenido.
+* @COMPLETAR-HANDLE-DE-GITHUB

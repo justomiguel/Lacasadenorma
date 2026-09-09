@@ -1,0 +1,96 @@
+name: CI
+
+# La compuerta principal: todo lo que se puede verificar sin base de datos y sin
+# navegador. Es el workflow que tiene que estar en verde para que un pull request
+# se pueda mergear (constitución, "Quality gates").
+#
+# Lo que necesita una base de datos vive en `db.yml`, lo que necesita un navegador
+# en `e2e.yml` y los presupuestos de performance en `quality.yml`: separarlos hace
+# que una falla diga por sí sola qué se rompió, y que lo lento no retrase lo rápido.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Dos pushes seguidos a la misma rama no necesitan dos corridas: la anterior ya
+# quedó vieja y se cancela. Ahorra minutos y evita resultados que llegan tarde.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Sólo lectura del repositorio. Este workflow no publica nada.
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    name: Todo lo que rompe el merge
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22, la misma versión que corre en producción
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` instala exactamente lo que dice package-lock.json y aborta si el
+      # lockfile no coincide con package.json. Esa es la verificación de sincronía
+      # del lockfile para todo el repositorio; el job `dependencias` no la repite.
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      # `next typegen` corre dentro de estos dos scripts, y no es opcional:
+      # `PageProps` y `LayoutProps` son tipos globales generados en `.next/types`,
+      # que está gitignorado. Sin generarlos, el typecheck falla en las páginas.
+      - name: Comprobar que los tipos cierran
+        run: npm run typecheck
+
+      - name: Comprobar las reglas de capas y de código
+        run: npm run lint
+
+      - name: Comprobar que el formato es el acordado
+        run: npm run format:check
+
+      - name: Probar el dominio y los componentes, con cobertura
+        run: npm run test -- --coverage
+
+      - name: Comprobar que ninguna cifra de relleno llegó al contenido
+        run: npm run check:placeholders
+
+      - name: Construir el sitio como se construye en producción
+        run: npm run build
+
+      # Este paso va DESPUÉS del build a propósito: la tercera comprobación del
+      # script mira los archivos de `.next/static`, o sea el JavaScript que se le
+      # sirve al navegador, y esa es la única que no depende de leer bien el
+      # código fuente. Sin build previo el script avisa que omite esa revisión y
+      # sale en verde, que es exactamente la falla silenciosa a evitar (amenaza I4).
+      - name: Comprobar que ninguna credencial de servidor llegó al navegador
+        run: npm run check:secrets
+
+  dependencias:
+    name: Riesgo conocido en las dependencias
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # No hace falta instalar nada: `npm audit` trabaja sobre el lockfile.
+      # Que el lockfile esté en sincronía con package.json ya lo garantiza el
+      # `npm ci` del job `verificar`, que aborta si divergen; duplicarlo acá sería
+      # tener dos lugares donde arreglar lo mismo.
+      - name: Buscar vulnerabilidades altas o críticas ya publicadas
+        run: npm audit --audit-level=high
