@@ -23,6 +23,7 @@ import {
   sortGeneratorMetadata,
 } from "@supabase/postgrest-typegen/generation";
 import pg from "pg";
+import prettier from "prettier";
 
 const HEADER = `/**
  * Generado por scripts/gen-types.mjs a partir de las migraciones. No editar a
@@ -67,6 +68,15 @@ try {
 } finally {
   await client.end();
 }
+
+// La salida del generador no respeta el estilo del repositorio, así que pasa por
+// Prettier con la configuración del proyecto. Es lo que permite que `--check`
+// compare contra el archivo commiteado: si el formato se aplicara después, la
+// comprobación fallaría siempre, y una compuerta que falla siempre se apaga.
+generated = await prettier.format(generated, {
+  ...(await prettier.resolveConfig(outFile)),
+  filepath: outFile,
+});
 
 if (flag === "--check") {
   const current = await readFile(outFile, "utf8").catch(() => null);

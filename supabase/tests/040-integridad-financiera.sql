@@ -12,7 +12,7 @@
 --     más la ausencia del GRANT (amenaza T2).
 
 begin;
-select plan(22);
+select plan(25);
 
 -- ── Fixture ─────────────────────────────────────────────────────────────────
 
@@ -291,30 +291,24 @@ select lives_ok(
 );
 
 -- ════════════════════════════════════════════════════════════════════════════
--- Huecos conocidos
+-- Lo que el cliente no puede elegir
 -- ════════════════════════════════════════════════════════════════════════════
--- Las dos aserciones que siguen fijan lo que el esquema hace hoy y **no** lo que
--- debería hacer. Están acá, y con el nombre gritado, porque un hueco que sólo vive
--- en el mensaje de un pull request desaparece cuando el pull request se mergea.
--- El día que cualquiera de los dos se corrija, la prueba correspondiente falla y
--- obliga a pasar por este archivo: es la forma de que la corrección sea
--- deliberada y no un efecto colateral que nadie mire.
+-- Las dos secciones que siguen prueban campos que existen para ser evidencia. Un
+-- campo de evidencia que quien actúa puede elegir no prueba nada, y las dos veces
+-- la garantía está en la base: un trigger que sobreescribe lo que vino.
 
--- ── Hueco 1: el registro de auditoría no ata al actor con la sesión ─────────
+-- ── El registro de auditoría ata al actor y la fecha con la sesión (R1) ─────
 --
--- `audit_log_insert` sólo exige `private.has_min_role('admin')`. No compara
--- `actor_id` con `(select auth.uid())`, ni acota `occurred_at`. Una sesión de
--- `admin` puede entonces escribir una entrada que le atribuye a `owner` una acción
--- que no hizo, con la fecha que quiera.
+-- `audit_log_insert` sólo exige `private.has_min_role('admin')`: la policy no mira
+-- `actor_id` ni `occurred_at`, y no podría hacerlo sin rechazar la entrada en lugar
+-- de corregirla. El trigger `audit_log_stamp_entry` los fija con el token y el reloj
+-- del servidor, así que da igual lo que mande quien inserta.
 --
--- La amenaza R1 dice "no se puede saber quién cambió una cifra" y la mitigación es
--- este registro. Append-only sí es: nadie borra ni reescribe (eso está probado más
--- arriba). Pero **agregar una entrada falsa sigue siendo posible**, y una credencial
--- de `admin` robada —que el modelo de amenazas lista como actor— alcanza para
--- dejar el rastro apuntando a otra persona.
---
--- La corrección es de una línea en la policy:
---   with check (private.has_min_role('admin') and actor_id = (select auth.uid()))
+-- Importa porque la amenaza R1 —"no se puede saber quién cambió una cifra"— se
+-- mitiga con este registro, y el modelo de amenazas lista una credencial de `admin`
+-- robada como actor posible. Sin el trigger, esa credencial alcanzaba para dejar el
+-- rastro apuntando a otra persona y fechado en cualquier momento. Y como la tabla es
+-- append-only —probado más arriba—, esa entrada falsa quedaba para siempre.
 
 reset role;
 set local role authenticated;
@@ -329,37 +323,52 @@ reset role;
 
 select results_eq(
   $q$
-    select actor_id::text, occurred_at
+    select actor_id::text
       from public.audit_log
      where action = 'payment_method.updated'
   $q$,
-  $q$ values ('10000000-0000-4000-8000-000000000004', timestamptz '2020-01-01') $q$,
-  'HUECO CONOCIDO: una sesión de admin escribe en audit_log una acción atribuida a owner y fechada en 2020; la policy de INSERT no ata actor_id a auth.uid() (R1)'
+  $q$ values ('10000000-0000-4000-8000-000000000003') $q$,
+  'admin declara a owner como actor y la entrada queda atribuida a admin, que es quien la insertó (R1)'
 );
 
--- ── Hueco 2: el contador de comprobantes se puede escribir a mano ───────────
+select ok(
+  (
+    select occurred_at > now() - interval '1 minute'
+      from public.audit_log
+     where action = 'payment_method.updated'
+  ),
+  'la fecha declarada en 2020 se reemplaza por la del servidor (R1)'
+);
+
+-- Sin sesión no hay actor, y la columna queda nula en lugar de mentir. Es el caso
+-- de una migración o un job, y está documentado en data-model.md.
+reset role;
+set local "request.jwt.claims" = '';
+
+insert into public.audit_log (action, entity_table)
+values ('campaign.migrated', 'campaigns');
+
+select is(
+  (select actor_id from public.audit_log where action = 'campaign.migrated'),
+  null,
+  'una acción del sistema, sin sesión, deja el actor nulo en lugar de atribuirlo a alguien'
+);
+
+-- ── El contador de comprobantes no se puede escribir a mano (FR-013) ────────
 --
--- La migración 20260909120700 dice, y con razón, que `expenses.receipt_count` es
--- un dato derivado que nadie escribe a mano, y termina con:
+-- La migración 20260909120700 intentaba protegerlo con
 --
 --     revoke update (receipt_count) on public.expenses from authenticated;
 --
--- Ese REVOKE **no hace nada**. El privilegio se había otorgado a nivel de tabla
--- (`grant select, insert, update, delete on public.expenses to authenticated`), y
--- Postgres no puede quitar una columna de un grant de tabla: emite un WARNING
--- —"no privileges could be revoked for column"— y sigue de largo. El resultado es
--- que `admin` puede fijar el contador en cualquier número.
+-- que no hace nada: el privilegio venía de un grant de tabla, y Postgres no puede
+-- quitarle una columna a un grant de tabla —avisa "no privileges could be revoked
+-- for column" y sigue de largo—. La migración 20260909120900 lo resuelve
+-- recalculando la columna en cada escritura de la fila.
 --
--- Por qué importa: FR-013 publica **que un comprobante existe** sin publicar el
--- archivo, y este contador es lo único que el público ve de eso. Un contador que
--- se puede escribir a mano es exactamente un número sin respaldo, que es lo que la
--- página de transparencia promete que no hay.
---
--- La prueba fija el comportamiento de hoy, no el deseado, y lo dice en el nombre.
--- El día que la migración se corrija —otorgando UPDATE columna por columna en
--- lugar de a nivel de tabla, o rechazando el cambio con un trigger— esta aserción
--- va a fallar, y eso es lo que se busca: que la corrección tenga que pasar por
--- acá y no se pueda hacer sin darse cuenta.
+-- Importa porque FR-013 publica **que un comprobante existe** sin publicar el
+-- archivo, y este contador es lo único que el público ve de eso. Un contador
+-- escribible a mano es un número sin respaldo, que es justo lo que la página de
+-- transparencia promete que no hay.
 
 reset role;
 set local role authenticated;
@@ -379,8 +388,26 @@ select results_eq(
       from public.expenses e
      where e.id = 'e0000000-0000-4000-8000-000000000001'
   $q$,
-  $q$ values (99, 1) $q$,
-  'HUECO CONOCIDO: admin escribe a mano expenses.receipt_count y el contador queda diciendo 99 con un solo comprobante; el revoke por columna de 20260909120700 no tiene efecto'
+  $q$ values (1, 1) $q$,
+  'admin escribe 99 en el contador y la base lo deja en la cuenta real de comprobantes (FR-013)'
+);
+
+-- Un gasto nuevo tampoco puede traer su propio contador.
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000003","role":"authenticated","app_metadata":{"user_role":"admin"}}';
+
+insert into public.expenses (id, campaign_id, amount_minor, currency, spent_at, concept, category, receipt_count)
+values ('e0000000-0000-4000-8000-000000000009', 'c0000000-0000-4000-8000-000000000001',
+        50000, 'ARS', date '2026-08-20', 'Aberturas', 'materiales', 7);
+
+reset role;
+
+select is(
+  (select receipt_count from public.expenses where id = 'e0000000-0000-4000-8000-000000000009'),
+  0,
+  'un gasto nuevo con contador declarado se guarda en cero, que es la cuenta real (FR-013)'
 );
 
 select * from finish();
