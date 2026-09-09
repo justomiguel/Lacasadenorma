@@ -58,20 +58,30 @@ function assertSameCurrency(a: Money, b: Money): void {
   }
 }
 
-export function addMoney<C extends CurrencyCode>(a: Money<C>, b: Money<C>): Money<C> {
+/**
+ * `NoInfer` en el segundo parámetro es lo que hace real la promesa del tipo: sin
+ * él, TypeScript infiere `C` como la unión de las dos monedas y
+ * `addMoney(pesos, dolares)` compila sin queja. Con él, `C` sale sólo del primer
+ * argumento y el segundo tiene que coincidir.
+ */
+export function addMoney<C extends CurrencyCode>(a: Money<C>, b: Money<NoInfer<C>>): Money<C> {
   assertSameCurrency(a, b);
 
   return money(a.amountMinor + b.amountMinor, a.currency);
 }
 
-export function subtractMoney<C extends CurrencyCode>(a: Money<C>, b: Money<C>): Money<C> {
+export function subtractMoney<C extends CurrencyCode>(
+  a: Money<C>,
+  b: Money<NoInfer<C>>,
+): Money<C> {
   assertSameCurrency(a, b);
 
   return money(a.amountMinor - b.amountMinor, a.currency);
 }
 
+/** Acá `C` sale de `currency`, y la lista tiene que ser homogénea en esa moneda. */
 export function sumMoney<C extends CurrencyCode>(
-  amounts: readonly Money<C>[],
+  amounts: readonly Money<NoInfer<C>>[],
   currency: C,
 ): Money<C> {
   return amounts.reduce<Money<C>>((total, amount) => addMoney(total, amount), zero(currency));

@@ -19,6 +19,9 @@ export default defineConfig([
     ".specify/**",
     ".agents/**",
     "supabase/**",
+    // Generado por `npm run db:types` desde el esquema real. Corregirlo a mano
+    // se perdería en la próxima generación.
+    "src/infrastructure/supabase/database.types.ts",
   ]),
 
   ...nextVitals,
