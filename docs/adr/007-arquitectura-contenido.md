@@ -18,11 +18,24 @@ Dos fuentes, divididas por frecuencia de cambio:
 
 | Fuente | Contenido | Se edita |
 |---|---|---|
-| `content/*.ts` versionado en el repositorio, validado con Zod | Historia de Norma, relato del accidente, textos de secciones, preguntas frecuentes, descripción del legado y de Riacho Conecta | Con un commit y un PR |
+| `content/*.json` versionado en el repositorio, validado con Zod | Historia de Norma, relato del accidente, textos de secciones, preguntas frecuentes, descripción del legado y de Riacho Conecta, textos legales | Con un commit y un PR |
 | Supabase | Montos, aportes, gastos, comprobantes, hitos, novedades, fotos, cuentas de aporte, objetivos | Desde el backoffice |
 
 El contenido del repositorio se valida con Zod al importarse: un campo faltante o mal formado rompe
 el build, no la página en producción.
+
+Los archivos son **JSON, no TypeScript**. La diferencia importa: un `.json` lo puede editar alguien
+que no programa sin riesgo de romper la compilación, y el esquema Zod le da el mismo control de
+errores que daría el compilador. La prosa se escribe como un array de párrafos, donde cada elemento
+es un `<p>`.
+
+Un campo sin dato verificado es `null` o una lista vacía, **nunca un texto de relleno**. La interfaz
+omite la sección. `docs/content-guide.md` lista qué falta y quién lo tiene que completar.
+
+**Frontera exacta con la base**: la tabla `people` tiene columnas de prosa que la página pública no
+lee en v1. Está justificado y detallado en la sección 8 de `data-model.md`; el resumen es que la
+prosa vive en `content/` y las fotografías en la base, porque una foto se sube desde un teléfono y
+un texto merece pasar por revisión.
 
 ## Alternativas descartadas
 

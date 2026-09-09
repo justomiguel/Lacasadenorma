@@ -14,8 +14,12 @@ exactamente el escenario a evitar.
 
 ## Decisión
 
-PostgreSQL 16 instalado por apt, más un **shim de plataforma** que recrea la superficie que aporta
-Supabase, más las partes del CLI que funcionan con `--db-url`.
+PostgreSQL **17** instalado desde el repositorio oficial de PostgreSQL (la misma versión mayor que
+trae un proyecto nuevo de Supabase), más un **shim de plataforma** que recrea la superficie que
+aporta Supabase, más las partes del CLI que funcionan con `--db-url`.
+
+Las extensiones que hacen falta son dos, y las dos vienen empaquetadas: `pgtap` para las pruebas de
+policies y `plpgsql_check`, que es lo que `supabase db lint` habilita por debajo.
 
 ```
 supabase/shim/       roles anon/authenticated/service_role, esquemas auth y storage,
@@ -31,7 +35,7 @@ Qué se usa de cada cosa, según lo medido:
 |---|---|---|
 | Aplicar migraciones | `supabase migration up --db-url` | no |
 | Linter de PL/pgSQL | `supabase db lint --db-url` (+ `plpgsql_check` de apt) | no |
-| **Linter de seguridad y performance de RLS** | `supabase db advisors --db-url` | no |
+| **Linter de seguridad y performance de RLS** | `supabase db advisors --db-url --fail-on warn` | no |
 | Tests de policies | pgTAP por `psql` | no |
 | Generar tipos TypeScript | `@supabase/postgrest-typegen` sobre `pg` | no |
 | ~~`gen types`, `db diff`, `db pull`, `test db`~~ | — | **sí, y por eso no se usan** |
@@ -66,7 +70,8 @@ proyecto real es el mismo SQL que se probó local.
   proyecto real, **y también lo inverso**, que es el modo de falla peligroso. Mitigación:
   `supabase db push --dry-run` antes del primer push, y tratar el primer `db advisors --linked` como
   la compuerta verdadera.
-- La versión local es 16.15, que puede no coincidir con la de Supabase.
+- La versión mayor coincide con la de un proyecto nuevo, pero la menor puede no coincidir. Es una
+  diferencia mucho más chica que la del shim.
 - **Los grants y RLS son capas distintas, y esto muerde local**: Supabase real otorga `grant all` a
   `anon` y `authenticated`, así que RLS es la única compuerta. Una base local sin esos grants hace
   que un error de permiso se disfrace de fallo de RLS. El shim reproduce los privilegios por defecto
