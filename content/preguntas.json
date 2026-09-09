@@ -1,0 +1,67 @@
+[
+  {
+    "question": "¿Qué es La Casa de Norma?",
+    "answer": [
+      "Es una campaña para reconstruir la casa de la familia de Norma, en Riacho He Hé, provincia de Formosa. Los aportes llegan por transferencia bancaria y cada gasto se publica en esta misma página con su fecha."
+    ],
+    "href": "/transparencia"
+  },
+  {
+    "question": "¿Quién fue Norma?",
+    "answer": [
+      "Fue una de las primeras comunicadoras sociales de Riacho He Hé. Pasó gran parte de su vida ayudando a que las historias de su pueblo pudieran ser escuchadas."
+    ],
+    "href": "/norma"
+  },
+  {
+    "question": "¿Qué pasó?",
+    "answer": [
+      "Norma murió en un accidente. No damos más detalles que los necesarios: su familia prefiere que se la recuerde por cómo vivió."
+    ],
+    "href": "/que-paso"
+  },
+  {
+    "question": "¿Dónde queda Riacho He Hé?",
+    "answer": [
+      "Es una localidad de la provincia de Formosa, en el norte de la Argentina."
+    ],
+    "href": null
+  },
+  {
+    "question": "¿Cómo puedo colaborar?",
+    "answer": [
+      "Por transferencia bancaria desde Argentina, Chile o Estados Unidos. En la página de aportes están los datos de cada país, y cada dato se copia con un toque.",
+      "Esta página no procesa pagos ni pide datos de tarjeta."
+    ],
+    "href": "/ayudar"
+  },
+  {
+    "question": "¿Para qué se va a usar el dinero?",
+    "answer": [
+      "Para la obra de la casa: materiales, mano de obra, servicios y traslados. El presupuesto está dividido por rubro y cada rubro se publica cuando queda cotizado, con su monto."
+    ],
+    "href": "/reconstruccion"
+  },
+  {
+    "question": "¿Cómo puedo verificar en qué se usó?",
+    "answer": [
+      "En la página de transparencia está el total recibido, el total gastado, el saldo y el detalle de cada gasto con su fecha, su concepto y si tiene comprobante. Los totales se calculan sumando ese mismo detalle.",
+      "Nada se borra: si un registro se cargó por error, se anula con el motivo y deja de sumar."
+    ],
+    "href": "/transparencia"
+  },
+  {
+    "question": "¿Qué va a pasar cuando la casa esté reconstruida?",
+    "answer": [
+      "El proyecto sigue con formación gratuita en herramientas digitales para gente del pueblo. El primer programa se llama Riacho Conecta."
+    ],
+    "href": "/legado"
+  },
+  {
+    "question": "¿Qué es Fundación Norma?",
+    "answer": [
+      "Es el nombre del proyecto que queremos que continúe después de la casa. Todavía no existe como organización: no tiene personería jurídica ni estatuto, y no vamos a decir que los tiene hasta que los tenga."
+    ],
+    "href": "/legado"
+  }
+]

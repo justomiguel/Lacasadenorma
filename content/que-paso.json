@@ -1,0 +1,15 @@
+{
+  "title": "Qué ocurrió",
+  "lead": "Norma murió en un accidente.",
+  "paragraphs": [
+    "No vamos a dar más detalles de los que hacen falta. No hay nada que agregar que le sirva a alguien, y su familia prefiere que se la recuerde por cómo vivió.",
+    "Si alguna vez se cuenta lo que pasó, va a ser con las palabras de la familia y en el momento que ellos elijan. Hasta entonces, esta página no lo cuenta."
+  ],
+  "needNow": {
+    "title": "Qué se necesita ahora",
+    "paragraphs": [
+      "La casa de la familia necesita ser reconstruida. Es una obra que no pueden afrontar solos.",
+      "Para eso existe esta página: para reunir lo que hace falta y mostrar, peso por peso, en qué se usa."
+    ]
+  }
+}
