@@ -110,11 +110,14 @@ stable
 security definer
 set search_path = ''
 as $$
+  -- `is not distinct from` y no `=`: un token sin `app_metadata` da null, y una
+  -- función de autorización que devuelve null obliga a que cada quien la use se
+  -- acuerde de que null no es false. Devuelve false y listo.
   select
     private.has_min_role('admin')
     or (
       (select auth.uid()) is not null
-      and ((select auth.jwt()) -> 'app_metadata' ->> 'user_role') = 'auditor'
+      and ((select auth.jwt()) -> 'app_metadata' ->> 'user_role') is not distinct from 'auditor'
     )
 $$;
 
