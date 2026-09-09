@@ -17,21 +17,39 @@ sería incoherente con eso.
 Eventos semánticos, sin cookies, sin identificadores persistentes, sin datos personales. Se registra
 **qué pasó**, nunca **quién lo hizo**.
 
-Eventos:
+Eventos. Los nombres están en castellano, como el resto del proyecto (ADR-014): el nombre de un
+evento se lee en un panel meses después, y conviene que se lea en el idioma en que se piensa el
+proyecto.
+
+La vista de página no está en la lista: la cuenta el script del proveedor, incluidas las
+navegaciones del cliente. Emitirla también desde el sitio la contaría dos veces.
 
 | Evento | Propiedades |
 |---|---|
-| `page_view` | ruta, referente (sólo el dominio), país (a nivel país) |
-| `help_cta_click` | ubicación en la página |
-| `payment_method_view` | país del método |
-| `bank_field_copy` | país, tipo de campo (nunca el valor) |
-| `share_click` | destino |
-| `transparency_view` | — |
-| `update_view` | slug |
+| `ayudar_click` | ubicación en la página |
+| `metodo_visto` | país del método |
+| `dato_copiado` | país, tipo de campo (**nunca** el valor) |
+| `compartir` | canal de destino, ruta |
+| `transparencia_vista` | ruta |
+| `novedad_vista` | slug |
 
-La capa de analítica es un puerto (`AnalyticsPort`) con dos implementaciones: una que no hace nada
-(por defecto, y en tests) y una que envía a un proveedor respetuoso de la privacidad cuando está
-configurado. **Sin configuración, no se envía nada.**
+La capa de analítica es un puerto (`Analytics`, en `src/domain/ports/analytics.ts`) con dos
+implementaciones: una que no hace nada (por defecto, y en tests) y una que envía a un proveedor
+respetuoso de la privacidad cuando está configurado. **Sin configuración, no se envía nada.**
+
+### Cómo se conecta el proveedor
+
+No se instala ningún SDK. El adaptador de navegador busca en `window` la función global que exponen
+los scripts compatibles con Plausible —el mismo contrato que implementan Umami y varios otros— y la
+llama si existe. El script sólo se inyecta cuando `NEXT_PUBLIC_ANALYTICS_SCRIPT_URL` está definida.
+
+Es una decisión con dos consecuencias buenas y una mala, y las tres son deliberadas:
+
+- Sin variable configurada no se carga ningún script de terceros, no se envía nada, y el sitio pesa
+  lo mismo. Es el estado por defecto, incluido el de un clon nuevo.
+- Cambiar de proveedor es cambiar una URL, no una dependencia del `package.json`.
+- A cambio, no hay tipos del proveedor: el adaptador comprueba en tiempo de ejecución que la función
+  global exista y tenga la forma esperada. Está encapsulado en un solo archivo.
 
 `docs/privacy.md` y la página pública de privacidad documentan qué se recolecta, para qué y cuánto
 se conserva.

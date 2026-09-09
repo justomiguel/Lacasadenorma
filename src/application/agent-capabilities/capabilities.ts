@@ -32,7 +32,9 @@ const countryInput = z.strictObject({
     .optional(),
 });
 
-function unavailableOutcome<T>(reason: keyof typeof UNAVAILABLE_MESSAGES): CapabilityOutcome<T> {
+function unavailableOutcome<T>(
+  reason: keyof typeof UNAVAILABLE_MESSAGES,
+): CapabilityOutcome<T> {
   return { ok: false, code: "unavailable", message: UNAVAILABLE_MESSAGES[reason] };
 }
 
@@ -260,7 +262,10 @@ export interface NormaStoryOutput {
   readonly diedOn: string | null;
 }
 
-const getNormaStoryCapability: AgentCapability<Record<string, never>, NormaStoryOutput> = {
+const getNormaStoryCapability: AgentCapability<
+  Record<string, never>,
+  NormaStoryOutput
+> = {
   name: "get_norma_story",
   title: "Quién fue Norma",
   description:
@@ -287,7 +292,10 @@ export interface TransparencySummaryOutput {
   readonly executedPercent: number | null;
   readonly expenseCount: number;
   readonly receiptCount: number;
-  readonly byCategory: readonly { readonly category: string; readonly amountMinor: number }[];
+  readonly byCategory: readonly {
+    readonly category: string;
+    readonly amountMinor: number;
+  }[];
   readonly reconciledAt: string | null;
   readonly detailUrl: string;
 }
@@ -338,7 +346,9 @@ const getTransparencySummary: AgentCapability<
     const spent = formatMoney(money(output.spentMinor, output.currency));
     const balance = formatMoney(money(output.balanceMinor, output.currency));
     const reconciled =
-      output.reconciledAt === null ? "" : ` Conciliado al ${formatDate(output.reconciledAt)}.`;
+      output.reconciledAt === null
+        ? ""
+        : ` Conciliado al ${formatDate(output.reconciledAt)}.`;
 
     return `Recibido ${received}, gastado ${spent}, saldo ${balance} en ${String(output.expenseCount)} gastos.${reconciled} Detalle completo en ${output.detailUrl}`;
   },

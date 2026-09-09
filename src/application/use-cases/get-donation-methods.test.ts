@@ -16,7 +16,9 @@ function method(partial: Partial<PaymentMethod> = {}): PaymentMethod {
     countryCode: "AR",
     currency: "ARS",
     label: "Transferencia en Argentina",
-    fields: [{ label: "CBU", value: "0000000000000000000000", copyable: true, hint: null }],
+    fields: [
+      { label: "CBU", value: "0000000000000000000000", copyable: true, hint: null },
+    ],
     instructions: null,
     sortOrder: 1,
     ...partial,

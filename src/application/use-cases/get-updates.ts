@@ -15,7 +15,9 @@ export interface UpdatesDeps {
   readonly limit?: number;
 }
 
-export async function listUpdates(deps: UpdatesDeps): Promise<DataResult<UpdateRecord[]>> {
+export async function listUpdates(
+  deps: UpdatesDeps,
+): Promise<DataResult<UpdateRecord[]>> {
   const { dataLayer, logger } = deps;
 
   if (dataLayer.source === "content-only") {

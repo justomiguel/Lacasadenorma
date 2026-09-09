@@ -1,13 +1,13 @@
 import type {
   BudgetItem,
   Campaign,
-  ContributionRecord,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
   PersonRecord,
   UpdateRecord,
 } from "../entities";
+import type { Money } from "../money";
 
 /**
  * Puertos de lectura pública. Dos implementaciones los satisfacen: una sobre el
@@ -26,10 +26,14 @@ export interface CampaignRepository {
 
 export interface TransparencyRepository {
   /**
-   * Aportes en su forma no identificable. Existe para calcular agregados; la
-   * capa pública nunca expone un aporte individual (FR-014).
+   * Total recibido por moneda, ya agregado.
+   *
+   * **No** existe un método que devuelva el detalle de aportes, y su ausencia es
+   * la garantía: un aporte individual puede identificar a una persona (FR-014,
+   * amenaza I2), así que la suma la hace la base en una vista y este puerto no
+   * ofrece ninguna forma de pedir las filas (ADR-016).
    */
-  listContributions(campaignId: string): Promise<ContributionRecord[]>;
+  listReceivedTotals(campaignId: string): Promise<Money[]>;
   listPublishedExpenses(campaignId: string): Promise<ExpenseRecord[]>;
 }
 

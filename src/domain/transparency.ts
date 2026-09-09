@@ -1,4 +1,4 @@
-import type { ContributionRecord, ExpenseCategory, ExpenseRecord } from "./entities";
+import type { ExpenseCategory, ExpenseRecord } from "./entities";
 import { EXPENSE_CATEGORIES } from "./entities";
 import { subtractMoney, sumMoney, type CurrencyCode, type Money } from "./money";
 import { ratioAsPercentage } from "./percentage";
@@ -6,14 +6,18 @@ import { ratioAsPercentage } from "./percentage";
 /**
  * Agregación de la rendición de cuentas.
  *
- * Tres reglas la gobiernan, y las tres vienen de la spec:
+ * Cuatro reglas la gobiernan, y las cuatro vienen de la spec:
  *
- * 1. Los anulados no participan de ningún total (`voidedAt`).
+ * 1. Los gastos anulados no participan de ningún total (`voidedAt`).
  * 2. No se mezclan monedas. La moneda principal es la del objetivo; el resto se
  *    informa por separado, sin convertir, porque no hay tipo de cambio fechado.
  * 3. La suma del detalle publicado es exactamente el total publicado (SC-007).
  *    Por eso el detalle que se devuelve es el mismo array que se sumó, no una
  *    consulta distinta: dos consultas pueden divergir, un array no.
+ * 4. **El total recibido es un dato de entrada, no algo que se derive acá.** No hay
+ *    detalle público de aportes del que sumarlo: un aporte individual puede
+ *    identificar a una persona (FR-014, amenaza I2), así que la cifra la calcula la
+ *    base en una vista agregada. El dominio no finge poder derivarla (ADR-016).
  */
 
 /** Un dato conciliado hace más de este tiempo se marca como desactualizado (FR-010). */
@@ -47,7 +51,13 @@ export interface TransparencySummary {
 }
 
 export interface SummarizeTransparencyInput {
-  readonly contributions: readonly ContributionRecord[];
+  /**
+   * Total recibido por moneda, tal como lo devuelve `campaign_totals`. Una moneda
+   * ausente de la lista significa que no se recibió nada en ella, y se representa
+   * omitiéndola, no con un cero: un cero explícito habría que escribirlo, y quien
+   * lo escribe puede equivocarse.
+   */
+  readonly received: readonly Money[];
   readonly expenses: readonly ExpenseRecord[];
   readonly goal: Money | null;
   readonly reconciledAt: string | null;
@@ -61,19 +71,25 @@ function isLive<T extends { voidedAt: string | null }>(record: T): boolean {
   return record.voidedAt === null;
 }
 
+function receivedIn(received: readonly Money[], currency: CurrencyCode): Money {
+  return sumMoney(
+    received.filter((amount) => amount.currency === currency),
+    currency,
+  );
+}
+
 function totalsFor(
   currency: CurrencyCode,
-  contributions: readonly ContributionRecord[],
+  received: readonly Money[],
   expenses: readonly ExpenseRecord[],
   goal: Money | null,
   onOutOfRange?: (value: number) => void,
 ): CurrencyTotals {
-  const received = sumMoney(
-    contributions.filter((item) => item.amount.currency === currency).map((item) => item.amount),
-    currency,
-  );
+  const receivedTotal = receivedIn(received, currency);
   const spent = sumMoney(
-    expenses.filter((item) => item.amount.currency === currency).map((item) => item.amount),
+    expenses
+      .filter((item) => item.amount.currency === currency)
+      .map((item) => item.amount),
     currency,
   );
 
@@ -83,9 +99,9 @@ function totalsFor(
 
   return {
     currency,
-    received,
+    received: receivedTotal,
     spent,
-    balance: subtractMoney(received, spent),
+    balance: subtractMoney(receivedTotal, spent),
     executedPercent: ratioAsPercentage(
       spent.amountMinor,
       comparableGoal?.amountMinor ?? null,
@@ -94,15 +110,20 @@ function totalsFor(
   };
 }
 
-export function summarizeTransparency(input: SummarizeTransparencyInput): TransparencySummary {
-  const contributions = input.contributions.filter(isLive);
+export function summarizeTransparency(
+  input: SummarizeTransparencyInput,
+): TransparencySummary {
   const expenses = input.expenses.filter(isLive);
 
   const primaryCurrency: CurrencyCode =
-    input.goal?.currency ?? input.defaultCurrency ?? expenses[0]?.amount.currency ?? "ARS";
+    input.goal?.currency ??
+    input.defaultCurrency ??
+    input.received[0]?.currency ??
+    expenses[0]?.amount.currency ??
+    "ARS";
 
   const presentCurrencies = new Set<CurrencyCode>([
-    ...contributions.map((item) => item.amount.currency),
+    ...input.received.map((amount) => amount.currency),
     ...expenses.map((item) => item.amount.currency),
   ]);
   presentCurrencies.delete(primaryCurrency);
@@ -119,24 +140,29 @@ export function summarizeTransparency(input: SummarizeTransparencyInput): Transp
     return { category, amount: sumMoney(amounts, primaryCurrency) };
   }).filter((entry) => entry.amount.amountMinor !== 0);
 
+  const totalReceived = input.received.reduce(
+    (total, amount) => total + amount.amountMinor,
+    0,
+  );
+
   return {
     primary: totalsFor(
       primaryCurrency,
-      contributions,
+      input.received,
       expenses,
       input.goal,
       input.onOutOfRange,
     ),
     others: [...presentCurrencies]
       .sort()
-      .map((currency) => totalsFor(currency, contributions, expenses, input.goal)),
+      .map((currency) => totalsFor(currency, input.received, expenses, input.goal)),
     expenses: sortedExpenses,
     expenseCount: expenses.length,
     receiptCount: expenses.reduce((total, item) => total + item.receiptCount, 0),
     byCategory,
     reconciledAt: input.reconciledAt,
     reconciliationIsStale: isReconciliationStale(input.reconciledAt, input.now),
-    isEmpty: contributions.length === 0 && expenses.length === 0,
+    isEmpty: totalReceived === 0 && expenses.length === 0,
   };
 }
 
@@ -144,7 +170,10 @@ export function summarizeTransparency(input: SummarizeTransparencyInput): Transp
  * Sin conciliación no hay dato que envejecer: devuelve `false` y la interfaz
  * explica que todavía no hubo conciliación, que es distinto de un dato viejo.
  */
-export function isReconciliationStale(reconciledAt: string | null, now = new Date()): boolean {
+export function isReconciliationStale(
+  reconciledAt: string | null,
+  now = new Date(),
+): boolean {
   if (reconciledAt === null) {
     return false;
   }

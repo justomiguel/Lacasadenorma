@@ -119,7 +119,9 @@ export function defineCapability<TInput, TOutput>(
  * Traduce los problemas de validación a prosa accionable. El texto lo lee un
  * modelo que puede corregirse y reintentar, así que un volcado de Zod no sirve.
  */
-function describeIssues(issues: readonly { message: string; path: PropertyKey[] }[]): string {
+function describeIssues(
+  issues: readonly { message: string; path: PropertyKey[] }[],
+): string {
   return issues
     .map((issue) => {
       const field = issue.path.map(String).join(".");

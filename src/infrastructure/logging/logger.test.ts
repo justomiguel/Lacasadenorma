@@ -18,7 +18,14 @@ describe("redact", () => {
   });
 
   it("oculta datos personales", () => {
-    expect(redact({ email: "norma@example.com", password: "x", cbu: "1", contributorName: "y" })).toEqual({
+    expect(
+      redact({
+        email: "norma@example.com",
+        password: "x",
+        cbu: "1",
+        contributorName: "y",
+      }),
+    ).toEqual({
       email: REDACTED,
       password: REDACTED,
       cbu: REDACTED,
@@ -27,7 +34,9 @@ describe("redact", () => {
   });
 
   it("recorre objetos anidados y arrays", () => {
-    expect(redact({ user: { id: "u1", email: "a@b.com" }, list: [{ token: "t" }] })).toEqual({
+    expect(
+      redact({ user: { id: "u1", email: "a@b.com" }, list: [{ token: "t" }] }),
+    ).toEqual({
       user: { id: "u1", email: REDACTED },
       list: [{ token: REDACTED }],
     });
@@ -67,7 +76,10 @@ describe("createLogger", () => {
     createLogger({ service: "test" }).error("falló la conciliación");
 
     expect(consoleError).toHaveBeenCalledTimes(1);
-    const payload = JSON.parse(String(consoleError.mock.calls[0]?.[0])) as Record<string, unknown>;
+    const payload = JSON.parse(String(consoleError.mock.calls[0]?.[0])) as Record<
+      string,
+      unknown
+    >;
 
     expect(payload.level).toBe("error");
     expect(payload.message).toBe("falló la conciliación");
@@ -78,7 +90,10 @@ describe("createLogger", () => {
   it("redacta el contexto antes de emitirlo", () => {
     createLogger().error("fallo al leer gastos", { token: "secreto", campaignId: "c1" });
 
-    const payload = JSON.parse(String(consoleError.mock.calls[0]?.[0])) as Record<string, unknown>;
+    const payload = JSON.parse(String(consoleError.mock.calls[0]?.[0])) as Record<
+      string,
+      unknown
+    >;
 
     expect(JSON.stringify(payload)).not.toContain("secreto");
     expect(payload.token).toBe(REDACTED);

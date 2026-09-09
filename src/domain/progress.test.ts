@@ -19,9 +19,7 @@ function milestone(partial: Partial<MilestoneRecord> = {}): MilestoneRecord {
 describe("summarizeFundraising", () => {
   it("informa lo recaudado y el porcentaje contra el objetivo", () => {
     const result = summarizeFundraising({
-      contributions: [
-        { id: "a", amount: money(250_000, "ARS"), receivedAt: "2026-09-01", voidedAt: null },
-      ],
+      received: [money(250_000, "ARS")],
       goal: money(1_000_000, "ARS"),
     });
 
@@ -31,9 +29,7 @@ describe("summarizeFundraising", () => {
 
   it("sin objetivo cargado informa lo recaudado y omite el porcentaje", () => {
     const result = summarizeFundraising({
-      contributions: [
-        { id: "a", amount: money(250_000, "ARS"), receivedAt: "2026-09-01", voidedAt: null },
-      ],
+      received: [money(250_000, "ARS")],
       goal: null,
     });
 
@@ -41,40 +37,32 @@ describe("summarizeFundraising", () => {
     expect(result.percent).toBeNull();
   });
 
-  it("excluye los aportes anulados", () => {
-    const result = summarizeFundraising({
-      contributions: [
-        { id: "a", amount: money(250_000, "ARS"), receivedAt: "2026-09-01", voidedAt: null },
-        {
-          id: "b",
-          amount: money(100_000, "ARS"),
-          receivedAt: "2026-09-02",
-          voidedAt: "2026-09-03T00:00:00.000Z",
-        },
-      ],
-      goal: money(1_000_000, "ARS"),
-    });
-
-    expect(result.raised).toEqual(money(250_000, "ARS"));
-  });
-
   it("sin aportes ni objetivo no hay nada que mostrar", () => {
-    const result = summarizeFundraising({ contributions: [], goal: null });
+    const result = summarizeFundraising({ received: [], goal: null });
 
     expect(result.hasData).toBe(false);
   });
 
-  it("cuando la moneda del aporte no es la del objetivo, no la suma al total", () => {
+  it("cuando la moneda recibida no es la del objetivo, no la suma al total", () => {
     const result = summarizeFundraising({
-      contributions: [
-        { id: "a", amount: money(250_000, "ARS"), receivedAt: "2026-09-01", voidedAt: null },
-        { id: "b", amount: money(20_000, "USD"), receivedAt: "2026-09-02", voidedAt: null },
-      ],
+      received: [money(250_000, "ARS"), money(20_000, "USD")],
       goal: money(1_000_000, "ARS"),
     });
 
     expect(result.raised).toEqual(money(250_000, "ARS"));
     expect(result.otherCurrencies).toEqual([money(20_000, "USD")]);
+  });
+
+  it("una moneda con total cero no se anuncia como recibida", () => {
+    // La vista devuelve una fila por moneda presente en aportes **o** en gastos, así
+    // que un cero acá significa "en esta moneda se gastó, no entró nada". Decir
+    // "también se recibieron US$ 0" sería falso.
+    const result = summarizeFundraising({
+      received: [money(250_000, "ARS"), money(0, "USD")],
+      goal: money(1_000_000, "ARS"),
+    });
+
+    expect(result.otherCurrencies).toEqual([]);
   });
 });
 

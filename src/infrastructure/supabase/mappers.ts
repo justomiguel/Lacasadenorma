@@ -3,7 +3,6 @@ import { z } from "zod";
 import type {
   BudgetItem,
   Campaign,
-  ContributionRecord,
   ExpenseRecord,
   MediaAsset,
   MilestoneRecord,
@@ -68,9 +67,13 @@ export type BudgetItemRow = Pick<
   "id" | "title" | "description" | "estimated_amount_minor" | "currency" | "sort_order"
 >;
 
-export type ContributionRow = Pick<
-  Tables["contributions"]["Row"],
-  "id" | "amount_minor" | "currency" | "received_at" | "voided_at"
+/**
+ * Fila de la vista agregada. Es lo único que el sitio público lee del lado de los
+ * aportes: la tabla `contributions` no tiene camino de lectura pública (ADR-016).
+ */
+export type CampaignTotalsRow = Pick<
+  Database["public"]["Views"]["campaign_totals"]["Row"],
+  "currency" | "received_minor"
 >;
 
 export type ExpenseRow = Pick<
@@ -106,7 +109,14 @@ export type PaymentMethodRow = Pick<
 
 export type MediaRow = Pick<
   Tables["media"]["Row"],
-  "id" | "storage_path" | "alt_text" | "caption" | "credit" | "width" | "height" | "taken_on"
+  | "id"
+  | "storage_path"
+  | "alt_text"
+  | "caption"
+  | "credit"
+  | "width"
+  | "height"
+  | "taken_on"
 >;
 
 function toCurrency(value: string, context: string): CurrencyCode {
@@ -135,9 +145,7 @@ export function mapCampaign(row: CampaignRow): Campaign {
     summary: row.summary,
     // Nulo es "objetivo no verificado todavía". Nunca se convierte en cero.
     goal:
-      row.goal_amount_minor === null
-        ? null
-        : money(row.goal_amount_minor, goalCurrency),
+      row.goal_amount_minor === null ? null : money(row.goal_amount_minor, goalCurrency),
     goalCurrency,
     status: row.status,
     reconciledAt: row.reconciled_at,
@@ -158,17 +166,23 @@ export function mapBudgetItem(row: BudgetItemRow): BudgetItem {
 }
 
 /**
- * Un aporte pierde acá todo lo que podría identificar a una persona: el nombre, la
- * nota de conciliación, el método por el que entró. No es que la capa pública "no
- * los use": es que no los recibe (FR-014).
+ * El total recibido en una moneda.
+ *
+ * La vista devuelve una fila por cada moneda que aparece en aportes **o** en
+ * gastos, así que puede traer un total recibido de cero, y eso es un dato válido:
+ * significa "en esta moneda se gastó pero no entró nada". El dominio decide si lo
+ * muestra.
+ *
+ * Los campos son anulables porque una vista con `left join` lo es a nivel de tipo,
+ * aunque la función que la alimenta use `coalesce`. Una fila incompleta se descarta
+ * en lugar de convertirse en un cero silencioso.
  */
-export function mapContribution(row: ContributionRow): ContributionRecord {
-  return {
-    id: row.id,
-    amount: toMoney(row.amount_minor, row.currency, `contributions.${row.id}`),
-    receivedAt: row.received_at,
-    voidedAt: row.voided_at,
-  };
+export function mapReceivedTotal(row: CampaignTotalsRow): Money | null {
+  if (row.currency === null || row.received_minor === null) {
+    return null;
+  }
+
+  return toMoney(row.received_minor, row.currency, "campaign_totals");
 }
 
 export function mapExpense(row: ExpenseRow): ExpenseRecord {
@@ -217,7 +231,9 @@ export function mapPaymentMethod(row: PaymentMethodRow): PaymentMethod {
   if (!parsed.success) {
     throw new MappingError(
       `payment_methods.${row.id}: los campos de la cuenta no tienen la forma esperada. ` +
-        parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; "),
+        parsed.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join("; "),
     );
   }
 
@@ -252,7 +268,10 @@ export function mapPaymentMethod(row: PaymentMethodRow): PaymentMethod {
  * Una foto. `publicUrlFor` traduce la ruta del bucket a una URL absoluta; se pasa
  * como función para que este módulo no dependa del cliente de Supabase.
  */
-export function mapMedia(row: MediaRow, publicUrlFor: (storagePath: string) => string): MediaAsset {
+export function mapMedia(
+  row: MediaRow,
+  publicUrlFor: (storagePath: string) => string,
+): MediaAsset {
   return {
     id: row.id,
     url: publicUrlFor(row.storage_path),

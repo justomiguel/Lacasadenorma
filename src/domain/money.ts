@@ -29,7 +29,10 @@ export function isCurrencyCode(value: unknown): value is CurrencyCode {
   return typeof value === "string" && (CURRENCIES as readonly string[]).includes(value);
 }
 
-export function money<C extends CurrencyCode>(amountMinor: number, currency: C): Money<C> {
+export function money<C extends CurrencyCode>(
+  amountMinor: number,
+  currency: C,
+): Money<C> {
   if (!Number.isInteger(amountMinor)) {
     throw new DomainError(
       `El monto tiene que ser un entero en la unidad mínima; se recibió ${String(amountMinor)}.`,
@@ -64,7 +67,10 @@ function assertSameCurrency(a: Money, b: Money): void {
  * `addMoney(pesos, dolares)` compila sin queja. Con él, `C` sale sólo del primer
  * argumento y el segundo tiene que coincidir.
  */
-export function addMoney<C extends CurrencyCode>(a: Money<C>, b: Money<NoInfer<C>>): Money<C> {
+export function addMoney<C extends CurrencyCode>(
+  a: Money<C>,
+  b: Money<NoInfer<C>>,
+): Money<C> {
   assertSameCurrency(a, b);
 
   return money(a.amountMinor + b.amountMinor, a.currency);
@@ -84,7 +90,10 @@ export function sumMoney<C extends CurrencyCode>(
   amounts: readonly Money<NoInfer<C>>[],
   currency: C,
 ): Money<C> {
-  return amounts.reduce<Money<C>>((total, amount) => addMoney(total, amount), zero(currency));
+  return amounts.reduce<Money<C>>(
+    (total, amount) => addMoney(total, amount),
+    zero(currency),
+  );
 }
 
 export function isPositive(amount: Money): boolean {

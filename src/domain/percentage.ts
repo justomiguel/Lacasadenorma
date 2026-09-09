@@ -11,9 +11,14 @@ import { DomainError } from "./errors";
 const MIN = 0;
 const MAX = 100;
 
-export function percentage(value: number, onOutOfRange?: (original: number) => void): number {
+export function percentage(
+  value: number,
+  onOutOfRange?: (original: number) => void,
+): number {
   if (!Number.isFinite(value)) {
-    throw new DomainError(`Un porcentaje tiene que ser un número finito; se recibió ${String(value)}.`);
+    throw new DomainError(
+      `Un porcentaje tiene que ser un número finito; se recibió ${String(value)}.`,
+    );
   }
 
   if (value < MIN || value > MAX) {

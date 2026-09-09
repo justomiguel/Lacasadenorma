@@ -1,11 +1,14 @@
-import type { ContributionRecord, MilestoneRecord } from "./entities";
-import { sumMoney, type Money } from "./money";
+import type { MilestoneRecord } from "./entities";
+import { sumMoney, type CurrencyCode, type Money } from "./money";
 import { ratioAsPercentage } from "./percentage";
 
 /**
  * Avance de la campaña. Hay dos medidas distintas y confundirlas sería engañoso:
  * el dinero recaudado contra el objetivo, y los hitos de obra completados. Un
  * 60% de plata no es un 60% de casa.
+ *
+ * Lo recaudado llega ya agregado por moneda, no como un detalle de aportes: no
+ * existe un detalle público del que sumarlo (ADR-016).
  */
 
 export interface FundraisingProgress {
@@ -19,29 +22,34 @@ export interface FundraisingProgress {
 }
 
 export interface SummarizeFundraisingInput {
-  readonly contributions: readonly ContributionRecord[];
+  /** Total recibido por moneda, tal como lo devuelve `campaign_totals`. */
+  readonly received: readonly Money[];
   readonly goal: Money | null;
   readonly onOutOfRange?: (value: number) => void;
 }
 
-export function summarizeFundraising(input: SummarizeFundraisingInput): FundraisingProgress {
-  const live = input.contributions.filter((item) => item.voidedAt === null);
-  const currency = input.goal?.currency ?? live[0]?.amount.currency ?? "ARS";
+export function summarizeFundraising(
+  input: SummarizeFundraisingInput,
+): FundraisingProgress {
+  const currency: CurrencyCode =
+    input.goal?.currency ?? input.received[0]?.currency ?? "ARS";
 
-  const raised = sumMoney(
-    live.filter((item) => item.amount.currency === currency).map((item) => item.amount),
-    currency,
-  );
+  const sumIn = (code: CurrencyCode): Money =>
+    sumMoney(
+      input.received.filter((amount) => amount.currency === code),
+      code,
+    );
 
-  const otherCurrencies = [...new Set(live.map((item) => item.amount.currency))]
+  const raised = sumIn(currency);
+
+  const otherCurrencies = [...new Set(input.received.map((amount) => amount.currency))]
     .filter((code) => code !== currency)
     .sort()
-    .map((code) =>
-      sumMoney(
-        live.filter((item) => item.amount.currency === code).map((item) => item.amount),
-        code,
-      ),
-    );
+    .map(sumIn)
+    // Una moneda con total cero no se muestra: la vista devuelve una fila por
+    // cada moneda que aparece en aportes **o** en gastos, así que puede traer una
+    // moneda en la que sólo se gastó.
+    .filter((amount) => amount.amountMinor !== 0);
 
   return {
     raised,
@@ -52,7 +60,7 @@ export function summarizeFundraising(input: SummarizeFundraisingInput): Fundrais
       input.onOutOfRange,
     ),
     otherCurrencies,
-    hasData: live.length > 0 || input.goal !== null,
+    hasData: input.received.length > 0 || input.goal !== null,
   };
 }
 

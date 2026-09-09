@@ -89,9 +89,7 @@ export function redact(value: unknown, seen = new WeakSet<object>()): unknown {
   const result: Record<string, unknown> = {};
 
   for (const [key, nested] of Object.entries(value)) {
-    result[key] = SENSITIVE_KEYS.has(normalizeKey(key))
-      ? REDACTED
-      : redact(nested, seen);
+    result[key] = SENSITIVE_KEYS.has(normalizeKey(key)) ? REDACTED : redact(nested, seen);
   }
 
   return result;
@@ -101,7 +99,12 @@ export interface LoggerOptions {
   readonly service?: string;
 }
 
-function emit(level: LogLevel, message: string, options: LoggerOptions, context?: LogContext) {
+function emit(
+  level: LogLevel,
+  message: string,
+  options: LoggerOptions,
+  context?: LogContext,
+) {
   const line = JSON.stringify({
     level,
     time: new Date().toISOString(),

@@ -1,6 +1,9 @@
 import type { BudgetItem, Campaign } from "@/src/domain/entities";
 import type { Logger } from "@/src/domain/ports/logger";
-import { summarizeTransparency, type TransparencySummary } from "@/src/domain/transparency";
+import {
+  summarizeTransparency,
+  type TransparencySummary,
+} from "@/src/domain/transparency";
 
 import type { DataLayer } from "../data-layer";
 import { ok, unavailable, type DataResult } from "../result";
@@ -41,8 +44,8 @@ export async function getTransparencyReport(
       return unavailable("not-published");
     }
 
-    const [contributions, expenses, budgetItems] = await Promise.all([
-      dataLayer.transparency.listContributions(campaign.id),
+    const [received, expenses, budgetItems] = await Promise.all([
+      dataLayer.transparency.listReceivedTotals(campaign.id),
       dataLayer.transparency.listPublishedExpenses(campaign.id),
       dataLayer.campaigns.listBudgetItems(campaign.id),
     ]);
@@ -51,7 +54,7 @@ export async function getTransparencyReport(
       campaign,
       budgetItems,
       summary: summarizeTransparency({
-        contributions,
+        received,
         expenses,
         goal: campaign.goal,
         reconciledAt: campaign.reconciledAt,

@@ -32,14 +32,7 @@ describe("getCampaignOverview", () => {
   it("devuelve el estado completo de la campaña", async () => {
     const result = await getCampaignOverview({
       dataLayer: fakeSupabaseLayer({
-        contributions: [
-          {
-            id: "c1",
-            amount: money(25_000_000, "ARS"),
-            receivedAt: "2026-09-01",
-            voidedAt: null,
-          },
-        ],
+        received: [money(25_000_000, "ARS")],
         expenses: [
           {
             id: "e1",
@@ -94,14 +87,7 @@ describe("getCampaignOverview", () => {
 
     const result = await getCampaignOverview({
       dataLayer: fakeSupabaseLayer({
-        contributions: [
-          {
-            id: "c1",
-            amount: money(500_000_000, "ARS"),
-            receivedAt: "2026-09-01",
-            voidedAt: null,
-          },
-        ],
+        received: [money(500_000_000, "ARS")],
       }),
       logger,
     });

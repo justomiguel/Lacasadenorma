@@ -1,13 +1,12 @@
 import type {
   BudgetItem,
   Campaign,
-  ContributionRecord,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
   UpdateRecord,
 } from "@/src/domain/entities";
-import { money } from "@/src/domain/money";
+import { money, type Money } from "@/src/domain/money";
 import type { Logger } from "@/src/domain/ports/logger";
 
 import type { DataLayer } from "../data-layer";
@@ -23,7 +22,8 @@ import type { DataLayer } from "../data-layer";
 export interface FakeData {
   campaign?: Campaign | null;
   budgetItems?: BudgetItem[];
-  contributions?: ContributionRecord[];
+  /** Total recibido por moneda, como lo devuelve `campaign_totals` (ADR-016). */
+  received?: Money[];
   expenses?: ExpenseRecord[];
   milestones?: MilestoneRecord[];
   paymentMethods?: PaymentMethod[];
@@ -72,7 +72,7 @@ export function fakeSupabaseLayer(data: FakeData = {}): DataLayer {
       listBudgetItems: () => guard(data.budgetItems ?? []),
     },
     transparency: {
-      listContributions: () => guard(data.contributions ?? []),
+      listReceivedTotals: () => guard(data.received ?? []),
       listPublishedExpenses: () => guard(data.expenses ?? []),
     },
     milestones: {

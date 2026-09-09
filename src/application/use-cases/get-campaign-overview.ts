@@ -47,9 +47,9 @@ export async function getCampaignOverview(
       return unavailable("not-published");
     }
 
-    const [budgetItems, contributions, expenses, milestones] = await Promise.all([
+    const [budgetItems, received, expenses, milestones] = await Promise.all([
       dataLayer.campaigns.listBudgetItems(campaign.id),
-      dataLayer.transparency.listContributions(campaign.id),
+      dataLayer.transparency.listReceivedTotals(campaign.id),
       dataLayer.transparency.listPublishedExpenses(campaign.id),
       dataLayer.milestones.listPublishedMilestones(campaign.id),
     ]);
@@ -67,14 +67,14 @@ export async function getCampaignOverview(
     return ok({
       campaign,
       fundraising: summarizeFundraising({
-        contributions,
+        received,
         goal: campaign.goal,
         onOutOfRange,
       }),
       milestones: summarizeMilestones(milestones),
       budgetItems,
       transparency: summarizeTransparency({
-        contributions,
+        received,
         expenses,
         goal: campaign.goal,
         reconciledAt: campaign.reconciledAt,

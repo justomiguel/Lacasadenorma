@@ -1,13 +1,13 @@
 import type {
   BudgetItem,
   Campaign,
-  ContributionRecord,
   ExpenseRecord,
   MediaAsset,
   MilestoneRecord,
   PaymentMethod,
   UpdateRecord,
 } from "@/src/domain/entities";
+import type { Money } from "@/src/domain/money";
 import type {
   CampaignRepository,
   MilestoneRepository,
@@ -19,7 +19,7 @@ import type {
 import {
   mapBudgetItem,
   mapCampaign,
-  mapContribution,
+  mapReceivedTotal,
   mapExpense,
   mapMedia,
   mapMilestone,
@@ -49,7 +49,9 @@ import type { ServerSupabaseClient } from "./server-client";
 
 class QueryError extends Error {
   constructor(operation: string, cause: { message: string; code?: string }) {
-    super(`${operation}: ${cause.message}${cause.code === undefined ? "" : ` (${cause.code})`}`);
+    super(
+      `${operation}: ${cause.message}${cause.code === undefined ? "" : ` (${cause.code})`}`,
+    );
     this.name = "QueryError";
   }
 }
@@ -60,13 +62,12 @@ const CAMPAIGN_COLUMNS =
 const BUDGET_ITEM_COLUMNS =
   "id, title, description, estimated_amount_minor, currency, sort_order";
 
-const CONTRIBUTION_COLUMNS = "id, amount_minor, currency, received_at, voided_at";
+const CAMPAIGN_TOTALS_COLUMNS = "currency, received_minor";
 
 const EXPENSE_COLUMNS =
   "id, amount_minor, currency, spent_at, concept, category, supplier, budget_item_id, receipt_count, voided_at";
 
-const MILESTONE_COLUMNS =
-  "id, title, description, status, happened_on, sort_order";
+const MILESTONE_COLUMNS = "id, title, description, status, happened_on, sort_order";
 
 const PAYMENT_METHOD_COLUMNS =
   "id, kind, country_code, currency, label, fields, instructions, sort_order";
@@ -125,22 +126,29 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
 
   const transparency: TransparencyRepository = {
     /**
-     * Los aportes anulados **se traen**: el dominio los necesita para excluirlos de
-     * los totales y para saber que existieron. Filtrarlos acá haría imposible
-     * distinguir "no hubo aportes" de "los que hubo se anularon".
+     * El total recibido sale de la vista agregada, no de `contributions`.
+     *
+     * No es una optimización: `anon` no tiene ni policy ni privilegio de lectura
+     * sobre la tabla, porque un aporte individual puede identificar a una persona
+     * (FR-014, amenaza I2). La vista se apoya en una función `security definer` que
+     * devuelve únicamente el agregado, y la exclusión de los aportes anulados
+     * ocurre ahí, en SQL, donde la prueba pgTAP la verifica (ADR-016).
      */
-    async listContributions(campaignId: string): Promise<ContributionRecord[]> {
+    async listReceivedTotals(campaignId: string): Promise<Money[]> {
       const { data, error } = await client
-        .from("contributions")
-        .select(CONTRIBUTION_COLUMNS)
-        .eq("campaign_id", campaignId)
-        .order("received_at", { ascending: false });
+        .from("campaign_totals")
+        .select(CAMPAIGN_TOTALS_COLUMNS)
+        .eq("campaign_id", campaignId);
 
       if (error !== null) {
-        throw new QueryError("leer los aportes", error);
+        throw new QueryError("leer los totales de la campaña", error);
       }
 
-      return data.map(mapContribution);
+      return data.flatMap((row) => {
+        const total = mapReceivedTotal(row);
+
+        return total === null ? [] : [total];
+      });
     },
 
     async listPublishedExpenses(campaignId: string): Promise<ExpenseRecord[]> {
@@ -213,7 +221,9 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
   function mapUpdate(row: UpdateRow): UpdateRecord {
     const media: MediaAsset[] = [...row.update_media]
       .sort((a, b) => a.sort_order - b.sort_order)
-      .flatMap((link) => (link.media === null ? [] : [mapMedia(link.media, publicUrlFor)]));
+      .flatMap((link) =>
+        link.media === null ? [] : [mapMedia(link.media, publicUrlFor)],
+      );
 
     return {
       id: row.id,
@@ -226,7 +236,10 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
   }
 
   const updates: UpdateRepository = {
-    async listPublishedUpdates(campaignId: string, limit?: number): Promise<UpdateRecord[]> {
+    async listPublishedUpdates(
+      campaignId: string,
+      limit?: number,
+    ): Promise<UpdateRecord[]> {
       let query = client
         .from("updates")
         .select(UPDATE_COLUMNS)

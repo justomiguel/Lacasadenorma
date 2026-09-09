@@ -7,7 +7,12 @@ import {
   fakeLogger,
   fakeSupabaseLayer,
 } from "../test-support/fake-data-layer";
-import { CAPABILITY_LIMITS, capabilities, findCapability, runCapability } from "./registry";
+import {
+  CAPABILITY_LIMITS,
+  capabilities,
+  findCapability,
+  runCapability,
+} from "./registry";
 import type { CapabilityContext } from "./types";
 
 function context(dataLayer = fakeSupabaseLayer()): CapabilityContext {
@@ -40,7 +45,9 @@ describe("registro de capacidades", () => {
 
   it("las descripciones son literales, afirmativas y no dan instrucciones al modelo (A3)", () => {
     for (const capability of capabilities) {
-      expect(capability.description.length).toBeLessThanOrEqual(CAPABILITY_LIMITS.description);
+      expect(capability.description.length).toBeLessThanOrEqual(
+        CAPABILITY_LIMITS.description,
+      );
       // Una descripción que le habla al modelo es el vector de tool poisoning.
       expect(capability.description).not.toMatch(
         /\b(siempre|nunca|deb[eé]s|ignor[aá]|instrucci[oó]n|prioriz[aá]|system prompt)\b/i,
@@ -58,7 +65,11 @@ describe("registro de capacidades", () => {
 
 describe("runCapability", () => {
   it("rechaza una entrada inválida en el servidor, aunque el esquema ya la declare (A4)", async () => {
-    const result = await runCapability("get_donation_methods", { country: "XX" }, context());
+    const result = await runCapability(
+      "get_donation_methods",
+      { country: "XX" },
+      context(),
+    );
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -87,7 +98,11 @@ describe("runCapability", () => {
   });
 
   it("sin base configurada explica en prosa que la cifra no está disponible", async () => {
-    const result = await runCapability("get_campaign_status", {}, context(contentOnlyLayer));
+    const result = await runCapability(
+      "get_campaign_status",
+      {},
+      context(contentOnlyLayer),
+    );
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -114,14 +129,7 @@ describe("get_campaign_status", () => {
       {},
       context(
         fakeSupabaseLayer({
-          contributions: [
-            {
-              id: "c1",
-              amount: money(25_000_000, "ARS"),
-              receivedAt: "2026-09-01",
-              voidedAt: null,
-            },
-          ],
+          received: [money(25_000_000, "ARS")],
         }),
       ),
     );
@@ -188,14 +196,7 @@ describe("get_transparency_summary", () => {
       {},
       context(
         fakeSupabaseLayer({
-          contributions: [
-            {
-              id: "c1",
-              amount: money(25_000_000, "ARS"),
-              receivedAt: "2026-09-01",
-              voidedAt: null,
-            },
-          ],
+          received: [money(25_000_000, "ARS")],
           expenses: [
             {
               id: "e1",
@@ -236,7 +237,9 @@ describe("get_transparency_summary", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.output).toMatchObject({ detailUrl: "https://ejemplo.test/transparencia" });
+    expect(result.output).toMatchObject({
+      detailUrl: "https://ejemplo.test/transparencia",
+    });
   });
 });
 
