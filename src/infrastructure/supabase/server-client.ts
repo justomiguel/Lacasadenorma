@@ -13,10 +13,9 @@ import type { Database } from "./database.types";
  *
  * Sobre `setAll`: en un Server Component las cookies no se pueden escribir, y el
  * intento lanza. Se atrapa a propósito, porque el refresco del token lo hace
- * `proxy.ts` en cada navegación y desde ahí sí se puede escribir. Los headers que
- * la librería pide propagar cuando escribe cookies de sesión —los `no-store`— se
- * copian tal cual: sin ellos, un intermediario podría cachear una respuesta con la
- * cookie de sesión de alguien y servírsela a otra persona.
+ * `proxy.ts` en cada navegación y desde ahí sí se puede escribir. Las cabeceras
+ * `no-store` que la librería pide propagar junto con una cookie de sesión también
+ * son cosa de `proxy.ts`: acá no hay respuesta HTTP a la que ponérselas.
  */
 export type ServerSupabaseClient = SupabaseClient<Database>;
 
@@ -34,19 +33,24 @@ export async function createServerSupabaseClient(): Promise<ServerSupabaseClient
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet, headers) {
+      setAll(cookiesToSet, _headers) {
         try {
           for (const { name, value, options } of cookiesToSet) {
             cookieStore.set(name, value, options);
-          }
-
-          for (const [key, headerValue] of Object.entries(headers)) {
-            cookieStore.set(key, headerValue);
           }
         } catch {
           // Un Server Component no puede escribir cookies. No es un fallo: el
           // refresco de sesión ocurre en `proxy.ts`, que sí puede.
         }
+
+        // `_headers` se ignora acá **a propósito**. Son cabeceras de respuesta
+        // HTTP (`Cache-Control: no-store` y compañía), no cookies, y desde este
+        // contexto no hay respuesta a la que ponérselas. Escribirlas en el almacén
+        // de cookies —que es lo que parece razonable a primera vista— crearía una
+        // cookie llamada `Cache-Control`, que no hace nada y confunde.
+        //
+        // Quien las emite es `proxy.ts`, que corre en cada navegación, tiene la
+        // respuesta en la mano y es donde el refresco del token ocurre de verdad.
       },
     },
   });
