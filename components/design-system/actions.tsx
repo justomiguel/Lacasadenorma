@@ -24,10 +24,11 @@ export function PrimaryAction({
   children,
   className,
   ...rest
-}: { href: ComponentProps<typeof Link>["href"]; children: ReactNode; className?: string } & Omit<
-  ComponentProps<typeof Link>,
-  "href" | "className" | "children"
->) {
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: ReactNode;
+  className?: string;
+} & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
     <Link href={href} className={cn(PRIMARY, className)} {...rest}>
       {children}
@@ -40,10 +41,11 @@ export function SecondaryAction({
   children,
   className,
   ...rest
-}: { href: ComponentProps<typeof Link>["href"]; children: ReactNode; className?: string } & Omit<
-  ComponentProps<typeof Link>,
-  "href" | "className" | "children"
->) {
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: ReactNode;
+  className?: string;
+} & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
     <Link href={href} className={cn(SECONDARY, className)} {...rest}>
       {children}
@@ -57,10 +59,11 @@ export function InlineLink({
   children,
   className,
   ...rest
-}: { href: ComponentProps<typeof Link>["href"]; children: ReactNode; className?: string } & Omit<
-  ComponentProps<typeof Link>,
-  "href" | "className" | "children"
->) {
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: ReactNode;
+  className?: string;
+} & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
     <Link
       href={href}

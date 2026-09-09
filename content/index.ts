@@ -30,7 +30,11 @@ import transparenciaData from "./transparencia.json";
 
 export const site = parseContent(siteSchema, siteData, "site.json");
 export const norma = parseContent(personSchema, normaData, "norma.json");
-export const whatHappened = parseContent(whatHappenedSchema, quePasoData, "que-paso.json");
+export const whatHappened = parseContent(
+  whatHappenedSchema,
+  quePasoData,
+  "que-paso.json",
+);
 export const reconstruction = parseContent(
   reconstructionSchema,
   reconstruccionData,

@@ -1,0 +1,51 @@
+import Link from "next/link";
+
+import { faq } from "@/content";
+
+/**
+ * Las nueve preguntas.
+ *
+ * La pregunta es el encabezado y la respuesta va inmediatamente debajo, en prosa,
+ * sin acordeón. Un acordeón esconde el contenido de quien busca con Ctrl+F, de un
+ * buscador que mide el contenido visible y de un modelo que lee la página, y en
+ * nueve preguntas no ahorra nada de desplazamiento que valga la pena (FR-001,
+ * estrategia AEO).
+ *
+ * El orden es el de `content/preguntas.json`, y es el orden en que una persona se
+ * hace las preguntas: qué es esto, quién fue, qué pasó, cómo ayudo, cómo verifico.
+ */
+export function FaqSection({ className }: { className?: string }) {
+  return (
+    <div className={className}>
+      <dl>
+        {faq.map((item) => (
+          <div
+            key={item.question}
+            className="border-t border-rule py-xl first:border-t-0 first:pt-0"
+          >
+            <dt>
+              <h3 className="max-w-measure font-prose text-subheading font-medium">
+                {item.question}
+              </h3>
+            </dt>
+            {item.answer.map((paragraph) => (
+              <dd key={paragraph.slice(0, 48)} className="mt-sm max-w-measure text-body">
+                {paragraph}
+              </dd>
+            ))}
+            {item.href === null ? null : (
+              <dd className="mt-sm">
+                <Link
+                  href={item.href}
+                  className="font-ui text-small text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+                >
+                  Ver más sobre esto
+                </Link>
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}

@@ -1,16 +1,25 @@
 import { describe, expect, it } from "vitest";
 
-import { faq, help, legacy, legal, norma, riachoConecta, site, transparency } from "./index";
+import {
+  faq,
+  help,
+  legacy,
+  legal,
+  norma,
+  riachoConecta,
+  site,
+  transparency,
+} from "./index";
 import { parseContent, personSchema, siteSchema } from "./schema";
 
 describe("parseContent", () => {
   it("falla nombrando el archivo y el campo cuando falta un dato", () => {
-    expect(() => parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json")).toThrow(
-      /content\/site\.json/,
-    );
-    expect(() => parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json")).toThrow(
-      /tagline/,
-    );
+    expect(() =>
+      parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json"),
+    ).toThrow(/content\/site\.json/);
+    expect(() =>
+      parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json"),
+    ).toThrow(/tagline/);
   });
 
   it("rechaza una fecha que no tiene el formato esperado", () => {

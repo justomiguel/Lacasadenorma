@@ -149,7 +149,9 @@ export function parseContent<T extends z.ZodType>(
       .map((issue) => `  · ${issue.path.join(".") || "(raíz)"}: ${issue.message}`)
       .join("\n");
 
-    throw new Error(`El contenido de content/${fileName} no cumple su esquema:\n${detail}`);
+    throw new Error(
+      `El contenido de content/${fileName} no cumple su esquema:\n${detail}`,
+    );
   }
 
   return result.data;

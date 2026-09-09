@@ -51,9 +51,7 @@ export function StatGroup({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <dl className={cn("grid gap-lg sm:grid-cols-3", className)}>{children}</dl>
-  );
+  return <dl className={cn("grid gap-lg sm:grid-cols-3", className)}>{children}</dl>;
 }
 
 /**
