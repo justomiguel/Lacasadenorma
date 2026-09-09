@@ -271,6 +271,7 @@ export type Database = {
           currency: string
           id: string
           published_at: string | null
+          receipt_count: number
           recorded_by: string | null
           spent_at: string
           supplier: string | null
@@ -288,6 +289,7 @@ export type Database = {
           currency: string
           id?: string
           published_at?: string | null
+          receipt_count?: number
           recorded_by?: string | null
           spent_at: string
           supplier?: string | null
@@ -305,6 +307,7 @@ export type Database = {
           currency?: string
           id?: string
           published_at?: string | null
+          receipt_count?: number
           recorded_by?: string | null
           spent_at?: string
           supplier?: string | null
