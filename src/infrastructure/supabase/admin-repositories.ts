@@ -16,6 +16,7 @@ import {
   storageKeyFor,
   UnsupportedFileError,
 } from "../files/image";
+import type { Json } from "./database.types";
 import {
   mapBudgetItem,
   mapCampaign,
@@ -315,18 +316,43 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
         }
       },
 
-      async attachReceipt(input): Promise<void> {
+      /**
+       * Validar, subir, registrar. En ese orden, y el orden es el contrato del
+       * puerto: si la fila se creara antes de que el archivo esté arriba, un fallo
+       * de red dejaría un gasto que dice tener comprobante y no lo tiene, que es
+       * exactamente la clase de dato sin respaldo que la transparencia promete que
+       * no existe.
+       */
+      async uploadReceipt({ expenseId, file }): Promise<{ fileName: string }> {
+        const info = await inspectReceipt(file);
+        const key = storageKeyFor(info.mimeType);
+
+        const { error: uploadError } = await client.storage
+          .from(RECEIPT_BUCKET)
+          .upload(key, file, { contentType: info.mimeType, upsert: false });
+
+        if (uploadError !== null) {
+          throw new UnsupportedFileError(
+            `No pudimos subir el comprobante: ${uploadError.message}`,
+          );
+        }
+
         const { error } = await client.from("expense_receipts").insert({
-          expense_id: input.expenseId,
-          storage_path: input.storagePath,
-          file_name: input.fileName,
-          mime_type: input.mimeType,
-          size_bytes: input.sizeBytes,
+          expense_id: expenseId,
+          storage_path: key,
+          // El nombre original se guarda para que una auditoría pueda cruzarlo con
+          // el papel; la clave de storage la genera el servidor, así que un nombre
+          // hostil no puede convertirse en una ruta.
+          file_name: file.name.slice(0, 200),
+          mime_type: info.mimeType,
+          size_bytes: file.size,
         });
 
         if (error !== null) {
           throw new QueryError("registrar el comprobante", error);
         }
+
+        return { fileName: file.name };
       },
 
       /**
@@ -583,10 +609,13 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
           action: input.action,
           entity_table: input.entityTable,
           entity_id: input.entityId,
-          diff: input.diff,
-          // `actor_id` lo pone el default de la tabla desde `auth.uid()`: si lo
-          // mandara el cliente, sería un dato que quien llama elige, y el registro
-          // de auditoría dejaría de servir para lo único que sirve.
+          // El `diff` del puerto es un objeto de valores desconocidos y la columna
+          // es `jsonb`; el cast dice lo que ya es cierto en la práctica, porque lo
+          // que se guarda son textos y booleanos armados por los casos de uso.
+          diff: input.diff as Json,
+          // `actor_id` y `occurred_at` los fija el trigger `audit_log_stamp_entry`
+          // desde el token y el reloj del servidor. Mandarlos desde acá no cambiaría
+          // nada, y por eso no se mandan (migración 20260909120800).
         });
 
         if (error !== null) {

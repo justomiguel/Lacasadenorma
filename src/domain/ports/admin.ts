@@ -86,17 +86,12 @@ export interface AdminExpensePort {
   }): Promise<string>;
   voidExpense(input: { id: string; reason: string }): Promise<void>;
   /**
-   * Registra un comprobante ya subido al bucket privado. La subida es un paso
-   * aparte a propósito: si la fila se creara primero, un fallo de red dejaría un
-   * comprobante registrado que no existe.
+   * Valida el archivo por su contenido, lo sube al bucket privado y **después**
+   * registra la fila. Ese orden es parte del contrato: al revés, un fallo de red
+   * dejaría un comprobante registrado que no existe, y la página de transparencia
+   * diría que hay respaldo donde no hay.
    */
-  attachReceipt(input: {
-    expenseId: string;
-    storagePath: string;
-    fileName: string;
-    mimeType: string;
-    sizeBytes: number;
-  }): Promise<void>;
+  uploadReceipt(input: { expenseId: string; file: File }): Promise<{ fileName: string }>;
   /** URL firmada de corta duración. El bucket nunca es público (amenaza I1). */
   createReceiptLink(input: {
     storagePath: string;
