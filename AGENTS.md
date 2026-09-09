@@ -1,0 +1,63 @@
+# AGENTS.md — cómo trabajar en este repositorio
+
+Este archivo traduce `.specify/memory/constitution.md` a instrucciones operativas. Si algo acá
+contradice la constitución, gana la constitución y este archivo se corrige.
+
+Idioma: **el contenido, la documentación y los nombres de rutas están en castellano; el código, los
+identificadores, los commits y los nombres de tablas están en inglés** (ADR-014).
+
+## Antes de escribir código
+
+1. Buscá la decisión en `specs/001-sitio-publico-campana/` y en `docs/adr/`. Si no está, **paralo y
+   documentalo primero**. No se improvisa arquitectura dentro del código (principio I).
+2. Si la tarea toca dominio, policies RLS o capacidades de agentes: **el test va primero** y tiene
+   que fallar por el motivo correcto antes de implementar (principio II).
+
+## Reglas que rompen el build si las violás
+
+- `src/domain/**` no importa React, Next, Supabase ni nada con I/O. Lo impone ESLint.
+- `src/application/**` importa puertos de `src/domain/ports`, nunca `src/infrastructure`.
+- `components/**` no importa `src/infrastructure/supabase/*`: llama casos de uso.
+- Ningún `console.log`. `warn` y `error` están permitidos.
+- Ningún `catch {}` vacío.
+- Ningún `any` sin comentario que explique por qué no hay alternativa.
+
+## Reglas que no rompen el build y son igual de obligatorias
+
+- **Ningún dato inventado llega a la interfaz.** Sin CBU de ejemplo, sin montos de muestra, sin
+  fechas estimadas. Si el dato no está verificado, la sección se omite. `npm run check:placeholders`
+  verifica lo que puede; el resto es criterio.
+- Todo monto es `bigint` en unidad mínima + moneda. Nunca `float`. Nunca sumar monedas distintas.
+- Nada financiero se borra: se anula con `voided_at` y `void_reason`.
+- Server Components por defecto. `"use client"` sólo con interactividad real, y lo más abajo posible
+  en el árbol.
+- Toda imagen por `next/image` con `width`/`height` reales y `alt` que aporte información.
+- Los estados vacío, de carga y de error se diseñan. Un estado sin diseñar es un bug abierto.
+
+## Diseño
+
+Leé `specs/001-sitio-publico-campana/ux.md` antes de tocar una pantalla. Los tokens viven en
+`app/globals.css` dentro de `@theme`; **no** se usan valores por defecto de Tailwind ni valores
+arbitrarios (`text-[13px]`) en producción.
+
+Prohibido: gradientes decorativos, glassmorphism, blobs, cards para todo, radios grandes, sombras
+difusas, emojis decorativos, iconos de relleno, animaciones sin función, copy de folleto.
+
+## Comandos
+
+```bash
+npm run dev            # servidor de desarrollo
+npm run verify         # typecheck + lint + formato + tests + chequeos + build
+npm run test           # unitarios y de componente
+npm run test:e2e       # Playwright
+npm run db:verify      # Postgres local: reset + migraciones + advisors + pgTAP
+```
+
+`next typegen` corre antes de `typecheck` y de `lint`: `PageProps` y `LayoutProps` son tipos
+globales generados, y sin generarlos el typecheck falla en las páginas.
+
+## Definition of Done
+
+Especificación cumplida · tests en el nivel adecuado, vistos en rojo antes · typecheck · lint ·
+build · axe limpio · revisado en 360 px y en 1440 px · seguridad considerada · SEO considerado ·
+documentación actualizada en el mismo commit · CI en verde.
