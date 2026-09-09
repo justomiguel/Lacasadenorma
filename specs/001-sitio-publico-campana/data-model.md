@@ -142,6 +142,10 @@ obtener el archivo. La UI pública lee un contador derivado, no las filas.
 **Invariante**: `length(btrim(alt_text)) > 0`. Un `alt` vacío se rechaza en la base, no sólo en el
 formulario, porque el formulario puede cambiar.
 
+**Sobre `media` y el contenido versionado**: `media` guarda las fotografías porque una foto se sube
+desde un teléfono y no puede requerir un despliegue. La prosa, en cambio, vive en `content/`. La
+frontera exacta está más abajo, en la sección 8.
+
 ### `payment_methods` — cómo colaborar
 
 | Columna | Tipo | Notas |
@@ -325,3 +329,23 @@ Los repositorios se resuelven en tiempo de ejecución según haya credenciales:
 | Sin Supabase configurado | `content/` | **Omitidas**, con aviso |
 
 Nunca se muestran ceros ni datos de ejemplo en lugar de las cifras reales. La ausencia se comunica.
+
+---
+
+## 8. Frontera exacta entre `content/` y la base
+
+`people` tiene columnas de prosa (`bio`) y fechas (`born_on`, `died_on`) que **la página pública no
+lee en la versión 1**. Es una decisión, no un descuido, y conviene que quede escrita porque de otro
+modo el mismo dato existiría en dos lugares y en algún momento iban a discrepar.
+
+| Dato | Fuente autoritativa en v1 | Motivo |
+|---|---|---|
+| Prosa de la historia de Norma, de qué ocurrió, de la reconstrucción, del legado, preguntas y legales | `content/*.json` | Cambia pocas veces, se revisa con calma, y merece pasar por revisión de código como cualquier otro texto publicado |
+| Fechas de nacimiento y muerte | `content/norma.json` (hoy `null`) | Son parte del mismo relato; separarlas de la prosa las volvería un dato huérfano |
+| Fotografías, retratos, `alt`, epígrafes | `media` + `people.portrait_media_id` | Se suben desde un teléfono; exigir un despliegue para publicar una foto haría que no se publique |
+| Montos, aportes, gastos, hitos, cuentas, novedades | Base | Cambian seguido y los edita quien no toca código |
+
+Las columnas de prosa de `people` se conservan en el esquema para el momento en que la familia
+quiera editar la historia desde el backoffice sin pasar por un despliegue. Hasta que exista ese
+formulario, **nadie las lee**, y ese es el único estado en el que dos fuentes para el mismo dato no
+generan una contradicción.

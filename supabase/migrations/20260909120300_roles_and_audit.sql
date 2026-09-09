@@ -46,12 +46,15 @@ as $$
 $$;
 
 -- ── has_min_role ────────────────────────────────────────────────────────────
--- La función que usan todas las policies.
+-- La función de rango, que usan casi todas las policies.
 --
--- `auditor` es rango 1: pasa el chequeo de lectura total (`has_min_role('auditor')`)
--- y falla el de cualquier escritura, que pide `'editor'` o más. Es lectura total
--- sin escritura, que es exactamente el rol que permite que alguien externo a la
--- familia verifique sin poder alterar nada.
+-- `auditor` es rango 1: pasa cualquier chequeo de lectura por rango
+-- (`has_min_role('auditor')` = "cualquier rol interno") y falla el de cualquier
+-- escritura, que pide `'editor'` o más. Es lectura sin escritura, que es
+-- exactamente el rol que permite que alguien externo a la familia verifique sin
+-- poder alterar nada.
+--
+-- Lo que el rango **no** puede expresar está abajo, en `can_read_ledger`.
 
 create or replace function private.has_min_role(minimum public.app_role)
 returns boolean
@@ -83,6 +86,40 @@ grant execute on function private.has_min_role(public.app_role) to authenticated
 
 -- `role_rank` no se otorga a nadie: la llama `has_min_role`, que es
 -- `security definer` y por lo tanto corre con los privilegios del dueño.
+
+-- ── can_read_ledger ─────────────────────────────────────────────────────────
+-- Corrección: el rango no alcanza para el libro.
+--
+-- La matriz de data-model.md §4 y la amenaza E1 dicen lo mismo: `editor` publica
+-- contenido y **no toca plata**. Pero `editor` es rango 2 y `auditor` rango 1, así
+-- que las policies del libro escritas como `has_min_role('auditor')` le abrían a
+-- `editor` los aportes, los comprobantes, el registro de auditoría y los gastos
+-- todavía no publicados. Era una escalada de lectura silenciosa: la policy se leía
+-- como correcta y no lo era.
+--
+-- La lectura del libro no es una escala sino un conjunto: `auditor`, `admin` y
+-- `owner`. `auditor` se nombra aparte porque es justamente el caso especial que
+-- una jerarquía numérica no puede expresar —lo mismo que ya documenta
+-- `src/domain/entities/role.ts`—; de `admin` para arriba se sigue resolviendo por
+-- rango, para que un rol futuro más privilegiado lo herede sin tocar esto.
+
+create or replace function private.can_read_ledger()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    private.has_min_role('admin')
+    or (
+      (select auth.uid()) is not null
+      and ((select auth.jwt()) -> 'app_metadata' ->> 'user_role') = 'auditor'
+    )
+$$;
+
+revoke all on function private.can_read_ledger() from public;
+grant execute on function private.can_read_ledger() to authenticated;
 
 -- ── Hook del token de acceso ────────────────────────────────────────────────
 -- Copia el rol más privilegiado de la persona a `app_metadata` del JWT. Una

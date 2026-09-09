@@ -27,8 +27,13 @@
 --    la condición de lectura con la de escritura y esconde errores.
 --
 -- Sobre los roles: `private.has_min_role('auditor')` es "cualquier rol interno" y
--- habilita lectura total. Cualquier escritura pide `'editor'` o más, así que
--- `auditor` queda fuera de todas por construcción, no por enumeración.
+-- habilita la lectura de lo que todavía no está publicado. Cualquier escritura
+-- pide `'editor'` o más, así que `auditor` queda fuera de todas por construcción,
+-- no por enumeración.
+--
+-- El libro —aportes, gastos, comprobantes y auditoría— es la excepción y usa
+-- `private.can_read_ledger()`: ahí `editor` no entra, y el rango no puede decir
+-- eso porque `editor` está por encima de `auditor` (data-model.md §4, amenaza E1).
 
 -- ── campaigns ───────────────────────────────────────────────────────────────
 
@@ -81,9 +86,11 @@ create policy budget_items_delete on public.budget_items
 -- individual puede identificar a una persona (FR-014, amenaza I2). Lo público es
 -- la vista agregada `campaign_totals`.
 
+-- `can_read_ledger()` y no `has_min_role('auditor')`: `editor` es de rango mayor
+-- que `auditor` y con la versión por rango leía todos los aportes (amenaza E1).
 create policy contributions_select on public.contributions
   for select to authenticated
-  using (private.has_min_role('auditor'));
+  using (private.can_read_ledger());
 
 create policy contributions_insert on public.contributions
   for insert to authenticated
@@ -104,11 +111,13 @@ create policy expenses_select_public on public.expenses
   for select to anon
   using (published_at is not null and voided_at is null);
 
+-- `editor` ve exactamente lo mismo que el público: un gasto en borrador o anulado
+-- es información del libro y no le corresponde (data-model.md §4, amenaza E1).
 create policy expenses_select_internal on public.expenses
   for select to authenticated
   using (
     (published_at is not null and voided_at is null)
-    or private.has_min_role('auditor')
+    or private.can_read_ledger()
   );
 
 create policy expenses_insert on public.expenses
@@ -126,7 +135,7 @@ create policy expenses_update on public.expenses
 
 create policy expense_receipts_select on public.expense_receipts
   for select to authenticated
-  using (private.has_min_role('auditor'));
+  using (private.can_read_ledger());
 
 create policy expense_receipts_insert on public.expense_receipts
   for insert to authenticated
@@ -324,7 +333,7 @@ create policy user_roles_delete on public.user_roles
 
 create policy audit_log_select on public.audit_log
   for select to authenticated
-  using (private.has_min_role('auditor'));
+  using (private.can_read_ledger());
 
 create policy audit_log_insert on public.audit_log
   for insert to authenticated

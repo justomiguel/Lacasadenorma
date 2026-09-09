@@ -64,9 +64,12 @@ create policy fotos_delete on storage.objects
 -- ── comprobantes ────────────────────────────────────────────────────────────
 -- Sin policy para `anon`: la ausencia **es** la negación.
 
+-- `can_read_ledger()`: la factura es parte del libro, y `editor` no lo ve. Con un
+-- chequeo por rango `editor` habría podido descargar comprobantes, porque su rango
+-- es mayor que el de `auditor` (amenazas I1 y E1).
 create policy comprobantes_select on storage.objects
   for select to authenticated
-  using (bucket_id = 'comprobantes' and private.has_min_role('auditor'));
+  using (bucket_id = 'comprobantes' and private.can_read_ledger());
 
 -- Cargar un comprobante acompaña al registro de un gasto, que es `admin`.
 create policy comprobantes_insert on storage.objects

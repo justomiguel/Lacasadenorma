@@ -173,19 +173,20 @@ values (
 );
 
 -- ── Comprobantes ────────────────────────────────────────────────────────────
--- El público sabe que existen; el archivo no se publica nunca.
+-- El público sabe que existen; el archivo no se publica nunca. `storage_path` es
+-- la ruta **dentro** del bucket `comprobantes`, sin el nombre del bucket.
 
 insert into public.expense_receipts
   (expense_id, storage_path, file_name, mime_type, size_bytes)
 values
   ('bbbbbbbb-0000-4000-8000-000000000003',
-   'comprobantes/desarrollo/factura-chapas.pdf', 'factura-chapas.pdf',
+   'desarrollo/factura-chapas.pdf', 'factura-chapas.pdf',
    'application/pdf', 148231),
   ('bbbbbbbb-0000-4000-8000-000000000004',
-   'comprobantes/desarrollo/factura-cabriadas.pdf', 'factura-cabriadas.pdf',
+   'desarrollo/factura-cabriadas.pdf', 'factura-cabriadas.pdf',
    'application/pdf', 121004),
   ('bbbbbbbb-0000-4000-8000-000000000001',
-   'comprobantes/desarrollo/recibo-contenedor.jpg', 'recibo-contenedor.jpg',
+   'desarrollo/recibo-contenedor.jpg', 'recibo-contenedor.jpg',
    'image/jpeg', 402118);
 
 -- ── Métodos de aporte ───────────────────────────────────────────────────────
