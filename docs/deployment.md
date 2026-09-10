@@ -156,7 +156,7 @@ npx supabase db push
 npx supabase db advisors --linked --type all --level warn
 ```
 
-El shim local es parcial: no tiene GoTrue, PostgREST ni Realtime, así que una migración puede pasar
+El shim local es parcial: no tiene GoTrue ni Realtime, así que una migración puede pasar
 en `db.yml` y comportarse distinto en el proyecto real. Ese primer `db advisors --linked` es la
 compuerta verdadera.
 

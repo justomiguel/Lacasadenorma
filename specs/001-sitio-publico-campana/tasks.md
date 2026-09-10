@@ -14,7 +14,7 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 **Organization**: agrupadas por historia de usuario, en orden de dependencias.
 
-**Estado**: las 114 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
+**Estado**: las 121 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
 puede traer una persona: las seis fotos con espacio reservado, las fechas de Norma, el relevamiento de
 la obra y las cuentas de aporte reales. No frenan el build: por diseño van en `null` y la interfaz
 omite la sección o reserva el espacio y dice qué va a ir ahí (fase 2, regla del dato ausente). Están
@@ -246,11 +246,58 @@ credenciales.
 
 ---
 
+## Phase 9: Cerrar el flujo 9, y los dos defectos que aparecieron al cerrarlo
+
+T087 quedó cumplido a medias durante un tiempo: los flujos 8 y 9 tenían cobertura de aplicación y de
+pgTAP, pero el recorrido con sesión real no estaba automatizado. La razón era buena mientras duró —la
+API local no tenía autenticación, y un servidor de auth falso habría verificado el servidor falso—, así
+que el flujo 9 vivía como verificación manual en el runbook.
+
+Se cerró poniendo el límite en otro lado: se sustituye la superficie HTTP de GoTrue y nada más. La
+contraseña la verifica bcrypt en la base, los claims los arma el hook de la migración invocado como
+`supabase_auth_admin`, el token lo valida PostgREST y las policies RLS deciden cada escritura.
+
+**Eso encontró dos defectos que ninguna prueba existente podía ver**, porque los dos vivían en la
+costura entre pgTAP —que verificaba que las policies fueran las del documento, y lo eran— y las pruebas
+de aplicación, que usan puertos en memoria que aceptan cualquier entrada.
+
+### Tests
+
+- [x] T115 pgTAP RED: `public.custom_access_token_hook` invocado con el rol `supabase_auth_admin`,
+      que es el que lo invoca de verdad. Fallaba con `permission denied for schema private`
+- [x] T116 pgTAP: `insert` directo sobre `audit_log` falla por falta de privilegio para los cuatro
+      roles, y `record_audit()` lo permite para los cuatro y lo niega sin rol (amenaza T2)
+- [x] T117 E2E RED: flujo 9 con sesión real en los tres navegadores — borrador sin camino público,
+      publicación, lista, `sitemap.xml`, despublicación, rastro de auditoría escrito con un rol y leído
+      con otro, y un `auditor` rechazado también cuando le habla directo a la base
+
+### Implementación
+
+- [x] T118 `20260910090000`: `usage` sobre `private` y `execute` sobre `private.role_rank` para
+      `supabase_auth_admin`. **Sin esto ninguna sesión se habría podido emitir en producción**
+- [x] T119 `20260910091000` y [ADR-019](../../docs/adr/019-auditoria-por-funcion.md):
+      `public.record_audit()` `security definer` con comprobación de rol propia, y revocación del
+      `insert` de tabla. La policy anterior pedía `admin`, así que publicar como `editor` dejaba la
+      fila publicada, no escribía el rastro y mostraba un error
+- [x] T120 Shim, fixture y soporte de E2E: `auth.users.encrypted_password` en formato bcrypt,
+      `pgcrypto` en `extensions`, los cuatro usuarios del backoffice, y la superficie de auth de
+      `scripts/local-api.mjs` (`/token`, `/user`, `/logout`)
+- [x] T121 Actualizar la documentación que esto invalida: `testing.md`, `runbook.md` §7,
+      `security.md`, `data-model.md`, `threat-model.md`, `testing-strategy.md`, ADR-013 y el índice de
+      ADR
+
+**Checkpoint**: los nueve flujos críticos tienen cobertura automática en los tres navegadores, y lo
+que queda como verificación manual es sólo lo que el shim no puede sustituir: Storage, los enlaces
+firmados y el comportamiento de GoTrue.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
-Setup (1) → Foundational (2) → US1 (3) → US2 (4) → US4 (5) → US3 (6) → US5 (7) → Polish (8)
+Setup (1) → Foundational (2) → US1 (3) → US2 (4) → US4 (5) → US3 (6) → US5 (7) → Polish (8) →
+Cerrar el flujo 9 (9)
 
 US4 va antes que US3 a propósito: las capacidades de lectura se apoyan en los casos de uso de US1 y
 US2, y no dependen de autenticación.

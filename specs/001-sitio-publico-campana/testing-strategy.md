@@ -12,7 +12,7 @@ deliberadamente engrosada en el nivel de integración de datos.
 |---|---|---|---|
 | **Unitario** | Vitest | Dominio puro: `Money`, `Percentage`, cálculo de saldo y de porcentaje ejecutado, agregación por moneda, formateo `es-AR`, parseo del contenido con Zod, redacción del logger, renderizado seguro de Markdown | Nada que toque red o base de datos |
 | **Componentes** | Vitest + Testing Library | Primitivas del sistema de diseño: `CopyField`, `ProgressBar`, `CountryTabs`, `Ledger`, `Figure`, `Callout`, y los estados vacío/error | Estilos, píxeles, capturas |
-| **Integración de datos** | **pgTAP sobre PostgreSQL 16 real** | Cada combinación rol × tabla × operación; existencia de índices en columnas de policy; que toda vista tenga `security_invoker`; que toda llamada `auth.*()` esté envuelta en subselect; que `audit_log` no acepte `delete` | El comportamiento de GoTrue y PostgREST reales |
+| **Integración de datos** | **pgTAP sobre PostgreSQL 17 real** ([ADR-013](../../docs/adr/013-base-datos-local.md)) | Cada combinación rol × tabla × operación; existencia de índices en columnas de policy; que toda vista tenga `security_invoker`; que toda llamada `auth.*()` esté envuelta en subselect; que `audit_log` no acepte `delete`; que el hook del token corra como `supabase_auth_admin` | El comportamiento de GoTrue. PostgREST sí se ejerce, pero en el nivel E2E |
 | **Integración de aplicación** | Vitest con repositorios en memoria | Casos de uso, las cinco capacidades de agentes, la equivalencia entre el adaptador REST y el caso de uso | Persistencia real |
 | **E2E** | Playwright (chromium, webkit, iPhone 15) | Los nueve flujos críticos | Rendimiento medido |
 | **Accesibilidad** | `@axe-core/playwright` | Cero violaciones `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa` en todas las páginas públicas, en dos viewports | Lo que axe no detecta: orden lógico, calidad del `alt`, sentido del texto. Eso se revisa a mano |
@@ -128,8 +128,12 @@ es por área.
 
 Se declara para que nadie lo confunda con cobertura real:
 
-- Emisión y verificación de un JWT real contra el JWKS del proyecto.
-- El `custom_access_token_hook` invocado por GoTrue con su payload real.
+- Emisión y verificación de un JWT **asimétrico** contra el JWKS del proyecto. La suite E2E emite y
+  verifica tokens HS256 firmados con el secreto que valida PostgREST, así que las policies RLS deciden
+  de verdad; lo que no se ejerce es la rotación de claves ni el camino del JWKS.
+- El resto del comportamiento de GoTrue: recuperación de contraseña, políticas de contraseña, límites de
+  tasa, y que el hook esté **habilitado** en el panel. Que el hook *funcione* sí se verifica, invocándolo
+  con el rol que lo invoca de verdad.
 - Uploads reales a Storage y el comportamiento del CDN del bucket público.
 - URLs firmadas reales de comprobantes.
 - `supabase db push` contra un proyecto real y `db advisors --linked`.

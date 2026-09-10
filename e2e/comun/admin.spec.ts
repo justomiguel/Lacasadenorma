@@ -129,7 +129,12 @@ test.describe("flujo 8 · la pantalla de acceso", () => {
     await page.getByLabel(/contraseña/i).fill("una-clave-que-no-es");
     await page.getByRole("button", { name: /entrar/i }).click();
 
-    await expect(page.getByRole("alert")).toBeVisible();
+    // Acotado al formulario a propósito. `getByRole("alert")` a secas también encuentra
+    // `__next-route-announcer__`, el `div role="alert"` que Next agrega para anunciar
+    // los cambios de ruta: cuando existe en ese instante, la aserción falla por
+    // ambigüedad y no por ausencia del mensaje, que es un fallo intermitente y que
+    // además señala el lugar equivocado.
+    await expect(page.locator("form").getByRole("alert")).toBeVisible();
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 

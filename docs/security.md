@@ -58,6 +58,15 @@ propia persona a través de la API de auth: leer el rol de ahí sería dejar que
 (`050-roles-y-token.sql`), y una de sus aserciones verifica explícitamente que `user_metadata` se
 ignore.
 
+**El hook lo ejecuta `supabase_auth_admin`, y hay que darle los privilegios exactos.** El hook no es
+`security definer` a propósito —así no se puede usar para escalar—, lo que significa que corre con los
+privilegios del servidor de auth. `20260910090000` le otorga dos cosas y nada más: `usage` sobre el
+esquema `private` y `execute` sobre `private.role_rank`. Es el mínimo privilegio que hace falta para
+resolver el rol; no incluye lectura de ninguna tabla más allá de `user_roles`, que el hook ya podía
+leer. La migración existe porque el hook fallaba con `permission denied for schema private` en cuanto lo
+invocaba ese rol: ninguna sesión se habría podido emitir. Lo cubren una aserción de
+`050-roles-y-token.sql` y el flujo 9 de la suite E2E.
+
 ### La matriz de permisos
 
 `src/domain/permissions.ts` es un **espejo** de la matriz de RLS, no la frontera. Existe para que el
@@ -103,9 +112,10 @@ habilitarlo. Los patrones que se repiten:
 | Sin policy = denegado | `contributions` y `expense_receipts` no tienen ninguna policy para `anon` | La ausencia es la protección, y no se puede "olvidar de filtrar" |
 | `UPDATE` siempre con `USING` **y** `WITH CHECK` | En cada policy de update | Sin `WITH CHECK` se puede reasignar la fila a otro dueño (amenaza E4) |
 | Nada financiero se borra | `contributions` y `expenses` no tienen policy de `DELETE` | Se anulan con `voided_at` y `void_reason` (FR-015) |
-| `audit_log` append-only | Tiene `SELECT` e `INSERT`, y **ninguna** de `UPDATE` ni `DELETE`, para ningún rol | Un rastro que se puede editar no es un rastro (amenaza T2) |
+| `audit_log` append-only, y sólo por función | `authenticated` tiene **sólo `SELECT`** sobre la tabla; se escribe llamando a `public.record_audit(…)`, que es `security definer` | Un rastro que se puede editar no es un rastro (amenaza T2), y el rol que hace una operación auditada no siempre es el rol que puede leer el rastro ([ADR-019](./adr/019-auditoria-por-funcion.md)) |
 | Vistas con `security_invoker` | `campaign_totals` | Una vista bypasea RLS por defecto: sin esto, expondría el detalle que la tabla niega (amenaza I3) |
-| Funciones en el esquema `private` | `has_min_role`, `can_read_ledger` | Postgres otorga `EXECUTE` a `PUBLIC` por defecto; llevan `set search_path = ''` y `revoke execute … from public, anon, authenticated` (amenaza E3) |
+| Funciones en el esquema `private` | `has_min_role`, `can_read_ledger`, `role_rank` | Postgres otorga `EXECUTE` a `PUBLIC` por defecto; llevan `set search_path = ''` y `revoke execute … from public, anon, authenticated` (amenaza E3) |
+| Lo `security definer` verifica el rol en su primera línea | `public.record_audit` | Una función `security definer` corre con los privilegios de su dueño: sin esa comprobación sería una escalada (amenaza E3). Y el `grant execute` va a `authenticated`, nunca a `anon` |
 | Grants explícitos | Al final de `20260909120400` | `anon` no tiene `SELECT` sobre `contributions`, `expense_receipts`, `user_roles` ni `audit_log` |
 
 Hay una trampa de Postgres que vale conocer porque produce fallos silenciosos: **un `UPDATE` necesita
@@ -326,7 +336,8 @@ lo primero que hay que revisar cuando el contexto cambie:
 | `style-src 'unsafe-inline'` | Next inyecta estilos en línea | Si aparece soporte estable de nonce para estilos |
 | `script-src 'unsafe-inline'` | Con nonces el HTML público deja de ser cacheable | Si Next emite nonces compatibles con respuestas cacheadas |
 | El claim de rol se refresca al rotar el token | Un cambio de rol tarda hasta el próximo refresh | Si el equipo crece |
-| Fidelidad parcial del shim local | Falta GoTrue, PostgREST y Realtime | `db push --dry-run` y `db advisors --linked` como compuerta real |
+| Fidelidad parcial del shim local | Falta GoTrue y Realtime | `db push --dry-run` y `db advisors --linked` como compuerta real |
+| La mutación y su entrada de auditoría no son atómicas | Son dos viajes a la base. Si el segundo falla, el cambio queda sin rastro y la pantalla informa el error, no lo esconde. Cerrar la ventana pediría una función SQL por operación, o sea el dominio duplicado en PL/pgSQL ([ADR-019](./adr/019-auditoria-por-funcion.md)) | Si el rastro pasa a ser un requisito legal y no operativo |
 | Sin límite de tasa en el borde | Vercel provee protección básica | Si aparece abuso real |
 | Sin 2FA obligatorio en las cuentas de administración | Depende del proveedor de identidad, no del código | Antes de dar acceso a más personas |
 | Un sitio clonado que copie el diseño y cambie el CBU | Está fuera del control técnico | Se mitiga por producto: dominio único comunicado en todos los canales, y los datos bancarios publicados también fuera del sitio |

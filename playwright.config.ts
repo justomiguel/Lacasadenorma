@@ -21,12 +21,13 @@ import { defineConfig, devices } from "@playwright/test";
  * que construye cada uno con su entorno y después invoca esto; por eso el modo
  * llega en `E2E_MODO` y no se elige acá.
  *
- * Lo que este archivo no hace, a propósito: no prueba una sesión de administrador
- * de verdad. La API local no incluye GoTrue, así que iniciar sesión no es
- * simulable sin escribir un servidor de autenticación falso, y un servidor falso
- * verificaría el servidor falso. Lo que sí se verifica automáticamente es que
- * cada ruta del backoffice rechace a quien no tiene sesión (`e2e/comun/admin.spec.ts`);
- * el flujo 9 completo es una verificación manual documentada en el runbook.
+ * El modo con datos también emite sesiones, y ahí conviene saber dónde cae el
+ * límite. Lo sustituido es la superficie HTTP de GoTrue; la cadena que decide una
+ * autorización es real: bcrypt contra `auth.users`, los claims que arma el
+ * `custom_access_token_hook` de la migración invocado como `supabase_auth_admin`,
+ * y un token firmado con el secreto que valida PostgREST, así que las policies RLS
+ * deciden cada lectura y cada escritura del flujo 9 (`e2e/con-datos/publicar.spec.ts`).
+ * Lo que el shim no puede afirmar está en `docs/testing.md` §2 y en el runbook.
  */
 
 const MODO = process.env.E2E_MODO === "con-datos" ? "con-datos" : "sin-datos";

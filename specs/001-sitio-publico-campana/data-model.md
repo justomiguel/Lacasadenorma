@@ -193,7 +193,15 @@ privilegiado.
 | `diff` | `jsonb` nullable | Antes/después, **sin datos sensibles** |
 | `occurred_at` | `timestamptz` | |
 
-Sólo `INSERT`. Sin policies de `UPDATE` ni `DELETE` para nadie, ni para `owner`.
+Sin policies de `UPDATE` ni `DELETE` para nadie, ni para `owner`.
+
+Y el `INSERT` **no llega por privilegio de tabla**: `authenticated` sólo tiene `SELECT`, y el rastro se
+agrega llamando a `public.record_audit(action, entity_table, entity_id, diff)`, que es `security
+definer` y comprueba `has_min_role('auditor')` en su primera línea
+([ADR-019](../../docs/adr/019-auditoria-por-funcion.md)). El motivo es que no hay una policy de
+`INSERT` que pueda ser correcta: el rango de quien hace una operación auditada va de `auditor` —abrir
+un comprobante se registra— hasta `owner`, y una policy escrita para el rango entero le abriría la
+escritura al rol que tiene que ser de sólo lectura en `public`.
 
 ---
 
@@ -241,13 +249,15 @@ separado; una conversión requiere tipo de cambio explícito y fechado, que hoy 
 | `payment_methods` | leer publicados | leer todo | — | — | **CRUD** |
 | `people` | leer publicadas | leer todo | editar | CRUD | CRUD |
 | `user_roles` | nada | nada | nada | leer | **CRUD** |
-| `audit_log` | nada | **leer** | nada | leer | leer |
+| `audit_log` | nada | **leer** + agregar por `record_audit()` | agregar por `record_audit()` | leer + agregar | leer + agregar |
 | `campaign_totals` (vista) | leer | leer | leer | leer | leer |
 
 Decisiones que hay que notar:
 
 - **`auditor` es sólo lectura, incluidos comprobantes.** Es el rol que permite que alguien externo
-  a la familia verifique sin poder alterar nada.
+  a la familia verifique sin poder alterar nada. La única fila que su sesión puede llegar a agregar es
+  la del propio rastro de auditoría, y no por una policy sino por `record_audit()`: abrir un comprobante
+  queda registrado, y ese registro tiene que poder escribirse sin darle escritura sobre nada más.
 - **`editor` no ve aportes ni gastos.** Publica contenido; no toca plata. Privilegio mínimo real.
 - **Sólo `owner` administra cuentas bancarias.** Cambiar un CBU es la operación de mayor impacto del
   sistema: quien la controle puede desviar todos los aportes.

@@ -65,11 +65,17 @@ proyecto real es el mismo SQL que se probó local.
 
 **Malas y aceptadas.**
 
-- **El shim es deliberadamente parcial**: no hay GoTrue, PostgREST, `pg_graphql` ni Realtime, y
-  `auth.users` real tiene muchas más columnas. Una migración puede pasar local y fallar en el
-  proyecto real, **y también lo inverso**, que es el modo de falla peligroso. Mitigación:
-  `supabase db push --dry-run` antes del primer push, y tratar el primer `db advisors --linked` como
-  la compuerta verdadera.
+- **El shim es deliberadamente parcial**: no hay GoTrue, `pg_graphql` ni Realtime, y `auth.users` real
+  tiene muchas más columnas —el shim tiene las cinco que el esquema y el fixture necesitan, incluida
+  `encrypted_password` en el mismo formato bcrypt que usa la plataforma—. Una migración puede pasar
+  local y fallar en el proyecto real, **y también lo inverso**, que es el modo de falla peligroso.
+  Mitigación: `supabase db push --dry-run` antes del primer push, y tratar el primer
+  `db advisors --linked` como la compuerta verdadera.
+- **El rol que ejecuta algo importa tanto como el privilegio**, y el shim lo hizo evidente tarde. El
+  `custom_access_token_hook` no lo invoca el dueño del esquema sino `supabase_auth_admin`, y hasta que
+  `050-roles-y-token.sql` lo invocó con ese rol el hook fallaba con `permission denied for schema
+  private`: ninguna sesión se habría podido emitir en producción. Regla que queda: **una prueba de una
+  función `security invoker` que no fija el rol real no prueba nada sobre los privilegios.**
 - La versión mayor coincide con la de un proyecto nuevo, pero la menor puede no coincidir. Es una
   diferencia mucho más chica que la del shim.
 - **Los grants y RLS son capas distintas, y esto muerde local**: Supabase real otorga `grant all` a

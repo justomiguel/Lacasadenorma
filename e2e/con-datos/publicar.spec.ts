@@ -68,6 +68,7 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await expect(page).toHaveURL(
       /\/admin\/novedades\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );
+    const pantallaDeLaNovedad = page.url();
     await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
     await expect(page.getByText(/es un borrador/i)).toBeVisible();
 
@@ -105,6 +106,32 @@ test.describe("flujo 9 · publicar una novedad", () => {
     // donde la gente la busca.
     await page.goto("/novedades");
     await expect(page.getByRole("link", { name: new RegExp(sufijo) })).toBeVisible();
+
+    // El sitemap es la otra invalidación de ADR-017, y la que nadie mira: si quedara
+    // cacheado, la novedad sería invisible para los buscadores hasta la próxima
+    // revalidación por tiempo.
+    const sitemap = await request.get("/sitemap.xml");
+
+    expect(sitemap.status()).toBe(200);
+    expect(await sitemap.text(), "el sitemap no se invalidó al publicar").toContain(
+      `/novedades/${slug}`,
+    );
+
+    // ── Y se puede volver atrás ───────────────────────────────────────────────
+    // Publicar por error tiene que ser reversible, y reversible de verdad: no alcanza
+    // con que la novedad desaparezca de la lista si sigue respondiendo por su URL.
+    // Se vuelve a la pantalla de la novedad por su URL y no por la lista: la lista
+    // tiene un "Despublicar" por cada novedad publicada del fixture, y el primero que
+    // aparezca al navegar sería el de otra fila.
+    await page.goto(pantallaDeLaNovedad);
+    await page.getByRole("button", { name: /^despublicar$/i }).click();
+
+    await expect(page.getByRole("status")).toContainText(/volvió a borrador/i);
+
+    expect(
+      (await request.get(`/novedades/${slug}`)).status(),
+      "una novedad despublicada seguía teniendo camino público",
+    ).toBe(404);
   });
 
   /**

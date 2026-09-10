@@ -19,18 +19,18 @@ menos que uno que verifica que algo no se puede hacer.**
 
 | Nivel | Herramienta | Cuántos | Qué cubre | Qué **no** cubre |
 | --- | --- | --- | --- | --- |
-| Dominio | Vitest | 102 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
-| Aplicación | Vitest con dobles en memoria | 132 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
+| Dominio | Vitest | 119 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
+| Aplicación | Vitest con dobles en memoria | 142 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
 | Infraestructura | Vitest | 49 | Redacción del logger, validación de archivos por contenido, límite de tasa, honestidad del JSON-LD | El comportamiento de Supabase |
-| Componentes | Vitest + Testing Library | 27 | `CopyField`, `CountryTabs`, `Ledger`, `Figure` y sus estados vacíos | Estilos, píxeles |
-| Contenido | Vitest | 9 | Que los diez JSON cumplan su esquema | |
-| Base de datos | pgTAP sobre PostgreSQL real | 146 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
-| Punta a punta | Playwright, tres navegadores, dos modos | 466 | Los nueve flujos críticos | Rendimiento medido |
+| Componentes | Vitest + Testing Library | 56 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
+| Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
+| Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
+| Punta a punta | Playwright, tres navegadores, dos modos | 484 | Los nueve flujos críticos | Rendimiento medido |
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
 
-Los totales: **319 tests en 23 archivos** con Vitest, **146 aserciones pgTAP** en 6 suites, **466
-tests de Playwright** entre los dos modos (228 sin datos, 238 con datos).
+Los totales: **378 tests en 28 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **484
+tests de Playwright** entre los dos modos (231 sin datos, 253 con datos).
 
 ### TDD, donde es obligatorio
 
@@ -65,8 +65,8 @@ la capa que menos importa.
 
 ## 2. Los nueve flujos críticos
 
-Son los recorridos que, si se rompen, rompen el proyecto. Cada uno tiene cobertura automática, salvo
-el noveno, que está explicado abajo.
+Son los recorridos que, si se rompen, rompen el proyecto. Los nueve tienen cobertura automática. El
+noveno necesita una sesión de administrador, y hasta dónde llega esa sesión está explicado abajo.
 
 | # | Flujo | Dónde se verifica | Modo |
 | --- | --- | --- | --- |
@@ -78,7 +78,7 @@ el noveno, que está explicado abajo.
 | 6 | Compartir la campaña | `e2e/comun/compartir.spec.ts` | los dos |
 | 7 | Revisar la transparencia | `e2e/con-datos/transparencia.spec.ts` | con datos |
 | 8 | Entrar al backoffice | `e2e/comun/admin.spec.ts` | los dos |
-| 9 | Publicar una actualización | **verificación manual**: [`docs/runbook.md`](./runbook.md#7-la-verificación-manual-del-flujo-9) | — |
+| 9 | Publicar una actualización | `e2e/con-datos/publicar.spec.ts` | con datos |
 
 Los tests no comprueban que la página cargue. Comprueban afirmaciones que se pueden falsear:
 
@@ -99,29 +99,58 @@ Los tests no comprueban que la página cargue. Comprueban afirmaciones que se pu
 - **Sin JavaScript los tres países vienen completos en el HTML.** Con el JS deshabilitado, las tres
   cuentas están servidas: el selector de país es una mejora, no un requisito (FR-025).
 
-### Por qué el flujo 9 no está automatizado
+### El flujo 9 y dónde está el límite de la sesión emulada
 
-Publicar una actualización necesita una sesión de administrador de verdad. La API local
-(`scripts/local-api.mjs`) es PostgREST sobre el Postgres local y **no incluye GoTrue**: no hay servidor
-de autenticación, así que no hay forma de iniciar sesión.
+Publicar una actualización necesita una sesión de administrador. Durante un tiempo eso lo dejó fuera de
+la suite: la API local era PostgREST sobre el Postgres local, sin GoTrue, y la conclusión —correcta
+mientras duró— era que un servidor de autenticación falso terminaría verificando el servidor falso.
 
-La alternativa sería escribir un GoTrue falso que emita tokens. Se descartó por una razón simple: un
-servidor de autenticación falso verificaría el servidor falso. El claim de rol, el hook que lo inyecta
-y la firma que `getClaims()` valida son exactamente lo que habría que simular, y son exactamente lo que
-importa comprobar.
+`scripts/local-api.mjs` ahora emite sesiones, y lo que cambió no es esa conclusión sino **dónde cae el
+límite**. Lo que el flujo 9 recorre es la cadena de autorización de verdad:
 
-Lo que sí está automatizado, y cubre la parte que se puede romper por descuido:
+- La contraseña se compara con bcrypt contra `auth.users.encrypted_password`, con
+  `extensions.crypt()`, igual que la guarda la plataforma.
+- Los claims del token los arma `public.custom_access_token_hook`, la función de la migración,
+  invocada **con el rol `supabase_auth_admin`**: los mismos privilegios que tiene el servidor de auth
+  en el proyecto real.
+- El token se firma con el secreto que valida PostgREST, así que las policies RLS deciden cada lectura
+  y cada escritura de la sesión.
+- `GET /auth/v1/user` verifica la firma HMAC y el vencimiento. No es un detalle de prolijidad:
+  `getClaims()` de supabase-js, con un token HS256, delega la verificación justamente en esa ruta, y si
+  contestara 200 sin mirar la firma, la propiedad que la prueba dice comprobar sería falsa. Hay una
+  aserción que fabrica un token con `user_role: owner` y comprueba que la API lo rechace.
 
-- Las ocho rutas del backoffice mandan a la pantalla de acceso sin sesión.
-- Una novedad concreta tampoco se abre sin sesión.
-- Un comprobante no se sirve sin sesión: 403, no un redirect a HTML.
-- El backoffice no se indexa, ni por `robots.txt` ni por su propia metadata, y no aparece en el
-  sitemap.
-- El formulario de acceso tiene etiquetas asociadas, se recorre con teclado y cumple WCAG 2.2 AA.
-- Un intento fallido explica qué pasó en lugar de no hacer nada.
+Lo sustituido es la superficie HTTP de GoTrue y la administración de la sesión —emitir, rotar y vencer
+refresh tokens, que en el shim viven en memoria del proceso—. Es transporte; no es donde se decide una
+autorización.
 
-El flujo 9 completo es un paso obligatorio del runbook antes de cada despliegue que toque el
-backoffice, con la lista de qué mirar.
+**Esto rindió antes de la primera aserción.** Montar la emisión de tokens contra el hook real descubrió
+que `supabase_auth_admin` no tenía `usage` sobre el esquema `private` y que ninguna sesión se habría
+podido emitir en producción (migración `20260910090000`). Recorrer el flujo descubrió el segundo:
+publicar una novedad como `editor` dejaba la fila publicada, no escribía la entrada de auditoría y
+mostraba un error (ADR-019). Los dos defectos estaban en la costura entre pgTAP y las pruebas de
+aplicación: pgTAP verificaba que la policy fuera la del documento —y lo era— y la capa de aplicación
+usa un puerto en memoria que acepta cualquier entrada.
+
+Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
+
+- Entrar como `editor`, escribir un borrador, comprobar que **no** tiene camino público antes de
+  publicar, publicarlo, y encontrarlo en su URL con su canónica, en la lista y en `/sitemap.xml` —las
+  tres invalidaciones de ADR-017—. Y después despublicarlo y comprobar que vuelve a dar 404: publicar
+  por error tiene que ser reversible de verdad, no sólo desaparecer de la lista.
+- La publicación queda en el registro de auditoría, escrita con un rol y leída con otro.
+- Un `auditor` no publica: la pantalla lo manda al aviso de permiso insuficiente, y la base rechaza el
+  `update` **aunque se le hable directamente con su sesión real**, salteando la interfaz entera. Que un
+  botón no aparezca no prueba que la operación esté prohibida.
+- El backoffice con sesión cumple WCAG 2.2 AA. Antes esto no se podía comprobar: sin sesión, axe sólo
+  llegaba a la pantalla de acceso.
+
+Los tres proyectos escriben en la misma base, así que cada prueba trabaja sobre una novedad con su
+propio `slug`, derivado del nombre del proyecto y del reloj.
+
+Sigue siendo cierto que el shim no es Supabase: el comportamiento de GoTrue ante una contraseña débil,
+la recuperación de contraseña, el rate limiting y el hook configurado en el panel se verifican contra
+el proyecto real, y están en el runbook.
 
 ---
 
@@ -253,16 +282,16 @@ directiva —y `Strict-Transport-Security`— cuando el sitio se sirve por http.
 
 ## 6. La base de datos: pgTAP
 
-Seis suites, 146 aserciones, sobre PostgreSQL 17 real con un shim que emula lo que Supabase agrega
+Seis suites, 155 aserciones, sobre PostgreSQL 17 real con un shim que emula lo que Supabase agrega
 ([ADR-013](./adr/013-base-datos-local.md)). Sin Docker.
 
 | Suite | Aserciones | Qué verifica |
 | --- | --- | --- |
-| `010-estructura.sql` | 33 | RLS habilitado en todas las tablas expuestas, índices, vistas con `security_invoker`, ningún grant prohibido |
+| `010-estructura.sql` | 36 | RLS habilitado en todas las tablas expuestas, índices, vistas con `security_invoker`, ningún grant prohibido, `record_audit` con `security definer` |
 | `020-lectura-publica.sql` | 23 | Qué puede y qué no puede leer `anon`: nada de aportes, nada de comprobantes, ningún borrador |
-| `030-matriz-de-permisos.sql` | 30 | La matriz completa rol × tabla × operación |
-| `040-integridad-financiera.sql` | 25 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
-| `050-roles-y-token.sql` | 19 | Que el rol venga de `app_metadata` y que `user_metadata` se ignore |
+| `030-matriz-de-permisos.sql` | 33 | La matriz completa rol × tabla × operación, y quién puede agregar al rastro de auditoría |
+| `040-integridad-financiera.sql` | 26 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
+| `050-roles-y-token.sql` | 21 | Que el rol venga de `app_metadata`, que `user_metadata` se ignore, y que el servidor de auth pueda ejecutar el hook |
 | `060-storage.sql` | 16 | `fotos` público, `comprobantes` privado, y las policies de cada uno |
 
 La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.
@@ -270,9 +299,14 @@ La forma de estos tests es distinta de la del resto: casi todos afirman que una 
 de sus aserciones esperan un rechazo. Es lo que hace que agregar una tabla sin policies rompa el
 build en lugar de exponerla.
 
-Lo que el shim no puede verificar, y por eso no se da por probado: el comportamiento de GoTrue, el hook
-que inyecta el claim de rol, PostgREST con RLS de verdad, las URL firmadas de Storage y `supabase db
-push` contra el proyecto real. La compuerta de eso es `supabase db advisors --linked`, en el despliegue.
+Lo que el shim no puede verificar, y por eso no se da por probado: el comportamiento de GoTrue, que el
+hook esté **configurado** en el panel del proyecto, las URL firmadas de Storage y `supabase db push`
+contra el proyecto real. La compuerta de eso es `supabase db advisors --linked`, en el despliegue.
+
+Que el hook *funcione* sí se verifica, y en dos niveles: `050` lo invoca con el rol
+`supabase_auth_admin`, y el flujo 9 emite un token con él y lo usa contra PostgREST. Esa aserción de
+`050` existe porque no existía: el hook fallaba con `permission denied for schema private` en cuanto lo
+llamaba el rol que lo llama de verdad, y ninguna sesión se habría podido emitir en producción.
 
 ---
 
@@ -280,7 +314,7 @@ push` contra el proyecto real. La compuerta de eso es `supabase db advisors --li
 
 | Workflow | Job (el nombre que se pide en la protección de rama) | Qué protege |
 | --- | --- | --- |
-| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 319 tests, cifras de relleno, secretos en el bundle, build |
+| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 378 tests, cifras de relleno, secretos en el bundle, build |
 | `ci.yml` | `Riesgo conocido en las dependencias` | `npm audit` |
 | `e2e.yml` | `sin-datos · flujos críticos y accesibilidad` | El sitio sin credenciales |
 | `e2e.yml` | `con-datos · flujos críticos y accesibilidad` | Los flujos con cifras |

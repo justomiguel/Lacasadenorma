@@ -29,3 +29,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [016](./016-totales-recibidos-agregados.md) | El total recibido viene de una vista agregada, no del detalle de aportes | Aceptada |
 | [017](./017-revalidacion.md) | Revalidación: ISR de cinco minutos más invalidación explícita al publicar | Aceptada |
 | [018](./018-presupuestos-de-performance.md) | Los presupuestos de Lighthouse se fijan sobre lo medido, no sobre lo deseado | Aceptada |
+| [019](./019-auditoria-por-funcion.md) | El rastro de auditoría se escribe por una función `security definer`, no por privilegio de tabla | Aceptada |

@@ -13,11 +13,11 @@ saber algo que no está acá, es un defecto de este documento.
 | Entorno | Qué se puede hacer | Qué **no** |
 |---|---|---|
 | **Sin credenciales** — `npm install && npm run dev` | Leer el sitio entero, escribir contenido, trabajar el diseño, correr los E2E en modo `sin-datos` | Ver cifras: el sitio explica por qué no las muestra |
-| **PostgreSQL local + API local** | Todo lo anterior más cifras, hitos, novedades, transparencia y los E2E en modo `con-datos` | Iniciar sesión: no hay GoTrue. Subir comprobantes: no hay Storage |
-| **Proyecto de Supabase real** | Sesión, `/admin`, subida de comprobantes, enlaces firmados, el hook de roles | — |
+| **PostgreSQL local + API local** | Todo lo anterior más cifras, hitos, novedades, transparencia, iniciar sesión en `/admin` con los usuarios del fixture, y los E2E en modo `con-datos` | Subir comprobantes: no hay Storage. Recuperar contraseña, límites de tasa de GoTrue |
+| **Proyecto de Supabase real** | Todo, con GoTrue y Storage de verdad: subida de comprobantes, enlaces firmados, el hook configurado en el panel | — |
 
 La progresión es deliberada. La mayoría del trabajo se hace en el primero, que no necesita nada. El
-tercero se usa sólo para lo que de verdad lo requiere, y es la única forma de verificar el flujo 9.
+tercero se usa sólo para lo que de verdad lo requiere.
 
 ---
 
@@ -105,7 +105,8 @@ linter.
 
 ### Qué no cubre
 
-El shim es parcial: no hay GoTrue, PostgREST completo con sus extensiones, ni Realtime. Una migración
+El shim es parcial: no hay GoTrue —la API local emite sesiones, pero no es GoTrue—, ni PostgREST
+completo con sus extensiones, ni Realtime. Una migración
 puede pasar en `db.yml` y comportarse distinto en el proyecto real. La compuerta verdadera es
 `supabase db push --dry-run` y `db advisors --linked` contra el proyecto, y está en
 [`deployment.md`](./deployment.md#5-cómo-llegan-las-migraciones-a-producción).
@@ -114,8 +115,10 @@ puede pasar en `db.yml` y comportarse distinto en el proyecto real. La compuerta
 
 ## 3. Un proyecto de Supabase real
 
-Hace falta para probar el backoffice, la sesión, la subida de comprobantes y los enlaces firmados. Se
-recomienda un proyecto aparte del de producción.
+Hace falta para lo que la API local no puede sustituir: la subida de comprobantes, los enlaces
+firmados, el comportamiento de GoTrue —recuperación de contraseña, políticas de contraseña, límites de
+tasa— y que el hook de roles esté efectivamente habilitado en el panel. El backoffice y la sesión se
+pueden recorrer con la base local (sección 2). Se recomienda un proyecto aparte del de producción.
 
 ### Crear y conectar
 
@@ -266,48 +269,33 @@ corrige el número: se abre un issue.
 
 ---
 
-## 7. La verificación manual del flujo 9
+## 7. El flujo 9 contra el proyecto real
 
-El flujo crítico 9 —**publicar una actualización**— es el único de los nueve que no tiene test E2E, y
-conviene entender por qué antes de ejecutarlo a mano.
+El flujo crítico 9 —**publicar una actualización**— **está automatizado**:
+`e2e/con-datos/publicar.spec.ts` lo recorre en los tres navegadores con una sesión real, y lo que
+sustituye es sólo la superficie HTTP de GoTrue. La contraseña la verifica bcrypt en la base, los claims
+los arma el `custom_access_token_hook` de la migración invocado como `supabase_auth_admin`, y el token
+lo valida PostgREST, así que las policies RLS deciden cada escritura del recorrido. El detalle de dónde
+cae ese límite está en [`testing.md`](./testing.md#el-flujo-9-y-dónde-está-el-límite-de-la-sesión-emulada).
 
-La API local no tiene GoTrue: no hay forma de iniciar sesión. Se evaluó levantar un servidor de auth
-falso, y la conclusión fue que un test que inicia sesión contra un GoTrue simulado verifica el
-simulacro, no el sistema. Lo que hace segura la publicación es la cadena completa —sesión real, token
-con el rol en `app_metadata`, y RLS decidiendo en la base—, y un doble reemplaza justamente los
-eslabones que importan.
+Así que esta sección ya no es "el flujo 9 a mano". Es **la lista corta de lo que la suite no puede
+afirmar**, y sigue siendo obligatoria antes de cada despliegue que toque `/admin`, la autenticación,
+Storage o las policies. Requiere el entorno de la sección 3.
 
-Lo que **sí** está automatizado: los 15 casos de uso del backoffice tienen tests de aplicación con
-repositorios falsos, y las policies de RLS tienen pruebas de pgTAP que verifican qué puede hacer cada
-rol y qué no. Lo que falta es el pegamento, y eso se verifica a mano.
+| # | Qué verificar | Por qué no lo cubre la suite |
+|---|---|---|
+| 1 | **Iniciar sesión con GoTrue de verdad**, con una cuenta `editor` creada desde el panel | La API local emite los tokens; GoTrue tiene su propia validación de contraseña, sus límites de tasa y sus mensajes |
+| 2 | Que el rol aparezca en el marco del backoffice | Confirma que el hook está **habilitado en el panel** y no sólo creado en el esquema. Si dice que no hay permisos, mirar la sección 3 antes que cualquier otra cosa |
+| 3 | **Subir una foto a una novedad**, con su descripción | No hay Storage local: el shim no tiene `storage.objects` funcional ni URLs firmadas |
+| 4 | **Abrir un comprobante desde `/admin/transparencia`** | Ídem: el enlace firmado y su vencimiento sólo existen en el proyecto real |
+| 5 | **Publicar y ver la vista previa al compartir.** Pegar el enlace en un chat de WhatsApp con uno mismo: título, descripción e imagen | La suite verifica las etiquetas y que la imagen sea una imagen; cómo las renderiza WhatsApp no es verificable desde un test |
+| 6 | Que `/sitemap.xml` en el dominio real incluya la novedad | La suite lo verifica contra la API local. Acá lo que se prueba es la caché de Vercel, no la invalidación de Next |
 
-### El procedimiento
-
-Requiere el entorno de la sección 3. Es un paso obligatorio antes de cada despliegue que toque
-`/admin`, la autenticación o las policies.
-
-1. **Sin sesión, abrir `/admin/novedades`.** Tiene que redirigir al login. Si muestra la pantalla, la
-   verificación termina acá y es un incidente.
-2. **Iniciar sesión** con una cuenta con rol `editor`.
-3. **Crear una novedad**: título y cuerpo. Guardar como borrador.
-4. **Abrir su URL pública en una ventana privada.** Tiene que dar 404. Un borrador visible es una
-   filtración de algo que todavía no se decidió publicar.
-5. **Volver al backoffice y publicarla.**
-6. **Recargar la URL pública en la ventana privada.** Tiene que aparecer, con su fecha.
-7. **Verificar `/novedades`**: tiene que estar en el índice.
-8. **Verificar `/sitemap.xml`**: tiene que incluirla. Es lo que confirma que la invalidación al
-   publicar funcionó (ADR-017) y no hay que esperar la revalidación.
-9. **Verificar la vista previa al compartir.** Pegar el enlace en un chat de WhatsApp con uno mismo:
-   título, descripción e imagen. Es como va a circular.
-10. **Despublicarla y confirmar que vuelve a dar 404.**
-11. **Revisar `/admin/auditoria`**: los pasos 5 y 10 tienen que estar registrados, con quién los hizo
-    y cuándo.
-12. **Cerrar sesión e iniciar con una cuenta `auditor`.** Intentar publicar. La pantalla no tiene que
-    ofrecerlo, y si se fuerza el pedido tiene que negarse: la interfaz oculta, RLS impide, y lo que se
-    está verificando es lo segundo.
-
-El paso 12 es el que más importa y el que se saltea. Que un botón no esté no significa que la
-operación no se pueda hacer.
+Lo que **no** hace falta repetir a mano, porque la suite lo afirma en cada corrida: que un borrador dé
+404, que la publicación aparezca en la lista y en el sitemap, que despublicar la vuelva a sacar del
+sitio, que la publicación quede en el registro de auditoría escrita con un rol y leída con otro, y que
+un `auditor` no logre publicar ni salteando la interfaz y hablándole directo a la base con su sesión.
+Ese último era el paso que más importaba de la lista vieja y el que más se salteaba.
 
 Cuando cambie algo de este camino, se actualiza esta lista. Una verificación manual que quedó vieja es
 peor que ninguna: se ejecuta, pasa, y no verifica lo que se cambió.
@@ -423,7 +411,7 @@ desde el resumen del banco.
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
 | Mes | Revisar quién tiene qué rol (sección 5) | `owner` |
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
-| Antes de cada despliegue que toque `/admin` o las policies | El flujo 9 (sección 7) | Quien despliega |
+| Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
 | Antes de cada despliegue | `npm run verify` en verde | CI, y conviene también en local |
 
 ## Documentos relacionados
@@ -432,6 +420,6 @@ desde el resumen del banco.
 |---|---|
 | [`deployment.md`](./deployment.md) | Workflows, secretos, migraciones a producción, rollback |
 | [`security.md`](./security.md) | Las cuatro fronteras, RLS, la matriz de permisos completa |
-| [`testing.md`](./testing.md) | Los cinco niveles, los dos modos, pgTAP |
+| [`testing.md`](./testing.md) | Los niveles de prueba, los dos modos, pgTAP |
 | [`privacy.md`](./privacy.md) | Qué datos hay y cuánto se conservan |
 | [`content-guide.md`](./content-guide.md) | Cómo se escribe una novedad |

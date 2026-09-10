@@ -74,9 +74,12 @@ export async function tokenDe(
   request: APIRequestContext,
   rol: RolDePrueba,
 ): Promise<string> {
-  const respuesta = await request.post(`${apiLocal()}/auth/v1/token?grant_type=password`, {
-    data: { email: CUENTAS[rol], password: CLAVE },
-  });
+  const respuesta = await request.post(
+    `${apiLocal()}/auth/v1/token?grant_type=password`,
+    {
+      data: { email: CUENTAS[rol], password: CLAVE },
+    },
+  );
 
   expect(respuesta.status(), `la API local no emitió un token para ${rol}`).toBe(200);
 

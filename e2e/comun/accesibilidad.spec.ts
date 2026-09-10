@@ -110,9 +110,10 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
       ),
     );
 
-    expect(duraciones.length, "la home tiene enlaces y botones que medir").toBeGreaterThan(
-      0,
-    );
+    expect(
+      duraciones.length,
+      "la home tiene enlaces y botones que medir",
+    ).toBeGreaterThan(0);
 
     for (const duracion of duraciones) {
       const segundos = Number.parseFloat(duracion.replace("ms", "").replace("s", ""));
