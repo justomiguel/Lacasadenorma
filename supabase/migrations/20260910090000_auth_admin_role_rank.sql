@@ -1,0 +1,36 @@
+-- El servidor de auth no podía ejecutar el hook del token.
+--
+-- `public.custom_access_token_hook` resuelve el rol de mayor rango ordenando por
+-- `private.role_rank`, y no es `security definer`: corre con los privilegios de
+-- quien lo llama, que es siempre `supabase_auth_admin`. Ese rol tenía `usage` sobre
+-- `public` y `select` sobre `public.user_roles` (migración 20260909120300), pero
+-- `private` está revocado de `public` y sólo se le había otorgado `usage` a `anon` y
+-- `authenticated`. Resultado: cada emisión de token abortaba con
+--
+--   permission denied for schema private
+--     LINE 4: order by private.role_rank(r.role::text) desc
+--
+-- y nadie habría podido entrar al backoffice. El síntoma no aparecía en ninguna
+-- prueba porque todas las que tocan el hook corrían como superusuario; ahora
+-- `supabase/tests/050-roles-y-token.sql` lo invoca con `set local role
+-- supabase_auth_admin`, que es la única forma de detectarlo sin desplegar.
+--
+-- ── Por qué estos dos grants y no otra cosa ─────────────────────────────────
+--
+-- Se descartó hacer el hook `security definer`: pasaría a correr con los
+-- privilegios del dueño del esquema, que puede escribir en todas las tablas de la
+-- aplicación, para leer una tabla y llamar una función pura. Los dos grants de acá
+-- son lo mínimo que necesita (principio V), y es además lo que documenta Supabase
+-- para sus hooks: grants explícitos, sin definer.
+--
+-- Se descartó inlinear la escala de roles dentro del hook para no depender de
+-- `private`: la jerarquía estaría escrita en dos lugares y el próximo rol nuevo
+-- entraría en uno solo.
+--
+-- `usage` sobre un esquema no da acceso a nada de adentro por sí mismo: sólo deja
+-- nombrar objetos sobre los que ya haya privilegio. `private.has_min_role` y
+-- `private.can_read_ledger` siguen siendo inalcanzables para `supabase_auth_admin`,
+-- y `role_rank` es `immutable` y no lee ninguna tabla.
+
+grant usage on schema private to supabase_auth_admin;
+grant execute on function private.role_rank(text) to supabase_auth_admin;

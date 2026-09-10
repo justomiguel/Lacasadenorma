@@ -13,7 +13,7 @@
 -- lectura pública es una página caída.
 
 begin;
-select plan(19);
+select plan(21);
 
 -- ── Fixture ─────────────────────────────────────────────────────────────────
 -- `raw_user_meta_data` con `user_role: owner` es exactamente lo que escribiría
@@ -227,6 +227,46 @@ select is(
   false,
   'a quien no tiene ningún rol, el hook no le inventa uno'
 );
+
+-- ── El hook, con los privilegios de quien lo invoca de verdad ───────────────
+-- Todo lo de arriba corre como superusuario, y eso deja sin probar la única cosa
+-- que puede hacer que el hook no sirva para nada: los privilegios. El hook no es
+-- `security definer`, así que corre con los del rol que lo llama, y ese rol es
+-- siempre `supabase_auth_admin`. Un `grant` que falte no se ve desde acá arriba.
+--
+-- Faltaba uno. El hook ordena por `private.role_rank`, y `private` sólo tenía
+-- `usage` para `anon` y `authenticated`: el servidor de auth cortaba con "permission
+-- denied for schema private" al emitir cada token. Nadie habría podido entrar al
+-- backoffice, y el síntoma habría aparecido en el primer intento de acceso contra el
+-- proyecto real, no acá.
+
+reset role;
+set local role supabase_auth_admin;
+
+select lives_ok(
+  $q$
+    select public.custom_access_token_hook(
+      jsonb_build_object(
+        'user_id', '10000000-0000-4000-8000-000000000002',
+        'claims', '{"sub": "10000000-0000-4000-8000-000000000002"}'::jsonb
+      )
+    )
+  $q$,
+  'el servidor de auth puede ejecutar el hook con sus propios privilegios'
+);
+
+select is(
+  public.custom_access_token_hook(
+    jsonb_build_object(
+      'user_id', '10000000-0000-4000-8000-000000000002',
+      'claims', '{"sub": "10000000-0000-4000-8000-000000000002"}'::jsonb
+    )
+  ) -> 'claims' -> 'app_metadata' ->> 'user_role',
+  'admin',
+  'y resuelve el mismo rol que resolvía con privilegios de superusuario'
+);
+
+reset role;
 
 -- ── role_rank no se rompe con basura ────────────────────────────────────────
 -- Recibe `text` y no el enum a propósito: un claim con cualquier cosa adentro tiene
