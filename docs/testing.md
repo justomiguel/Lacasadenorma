@@ -1,0 +1,313 @@
+# Testing
+
+Qué se prueba, en qué nivel, cómo se corre, y —lo que suele faltar en un documento como este— **qué no
+se prueba y por qué**.
+
+El principio que ordena todo el resto está en
+[`specs/001-sitio-publico-campana/testing-strategy.md`](../specs/001-sitio-publico-campana/testing-strategy.md)
+y conviene repetirlo acá: **se testea lo que puede lastimar a alguien**. En este proyecto eso es una
+lista corta y concreta: que un CBU publicado sea el correcto, que una cifra no aparezca inventada, que
+la suma del detalle dé el total, que un comprobante no se filtre, que una persona sin sesión no entre
+al backoffice, y que el sitio se entienda con lector de pantalla y con el teclado.
+
+De ahí sale un corolario que se aplica todo el tiempo: **un test que verifica que algo funciona vale
+menos que uno que verifica que algo no se puede hacer.**
+
+---
+
+## 1. Los niveles, y qué cubre cada uno
+
+| Nivel | Herramienta | Cuántos | Qué cubre | Qué **no** cubre |
+| --- | --- | --- | --- | --- |
+| Dominio | Vitest | 102 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
+| Aplicación | Vitest con dobles en memoria | 132 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
+| Infraestructura | Vitest | 49 | Redacción del logger, validación de archivos por contenido, límite de tasa, honestidad del JSON-LD | El comportamiento de Supabase |
+| Componentes | Vitest + Testing Library | 27 | `CopyField`, `CountryTabs`, `Ledger`, `Figure` y sus estados vacíos | Estilos, píxeles |
+| Contenido | Vitest | 9 | Que los diez JSON cumplan su esquema | |
+| Base de datos | pgTAP sobre PostgreSQL real | 146 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
+| Punta a punta | Playwright, tres navegadores, dos modos | 466 | Los nueve flujos críticos | Rendimiento medido |
+| Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
+| Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
+
+Los totales: **319 tests en 23 archivos** con Vitest, **146 aserciones pgTAP** en 6 suites, **466
+tests de Playwright** entre los dos modos (228 sin datos, 238 con datos).
+
+### TDD, donde es obligatorio
+
+RED → GREEN → REFACTOR no es una preferencia estilística acá; es obligatorio en tres lugares y
+opcional en el resto:
+
+| Obligatorio | Por qué |
+| --- | --- |
+| `src/domain/` | Un error de cálculo en el saldo publicado es un error en la rendición de cuentas |
+| Policies RLS | Un test que pasa porque la policy permite todo es un test que no probó nada. Se escribe primero el caso negado |
+| Capacidades para agentes | El contrato lo consume software de terceros, y una fuga se descubre desde afuera |
+
+No se aplica en maquetación ni estilos. Ahí el mecanismo de verificación es el loop de revisión
+visual, y un test que sólo re-describe el JSX no aporta nada más que trabajo cuando el JSX cambia.
+
+### Cobertura
+
+Se mide y no se persigue como número. Los umbrales están en `vitest.config.mts` y son **por área**, a
+propósito:
+
+```ts
+thresholds: {
+  "src/domain/**": { branches: 90, functions: 95, lines: 95, statements: 95 },
+  "src/application/**": { branches: 75, functions: 85, lines: 85, statements: 85 },
+},
+```
+
+Un porcentaje global alto con el dominio al 60 % sería una mentira estadística: el promedio lo levanta
+la capa que menos importa.
+
+---
+
+## 2. Los nueve flujos críticos
+
+Son los recorridos que, si se rompen, rompen el proyecto. Cada uno tiene cobertura automática, salvo
+el noveno, que está explicado abajo.
+
+| # | Flujo | Dónde se verifica | Modo |
+| --- | --- | --- | --- |
+| 1 | Abrir la home | `e2e/comun/home.spec.ts` | los dos |
+| 2 | Entender qué es la campaña | `e2e/comun/home.spec.ts` | los dos |
+| 3 | Ver el progreso | `e2e/con-datos/progreso.spec.ts` | con datos |
+| 4 | Elegir cómo colaborar | `e2e/con-datos/aportes.spec.ts` | con datos |
+| 5 | Copiar un dato de la cuenta | `e2e/con-datos/portapapeles.spec.ts` | con datos, Chromium |
+| 6 | Compartir la campaña | `e2e/comun/compartir.spec.ts` | los dos |
+| 7 | Revisar la transparencia | `e2e/con-datos/transparencia.spec.ts` | con datos |
+| 8 | Entrar al backoffice | `e2e/comun/admin.spec.ts` | los dos |
+| 9 | Publicar una actualización | **verificación manual**: [`docs/runbook.md`](./runbook.md#7-la-verificación-manual-del-flujo-9) | — |
+
+Los tests no comprueban que la página cargue. Comprueban afirmaciones que se pueden falsear:
+
+- **La suma del libro de gastos es exactamente el total publicado.** Suma las filas de la tabla y las
+  compara con la cifra de "Gastado" (SC-007). Si alguien cambia un cálculo, este test falla antes de
+  que la incoherencia llegue a una pantalla.
+- **El saldo es la resta, y el recibido no incluye lo anulado.** Un gasto anulado que siguiera contando
+  sería una rendición de cuentas equivocada.
+- **Lo que queda en el portapapeles es lo que estaba a la vista.** Lee `navigator.clipboard.readText()`
+  y lo compara con el texto en pantalla. Es el test que protege el dato más peligroso del sitio: copiar
+  un CBU distinto del que se muestra sería un desastre silencioso.
+- **Los borradores y lo anulado no tienen camino de lectura pública.** Un slug de borrador adivinado
+  responde 404, no 200 (amenaza I7).
+- **Dice cuántos comprobantes hay y no publica los archivos.** La ruta del comprobante responde 403 sin
+  sesión, sin seguir redirects (FR-013, SC-008).
+- **Cada página se puede compartir con título, descripción y canónica.** Once páginas, y además la
+  imagen de la vista previa se descarga y se verifica que sea una imagen de verdad (SC-011).
+- **Sin JavaScript los tres países vienen completos en el HTML.** Con el JS deshabilitado, las tres
+  cuentas están servidas: el selector de país es una mejora, no un requisito (FR-025).
+
+### Por qué el flujo 9 no está automatizado
+
+Publicar una actualización necesita una sesión de administrador de verdad. La API local
+(`scripts/local-api.mjs`) es PostgREST sobre el Postgres local y **no incluye GoTrue**: no hay servidor
+de autenticación, así que no hay forma de iniciar sesión.
+
+La alternativa sería escribir un GoTrue falso que emita tokens. Se descartó por una razón simple: un
+servidor de autenticación falso verificaría el servidor falso. El claim de rol, el hook que lo inyecta
+y la firma que `getClaims()` valida son exactamente lo que habría que simular, y son exactamente lo que
+importa comprobar.
+
+Lo que sí está automatizado, y cubre la parte que se puede romper por descuido:
+
+- Las ocho rutas del backoffice mandan a la pantalla de acceso sin sesión.
+- Una novedad concreta tampoco se abre sin sesión.
+- Un comprobante no se sirve sin sesión: 403, no un redirect a HTML.
+- El backoffice no se indexa, ni por `robots.txt` ni por su propia metadata, y no aparece en el
+  sitemap.
+- El formulario de acceso tiene etiquetas asociadas, se recorre con teclado y cumple WCAG 2.2 AA.
+- Un intento fallido explica qué pasó en lugar de no hacer nada.
+
+El flujo 9 completo es un paso obligatorio del runbook antes de cada despliegue que toque el
+backoffice, con la lista de qué mirar.
+
+---
+
+## 3. Accesibilidad
+
+`e2e/comun/accesibilidad.spec.ts` corre axe sobre las **once páginas públicas** en **dos viewports** —el
+del proyecto y 360 px— con las etiquetas `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` y `wcag22aa`. Cero
+violaciones, sin excepciones configuradas.
+
+Además, tres cosas que axe no detecta y que se verifican aparte:
+
+- **La primera tabulación de cada página lleva al contenido.** El salto tiene que existir y tiene que
+  funcionar, no sólo estar en el DOM.
+- **Cada página tiene un `h1` y la jerarquía de encabezados no salta niveles.**
+- **Con "reducir movimiento" activo no queda ninguna transición larga.** Se lee el CSS computado, no la
+  intención.
+
+Lo que axe no puede ver sigue siendo responsabilidad de la revisión manual: si el orden de lectura
+tiene sentido, si el `alt` de una foto aporta información o la repite, si el texto de un enlace se
+entiende fuera de contexto. Eso se revisa en el loop visual, no acá.
+
+Dos hallazgos reales que salieron de esta suite, para que quede claro que no es decorativa: el tercer
+nivel de tinta del sistema de diseño no llegaba a 4,5:1 sobre el papel —se corrigió el token, no el
+test— y la lista de rubros del presupuesto tenía un `<div>` de más entre el `<dl>` y sus `<dt>`, que
+invalida la lista para un lector de pantalla.
+
+---
+
+## 4. Cómo se corre
+
+```bash
+npm test                     # unitarios, de componente y de contenido (~6 s)
+npm run test:watch           # lo mismo, en watch
+npm run test:coverage        # con cobertura y umbrales por área
+
+npm run test:e2e             # los dos modos, uno después del otro (~6 min)
+npm run test:e2e:sin-datos   # sólo el sitio sin base de datos
+npm run test:e2e:con-datos   # sólo el sitio con la base local y el fixture
+
+npm run db:test              # las seis suites pgTAP sobre una base recreada
+npm run db:verify            # reset + lint + advisors + pgTAP + tipos
+
+npm run verify               # la compuerta completa de CI
+```
+
+Para iterar sobre un test de Playwright sin reconstruir el sitio en cada corrida:
+
+```bash
+E2E_REUSAR=1 npm run test:e2e:con-datos -- --project=escritorio e2e/con-datos/aportes.spec.ts
+```
+
+`E2E_REUSAR=1` reusa el build y la base que ya están. Si el build que hay en `.next` no es del modo
+pedido, el script **corta con un error** en lugar de correr: un build del otro modo pasa la mayoría de
+los tests y falla los tres que miran las URL canónicas, que es la peor forma de fallar porque nadie
+sospecha del build.
+
+La primera vez hay que instalar los navegadores:
+
+```bash
+npx playwright install --with-deps
+```
+
+---
+
+## 5. Los dos modos, y por qué son dos builds
+
+Esta es la parte del harness que hay que entender antes de tocarlo.
+
+**Next reemplaza las variables `NEXT_PUBLIC_*` por su valor durante la construcción.** No las lee al
+arrancar: las inlinea en el JavaScript. Entonces "el sitio con base de datos" y "el sitio sin base de
+datos" no son dos configuraciones del mismo servidor, son **dos builds distintos**. Playwright sabe
+levantar servidores, no construirlos con entornos diferentes, así que la preparación vive en
+`scripts/e2e.sh` y el modo llega a `playwright.config.ts` por `E2E_MODO`.
+
+| | `sin-datos` | `con-datos` |
+| --- | --- | --- |
+| Puerto | 3210 | 3211 |
+| PostgreSQL | no hace falta | requerido |
+| Preparación | ninguna | `db-local.sh reset` + `fixture` |
+| Variables de Supabase | vacías y exportadas | apuntando a la API local |
+| Servidores | `next start` | `next start` + `node scripts/local-api.mjs` |
+| Suites | `e2e/comun/` + `e2e/sin-datos/` | `e2e/comun/` + `e2e/con-datos/` |
+| Verifica | FR-034, SC-012: la ausencia explicada | Los flujos 3, 4, 5 y 7 |
+
+Detalles que parecen menores y no lo son:
+
+- **Las variables van vacías y exportadas, no ausentes.** En una máquina de desarrollo `.env.local`
+  tiene la base configurada y Next la leería; una variable vacía gana sobre el archivo, y
+  `readSupabaseConfig()` la trata como ausente. Sin esto, el modo sin datos dejaría de probar lo único
+  que existe para probar.
+- **Siempre `next start`, nunca `next dev`.** El servidor de desarrollo volvería a leer `.env.local`, y
+  además no minifica ni comprime: mediría un sitio que nadie visita.
+- **`NEXT_PUBLIC_SITE_URL` se fija al puerto del modo.** La canónica, el sitemap, el JSON-LD y la
+  imagen de compartir se derivan de ahí; sin fijarla, las afirmaciones del flujo 6 medirían la URL de
+  otra máquina.
+- **La huella del build.** `scripts/e2e.sh` anota en `.next/e2e-modo` el modo, la URL y el `BUILD_ID`.
+  Cualquier `npm run build` —incluido el de `npm run verify`— cambia el identificador, así que la
+  comprobación de `E2E_REUSAR` falla en lugar de dar por bueno lo que hay.
+- **La API local se reusa si ya está levantada, el sitio no.** PostgREST no depende del build y apunta a
+  la misma base que acabó de migrar el script; el servidor del sitio sí depende del build, y reusarlo
+  sería reusar el build anterior.
+
+### Los tres navegadores
+
+| Proyecto | Dispositivo | Qué excluye |
+| --- | --- | --- |
+| `escritorio` | Desktop Chrome, con permiso de portapapeles | — |
+| `movil` | iPhone 15 | el flujo 5 |
+| `safari` | Desktop Safari | el flujo 5 |
+
+El flujo del portapapeles corre sólo en Chromium: es el único navegador que concede el permiso sin
+intervención. El valor sigue siendo seleccionable a mano en todos, y eso **sí** se verifica en los
+tres, porque es lo que salva a quien no tiene el permiso.
+
+WebKit dio un hallazgo que vale documentar porque costó encontrarlo: 44 tests fallaban en `safari` y
+`movil` con violaciones de contraste y de tamaño de objetivo que no existían. La causa era
+`upgrade-insecure-requests` en la CSP. Chromium exceptúa los orígenes locales; WebKit no, así que
+pedía la hoja de estilos, las fuentes y todo el JavaScript por https contra un servidor que habla
+http. La página se servía entera y sin estilos, los objetivos táctiles medían 22 px, y axe reportaba
+docenas de violaciones reales de una página que en producción no existe. `next.config.ts` omite esa
+directiva —y `Strict-Transport-Security`— cuando el sitio se sirve por http.
+
+---
+
+## 6. La base de datos: pgTAP
+
+Seis suites, 146 aserciones, sobre PostgreSQL 17 real con un shim que emula lo que Supabase agrega
+([ADR-013](./adr/013-base-datos-local.md)). Sin Docker.
+
+| Suite | Aserciones | Qué verifica |
+| --- | --- | --- |
+| `010-estructura.sql` | 33 | RLS habilitado en todas las tablas expuestas, índices, vistas con `security_invoker`, ningún grant prohibido |
+| `020-lectura-publica.sql` | 23 | Qué puede y qué no puede leer `anon`: nada de aportes, nada de comprobantes, ningún borrador |
+| `030-matriz-de-permisos.sql` | 30 | La matriz completa rol × tabla × operación |
+| `040-integridad-financiera.sql` | 25 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
+| `050-roles-y-token.sql` | 19 | Que el rol venga de `app_metadata` y que `user_metadata` se ignore |
+| `060-storage.sql` | 16 | `fotos` público, `comprobantes` privado, y las policies de cada uno |
+
+La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.
+`030-matriz-de-permisos.sql` recorre cinco roles contra trece tablas y cuatro operaciones, y la mayoría
+de sus aserciones esperan un rechazo. Es lo que hace que agregar una tabla sin policies rompa el
+build en lugar de exponerla.
+
+Lo que el shim no puede verificar, y por eso no se da por probado: el comportamiento de GoTrue, el hook
+que inyecta el claim de rol, PostgREST con RLS de verdad, las URL firmadas de Storage y `supabase db
+push` contra el proyecto real. La compuerta de eso es `supabase db advisors --linked`, en el despliegue.
+
+---
+
+## 7. Lo que corre en CI
+
+| Workflow | Job (el nombre que se pide en la protección de rama) | Qué protege |
+| --- | --- | --- |
+| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 319 tests, cifras de relleno, secretos en el bundle, build |
+| `ci.yml` | `Riesgo conocido en las dependencias` | `npm audit` |
+| `e2e.yml` | `sin-datos · flujos críticos y accesibilidad` | El sitio sin credenciales |
+| `e2e.yml` | `con-datos · flujos críticos y accesibilidad` | Los flujos con cifras |
+| `quality.yml` | `Presupuestos de performance, accesibilidad y SEO` | Lighthouse, nueve páginas |
+| `db.yml` | `Migraciones, advisors y policies RLS` | Migraciones, `db lint`, advisors, pgTAP |
+
+Tres decisiones del harness de CI que conviene conocer antes de editarlo:
+
+- **`fail-fast: false` en la matriz de E2E.** Si los dos modos se rompen, hace falta ver los dos.
+  Cancelar el segundo esconde la mitad del diagnóstico y obliga a otra corrida.
+- **`check:secrets` corre después del `build`.** El script mira los archivos de `.next/static`, o sea
+  el JavaScript que llega al navegador. Sin build previo avisa que omite la revisión y sale en verde:
+  la comprobación más importante quedaría desactivada sin que nadie se entere.
+- **`db.yml` está separado.** Instalar PostgreSQL 17 con pgTAP tarda minutos y sólo puede cambiar de
+  resultado si cambia el esquema. La instalación está en una acción compuesta
+  (`.github/actions/postgres-local`) que comparte con el job `con-datos` de E2E, para que la receta
+  viva en un solo lugar.
+
+Ni los E2E ni Lighthouse usan credenciales de Supabase, y es deliberado: correr la suite en modo sin
+datos es la única verificación automática de que la degradación funciona. Si algo falla ahí se arregla
+la página o el test; **no** se agregan secretos a esos workflows.
+
+---
+
+## 8. Cuando un test falla
+
+| Síntoma | Primero mirá |
+| --- | --- |
+| Un test de Playwright falla sólo en CI | El reporte HTML del artefacto `playwright-<modo>-<run_id>`, que se sube sólo en fallo y se retiene 7 días |
+| Falla en `safari` o `movil` y no en `escritorio` | Si la página se está sirviendo con estilos. Un fallo de CSP o de assets se ve como docenas de violaciones de axe |
+| Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
+| `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
+| Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
+| pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
+| `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |
