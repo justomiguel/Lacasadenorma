@@ -47,6 +47,12 @@ create schema if not exists auth;
 create schema if not exists storage;
 create schema if not exists extensions;
 
+-- `pgcrypto` en `extensions`, donde la instala la plataforma. La necesita
+-- `auth.users.encrypted_password`: `crypt()` y `gen_salt('bf')`, el mismo bcrypt con
+-- el que GoTrue guarda las contraseñas. Va acá y no en `public` porque `reset` borra
+-- `public` entero, y la extensión se caería con él.
+create extension if not exists pgcrypto with schema extensions;
+
 grant usage on schema public to anon, authenticated, service_role;
 grant usage on schema auth to anon, authenticated, service_role, supabase_auth_admin;
 grant usage on schema storage to anon, authenticated, service_role;
@@ -55,10 +61,18 @@ grant usage on schema extensions to anon, authenticated, service_role;
 -- ── Usuarios ────────────────────────────────────────────────────────────────
 -- Sólo las columnas que el esquema de la aplicación referencia. `raw_app_meta_data`
 -- es donde vive el rol: la escribe el servidor de auth, no el usuario.
+--
+-- `encrypted_password` existe para `scripts/local-api.mjs`, que verifica la
+-- contraseña con `extensions.crypt()` contra este hash y así emite un token de
+-- verdad para el flujo 9. Mismo nombre y mismo formato que la columna de la
+-- plataforma —bcrypt, prefijo `$2a$`— para que el fixture no tenga que saber contra
+-- cuál de las dos está corriendo. Nunca se escribe en claro: quien inserta un
+-- usuario pasa por `extensions.crypt(clave, extensions.gen_salt('bf'))`.
 
 create table if not exists auth.users (
   id uuid primary key default gen_random_uuid(),
   email text unique,
+  encrypted_password text,
   raw_app_meta_data jsonb not null default '{}'::jsonb,
   raw_user_meta_data jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()

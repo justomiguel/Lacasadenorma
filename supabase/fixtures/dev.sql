@@ -10,8 +10,9 @@
 -- primera pantalla en lugar de pasar por verdadero.
 --
 -- Para qué existe: verificar que la suma del detalle coincide con los totales
--- (SC-007), que las cifras se ven bien en 360 px con números largos, y que el
--- libro de gastos aguanta con veinte filas.
+-- (SC-007), que las cifras se ven bien en 360 px con números largos, que el
+-- libro de gastos aguanta con veinte filas, y que el flujo 9 —entrar al backoffice y
+-- publicar una novedad— se puede recorrer con una sesión de verdad.
 
 begin;
 
@@ -26,6 +27,52 @@ delete from public.budget_items;
 delete from public.payment_methods;
 delete from public.media;
 delete from public.campaigns where slug = 'casa-de-norma-desarrollo';
+
+-- `audit_log` **no** se borra. Es append-only por diseño —no tiene policy de DELETE
+-- para ningún rol, ni para `owner` (amenaza T2)— y un fixture que lo vaciara estaría
+-- enseñando a saltear esa regla con el rol de la base. Las entradas viejas no
+-- molestan: la pantalla ordena por fecha y las pruebas buscan la suya.
+delete from public.user_roles;
+delete from auth.users where email like '%@ejemplo.invalid';
+
+-- ── Personas del backoffice ─────────────────────────────────────────────────
+-- Una por rol, para que la matriz de permisos se pueda recorrer entrando de verdad y
+-- no sólo leyéndola. El flujo 9 entra como `editora`, y comprueba con `auditora` que
+-- un rol de sólo lectura no puede publicar aunque se fuerce el pedido.
+--
+-- `.invalid` es el TLD que la RFC 2606 reserva justamente para esto: ninguna de estas
+-- direcciones puede existir, ni hoy ni cuando alguien compre el dominio parecido.
+--
+-- La contraseña es una sola y está en claro dos líneas más abajo. **No es un
+-- secreto**, del mismo carácter que el `norma_local:norma_local` de la base local:
+-- sólo abre una sesión contra este Postgres, que se borra entero en cada reset, y el
+-- proyecto real no tiene ninguna cuenta con esta clave. `extensions.crypt` con
+-- `gen_salt('bf')` la guarda como bcrypt, en la misma columna y el mismo formato que
+-- usa la plataforma, así que `scripts/local-api.mjs` la verifica igual que GoTrue.
+--
+-- Si esta clave cambia, hay que cambiarla también en `e2e/soporte/backoffice.ts`. No
+-- se puede compartir la definición entre un archivo SQL y un módulo de TypeScript;
+-- lo que sí pasa si se desincronizan es que el flujo 9 falla en el primer paso, con
+-- el mensaje de la pantalla de acceso, que es un fallo bien visible.
+
+insert into auth.users (id, email, encrypted_password) values
+  ('bbbbbbbb-0000-4000-8000-000000000001', 'propietaria@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+  ('bbbbbbbb-0000-4000-8000-000000000002', 'administrador@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+  ('bbbbbbbb-0000-4000-8000-000000000003', 'editora@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+  ('bbbbbbbb-0000-4000-8000-000000000004', 'auditora@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')));
+
+insert into public.user_roles (user_id, role, granted_by) values
+  ('bbbbbbbb-0000-4000-8000-000000000001', 'owner', null),
+  ('bbbbbbbb-0000-4000-8000-000000000002', 'admin',
+   'bbbbbbbb-0000-4000-8000-000000000001'),
+  ('bbbbbbbb-0000-4000-8000-000000000003', 'editor',
+   'bbbbbbbb-0000-4000-8000-000000000001'),
+  ('bbbbbbbb-0000-4000-8000-000000000004', 'auditor',
+   'bbbbbbbb-0000-4000-8000-000000000001');
 
 -- ── Campaña ─────────────────────────────────────────────────────────────────
 
