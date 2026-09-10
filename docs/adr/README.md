@@ -28,3 +28,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [015](./015-fixture-de-desarrollo.md) | Un fixture de desarrollo, separado y explícito | Aceptada |
 | [016](./016-totales-recibidos-agregados.md) | El total recibido viene de una vista agregada, no del detalle de aportes | Aceptada |
 | [017](./017-revalidacion.md) | Revalidación: ISR de cinco minutos más invalidación explícita al publicar | Aceptada |
+| [018](./018-presupuestos-de-performance.md) | Los presupuestos de Lighthouse se fijan sobre lo medido, no sobre lo deseado | Aceptada |

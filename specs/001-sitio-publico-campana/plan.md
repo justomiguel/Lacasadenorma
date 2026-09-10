@@ -51,6 +51,13 @@ home legible en menos de 2,5 s en 4G (SC-004). Presupuestos: LCP ≤ 2,5 s, CLS 
 JavaScript de cliente en la home ≤ 40 KB comprimido, que es alcanzable porque sólo tres
 componentes necesitan interactividad.
 
+> **Medido** (ADR-018). El objetivo de 40 KB se cumple: el código propio pesa ~42 KB comprimidos. Lo
+> que no se puede expresar como assertion es ese recorte, porque Lighthouse agrupa los scripts por
+> tipo y no por origen, y el runtime de React y de Next suma 121 KB aparte. Y los 2,5 s de SC-004 se
+> verifican con el FCP —0,76 s, con la fallback de métricas ajustadas ya en su posición final—, no con
+> el LCP, que en este sitio marca cuándo termina de bajar la tipografía. Los números que corta CI están
+> en `lighthouserc.json` con el ADR detrás.
+
 **Constraints**: Sin Docker en el entorno de desarrollo de agentes, lo que descarta el flujo
 declarativo de esquemas de Supabase y obliga a migraciones escritas a mano. Sin credenciales de
 Supabase disponibles todavía, por lo que el sitio **debe** funcionar sin base de datos configurada

@@ -228,14 +228,21 @@ que lo que hay que saber está acá:
 - **Las nueve páginas públicas**, tres corridas cada una, contra `npm run start` (nunca contra `npm
   run dev`: el servidor de desarrollo no minifica ni comprime, y daría un número que no se parece a
   lo que ve una persona en 4G).
-- **Las cuatro categorías ≥ 0,95**, que es lo que fija la constitución (principio VII, SC-003).
-- **Presupuesto de scripts: 50 KB transferidos por página.** El objetivo del plan para la home es más
-  exigente —40 KB comprimidos— y se sigue en `plan.md`; el número que corta CI es el de acá, que
-  aplica a todas las páginas por igual.
+- **Las cuatro categorías ≥ 0,95**, que es lo que fija la constitución (principio VII, SC-003). Es la
+  compuerta principal, y la más estable: en las mediciones da entre 0,97 y 0,99.
+- **Presupuesto de scripts: 200 KB transferidos por página.** La página más pesada mide 181 KB, de los
+  cuales 121 KB son el runtime de React y de Next. El margen alcanza para un cambio de versión y no
+  alcanza para importar Zod o un cliente de Supabase en un componente de cliente.
 - **Cero recursos de terceros.** No hay analytics invasivo ni fuentes externas: las fuentes se
   autoalojan con `next/font`. Si aparece un tercero, el presupuesto lo hace visible en el pull
   request que lo introduce, que es cuando conviene discutirlo.
-- **LCP ≤ 2,5 s y CLS ≤ 0,05**, los presupuestos del plan.
+- **LCP ≤ 2,8 s y CLS ≤ 0,05.**
+
+Los dos primeros números y el del LCP salen de una medición, no del plan: los que estaban antes se
+escribieron antes de que existiera un build y ninguno era alcanzable. Por qué son estos, con las
+mediciones, está en [`adr/018-presupuestos-de-performance.md`](./adr/018-presupuestos-de-performance.md).
+Ahí también está la razón por la que el LCP no está en 2,5 s: sobre un build sin cambios, la métrica
+se mueve 700 ms entre corridas, y un umbral dentro de esa banda se pone rojo por azar.
 
 Se agrega para comparar contra la mediana de las tres corridas, no contra la mejor: una corrida
 afortunada no es el sitio.

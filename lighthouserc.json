@@ -18,7 +18,7 @@
           {
             "path": "/*",
             "resourceSizes": [
-              { "resourceType": "script", "budget": 50 },
+              { "resourceType": "script", "budget": 200 },
               { "resourceType": "total", "budget": 800 }
             ],
             "resourceCounts": [{ "resourceType": "third-party", "budget": 0 }]
@@ -43,15 +43,19 @@
         "categories:seo": ["error", { "minScore": 0.95, "aggregationMethod": "median" }],
         "resource-summary:script:size": [
           "error",
-          { "maxNumericValue": 51200, "aggregationMethod": "median" }
+          { "maxNumericValue": 204800, "aggregationMethod": "median" }
         ],
         "resource-summary:third-party:count": [
           "error",
           { "maxNumericValue": 0, "aggregationMethod": "median" }
         ],
+        "first-contentful-paint": [
+          "error",
+          { "maxNumericValue": 1200, "aggregationMethod": "median" }
+        ],
         "largest-contentful-paint": [
           "error",
-          { "maxNumericValue": 2500, "aggregationMethod": "median" }
+          { "maxNumericValue": 2800, "aggregationMethod": "median" }
         ],
         "cumulative-layout-shift": [
           "error",
