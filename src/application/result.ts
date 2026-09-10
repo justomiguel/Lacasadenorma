@@ -29,11 +29,17 @@ export function unavailable<T>(reason: UnavailableReason): DataResult<T> {
   return { status: "unavailable", reason };
 }
 
-/** Mensaje para la persona que está leyendo. Nunca detalle técnico (amenaza I6). */
+/**
+ * Mensaje para la persona que está leyendo. Nunca detalle técnico (amenaza I6).
+ *
+ * Sin sustantivo propio a propósito: el mismo texto acompaña a las cifras de la
+ * transparencia, al índice de novedades y a las respuestas de la API. Quién es el
+ * dato ausente lo dice el título de cada aviso; esto dice por qué falta.
+ */
 export const UNAVAILABLE_MESSAGES: Record<UnavailableReason, string> = {
   "not-configured":
-    "Las cifras de la campaña todavía no están conectadas a esta página. En cuanto lo estén, aparecen acá.",
+    "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
   error:
-    "No pudimos leer las cifras en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+    "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
   "not-published": "La campaña todavía no está publicada.",
 };

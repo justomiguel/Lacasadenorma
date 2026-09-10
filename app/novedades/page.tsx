@@ -37,6 +37,32 @@ export const metadata = pageMetadata({
   path: "/novedades",
 });
 
+/**
+ * Lo que el índice explica de sí mismo cuando no tiene entradas para mostrar.
+ *
+ * Es el único lugar del sitio donde toda la página depende de la base, así que sin
+ * datos quedaría un título y un cartel: una pared. Esto no es relleno para llenar
+ * la pantalla —dice qué va a haber acá y hacia dónde seguir mientras tanto—, y por
+ * eso vale también cuando la campaña está conectada y todavía no publicó nada.
+ */
+function QueEsElDiario() {
+  return (
+    <div className="max-w-measure space-y-md text-body">
+      <p>
+        El diario de la obra se escribe a medida que pasa: lo que se compró, la semana de
+        trabajo que se hizo, y también lo que salió distinto de lo previsto. Cada entrada
+        lleva su fecha y, cuando hay, sus fotos.
+      </p>
+      <p className="text-ink-muted">
+        La historia no depende de este índice y se puede leer completa:{" "}
+        <InlineLink href="/norma">quién fue Norma</InlineLink>,{" "}
+        <InlineLink href="/reconstruccion">qué hay que reconstruir</InlineLink> y{" "}
+        <InlineLink href="/ayudar">cómo colaborar</InlineLink>.
+      </p>
+    </div>
+  );
+}
+
 export default async function NovedadesPage() {
   const updates = await listUpdates({ dataLayer: getPublicDataLayer(), logger });
 
@@ -50,17 +76,21 @@ export default async function NovedadesPage() {
 
       <Container>
         <Section>
-          {updates.status !== "ok" ? (
-            <Unavailable reason={updates.reason} />
-          ) : updates.data.length === 0 ? (
-            <EmptyState title="Todavía no hay novedades publicadas">
-              <p>
-                La primera va a ser el día en que empiece la obra. Mientras tanto, lo que
-                ya se puede ver es{" "}
-                <InlineLink href="/reconstruccion">qué hay que hacer</InlineLink> y{" "}
-                <InlineLink href="/transparencia">cómo va la cuenta</InlineLink>.
-              </p>
-            </EmptyState>
+          {updates.status !== "ok" || updates.data.length === 0 ? (
+            <div className="space-y-xl">
+              <QueEsElDiario />
+
+              {updates.status !== "ok" ? (
+                <Unavailable
+                  reason={updates.reason}
+                  title="Las novedades todavía no se están publicando acá"
+                />
+              ) : (
+                <EmptyState title="Todavía no hay novedades publicadas">
+                  <p>La primera va a ser el día en que empiece la obra.</p>
+                </EmptyState>
+              )}
+            </div>
           ) : (
             <ul className="border-t border-rule">
               {updates.data.map((update) => {
