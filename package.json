@@ -34,7 +34,7 @@
     "db:new": "supabase migration new",
     "check:placeholders": "node scripts/check-no-placeholders.mjs",
     "check:secrets": "node scripts/check-no-client-secrets.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run check:placeholders && npm run check:secrets && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run check:placeholders && npm run check:secrets && npm run build"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

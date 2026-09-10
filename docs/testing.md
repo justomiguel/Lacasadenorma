@@ -167,6 +167,11 @@ npm run db:verify            # reset + lint + advisors + pgTAP + tipos
 npm run verify               # la compuerta completa de CI
 ```
 
+`verify` corre `test:coverage` y no `test`, aunque tarde unos segundos más. La diferencia importa: CI
+sí mide los umbrales, así que con `test` a secas se podía tener `verify` en verde y el pull request en
+rojo por cobertura. Una compuerta local que no reproduce la de CI no es una compuerta, es una
+sugerencia.
+
 Para iterar sobre un test de Playwright sin reconstruir el sitio en cada corrida:
 
 ```bash

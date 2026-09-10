@@ -39,7 +39,7 @@ caso está todo en [`docs/runbook.md`](./docs/runbook.md#2-la-base-de-datos-loca
 ### Verificar que está sano
 
 ```bash
-npm run verify       # tipos, reglas de capas, formato, tests, chequeos y build
+npm run verify       # tipos, reglas de capas, formato, tests con cobertura, chequeos y build
 npm run test:e2e     # los nueve flujos críticos y axe, en tres navegadores
 ```
 
@@ -101,7 +101,7 @@ El detalle, con el recorrido completo de un pedido y de una mutación, está en
 | Comando | Qué hace |
 | --- | --- |
 | `npm run dev` | Servidor de desarrollo |
-| `npm run verify` | Tipos, lint, formato, tests, chequeos y build. La compuerta completa |
+| `npm run verify` | Tipos, lint, formato, tests con cobertura, chequeos y build. La compuerta completa |
 | `npm test` | Unitarios y de componente (Vitest) |
 | `npm run test:e2e` | Los dos modos de Playwright, uno después del otro |
 | `npm run test:e2e:sin-datos` | Sólo el sitio sin base de datos |
