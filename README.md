@@ -111,6 +111,7 @@ El detalle, con el recorrido completo de un pedido y de una mutación, está en
 | `npm run api:local` | API local compatible con Supabase, sin Docker |
 | `npm run check:placeholders` | Que no haya datos de relleno en el contenido ni en la interfaz |
 | `npm run check:secrets` | Que ninguna clave secreta esté en el JavaScript del navegador |
+| `node scripts/screenshots.mjs` | Las once páginas en 360 px y 1440 px, para el loop de revisión visual. Los criterios medibles de ese loop los verifica `test:e2e`; esto es para los cuatro que hay que mirar ([`docs/testing.md`](./docs/testing.md)) |
 
 La lista completa está en `package.json`; los comandos de base de datos, uno por uno, en
 [`docs/runbook.md`](./docs/runbook.md).
