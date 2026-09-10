@@ -2,6 +2,7 @@ import { EXPENSE_CATEGORY_LABELS, type ExpenseRecord } from "@/src/domain/entiti
 import { formatMoney } from "@/src/domain/money";
 
 import { cn } from "./cn";
+import { formatLongDate } from "./dates";
 
 /**
  * Libro de gastos.
@@ -13,15 +14,6 @@ import { cn } from "./cn";
  * En mobile **no** hace scroll horizontal: cada fila se reordena en bloque. Una
  * tabla financiera que se lee de costado no se lee.
  */
-
-function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("es-AR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(iso));
-}
 
 export function Ledger({
   expenses,
@@ -78,7 +70,7 @@ export function Ledger({
             className="block border-b border-rule py-md md:table-row md:py-0"
           >
             <td className="block py-3xs font-ui text-small text-ink-muted md:table-cell md:py-sm md:pr-md">
-              <time dateTime={expense.spentAt}>{formatDate(expense.spentAt)}</time>
+              <time dateTime={expense.spentAt}>{formatLongDate(expense.spentAt)}</time>
             </td>
             <th
               scope="row"

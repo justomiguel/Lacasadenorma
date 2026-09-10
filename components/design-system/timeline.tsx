@@ -5,6 +5,7 @@ import {
 } from "@/src/domain/entities";
 
 import { cn } from "./cn";
+import { formatLongDate } from "./dates";
 
 /**
  * Hitos de la obra.
@@ -44,12 +45,7 @@ export function Timeline({
                 <>
                   {" · "}
                   <time dateTime={milestone.happenedOn}>
-                    {new Intl.DateTimeFormat("es-AR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                      timeZone: "UTC",
-                    }).format(new Date(milestone.happenedOn))}
+                    {formatLongDate(milestone.happenedOn)}
                   </time>
                 </>
               )}

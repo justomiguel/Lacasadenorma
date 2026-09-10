@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { cn } from "./cn";
+import { formatLongDate } from "./dates";
 
 /**
  * Tipografía del sistema. Los tamaños vienen de los tokens de `ux.md`; ningún
@@ -104,12 +105,7 @@ export function Byline({
   label?: string;
   className?: string;
 }) {
-  const formatted = new Intl.DateTimeFormat("es-AR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(isoDate));
+  const formatted = formatLongDate(isoDate);
 
   return (
     <p className={cn("font-ui text-small text-ink-muted", className)}>

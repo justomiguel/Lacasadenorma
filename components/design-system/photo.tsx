@@ -92,9 +92,12 @@ export function ReservedSpace({
       )}
       style={{ aspectRatio: RATIO_VALUE[ratio] }}
     >
-      <p className="max-w-measure font-ui text-label uppercase text-ink-muted">
-        {description}
-      </p>
+      {/*
+        Sin `uppercase`: esto es una oración, no una etiqueta. En versales, dos o
+        tres líneas de texto corrido se leen bastante peor, y acá la oración es lo
+        que explica que el hueco es una espera y no un error.
+      */}
+      <p className="max-w-measure font-ui text-small text-ink-muted">{description}</p>
     </div>
   );
 }

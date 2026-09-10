@@ -100,12 +100,24 @@ export const programSchema = pageSchema.extend({
 
 export const faqSchema = z
   .array(
-    z.object({
-      question: z.string().min(1),
-      answer: paragraphs,
-      /** Ruta con la respuesta completa, si existe una página propia. */
-      href: z.string().startsWith("/").nullable(),
-    }),
+    z
+      .object({
+        question: z.string().min(1),
+        answer: paragraphs,
+        /** Ruta con la respuesta completa, si existe una página propia. */
+        href: z.string().startsWith("/").nullable(),
+        /**
+         * Texto del enlace, escrito para esta pregunta. Nunca "ver más": nueve
+         * enlaces con el mismo texto son, para un lector de pantalla, nueve
+         * enlaces entre los que no se puede elegir.
+         */
+        linkLabel: z.string().min(1).nullable(),
+      })
+      .refine((entry) => (entry.href === null) === (entry.linkLabel === null), {
+        message:
+          "`href` y `linkLabel` van juntos: un enlace sin texto no se puede anunciar, y un texto sin destino no lleva a ninguna parte",
+        path: ["linkLabel"],
+      }),
   )
   .min(9, "Las nueve preguntas del proyecto son un requisito (FR-001)");
 

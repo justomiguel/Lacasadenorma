@@ -13,6 +13,10 @@ import { faq } from "@/content";
  *
  * El orden es el de `content/preguntas.json`, y es el orden en que una persona se
  * hace las preguntas: qué es esto, quién fue, qué pasó, cómo ayudo, cómo verifico.
+ *
+ * El texto de cada enlace viene del contenido y no de acá. Un "ver más" repetido
+ * nueve veces se escucha, en la lista de enlaces de un lector de pantalla, como la
+ * misma frase nueve veces: no hay forma de elegir uno.
  */
 export function FaqSection({ className }: { className?: string }) {
   return (
@@ -33,13 +37,13 @@ export function FaqSection({ className }: { className?: string }) {
                 {paragraph}
               </dd>
             ))}
-            {item.href === null ? null : (
+            {item.href === null || item.linkLabel === null ? null : (
               <dd className="mt-sm">
                 <Link
                   href={item.href}
                   className="font-ui text-small text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
                 >
-                  Ver más sobre esto
+                  {item.linkLabel}
                 </Link>
               </dd>
             )}

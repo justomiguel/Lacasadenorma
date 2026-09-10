@@ -20,11 +20,17 @@ import { HelpCta } from "./help-cta";
  * 3. **No hay foto todavía, y se dice.** El hueco mantiene la proporción del
  *    retrato que va a ir ahí, así que cuando llegue no hay salto de layout, y
  *    mientras tanto no hay ilustración ni imagen de archivo ocupando su lugar.
+ *
+ * El texto se centra contra el retrato en lugar de apoyarse en su base. Alinear
+ * al pie es un recurso editorial legítimo, pero con un retrato 3:4 de media
+ * pantalla empujaba el título al 60% del alto: en la revisión visual, la primera
+ * pantalla en 1440 px era mitad vacío arriba y el nombre bien abajo, y todavía va
+ * a ser así un tiempo, porque la foto no llegó.
  */
 export function Hero() {
   return (
     <section className="border-b border-rule" aria-labelledby="apertura">
-      <div className="mx-auto grid w-full max-w-page items-end gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
+      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
         <div className="lg:col-span-6">
           <p className="font-ui text-label uppercase tracking-label text-ink-muted">
             {site.place.locality}, {site.place.province}

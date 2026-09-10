@@ -67,9 +67,16 @@ export function CopyField({
       <div className="flex items-baseline justify-between gap-md">
         <div className="min-w-0">
           <p className="font-ui text-label uppercase text-ink-muted">{label}</p>
+          {/*
+            `break-words` y no `break-all`: los dos parten un CBU de 22 dígitos que
+            no entra en 360 px, pero `break-all` parte también donde no hace falta,
+            y una etiqueta como "CUENTA DE PRUEBA — NO TRANSFERIR" quedaba cortada
+            entre la N y la O. En el campo donde alguien lee el dato que va a
+            copiar, un corte arbitrario siembra la duda de si el dato está entero.
+          */}
           <p
             id={valueId}
-            className="mt-3xs break-all font-ui text-subheading font-medium tabular-nums"
+            className="mt-3xs break-words font-ui text-subheading font-medium tabular-nums"
             data-figure
           >
             {value}

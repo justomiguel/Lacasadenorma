@@ -141,7 +141,20 @@ export function CountryTabs({
         role="tablist"
         aria-label="Elegí desde qué país vas a transferir"
         onKeyDown={onKeyDown}
-        className="flex flex-wrap gap-3xs border-b border-rule"
+        /*
+          Una grilla de tres columnas, no un `flex-wrap`. Con `flex-wrap`, en 360 px
+          los tres nombres no entraban en una fila y "Estados Unidos" caía solo
+          abajo, con la regla del contenedor cruzando por encima: parecía un tab
+          suelto y no la tercera opción.
+          Las columnas se miden por su contenido y no en tercios iguales, porque
+          "Estados Unidos" no entra en un tercio de 360 px ni con la tipografía más
+          chica que sigue siendo legible: en tercios, ese tab quedaba en dos líneas
+          al lado de dos que ocupaban una. Midiendo por contenido, los tres entran
+          en una línea, y en una pantalla realmente angosta la grilla encoge las
+          columnas y parte el nombre adentro de su celda, que es un desprolijo
+          mucho más chico que una fila rota.
+        */
+        className="grid grid-cols-[auto_auto_auto] justify-start border-b border-rule sm:flex sm:flex-wrap sm:gap-3xs"
       >
         {panels.map((panel) => {
           const isSelected = panel.country === selected;
@@ -166,7 +179,7 @@ export function CountryTabs({
                 setSelected(panel.country);
               }}
               className={cn(
-                "min-h-touch px-md font-ui text-subheading transition-colors duration-fast ease-editorial",
+                "min-h-touch px-xs font-ui text-body transition-colors duration-fast ease-editorial sm:px-md sm:text-subheading",
                 isSelected
                   ? "border-b-2 border-brick font-medium text-ink"
                   : "border-b-2 border-transparent text-ink-muted hover:text-ink",
