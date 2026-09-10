@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { money } from "@/src/domain/money";
 
+import type { DataLayer } from "../data-layer";
 import {
   contentOnlyLayer,
   fakeLogger,
@@ -15,7 +16,7 @@ import {
 } from "./registry";
 import type { CapabilityContext } from "./types";
 
-function context(dataLayer = fakeSupabaseLayer()): CapabilityContext {
+function context(dataLayer: DataLayer = fakeSupabaseLayer()): CapabilityContext {
   return { dataLayer, logger: fakeLogger(), siteUrl: "https://ejemplo.test" };
 }
 

@@ -55,7 +55,15 @@ export function fakeLogger(): Logger & { calls: string[] } {
   };
 }
 
-export function fakeSupabaseLayer(data: FakeData = {}): DataLayer {
+/**
+ * El tipo de retorno es el miembro `supabase` de la unión y no `DataLayer`: así un
+ * test puede reemplazar un repositorio con `{ ...fakeSupabaseLayer(), updates }`
+ * sin que TypeScript compare el objeto contra el miembro `content-only`, que no
+ * tiene repositorios. Sigue siendo asignable a `DataLayer` donde haga falta.
+ */
+export function fakeSupabaseLayer(
+  data: FakeData = {},
+): Extract<DataLayer, { source: "supabase" }> {
   function guard<T>(value: T): Promise<T> {
     if (data.failWith !== undefined) {
       return Promise.reject(data.failWith);

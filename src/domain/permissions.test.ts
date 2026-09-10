@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { APP_ROLES, hasMinRole, roleRank } from "./entities/role";
+import { APP_ROLES, hasMinRole, isAppRole, roleRank } from "./entities/role";
 import { can, permissionsOf, PERMISSIONS } from "./permissions";
 
 describe("can", () => {
@@ -98,5 +98,30 @@ describe("hasMinRole", () => {
     expect(hasMinRole("admin", "editor")).toBe(true);
     expect(hasMinRole("editor", "admin")).toBe(false);
     expect(hasMinRole(null, "auditor")).toBe(false);
+  });
+});
+
+describe("isAppRole", () => {
+  // Lo que llega en un token es `unknown`: el hook de acceso escribe
+  // `app_metadata.user_role`, pero nada en el tipo garantiza qué hay ahí. Esta
+  // guarda es la que decide si ese valor se convierte en permisos.
+  it("acepta los cuatro roles declarados", () => {
+    for (const role of APP_ROLES) {
+      expect(isAppRole(role)).toBe(true);
+    }
+  });
+
+  it("rechaza un rol inventado, aunque suene a rol", () => {
+    expect(isAppRole("superadmin")).toBe(false);
+    expect(isAppRole("Owner")).toBe(false);
+    expect(isAppRole("")).toBe(false);
+  });
+
+  it("rechaza lo que no es una cadena", () => {
+    expect(isAppRole(null)).toBe(false);
+    expect(isAppRole(undefined)).toBe(false);
+    expect(isAppRole(3)).toBe(false);
+    expect(isAppRole({ role: "owner" })).toBe(false);
+    expect(isAppRole(["owner"])).toBe(false);
   });
 });
