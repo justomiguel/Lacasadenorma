@@ -254,9 +254,19 @@ Detalles que parecen menores y no lo son:
 - **La huella del build.** `scripts/e2e.sh` anota en `.next/e2e-modo` el modo, la URL y el `BUILD_ID`.
   Cualquier `npm run build` —incluido el de `npm run verify`— cambia el identificador, así que la
   comprobación de `E2E_REUSAR` falla en lugar de dar por bueno lo que hay.
+- **La API local se levanta antes de construir, no después.** Es el orden y es lo que más cuesta ver
+  cuando se rompe. Casi todas las páginas públicas son estáticas con `revalidate = 300`: Next las
+  prerenderiza **durante el build**, leyendo la base. Con la API abajo en ese momento, cada página se
+  hornea con la rama del dato ausente —correcta, pero sin una sola cifra— y la entrada de caché queda
+  *fresca* cinco minutos, así que Next no la revalida y sirve la versión vacía toda la corrida, que dura
+  menos que eso. Se ve como veintitrés fallos de flujos 3, 4, 5 y 7 que parecen de la aplicación.
+  Levantarla antes también hace que el build local se parezca al de producción, donde Vercel construye
+  con Supabase disponible.
 - **La API local se reusa si ya está levantada, el sitio no.** PostgREST no depende del build y apunta a
   la misma base que acabó de migrar el script; el servidor del sitio sí depende del build, y reusarlo
-  sería reusar el build anterior.
+  sería reusar el build anterior. Ese "se reusa" es también lo que escondía el problema anterior: en una
+  máquina donde alguien ya tenía la API arriba, el build agarraba datos y la suite pasaba; en un runner
+  limpio de CI, nunca.
 
 ### Los tres navegadores
 
@@ -348,5 +358,6 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
+| Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |

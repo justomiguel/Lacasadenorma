@@ -48,6 +48,18 @@ say() {
 
 export E2E_MODO="$modo"
 
+# La API local que este script levanta, para bajarla al salir. Vacío si ya estaba
+# levantada por otra persona: en ese caso no es nuestra y no se toca.
+api_propia=""
+
+al_salir() {
+  if [[ -n "$api_propia" ]]; then
+    kill "$api_propia" 2>/dev/null || true
+  fi
+}
+
+trap al_salir EXIT
+
 if [[ "$modo" == "con-datos" ]]; then
   export PORT="${PORT:-3211}"
   export LOCAL_API_PORT="${LOCAL_API_PORT:-54321}"
@@ -84,6 +96,62 @@ huella() {
   printf '%s %s %s' "$modo" "$NEXT_PUBLIC_SITE_URL" "$(cat .next/BUILD_ID 2>/dev/null)"
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# La API local tiene que estar arriba ANTES de construir
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Esto parece un detalle de orden y es la diferencia entre probar el sitio y probar
+# una cáscara vacía.
+#
+# Casi todas las páginas públicas son estáticas con `revalidate = 300`: Next las
+# **prerenderiza durante el build**, leyendo la base. Si la API no está levantada en
+# ese momento, cada página se hornea con la rama del dato ausente —correcta, pero sin
+# una sola cifra— y queda en caché. Y como la entrada está *fresca* durante cinco
+# minutos, Next no la revalida: sirve la versión vacía toda la corrida, que dura
+# menos que eso. El resultado son veintitrés fallos que parecen de la aplicación y
+# son del harness.
+#
+# Levantarla acá también es lo que hace que el build local se parezca al de
+# producción, donde Vercel construye con Supabase disponible.
+#
+# Playwright la vuelve a declarar en `playwright.config.ts` con
+# `reuseExistingServer: true`, así que la encuentra levantada y la reusa. Esa
+# declaración sigue haciendo falta para quien corre `npx playwright test` a mano.
+levantar_api_local() {
+  local sonda="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=id&limit=1"
+  local registro="${TMPDIR:-/tmp}/e2e-api-local.log"
+
+  if curl --fail --silent --show-error --output /dev/null "$sonda" 2>/dev/null; then
+    say "La API local ya estaba levantada: se reusa"
+    return
+  fi
+
+  say "Levantando la API local (hace falta para construir con datos)"
+  node scripts/local-api.mjs > "$registro" 2>&1 &
+  api_propia=$!
+
+  # La sonda pide una tabla, no el puerto: que PostgREST escuche no significa que ya
+  # haya leído el esquema, y un build contra un esquema sin leer falla igual.
+  for _ in $(seq 1 60); do
+    if curl --fail --silent --output /dev/null "$sonda" 2>/dev/null; then
+      return
+    fi
+
+    if ! kill -0 "$api_propia" 2>/dev/null; then
+      api_propia=""
+      echo "La API local terminó antes de estar lista:" >&2
+      cat "$registro" >&2
+      exit 1
+    fi
+
+    sleep 1
+  done
+
+  echo "La API local no contestó en 60 s:" >&2
+  cat "$registro" >&2
+  exit 1
+}
+
 if [[ "${E2E_REUSAR:-}" == "1" ]]; then
   if [[ "$(cat "$HUELLA" 2>/dev/null)" != "$(huella)" ]]; then
     echo "El build que hay en .next no es el de modo ${modo}." >&2
@@ -97,6 +165,10 @@ else
     say "Recreando la base local y cargando el fixture"
     ./scripts/db-local.sh reset
     ./scripts/db-local.sh fixture
+
+    # Después del reset, nunca antes: PostgREST cachea el esquema, y levantarlo contra
+    # una base que está por recrearse lo deja hablando de tablas que ya no son ésas.
+    levantar_api_local
   fi
 
   say "Construyendo el sitio en modo ${modo}"

@@ -23,10 +23,11 @@ name: E2E
 #   algo que afirmar: no se puede comprobar que la suma del detalle da el total
 #   publicado si no hay ningún gasto.
 #
-# Lo que ninguno de los dos hace es iniciar sesión en el backoffice con una sesión de
-# verdad: la API local no incluye GoTrue. Lo que sí se verifica es que ninguna ruta del
-# backoffice se abra sin sesión. El flujo 9 completo es una verificación manual contra
-# un proyecto de Supabase, y está en docs/runbook.md como paso obligatorio.
+# El modo con datos también inicia sesión de verdad: la API local emite tokens firmados
+# con el secreto que valida PostgREST, con los claims que arma el hook de la migración,
+# así que el flujo 9 recorre la cadena de autorización completa. Lo que sigue sin
+# cubrirse acá es Storage, los enlaces firmados y el comportamiento de GoTrue, y está
+# en docs/runbook.md sección 7 como verificación obligatoria antes de desplegar.
 
 on:
   pull_request:
