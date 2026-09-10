@@ -4,19 +4,25 @@ import type {
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
-  PersonRecord,
   UpdateRecord,
 } from "../entities";
 import type { Money } from "../money";
 
 /**
- * Puertos de lectura pública. Dos implementaciones los satisfacen: una sobre el
- * contenido versionado en `content/`, que funciona sin credenciales, y una sobre
- * Supabase. La capa de aplicación no sabe cuál está usando (ADR-005, FR-034).
+ * Puertos de lectura pública, implementados sobre Supabase. Cuando no hay proyecto
+ * configurado no hay una segunda implementación de estos puertos: la capa de datos
+ * es una unión y devuelve `{ source: "content-only" }`, sin repositorios (ADR-005,
+ * FR-034). Es a propósito —un repositorio falso que devuelve listas vacías haría que
+ * "no hay cifras cargadas" y "no hay base configurada" se vieran igual, y son cosas
+ * distintas que el sitio tiene que explicar distinto—.
  *
  * Todos los métodos devuelven **sólo material publicado**. Los borradores no
  * tienen camino de lectura pública, ni por descuido: la forma de estos puertos
  * no permite pedirlos.
+ *
+ * No hay puerto de lectura para `people`. La prosa sobre Norma vive en `content/`
+ * (ADR-007) y la tabla queda reservada para cuando el backoffice la edite; declarar
+ * el puerto antes de que exista quien lo implemente sería una promesa sin dueño.
  */
 
 export interface CampaignRepository {
@@ -50,8 +56,4 @@ export interface UpdateRepository {
   listPublishedUpdates(campaignId: string, limit?: number): Promise<UpdateRecord[]>;
   /** Devuelve `null` si el slug no existe o si todavía no está publicado (I7). */
   findPublishedUpdateBySlug(slug: string): Promise<UpdateRecord | null>;
-}
-
-export interface PersonRepository {
-  findPublishedPersonBySlug(slug: string): Promise<PersonRecord | null>;
 }

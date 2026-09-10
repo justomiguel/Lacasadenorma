@@ -116,7 +116,7 @@ una mitigación sin verificación es una intención.
 
 | Cabecera | Valor | Motivo |
 |---|---|---|
-| `Content-Security-Policy` | `default-src 'self'`; `img-src 'self' data: https://<proyecto>.supabase.co`; `script-src 'self'` con nonce; `style-src 'self' 'unsafe-inline'`; `frame-ancestors 'none'`; `base-uri 'none'`; `form-action 'self'` | `style-src 'unsafe-inline'` es la única concesión, necesaria por los estilos en línea de Next; se documenta como deuda conocida |
+| `Content-Security-Policy` | `default-src 'self'`; `base-uri 'none'`; `form-action 'self'`; `frame-ancestors 'none'`; `object-src 'none'`; `img-src 'self' data: blob:` más el origen de Supabase; `font-src 'self'`; `style-src 'self' 'unsafe-inline'`; `script-src 'self' 'unsafe-inline'`; `connect-src 'self'` más el origen de Supabase; `manifest-src 'self'`; `upgrade-insecure-requests` | `'unsafe-inline'` en `style-src` y en `script-src` son las dos concesiones, y las dos son deuda conocida (§5). Los orígenes externos se derivan de las variables de entorno: sin proyecto de Supabase y sin analítica configurada, la política no permite ningún tercero. Cuando hay analítica, su origen se agrega a `script-src` y a `connect-src` (ADR-010) |
 | `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` | |
 | `X-Content-Type-Options` | `nosniff` | |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | |
@@ -148,6 +148,8 @@ Se declaran en lugar de disimularse.
 | Riesgo aceptado | Por qué se acepta | Cuándo se revisa |
 |---|---|---|
 | `style-src 'unsafe-inline'` en la CSP | Next inyecta estilos en línea; eliminarlo requiere una arquitectura de nonces para estilos que hoy no vale su costo | Si aparece soporte estable de nonce para estilos |
+| `script-src 'unsafe-inline'` en la CSP | Los datos del servidor viajan al cliente en scripts en línea que Next emite en cada página. Con nonces, cada respuesta tiene que dejar de ser cacheable en el borde o el nonce se reusa, que es lo mismo que no tenerlo. El sitio público es HTML cacheado y esa propiedad es la que lo sostiene en un pico de difusión (amenaza D1) | Si Next emite nonces compatibles con respuestas cacheadas |
+| `'unsafe-eval'` en desarrollo | Sólo cuando `NODE_ENV === "development"`, para el refresco en caliente. En el build de producción no está | — |
 | Los claims de rol se refrescan al rotar el token | Un cambio de rol tarda hasta el próximo refresh. Con cuatro administradores es aceptable y está en el runbook | Si el equipo crece |
 | Fidelidad parcial del shim local de Postgres | Falta GoTrue, PostgREST y Realtime. Una migración puede pasar local y fallar en el proyecto real, o al revés | `db push --dry-run` antes del primer push, y `db advisors --linked` como compuerta verdadera |
 | Sin límite de tasa en el borde | Vercel provee protección básica; un límite propio agregaría estado | Si aparece abuso real |

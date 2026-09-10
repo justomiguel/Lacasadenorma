@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { AnalyticsScript } from "@/components/site/analytics";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { HelpBar } from "@/components/site/help-bar";
@@ -69,6 +70,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <StructuredData
           json={graph([organizationSchema(siteUrl), webSiteSchema(siteUrl)])}
         />
+
+        <AnalyticsScript />
       </head>
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <a

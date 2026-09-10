@@ -27,7 +27,8 @@ identificadores, los commits y los nombres de tablas están en inglés** (ADR-01
 - **Ningún dato inventado llega a la interfaz.** Sin CBU de ejemplo, sin montos de muestra, sin
   fechas estimadas. Si el dato no está verificado, la sección se omite. `npm run check:placeholders`
   verifica lo que puede; el resto es criterio.
-- Todo monto es `bigint` en unidad mínima + moneda. Nunca `float`. Nunca sumar monedas distintas.
+- Todo monto es un entero en unidad mínima más su moneda: `bigint` en la base, `Money` en
+  TypeScript. Nunca `float`, nunca decimales, nunca sumar monedas distintas.
 - Nada financiero se borra: se anula con `voided_at` y `void_reason`.
 - Server Components por defecto. `"use client"` sólo con interactividad real, y lo más abajo posible
   en el árbol.

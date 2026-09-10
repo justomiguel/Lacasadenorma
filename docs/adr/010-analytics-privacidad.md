@@ -24,14 +24,18 @@ proyecto.
 La vista de página no está en la lista: la cuenta el script del proveedor, incluidas las
 navegaciones del cliente. Emitirla también desde el sitio la contaría dos veces.
 
-| Evento | Propiedades |
-|---|---|
-| `ayudar_click` | ubicación en la página |
-| `metodo_visto` | país del método |
-| `dato_copiado` | país, tipo de campo (**nunca** el valor) |
-| `compartir` | canal de destino, ruta |
-| `transparencia_vista` | ruta |
-| `novedad_vista` | slug |
+| Evento | Propiedades | Dónde se emite |
+|---|---|---|
+| `ayudar_click` | ubicación en la página | `components/campaign/help-cta.tsx` |
+| `metodo_visto` | país del método | `components/campaign/donation-methods.tsx` |
+| `dato_copiado` | país, tipo de campo (**nunca** el valor) | `components/campaign/donation-methods.tsx` |
+| `compartir` | canal de destino, ruta | `components/campaign/share-block.tsx` |
+
+La lista es exactamente esa, y la columna de la derecha existe para que se pueda verificar. Una
+versión anterior de este ADR declaraba también `transparencia_vista` y `novedad_vista`: se quitaron
+porque son vistas de página con otro nombre —el proveedor ya las separa por ruta— y porque nunca se
+emitieron. Un evento declarado y no emitido es una afirmación falsa sobre lo que el sitio mide, y las
+afirmaciones sobre privacidad son las que menos conviene tener desactualizadas.
 
 La capa de analítica es un puerto (`Analytics`, en `src/domain/ports/analytics.ts`) con dos
 implementaciones: una que no hace nada (por defecto, y en tests) y una que envía a un proveedor
@@ -41,7 +45,14 @@ respetuoso de la privacidad cuando está configurado. **Sin configuración, no s
 
 No se instala ningún SDK. El adaptador de navegador busca en `window` la función global que exponen
 los scripts compatibles con Plausible —el mismo contrato que implementan Umami y varios otros— y la
-llama si existe. El script sólo se inyecta cuando `NEXT_PUBLIC_ANALYTICS_SCRIPT_URL` está definida.
+llama si existe. El script sólo se inyecta cuando `NEXT_PUBLIC_ANALYTICS_SCRIPT_URL` y
+`NEXT_PUBLIC_ANALYTICS_DOMAIN` están definidas las dos (`components/site/analytics.tsx`).
+
+Hay un detalle que hace falta escribir porque se descubre tarde y de la peor manera: **la CSP y la
+analítica están acopladas**. Con `script-src 'self'`, configurar las variables no alcanza —el
+navegador bloquea el script y no llega un solo evento, sin que nada se vea roto—. `next.config.ts`
+deriva el origen permitido de la misma variable que inyecta el script, así que las dos cosas no
+pueden quedar desalineadas.
 
 Es una decisión con dos consecuencias buenas y una mala, y las tres son deliberadas:
 

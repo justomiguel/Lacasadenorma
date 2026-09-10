@@ -12,15 +12,20 @@
  *
  * La vista de página **no** está en esta lista: la cuenta el script del proveedor,
  * incluidas las navegaciones del cliente. Emitirla también desde acá la contaría
- * dos veces.
+ * dos veces. Por eso tampoco hay eventos de "vio la transparencia" ni "vio una
+ * novedad": son vistas de página con otro nombre, y el proveedor ya las separa por
+ * ruta. Un evento que duplica un dato que ya existe sólo agrega una forma de que los
+ * dos números no coincidan.
+ *
+ * Cada evento de esta lista se emite desde algún lugar del sitio, y el listado de
+ * dónde está en `docs/privacy.md`. Un evento declarado y nunca emitido es una
+ * afirmación falsa sobre lo que el sitio mide.
  */
 export type AnalyticsEvent =
   | { name: "ayudar_click"; props: { origen: string } }
   | { name: "metodo_visto"; props: { pais: string } }
   | { name: "dato_copiado"; props: { pais: string; campo: string } }
-  | { name: "compartir"; props: { canal: string; ruta: string } }
-  | { name: "transparencia_vista"; props: { ruta: string } }
-  | { name: "novedad_vista"; props: { slug: string } };
+  | { name: "compartir"; props: { canal: string; ruta: string } };
 
 export interface Analytics {
   track(event: AnalyticsEvent): void;

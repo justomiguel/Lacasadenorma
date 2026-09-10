@@ -30,13 +30,35 @@ const supabaseOrigin = supabaseUrl ? new URL(supabaseUrl).origin : null;
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const servesOverHttp = siteUrl !== undefined && siteUrl.startsWith("http://");
 
+/**
+ * Origen del script de analítica, si hay uno configurado (ADR-010).
+ *
+ * La CSP y la analítica están acopladas y conviene decirlo en voz alta: con
+ * `script-src 'self'`, configurar el proveedor no alcanza —el navegador bloquea el
+ * script y no llega ningún evento—. El origen se deriva de la misma variable que
+ * inyecta el script, así que las dos cosas no pueden divergir. Sin variable, la
+ * política no se abre ni un milímetro.
+ */
+const analyticsScript = process.env.NEXT_PUBLIC_ANALYTICS_SCRIPT_URL?.trim();
+const analyticsOrigin =
+  analyticsScript !== undefined && analyticsScript.length > 0
+    ? new URL(analyticsScript).origin
+    : null;
+
+/** Los orígenes externos que la política permite, ya sin nulos ni repetidos. */
+function allow(...origins: readonly (string | null)[]): string {
+  const unique = [...new Set(origins.filter((origin) => origin !== null))];
+
+  return unique.length === 0 ? "" : ` ${unique.join(" ")}`;
+}
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'none'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  `img-src 'self' data: blob:${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
+  `img-src 'self' data: blob:${allow(supabaseOrigin)}`,
   "font-src 'self'",
   // Next inyecta estilos en línea; eliminar 'unsafe-inline' exigiría una
   // arquitectura de nonces para estilos. Declarado como deuda conocida en
@@ -46,8 +68,8 @@ const contentSecurityPolicy = [
   // entre entornos y para el refresco en caliente; en producción no lo usa nunca.
   // Sin esta distinción, la consola de desarrollo se llena de errores de CSP y el
   // ruido esconde los errores de verdad (principio X).
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
-  `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}${allow(analyticsOrigin)}`,
+  `connect-src 'self'${allow(supabaseOrigin, analyticsOrigin)}`,
   "manifest-src 'self'",
   ...(servesOverHttp ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");

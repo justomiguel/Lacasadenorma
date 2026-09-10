@@ -5,6 +5,5 @@ export * from "./expense";
 export * from "./media";
 export * from "./milestone";
 export * from "./payment-method";
-export * from "./person";
 export * from "./role";
 export * from "./update";

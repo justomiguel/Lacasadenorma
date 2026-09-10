@@ -25,3 +25,6 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [012](./012-design-system.md) | Sistema de diseño propio sobre tokens de Tailwind 4 | Aceptada |
 | [013](./013-base-datos-local.md) | Desarrollo y testing de base de datos sin Docker | Aceptada |
 | [014](./014-idioma.md) | Castellano para producto y documentación, inglés para el código | Aceptada |
+| [015](./015-fixture-de-desarrollo.md) | Un fixture de desarrollo, separado y explícito | Aceptada |
+| [016](./016-totales-recibidos-agregados.md) | El total recibido viene de una vista agregada, no del detalle de aportes | Aceptada |
+| [017](./017-revalidacion.md) | Revalidación: ISR de cinco minutos más invalidación explícita al publicar | Aceptada |
