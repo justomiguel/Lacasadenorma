@@ -39,7 +39,7 @@ Ese "espera a que terminen" es el motivo de que `deploy.yml` se dispare con `wor
 | ------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `ci.yml`      | Tipos, reglas de capas, formato, tests, cifras de relleno, build, secretos en el bundle | Cada pull request y cada push a `main`                           |
 | `db.yml`      | Que las migraciones apliquen y que las policies RLS nieguen lo que tienen que negar     | Pull requests que tocan `supabase/**` o el script; push a `main` |
-| `e2e.yml`     | Los nueve flujos críticos y la accesibilidad, en tres navegadores                       | Cada pull request y cada push a `main`                           |
+| `e2e.yml`     | Los nueve flujos críticos y la accesibilidad, en dos modos y tres navegadores            | Cada pull request y cada push a `main`                           |
 | `quality.yml` | Los presupuestos de performance, accesibilidad, buenas prácticas y SEO                  | Cada pull request y cada push a `main`                           |
 | `deploy.yml`  | Que a producción llegue sólo lo que pasó las compuertas                                 | Pull request (preview) y `workflow_run` de CI/E2E sobre `main`   |
 
@@ -51,11 +51,19 @@ Dos cosas que parecen detalles y no lo son:
 - **`db.yml` está separado de `ci.yml`.** Instalar PostgreSQL 17 con pgTAP tarda minutos y sólo puede
   cambiar de resultado si cambia el esquema. Junto con el resto haría esperar ese tiempo a cada
   corrección de una coma.
+- **`e2e.yml` es una matriz de dos modos**, así que aparecen **dos** checks: `sin-datos · flujos
+  críticos y accesibilidad` y `con-datos · flujos críticos y accesibilidad`. Sin `fail-fast`: si los
+  dos se rompen hace falta ver los dos, y cancelar el segundo esconde la mitad del diagnóstico.
 
-Ni los E2E ni Lighthouse usan credenciales de Supabase, y es a propósito: el sitio tiene que
-funcionar sin base de datos configurada (FR-034), y correr esas suites en ese modo es la única
+Ni Lighthouse ni el modo `sin-datos` usan credenciales de Supabase, y es a propósito: el sitio tiene
+que funcionar sin base de datos configurada (FR-034), y correr la suite en ese modo es la única
 verificación automática de que la degradación funciona. Si algo falla ahí, se arregla la página o el
 test; **no** se agregan secretos a esos workflows.
+
+El modo `con-datos` tampoco usa el proyecto de Supabase: levanta un PostgreSQL local con el fixture y
+un PostgREST encima. Las cifras que la suite verifica son las del fixture, conocidas y estables, no
+las de producción. Un E2E que dependiera de los datos reales fallaría cada vez que alguien registra
+un aporte.
 
 ---
 
@@ -185,9 +193,9 @@ GitHub. Hasta que estén, los workflows corren pero **las compuertas no bloquean
    - requerir pull request antes del merge, con al menos una aprobación;
    - requerir revisión de Code Owners (después de completar el CODEOWNERS);
    - requerir que estén en verde: `Todo lo que rompe el merge`, `Riesgo conocido en las
-     dependencias`, `Flujos críticos y accesibilidad en tres navegadores`, `Presupuestos de
-     performance, accesibilidad y SEO` y, cuando el cambio toca el esquema, `Migraciones, advisors y
-     policies RLS`;
+     dependencias`, `sin-datos · flujos críticos y accesibilidad`, `con-datos · flujos críticos y
+     accesibilidad`, `Presupuestos de performance, accesibilidad y SEO` y, cuando el cambio toca el
+     esquema, `Migraciones, advisors y policies RLS`;
    - requerir que la rama esté actualizada con `main` antes de mergear;
    - prohibir push directo y force-push sobre `main`.
 3. **Entorno `production`** (Settings → Environments → New environment):
