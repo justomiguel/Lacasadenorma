@@ -52,6 +52,11 @@ const SIN_PORTAPAPELES = [OTRO_MODO, /portapapeles/];
  * migrada y con el fixture: eso lo hace `scripts/e2e.sh` antes, porque recrear un
  * esquema no es algo que deba pasar mientras Playwright cuenta los segundos de
  * arranque.
+ *
+ * Cuando la corrida entra por `scripts/e2e.sh` —o sea siempre, en CI—, la API ya está
+ * levantada antes de acá: **el build la necesita**, porque las páginas estáticas se
+ * prerenderizan leyendo la base. Esta declaración es para quien invoca
+ * `npx playwright test` a mano, y por eso reusa la que encuentre en lugar de fallar.
  */
 const servidores = [
   ...(MODO === "con-datos"

@@ -234,7 +234,7 @@ levantar servidores, no construirlos con entornos diferentes, así que la prepar
 | --- | --- | --- |
 | Puerto | 3210 | 3211 |
 | PostgreSQL | no hace falta | requerido |
-| Preparación | ninguna | `db-local.sh reset` + `fixture` |
+| Preparación | ninguna | `db-local.sh reset` + `fixture` + API local arriba, y recién entonces el build |
 | Variables de Supabase | vacías y exportadas | apuntando a la API local |
 | Servidores | `next start` | `next start` + `node scripts/local-api.mjs` |
 | Suites | `e2e/comun/` + `e2e/sin-datos/` | `e2e/comun/` + `e2e/con-datos/` |
