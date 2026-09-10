@@ -66,15 +66,41 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Mientras el proyecto de Vercel no exista, el preview no se puede desplegar.
+      # Hasta que se carguen los secretos, este job explica qué falta en lugar de
+      # frenar el pull request con `--token, but it's missing a value`, que no dice
+      # nada. Es el mismo criterio que arriba con los forks, aplicado al período
+      # anterior al primer despliegue.
+      #
+      # El secreto se compara en un `if` de paso porque el contexto `secrets` no
+      # existe en el `if` de un job; sí en su `env`, que es de donde se lee acá. La
+      # comparación no imprime el valor.
+      - name: Avisar si todavía no hay proyecto de Vercel
+        if: env.VERCEL_TOKEN == ''
+        run: |
+          echo "::notice::Sin preview: falta configurar VERCEL_TOKEN, VERCEL_ORG_ID y VERCEL_PROJECT_ID."
+          {
+            echo "## Todavía no hay preview"
+            echo ""
+            echo "Faltan los secretos \`VERCEL_TOKEN\`, \`VERCEL_ORG_ID\` y"
+            echo "\`VERCEL_PROJECT_ID\` (Settings → Secrets and variables → Actions)."
+            echo "Cómo obtenerlos está en \`docs/deployment.md\` §7."
+            echo ""
+            echo "Mientras tanto, este cambio se revisa local con \`npm run dev\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Traer la configuración del proyecto de Vercel
+        if: env.VERCEL_TOKEN != ''
         run: npx --yes vercel@59 pull --yes --environment=preview --token="$VERCEL_TOKEN"
 
       - name: Construir el sitio con la configuración de preview
+        if: env.VERCEL_TOKEN != ''
         run: npx --yes vercel@59 build --token="$VERCEL_TOKEN"
 
       # La URL que devuelve el comando no es secreta y sirve para revisar; el token
       # nunca aparece en la salida porque viaja por el entorno.
       - name: Publicar el preview
+        if: env.VERCEL_TOKEN != ''
         run: |
           url="$(npx --yes vercel@59 deploy --prebuilt --token="$VERCEL_TOKEN" | tail --lines 1)"
           {
@@ -268,6 +294,12 @@ jobs:
     # lo irreversible, que es la migración. Pedirla también para publicar HTML
     # convertiría la compuerta en un trámite, y un trámite se aprueba sin leer.
     # Un despliegue equivocado se revierte promoviendo el anterior en Vercel.
+    #
+    # Y a propósito sin el aviso por secreto faltante que sí tiene el preview: acá
+    # el silencio sería el problema. Un merge a `main` que no publica nada y no se
+    # queja deja creer que el sitio está actualizado cuando no lo está, y eso en
+    # este proyecto significa cifras viejas en la página de transparencia. Si falta
+    # el token, este job tiene que ponerse rojo (principio XII).
 
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

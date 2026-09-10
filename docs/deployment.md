@@ -114,6 +114,12 @@ workflow del repositorio base **con los secretos disponibles** sobre código que
 persona. Es la forma conocida de perder el token de despliegue. Un aporte externo se revisa
 localmente.
 
+Mientras los secretos de Vercel no estén cargados, el job de preview no falla: escribe en el resumen
+qué falta y termina en verde. La alternativa era un pull request en rojo por algo que ningún autor
+puede arreglar desde el código, y una compuerta que está roja por defecto es una compuerta que se
+aprende a ignorar. El de producción sí falla en el mismo caso, y a propósito: un merge a `main` que
+no publica nada y no se queja deja creer que el sitio está al día cuando no lo está.
+
 ---
 
 ## 5. Cómo llegan las migraciones a producción
