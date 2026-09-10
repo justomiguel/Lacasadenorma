@@ -123,6 +123,25 @@ leer la fila primero**, así que una tabla con policy de `UPDATE` y sin policy d
 filas modificadas y ningún error (amenaza E5). Está cubierto en
 `030-matriz-de-permisos.sql`.
 
+### Toda operación del backoffice deja rastro, y el compilador lo exige
+
+Las quince operaciones pasan por `perform()` en `src/application/admin/core.ts`, y su parámetro
+`audit` es **obligatorio**: una operación nueva que no arme su entrada de `audit_log` no compila
+([ADR-020](./adr/020-rastro-obligatorio.md)). El rastro se escribe después de que la mutación salió
+bien, y si la escritura falla la operación **falla entera**, porque un cambio sin rastro es peor que un
+cambio que no se hizo.
+
+Era una convención escrita en un comentario, y la convención se rompió sola: tres operaciones de
+contenido —guardar una novedad, agregar una foto, guardar un hito— quedaron sin rastro sin que nada lo
+notara. Ninguna violaba FR-016, que pide el rastro para los datos financieros, pero tampoco estaba
+documentada como excepción, y una de ellas era hermana exacta de otra que sí auditaba. El signo de
+pregunta del tipo era lo que lo hacía posible; ahora no está.
+
+El `diff` lo **redacta cada caso de uso**, y eso es parte del control, no un detalle de formato: del
+cambio de una cuenta bancaria se guarda qué campos se tocaron y nunca el CBU, de un aporte se guarda si
+tenía nota de conciliación y nunca qué decía, y del texto de una novedad se guarda el título y nunca el
+cuerpo. El registro lo leen más roles que las tablas que audita.
+
 ### El total recibido no sale del detalle
 
 `anon` no puede leer `contributions` en absoluto. Lo público es `campaign_totals`, una vista con
@@ -337,7 +356,7 @@ lo primero que hay que revisar cuando el contexto cambie:
 | `script-src 'unsafe-inline'` | Con nonces el HTML público deja de ser cacheable | Si Next emite nonces compatibles con respuestas cacheadas |
 | El claim de rol se refresca al rotar el token | Un cambio de rol tarda hasta el próximo refresh | Si el equipo crece |
 | Fidelidad parcial del shim local | Falta GoTrue y Realtime | `db push --dry-run` y `db advisors --linked` como compuerta real |
-| La mutación y su entrada de auditoría no son atómicas | Son dos viajes a la base. Si el segundo falla, el cambio queda sin rastro y la pantalla informa el error, no lo esconde. Cerrar la ventana pediría una función SQL por operación, o sea el dominio duplicado en PL/pgSQL ([ADR-019](./adr/019-auditoria-por-funcion.md)) | Si el rastro pasa a ser un requisito legal y no operativo |
+| La mutación y su entrada de auditoría no son atómicas | Son dos viajes a la base, y desde [ADR-020](./adr/020-rastro-obligatorio.md) son los quince, no sólo los financieros. Si el segundo falla, el cambio queda sin rastro y la pantalla informa el error, no lo esconde. Cerrar la ventana pediría una función SQL por operación, o sea el dominio duplicado en PL/pgSQL ([ADR-019](./adr/019-auditoria-por-funcion.md)) | Si el rastro pasa a ser un requisito legal y no operativo |
 | Sin límite de tasa en el borde | Vercel provee protección básica | Si aparece abuso real |
 | Sin 2FA obligatorio en las cuentas de administración | Depende del proveedor de identidad, no del código | Antes de dar acceso a más personas |
 | Un sitio clonado que copie el diseño y cambie el CBU | Está fuera del control técnico | Se mitiga por producto: dominio único comunicado en todos los canales, y los datos bancarios publicados también fuera del sitio |

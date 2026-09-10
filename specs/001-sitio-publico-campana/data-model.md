@@ -195,6 +195,11 @@ privilegiado.
 
 Sin policies de `UPDATE` ni `DELETE` para nadie, ni para `owner`.
 
+**Escriben acá las quince operaciones del backoffice, sin excepción.** No sólo las financieras que pide
+FR-016: también guardar una novedad, agregarle una foto y guardar un hito, porque las tres cambian lo
+que el sitio publica. Es una obligación del tipo y no una convención
+([ADR-020](../../docs/adr/020-rastro-obligatorio.md)).
+
 Y el `INSERT` **no llega por privilegio de tabla**: `authenticated` sólo tiene `SELECT`, y el rastro se
 agrega llamando a `public.record_audit(action, entity_table, entity_id, diff)`, que es `security
 definer` y comprueba `has_min_role('auditor')` en su primera línea

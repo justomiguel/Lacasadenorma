@@ -296,7 +296,7 @@ describe("novedades", () => {
     const result = await saveUpdate(editor, draft);
 
     expect(result.status).toBe("ok");
-    expect(fake.calls.map((call) => call.name)).toEqual(["saveUpdate"]);
+    expect(fake.calls.map((call) => call.name)).toEqual(["saveUpdate", "audit.append"]);
   });
 
   /** Un `<script>` en el cuerpo sería un XSS con privilegios de administración (T4). */
@@ -318,6 +318,31 @@ describe("novedades", () => {
 
     expect(result.status).toBe("invalid");
     expect(result.status === "invalid" ? result.fieldErrors : {}).toHaveProperty("slug");
+  });
+
+  /**
+   * `saveUpdate` es también la operación con la que se edita una novedad ya publicada,
+   * así que su rastro no es opcional: sin él, cambiar lo que dice el sitio sería
+   * invisible (ADR-020). El cuerpo no va al diff, que puede tener 20.000 caracteres.
+   */
+  it("guardar deja rastro con el título, y sin el cuerpo", async () => {
+    const { deps: editor, fake } = deps("editor");
+    await saveUpdate(editor, draft);
+
+    expect(fake.audit).toHaveLength(1);
+    expect(fake.audit[0]).toMatchObject({
+      action: "update.created",
+      entityTable: "updates",
+      diff: { slug: "empezo-el-techo", title: "Empezó el techo" },
+    });
+    expect(JSON.stringify(fake.audit)).not.toContain("chapas");
+  });
+
+  it("editar una novedad existente se distingue de crearla", async () => {
+    const { deps: editor, fake } = deps("editor");
+    await saveUpdate(editor, { ...draft, id: RECORD });
+
+    expect(fake.audit[0]).toMatchObject({ action: "update.updated" });
   });
 
   it("publicar deja rastro y despublicar también", async () => {
@@ -366,7 +391,31 @@ describe("novedades", () => {
     expect(fake.calls.map((call) => call.name)).toEqual([
       "createMedia",
       "attachMediaToUpdate",
+      "audit.append",
     ]);
+  });
+
+  /**
+   * La entidad del rastro es la novedad y no la foto: quien lee el registro pregunta
+   * qué le pasó a esta novedad, y el identificador de la fila de `media` no contesta.
+   */
+  it("la foto deja rastro colgado de la novedad, no de la foto", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const file = new File([new Uint8Array([0xff, 0xd8, 0xff])], "techo.jpg", {
+      type: "image/jpeg",
+    });
+
+    await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file,
+      alt: "Cabriadas de madera apoyadas sobre los muros",
+    });
+
+    expect(fake.audit[0]).toMatchObject({
+      action: "update.photo_added",
+      entityTable: "updates",
+      entityId: RECORD,
+    });
   });
 });
 
@@ -423,6 +472,29 @@ describe("hitos", () => {
     });
 
     expect(result.status).toBe("ok");
+  });
+
+  /**
+   * Es la operación hermana de `saveBudgetItem`: misma forma, misma casilla de
+   * publicación, y las dos cambian lo que muestra el sitio. Durante un tiempo una
+   * auditaba y la otra no, sin que nada explicara la diferencia (ADR-020).
+   */
+  it("guardar un hito deja rastro con el estado y si quedó publicado", async () => {
+    const { deps: editor, fake } = deps("editor");
+    await saveMilestone(editor, {
+      campaignId: CAMPAIGN,
+      title: "Techo colocado",
+      status: "completado",
+      happenedOn: "2026-08-20",
+      publish: "on",
+    });
+
+    expect(fake.audit).toHaveLength(1);
+    expect(fake.audit[0]).toMatchObject({
+      action: "milestone.created",
+      entityTable: "milestones",
+      diff: { title: "Techo colocado", status: "completado", published: true },
+    });
   });
 });
 

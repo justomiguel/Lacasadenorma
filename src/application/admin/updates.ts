@@ -21,6 +21,9 @@ import {
  * **Guardar y publicar son dos operaciones.** Un borrador se guarda sin validar que
  * el texto esté terminado; publicar es un acto aparte y explícito. Así se puede
  * empezar a escribir en la obra, con mala señal, sin miedo a publicar algo a medias.
+ * Las dos dejan rastro, también la del borrador: editar el texto de una novedad ya
+ * publicada entra por acá, y sin la entrada el cambio sería invisible
+ * ([ADR-020](../../../docs/adr/020-rastro-obligatorio.md)).
  *
  * **El cuerpo se parsea antes de guardar.** No para transformarlo —se guarda el
  * Markdown tal cual— sino para rechazar lo que el renderizador no va a poder mostrar.
@@ -68,6 +71,14 @@ export async function saveUpdate(
       }),
     }),
     success: () => "Novedad guardada.",
+    audit: (data, output) => ({
+      action: data.id === null ? "update.created" : "update.updated",
+      entityTable: "updates",
+      entityId: output.id,
+      // El cuerpo no va al diff: son hasta veinte mil caracteres, y el registro se lee
+      // como una lista de qué pasó, no como un historial de versiones del texto.
+      diff: { slug: data.slug, title: data.title },
+    }),
   });
 }
 
@@ -161,5 +172,13 @@ export async function addUpdatePhoto(
       return { mediaId: media.id };
     },
     success: () => "Foto agregada.",
+    audit: (data, output) => ({
+      action: "update.photo_added",
+      // La entidad es la novedad y no la foto: quien lee el registro busca "qué le
+      // pasó a esta novedad", y el identificador de la fila de `media` no le dice nada.
+      entityTable: "updates",
+      entityId: data.updateId,
+      diff: { media: output.mediaId, alt: data.alt },
+    }),
   });
 }

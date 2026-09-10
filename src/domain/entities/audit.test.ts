@@ -33,4 +33,18 @@ describe("descripción de la auditoría", () => {
       expect(label).toBe(label.toLowerCase().replace(/\.$/, ""));
     }
   });
+
+  /**
+   * La base tiene un `check` sobre `action` con esta misma expresión
+   * (`audit_log_action_format`, migración 20260909120300). Una clave nueva que no la
+   * cumpla compila, pasa los tests de la operación contra el puerto en memoria, y
+   * recién falla contra Postgres, en el `insert` del rastro: o sea que hace fallar la
+   * operación entera después de haberla hecho. Se comprueba acá para que el error
+   * aparezca al agregar la clave.
+   */
+  it("todas las claves cumplen el `check` de la base", () => {
+    for (const action of Object.keys(AUDIT_ACTION_LABELS)) {
+      expect(action).toMatch(/^[a-z_]+\.[a-z_]+$/);
+    }
+  });
 });

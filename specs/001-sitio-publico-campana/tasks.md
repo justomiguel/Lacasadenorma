@@ -14,7 +14,7 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 **Organization**: agrupadas por historia de usuario, en orden de dependencias.
 
-**Estado**: las 128 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
+**Estado**: las 132 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
 puede traer una persona: las seis fotos con espacio reservado, las fechas de Norma, el relevamiento de
 la obra y las cuentas de aporte reales. No frenan el build: por diseño van en `null` y la interfaz
 omite la sección o reserva el espacio y dice qué va a ir ahí (fase 2, regla del dato ausente). Están
@@ -335,12 +335,39 @@ cuatro siguen siendo un juicio, con las capturas como material de trabajo.
 
 ---
 
+## Phase 11: La auditoría de cierre, y el hallazgo que dejó
+
+**Objetivo**: verificar el backoffice operación por operación contra el código, no contra la memoria
+de haberlo escrito.
+
+El recorrido de las quince operaciones encontró una: `audit` era un parámetro **opcional** de
+`perform`, y tres operaciones de contenido no lo pasaban. Ninguna violaba FR-016 —que pide el rastro
+para los datos financieros— pero ninguna estaba documentada como excepción, y una de las tres,
+`saveMilestone`, es hermana exacta de `saveBudgetItem`, que sí auditaba. No era una decisión: era un
+olvido que el signo de pregunta del tipo hacía posible.
+
+- [x] T129 `audit` obligatorio en `PerformOptions`. Una operación nueva sin rastro no compila
+      ([ADR-020](../../docs/adr/020-rastro-obligatorio.md))
+- [x] T130 Las tres entradas que faltaban, con su `diff` redactado: `update.created` /
+      `update.updated` sin el cuerpo, `update.photo_added` colgado de la novedad y no de la foto, y
+      `milestone.created` / `milestone.updated` con el estado y la publicación
+- [x] T131 Tests de las tres, y uno que comprueba que toda clave de `AUDIT_ACTION_LABELS` cumple el
+      `check` de la base: una clave mal escrita compilaba, pasaba contra el puerto en memoria y
+      recién fallaba contra Postgres, en el `insert` del rastro
+- [x] T132 Documentar la invariante donde se busca: `docs/security.md` §3, `data-model.md`, el índice
+      de ADR y las cifras de `testing.md`
+
+**Checkpoint**: "toda operación del backoffice deja rastro" pasa de ser una frase en un comentario a
+una propiedad que sostiene el compilador.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
 Setup (1) → Foundational (2) → US1 (3) → US2 (4) → US4 (5) → US3 (6) → US5 (7) → Polish (8) →
-Cerrar el flujo 9 (9) → Loop de revisión visual (10)
+Cerrar el flujo 9 (9) → Loop de revisión visual (10) → Auditoría de cierre (11)
 
 US4 va antes que US3 a propósito: las capacidades de lectura se apoyan en los casos de uso de US1 y
 US2, y no dependen de autenticación.

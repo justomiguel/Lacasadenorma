@@ -19,8 +19,8 @@ menos que uno que verifica que algo no se puede hacer.**
 
 | Nivel | Herramienta | Cuántos | Qué cubre | Qué **no** cubre |
 | --- | --- | --- | --- | --- |
-| Dominio | Vitest | 119 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
-| Aplicación | Vitest con dobles en memoria | 142 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
+| Dominio | Vitest | 120 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
+| Aplicación | Vitest con dobles en memoria | 146 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
 | Infraestructura | Vitest | 49 | Redacción del logger, validación de archivos por contenido, límite de tasa, honestidad del JSON-LD | El comportamiento de Supabase |
 | Componentes | Vitest + Testing Library | 64 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas, la barra de ayuda y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
@@ -29,7 +29,7 @@ menos que uno que verifica que algo no se puede hacer.**
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
 
-Los totales: **386 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **502
+Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **502
 tests de Playwright** entre los dos modos (240 sin datos, 262 con datos).
 
 ### TDD, donde es obligatorio
@@ -351,7 +351,7 @@ llamaba el rol que lo llama de verdad, y ninguna sesión se habría podido emiti
 
 | Workflow | Job (el nombre que se pide en la protección de rama) | Qué protege |
 | --- | --- | --- |
-| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 386 tests, cifras de relleno, secretos en el bundle, build |
+| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 391 tests, cifras de relleno, secretos en el bundle, build |
 | `ci.yml` | `Riesgo conocido en las dependencias` | `npm audit` |
 | `e2e.yml` | `sin-datos · flujos críticos y accesibilidad` | El sitio sin credenciales |
 | `e2e.yml` | `con-datos · flujos críticos y accesibilidad` | Los flujos con cifras |

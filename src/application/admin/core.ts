@@ -25,10 +25,14 @@ import type { Logger } from "@/src/domain/ports/logger";
  * exactamente el caso de una Server Action invocada por su ID sin cookie
  * (amenaza T7).
  *
- * **3. Toda mutación financiera deja rastro.** `perform` recibe la acción y la
- * entidad y escribe en `audit_log` después de que la operación salió bien. Si el
- * registro de auditoría falla, la operación **falla entera**: un cambio sin rastro
- * es peor que un cambio que no se hizo (FR-016).
+ * **3. Toda operación deja rastro, y el tipo lo obliga.** `perform` recibe la acción
+ * y la entidad y escribe en `audit_log` después de que la operación salió bien. Si el
+ * registro de auditoría falla, la operación **falla entera**: un cambio sin rastro es
+ * peor que un cambio que no se hizo (FR-016). `audit` es obligatorio y no opcional
+ * porque la convención se rompió sola: tres operaciones de contenido quedaron sin
+ * rastro sin que nada lo notara, entre ellas guardar un hito, que es hermana exacta de
+ * guardar un rubro de presupuesto y sí auditaba
+ * ([ADR-020](../../../docs/adr/020-rastro-obligatorio.md)).
  */
 
 export interface Actor {
@@ -54,7 +58,7 @@ export type AdminResult<T> =
   | { readonly status: "rejected"; readonly message: string }
   | { readonly status: "failed"; readonly message: string };
 
-/** Qué se guarda en el registro de auditoría cuando la operación toca plata o cuentas. */
+/** Qué se guarda en el registro de auditoría. El `diff` va redactado: nunca datos sensibles. */
 export interface AuditTrail {
   readonly action: AuditAction;
   readonly entityTable: string;
@@ -71,8 +75,7 @@ interface PerformOptions<Input, Output> {
   readonly input: unknown;
   readonly run: (input: Input) => Promise<Output>;
   readonly success: (output: Output) => string;
-  /** Ausente cuando la operación no cambia nada auditable (por ejemplo, un borrador). */
-  readonly audit?: (input: Input, output: Output) => AuditTrail;
+  readonly audit: (input: Input, output: Output) => AuditTrail;
 }
 
 export async function perform<Input, Output>({
@@ -114,9 +117,7 @@ export async function perform<Input, Output>({
   try {
     const output = await run(parsed.data);
 
-    if (audit !== undefined) {
-      await gateway.audit.append(audit(parsed.data, output));
-    }
+    await gateway.audit.append(audit(parsed.data, output));
 
     return { status: "ok", value: output, message: success(output) };
   } catch (error) {

@@ -60,5 +60,11 @@ export async function saveMilestone(
       }),
     }),
     success: () => "Hito guardado.",
+    audit: (data, output) => ({
+      action: data.id === null ? "milestone.created" : "milestone.updated",
+      entityTable: "milestones",
+      entityId: output.id,
+      diff: { title: data.title, status: data.status, published: data.publish },
+    }),
   });
 }
