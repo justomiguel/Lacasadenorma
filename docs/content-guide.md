@@ -94,7 +94,7 @@ Esta es la lista que ADR-007 promete. Está ordenada por lo que más cambia la p
 
 ### Fotografías
 
-Ningún archivo de imagen está en el proyecto. Los cinco espacios reservados, con el texto que se ve
+Ningún archivo de imagen está en el proyecto. Los seis espacios reservados, con el texto que se ve
 hoy en pantalla:
 
 | Dónde | Qué va | Proporción |
@@ -120,7 +120,7 @@ lo que se ve para alguien que no puede verlo, no repite el epígrafe.
 | `norma.bornOn`, `norma.diedOn` | `null`. **No se estiman ni se sacan de una noticia** | La familia, si decide publicarlas |
 | `reconstruccion.scope` | Lista vacía: el relevamiento de la obra está en curso | La familia con gente del pueblo, a medida que cada parte se cotiza |
 | `transparencia.paragraphs` | Lista vacía. El método sí está escrito; falta la introducción | Quien escribe |
-| `preguntas[3].href` | `null`: "¿Dónde queda Riacho He Hé?" se responde en la home y no tiene página propia | Nadie, hasta que exista esa página |
+| `preguntas[3].href` y `linkLabel` | Los dos en `null`: "¿Dónde queda Riacho He Hé?" se responde en la home y no tiene página propia | Nadie, hasta que exista esa página |
 | Dirección de contacto en `/legales/privacidad` | No publicada, y la página lo dice | El equipo, cuando haya un canal que alguien atienda |
 
 Que `scope` esté vacío no rompe la página: `/reconstruccion` explica que el relevamiento está en curso
@@ -201,6 +201,12 @@ sensación de que hay que entrar a otra página.
 
 Cada pregunta termina en signo de interrogación y hay un test que lo verifica. Parece trivial y no lo
 es: los datos estructurados de `FAQPage` reproducen ese texto exactamente.
+
+El enlace de cada pregunta lleva su propio texto, en `linkLabel`, escrito para esa pregunta: "Ver los
+datos para transferir", "Leer qué ocurrió". **Nunca "ver más".** Un lector de pantalla puede pedir la
+lista de enlaces de la página y leerla fuera de contexto; nueve enlaces que dicen "ver más" son nueve
+enlaces entre los que no se puede elegir. Si una pregunta no tiene página propia, van en `null` los
+dos campos —el esquema los exige juntos— y la pregunta se responde y ahí termina.
 
 ---
 
