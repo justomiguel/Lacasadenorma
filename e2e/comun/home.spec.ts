@@ -65,6 +65,30 @@ test.describe("flujo 1 · abrir la home", () => {
       apertura.getByRole("link", { name: /conocer la historia de norma/i }),
     ).toHaveCount(1);
   });
+
+  test("el primer pliegue no espera más tipografía que la que dibuja", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    // Dos archivos: la serif del relato y la grotesca de la interfaz. Las dos se
+    // dibujan en la primera pantalla, así que precargarlas es correcto.
+    //
+    // El número es la parte importante. Una tercera precarga fue durante un tiempo
+    // la itálica de Newsreader, 64 KB en el camino crítico de las nueve páginas para
+    // un estilo que sólo aparece dentro del cuerpo de una novedad. El elemento LCP de
+    // cada página es su `<h1>`, y su dibujado final espera a que llegue la tipografía:
+    // sacarla del preload bajó el LCP de la home de 2,4 s a 2,1 s (ADR-018).
+    //
+    // Nada más en el proyecto detecta esa regresión. El presupuesto de Lighthouse
+    // cuenta scripts, y una tipografía no es un script.
+    const precargas = page.locator('link[rel="preload"][as="font"]');
+
+    await expect(
+      precargas,
+      "sólo se precargan las tipografías que se dibujan en el primer pliegue (ADR-018)",
+    ).toHaveCount(2);
+  });
 });
 
 test.describe("flujo 2 · entender la campaña", () => {

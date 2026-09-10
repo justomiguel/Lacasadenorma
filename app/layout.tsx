@@ -14,7 +14,7 @@ import {
 } from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
-import { archivo, newsreader } from "./fonts";
+import { archivo, newsreader, newsreaderItalic } from "./fonts";
 import "./globals.css";
 
 /**
@@ -58,8 +58,15 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const siteUrl = getSiteUrl();
 
+  // `newsreaderItalic` no aparece en ninguna regla de CSS: se aplica acá para que
+  // su `@font-face` entre en la hoja de estilos. Es lo que permite que un `<em>` en
+  // el cuerpo de una novedad se dibuje en itálica de verdad sin poner el archivo en
+  // el camino crítico de las nueve páginas. Ver app/fonts.ts.
   return (
-    <html lang="es-AR" className={`${newsreader.variable} ${archivo.variable}`}>
+    <html
+      lang="es-AR"
+      className={`${newsreader.variable} ${archivo.variable} ${newsreaderItalic.variable}`}
+    >
       <head>
         {/* Resumen del sitio para agentes y motores de respuesta. No sustituye al
             SEO tradicional; es un archivo más, barato de mantener. */}
