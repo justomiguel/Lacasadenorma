@@ -30,7 +30,10 @@ const MARKERS = [
   /\bFIXME\b/,
   /\bTBD\b/,
   /\bPENDIENTE\b/,
-  /\bPLACEHOLDER\b/i,
+  // En mayúsculas, como el resto: en minúsculas choca con la variante
+  // `placeholder:` de Tailwind, que aparece en el atributo `class` de cada campo de
+  // formulario y no es texto que nadie lea.
+  /\bPLACEHOLDER\b/,
   /\blorem ipsum\b/i,
   /X{4,}/,
   /\bcompletar acá\b/i,
