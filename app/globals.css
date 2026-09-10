@@ -129,9 +129,13 @@
 
   /* ── Medida de lectura ──────────────────────────────────────────────────
    * 68 caracteres como máximo para prosa. Una línea de 140 no se lee.
+   *
+   * En `em` y no en `ch`: `1ch` es el ancho de avance del «0», bastante más
+   * ancho que el carácter promedio del castellano, así que `68ch` entregaba
+   * cerca de 100 caracteres. Ver ux.md, sección 2.
    */
   --container-*: initial;
-  --container-measure: 68ch;
+  --container-measure: 26em;
   --container-page: 84rem;
 
   /* ── Forma ──────────────────────────────────────────────────────────────

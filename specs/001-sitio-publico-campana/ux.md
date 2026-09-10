@@ -81,8 +81,24 @@ Por eso un número decorativo —el ordinal de una lista, un contador de pasos�
 `data-figure` aunque quiera números tabulares: para eso está la utilidad `tabular-nums`. Marcar un
 ordinal como cifra hace que la segunda verificación deje de verificar nada.
 
-**Medida de lectura**: máximo `68ch` para prosa. No negociable: una línea de 140 caracteres no se
-lee.
+**Medida de lectura**: máximo **68 caracteres** para prosa. No negociable: una línea de 140
+caracteres no se lee.
+
+El token se expresa en `em` y no en `ch`, y la diferencia no es cosmética. `1ch` es el ancho de
+avance del carácter «0», bastante más ancho que el carácter promedio de un texto en castellano, así
+que `68ch` **entregaba entre 98 y 104 caracteres** en las once páginas: la medida decía 68 y daba
+casi el doble del límite que la línea de 140 pretendía evitar. Con `--container-measure: 26em` la
+medida medida —perdón por la redundancia, pero es el punto— queda **entre 61 y 66 caracteres** en los
+tres tamaños de prosa, y además escala con el tamaño de cada rol en lugar de con la forma de un
+glifo.
+
+El valor se calibró midiendo, no eligiendo un número redondo: `28em` dejaba la prosa principal en 66
+pero empujaba las notas al pie y los ítems de lista a 70 y 71, porque un `li` a `text-small` hereda la
+medida del `ul` y le resta la sangría, y porque el ancho promedio de carácter depende de qué letras
+tiene cada párrafo. Los dos efectos suman unos cinco caracteres de dispersión, y `26em` los absorbe.
+
+Todo esto se descubrió midiendo y no leyendo el CSS —el token decía 68 y el CSS estaba bien escrito—,
+y por eso la medición quedó automatizada en `e2e/comun/revision-visual.spec.ts`.
 
 ---
 
@@ -108,6 +124,13 @@ correctas; Tailwind emite el fallback hexadecimal automáticamente.
 
 **El acento se usa poco.** Si hay más de tres elementos color ladrillo en una pantalla, algo está
 mal. En una página editorial el color es un señalador, no un relleno.
+
+Lo que se cuenta son las **superficies rellenas** con el acento: un botón ladrillo, la barra de
+progreso, un bloque destacado. No se cuentan los enlaces, aunque lleven el mismo token en el texto y
+en la regla de un pixel: ésa es la forma que tiene un enlace en este sistema, y contarla convertiría
+el límite en "no más de tres enlaces por pantalla", que en una página editorial es absurdo. La
+distinción se escribió después de medir: `/novedades` acusaba cuatro elementos y dos eran los títulos
+de las novedades de la lista, exactamente donde un enlace tiene que estar.
 
 Modo oscuro: **fuera de alcance en v1** (principio III). Los tokens están estructurados para
 soportarlo con `@custom-variant dark` sin refactor.
@@ -276,6 +299,15 @@ el pie. Un menú oculto en un sitio de nueve páginas agrega un toque y JavaScri
 La acción de ayudar es persistente en mobile como una barra inferior compacta, que **no** tapa
 contenido (el `body` reserva su altura) y que desaparece en la propia página de aportes.
 
+**Y se retira mientras la acción primaria ya está en pantalla.** La barra existe para que ayudar esté
+a un toque cuando la persona se alejó de la apertura; sobre el pliegue de la home no cumple ninguna
+función, porque ahí el botón *Ayudar a reconstruir* está a la vista. Lo que hacía era duplicarlo:
+dos llamadas idénticas al mismo destino en la misma pantalla, cuatro elementos con acento donde el
+sistema admite tres (sección 12). Se resolvió a favor de la barra —el requisito de mobile es real— y
+en contra de mostrarla siempre: un observador de intersección sobre el botón de la apertura la oculta
+mientras ese botón es visible. El estado por omisión es *visible*, así que si el JavaScript no llega
+la barra se comporta como antes y la acción nunca se pierde.
+
 ---
 
 ## 10. Fotografía
@@ -317,7 +349,8 @@ El loop de revisión visual cierra sólo cuando, en capturas de 360 px y de 1440
 
 - [ ] La primera pantalla en mobile comunica qué es esto y qué se puede hacer, sin desplazarse.
 - [ ] No hay ningún gradiente, blob, sombra difusa ni card decorativa.
-- [ ] Hay como máximo tres elementos con color de acento por pantalla.
+- [ ] Hay como máximo tres superficies con relleno de acento por pantalla (sección 3: los enlaces no
+      cuentan).
 - [ ] La prosa no supera los 68 caracteres por línea en ningún viewport.
 - [ ] Las cifras están alineadas y no bailan.
 - [ ] Cada foto (o su espacio reservado) mantiene su proporción sin saltos de layout.
