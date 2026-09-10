@@ -22,8 +22,15 @@
 @theme {
   /* ── Color ──────────────────────────────────────────────────────────────
    * Papel y tinta, más un solo acento. oklch para que las mezclas sean
-   * perceptualmente correctas. Todo par texto/fondo llega a 4.5:1, salvo
-   * `ink-faint`, restringido por contrato a texto de 24 px o más.
+   * perceptualmente correctas.
+   *
+   * Los tres niveles de tinta llegan a 4.5:1 sobre los dos papeles, en
+   * cualquier tamaño. `ink-faint` estuvo un tiempo en 62% con la condición de
+   * usarse sólo en texto de 24 px o más, y esa condición no se sostuvo: los seis
+   * lugares donde se usa son texto chico —créditos de foto, "(opcional)", la
+   * línea legal del pie—, porque es ahí donde hace falta un tercer nivel. Una
+   * restricción que ningún uso real respeta no es una restricción, es una
+   * trampa; el token se oscureció hasta cumplir sin condiciones.
    */
   --color-*: initial;
 
@@ -31,7 +38,7 @@
   --color-paper-sunk: oklch(96.4% 0.008 85);
   --color-ink: oklch(22% 0.014 65);
   --color-ink-muted: oklch(48% 0.014 65);
-  --color-ink-faint: oklch(62% 0.012 65);
+  --color-ink-faint: oklch(54% 0.012 65);
   --color-rule: oklch(88% 0.008 65);
 
   /* Tierra colorada de Formosa y ladrillo de obra. Acento único. */

@@ -66,6 +66,21 @@ Todo en `rem`, con `line-height` y `letter-spacing` fijados por token, porque un
 **Las cifras usan `font-variant-numeric: tabular-nums`.** Un monto que baila al actualizarse
 transmite descuido, y acá los números son el argumento.
 
+### El atributo `data-figure`
+
+Toda cifra **que el proyecto afirma** —un monto, un porcentaje, un dato bancario— lleva
+`data-figure`. No es una utilidad de estilo: es una afirmación sobre el origen del número, y de eso
+dependen dos verificaciones opuestas de la suite E2E.
+
+- Con base de datos: se suman las cifras de la tabla de gastos y tiene que dar el total publicado
+  (SC-007).
+- Sin base de datos: **no puede haber ninguna**. Es la forma de comprobar que el sitio no degrada a
+  ceros, y un cero es una afirmación falsa sobre el mundo (FR-034, SC-012).
+
+Por eso un número decorativo —el ordinal de una lista, un contador de pasos— **no** lleva
+`data-figure` aunque quiera números tabulares: para eso está la utilidad `tabular-nums`. Marcar un
+ordinal como cifra hace que la segunda verificación deje de verificar nada.
+
 **Medida de lectura**: máximo `68ch` para prosa. No negociable: una línea de 140 caracteres no se
 lee.
 
@@ -82,7 +97,7 @@ correctas; Tailwind emite el fallback hexadecimal automáticamente.
 | `--color-paper-sunk` | `oklch(96.4% 0.008 85)` | Bloques diferenciados, sin bordes |
 | `--color-ink` | `oklch(22% 0.014 65)` | Texto. Casi negro **cálido**, no gris azulado |
 | `--color-ink-muted` | `oklch(48% 0.014 65)` | Epígrafes, metadatos. Contraste ≥ 4.5:1 sobre papel |
-| `--color-ink-faint` | `oklch(62% 0.012 65)` | Sólo texto ≥ 24 px o elementos no textuales |
+| `--color-ink-faint` | `oklch(54% 0.012 65)` | Tercer nivel: créditos de foto, "(opcional)", línea legal. Contraste ≥ 4.5:1 sobre papel |
 | `--color-rule` | `oklch(88% 0.008 65)` | Reglas de un pixel. Reemplazan a las cards |
 | `--color-brick` | `oklch(52% 0.142 38)` | **Acento único.** Tierra colorada de Formosa y ladrillo de obra. Enlaces, acciones, la barra de progreso |
 | `--color-brick-strong` | `oklch(44% 0.148 38)` | Estado activo y `:hover` |
@@ -99,9 +114,24 @@ soportarlo con `@custom-variant dark` sin refactor.
 
 ### Contraste verificado
 
-Todo par texto/fondo cumple al menos 4.5:1, y los títulos grandes al menos 3:1. `--color-ink-faint`
-está por debajo de 4.5:1 a propósito y su uso está restringido a texto de 24 px o más, lo que WCAG
-2.2 permite. Se verifica con axe en CI, no a ojo.
+Todo par texto/fondo cumple al menos 4.5:1 en cualquier tamaño, medido sobre los dos papeles:
+
+| Tinta | Sobre `paper` | Sobre `paper-sunk` |
+|---|---|---|
+| `ink` | 16,7:1 | 15,6:1 |
+| `ink-muted` | 6,3:1 | 5,9:1 |
+| `ink-faint` | 4,9:1 | 4,6:1 |
+| `brick` | 5,7:1 | 5,3:1 |
+
+`ink-faint` estuvo definido en `62%`, por debajo del umbral, con la condición de usarse sólo en
+texto de 24 px o más —lo que WCAG 2.2 permite—. La condición no se sostuvo: los seis lugares donde
+el sistema necesita un tercer nivel de tinta son texto chico, porque es ahí donde la jerarquía hace
+falta. Una restricción que ningún uso real respeta es una trampa, así que el token se oscureció a
+`54%` y la restricción desapareció. Lo encontró axe en la suite E2E, no una revisión a ojo, y por
+eso la comprobación automática vale: la regla estaba escrita en esta misma página y aun así se
+incumplió en seis lugares.
+
+`rule` (1,4:1) es para líneas de un pixel, que no son texto ni un control: no le aplica el umbral.
 
 ---
 

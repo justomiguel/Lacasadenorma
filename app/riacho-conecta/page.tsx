@@ -50,10 +50,12 @@ export default function RiachoConectaPage() {
                 key={topic}
                 className="flex items-baseline gap-md border-b border-rule py-sm"
               >
+                {/* Ordinal decorativo: números tabulares sí, `data-figure` no. Ese
+                    atributo marca las cifras que el proyecto afirma, y la suite sin
+                    datos verifica que no haya ninguna. */}
                 <span
-                  className="font-ui text-small text-ink-faint"
+                  className="font-ui text-small tabular-nums text-ink-faint"
                   aria-hidden="true"
-                  data-figure
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>

@@ -40,19 +40,20 @@ export function BudgetList({
   return (
     <div className={className}>
       <dl className="border-t border-rule">
+        {/* El `<div>` envuelve cada grupo, que es lo único que un `<dl>` admite entre
+            medio, y el `<dt>` y los `<dd>` son hijos directos de ese div. Un envoltorio
+            más adentro —el que había acá para agrupar el título con la descripción—
+            rompe la asociación etiqueta-valor, y con ella la única cosa que hace que
+            esta lista sea una lista de definiciones y no tres textos sueltos.
+
+            La colocación en dos columnas la resuelve la grilla por orden: el título
+            cae en la primera celda, el monto a su derecha y la descripción abajo. */}
         {items.map((item) => (
           <div
             key={item.id}
             className="grid gap-2xs border-b border-rule py-md sm:grid-cols-[1fr_auto] sm:gap-lg"
           >
-            <div>
-              <dt className="text-body font-medium">{item.title}</dt>
-              {item.description === null ? null : (
-                <dd className="mt-3xs max-w-measure text-small text-ink-muted">
-                  {item.description}
-                </dd>
-              )}
-            </div>
+            <dt className="text-body font-medium">{item.title}</dt>
             <dd className="font-ui text-subheading font-medium sm:text-right" data-figure>
               {item.estimatedAmount === null ? (
                 <span className="font-normal text-ink-muted">Sin cotizar</span>
@@ -60,6 +61,11 @@ export function BudgetList({
                 formatMoney(item.estimatedAmount)
               )}
             </dd>
+            {item.description === null ? null : (
+              <dd className="max-w-measure text-small text-ink-muted sm:col-start-1">
+                {item.description}
+              </dd>
+            )}
           </div>
         ))}
       </dl>
