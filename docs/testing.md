@@ -294,6 +294,25 @@ Detalles que parecen menores y no lo son:
   sería reusar el build anterior. Ese "se reusa" es también lo que escondía el problema anterior: en una
   máquina donde alguien ya tenía la API arriba, el build agarraba datos y la suite pasaba; en un runner
   limpio de CI, nunca.
+- **La caché de fetch se borra antes de construir**, y esto tardó en aparecer porque contradice lo que
+  uno supone del build. Next guarda **en disco**, en `.next/cache/fetch-cache`, cada lectura de Supabase:
+  el cliente lee por `fetch` y Next lo instrumenta. Las entradas duran la ventana de `revalidate` —cinco
+  minutos— y **sobreviven al build siguiente**, así que dos builds separados por menos de eso hornean
+  los mismos datos y el segundo no consulta la base. Si el primero corrió con la base vacía —el de
+  `npm run verify` después de un `db:verify`, que hace `reset` sin fixture, o el de una corrida que
+  falló—, el segundo hornea las once páginas sin una sola cifra con el fixture cargado y la API
+  contestando. Está medido: mismo fixture, misma API, mismo entorno, y la única diferencia entre la
+  página vacía y la página completa fue borrar ese directorio. Vale saberlo fuera del harness también,
+  porque Vercel restaura la caché de build entre despliegues: un deploy puede prerenderizar cifras
+  leídas hasta cinco minutos antes. Para el sitio es inocuo —la página revalida sola—, pero explica una
+  cifra que llega vieja a un despliegue recién hecho.
+- **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
+  comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
+  cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
+  error que dice qué pasó y qué mirar. Hace falta porque el modo de falla es silencioso **por diseño**:
+  cuando una lectura no trae nada la página muestra la rama del dato ausente en lugar de romperse
+  (FR-034), y eso, que en producción es lo correcto, acá deja que la corrida gaste seis minutos para
+  devolver veinte pruebas rojas que parecen defectos de la aplicación. Pasó, y de ahí salió la guardia.
 
 ### Los tres navegadores
 

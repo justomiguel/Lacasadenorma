@@ -179,6 +179,45 @@ levantar_api_local() {
   exit 1
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Y después de construir, mirar lo construido
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Todo lo de arriba comprueba las *condiciones* del build: que la API esté, que vea el
+# fixture, que la caché esté fría. Esto comprueba el **resultado**, que es lo único que
+# no puede estar bien por casualidad.
+#
+# Hace falta porque el modo de falla es silencioso por diseño: cuando una lectura no
+# trae nada, la página muestra la rama del dato ausente en lugar de romperse (FR-034).
+# Es correcto en producción y es lo peor posible acá: el build termina en verde, el
+# servidor arranca, y la corrida gasta seis minutos para devolver veinte pruebas rojas
+# que parecen defectos de la aplicación y son del harness. Ya pasó.
+#
+# `data-figure` es la marca de las cifras del sitio. Aparece decenas de veces en las
+# cuatro páginas cuando hay datos y **cero** veces cuando no hay: no depende del
+# fixture, sólo de que la campaña tenga números que mostrar.
+verificar_que_el_build_tiene_datos() {
+  local sin_datos=()
+  local pagina
+
+  for pagina in index ayudar transparencia reconstruccion; do
+    if ! grep -q 'data-figure' ".next/server/app/${pagina}.html" 2>/dev/null; then
+      sin_datos+=("$pagina")
+    fi
+  done
+
+  if (( ${#sin_datos[@]} > 0 )); then
+    echo "El sitio se construyó sin una sola cifra: ${sin_datos[*]}." >&2
+    echo "El build no leyó la base, así que las páginas estáticas quedaron con la rama" >&2
+    echo "del dato ausente y los flujos 3, 4, 5 y 7 van a fallar en masa." >&2
+    echo "Qué mirar, en este orden:" >&2
+    echo "  1. curl 'http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug'" >&2
+    echo "  2. rm -rf .next/cache && volvé a correr" >&2
+    echo "  3. pkill -f local-api.mjs y volvé a correr, por si la API es de otra base" >&2
+    exit 1
+  fi
+}
+
 if [[ "${E2E_REUSAR:-}" == "1" ]]; then
   if [[ "$(cat "$HUELLA" 2>/dev/null)" != "$(huella)" ]]; then
     echo "El build que hay en .next no es el de modo ${modo}." >&2
@@ -198,9 +237,28 @@ else
     levantar_api_local
   fi
 
+  # La caché de fetch se borra, y no es una limpieza por prolijidad.
+  #
+  # Next guarda **en disco** cada lectura de Supabase en `.next/cache/fetch-cache`,
+  # porque el cliente lee por `fetch` y Next lo instrumenta. Las entradas viven la
+  # ventana de `revalidate` —cinco minutos— y sobreviven al build siguiente: dos builds
+  # separados por menos de eso hornean los mismos datos, y el segundo **no consulta la
+  # base**. Si el primero corrió cuando la base estaba vacía —por ejemplo el de
+  # `npm run verify`, o el de una corrida anterior que falló—, el segundo hornea las
+  # once páginas con la rama del dato ausente aunque el fixture esté cargado y la API
+  # contestando.
+  #
+  # Está medido: mismo fixture, misma API, mismo entorno, y la única diferencia entre
+  # una página sin una sola cifra y la página completa fue borrar este directorio.
+  rm -rf .next/cache/fetch-cache
+
   say "Construyendo el sitio en modo ${modo}"
   npm run build
   huella > "$HUELLA"
+
+  if [[ "$modo" == "con-datos" ]]; then
+    verificar_que_el_build_tiene_datos
+  fi
 fi
 
 say "Recorriendo los flujos críticos en modo ${modo}"

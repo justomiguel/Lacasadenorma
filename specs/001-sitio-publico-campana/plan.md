@@ -77,14 +77,14 @@ Evaluado contra `.specify/memory/constitution.md` v1.0.0.
 
 | Principio | Cómo lo cumple este plan | Verificación |
 |---|---|---|
-| **I. Specification First** | Este plan deriva de `spec.md`; las decisiones no triviales tienen ADR (001–012) antes de codificarse | Revisión de PR: toda decisión de arquitectura tiene ADR |
+| **I. Specification First** | Este plan deriva de `spec.md`; las decisiones no triviales tienen ADR antes de codificarse (001–012 al planificar; 013–020 se agregaron cuando la implementación descubrió decisiones que el plan no había previsto) | Revisión de PR: toda decisión de arquitectura tiene ADR |
 | **II. TDD** | RED→GREEN→REFACTOR en dominio (`Money`, `Percentage`, saldos), en policies RLS (pgTAP) y en capacidades de agentes. No en maquetación | Los tests de dominio y pgTAP existen antes de su implementación |
 | **III. Simplicidad** | Sin CMS, sin monorepo, sin librería de componentes, sin Realtime, sin `cacheComponents`, sin servidor MCP. Cinco patrones, cada uno con un problema nombrado (ADR-005) | Tabla de patrones con justificación; ninguna entrada sin problema real |
 | **IV. Separación** | Cuatro capas con dependencias unidireccionales; `domain/` sin imports de I/O | Regla de ESLint `no-restricted-imports` que falla el lint si `domain/` importa React, Next o Supabase |
 | **V. Seguro por defecto** | RLS en la primera migración; clave secreta sólo en servidor; validación server-side siempre; `proxy.ts` sólo redirige; financieros append-only | pgTAP de negación por rol; grep en CI que prohíbe la clave secreta fuera de `infrastructure/`; threat model |
-| **VI. Accesibilidad** | axe en E2E sobre todas las páginas públicas en dos viewports; foco visible en los tokens; `alt` obligatorio en el modelo de datos | `e2e/accessibility.spec.ts` con cero violaciones |
+| **VI. Accesibilidad** | axe en E2E sobre todas las páginas públicas en dos viewports; foco visible en los tokens; `alt` obligatorio en el modelo de datos | `e2e/comun/accesibilidad.spec.ts` con cero violaciones, y el anillo de foco recorrido con Tab |
 | **VII. Performance** | Server Components por defecto; `next/image` obligatorio; fuentes autoalojadas; presupuestos en CI | Lighthouse CI en `quality.yml` |
-| **VIII. Diseño humano** | Sistema de diseño editorial propio con tokens; lista de anti-patrones prohibidos; loop de revisión visual; copy escrito a mano | Capturas desktop y mobile de cada página en el PR |
+| **VIII. Diseño humano** | Sistema de diseño editorial propio con tokens; lista de anti-patrones prohibidos; loop de revisión visual; copy escrito a mano | Capturas desktop y mobile de cada página, y seis de los diez criterios medidos en `e2e/comun/revision-visual.spec.ts` |
 | **IX. Listo para agentes** | `AgentCapabilityService` en `application/`; WebMCP en un solo archivo con feature detection; sólo lectura | Tests de las cinco capacidades; test que verifica que ninguna es mutante |
 | **X. Observabilidad** | Logger estructurado con redacción de campos sensibles; `/api/health`; errores de servidor con causa | Test unitario del logger que verifica la redacción |
 | **XI. Documentación** | README que levanta sin credenciales; `/docs` completo; ADRs; runbook | SC-012 verificado a mano en un clon limpio |

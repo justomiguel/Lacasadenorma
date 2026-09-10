@@ -353,6 +353,13 @@ E2E_REUSAR=1 ./scripts/e2e.sh con-datos --project=escritorio e2e/con-datos/porta
 sobre un test. En CI nunca se usa. Si el build que hay no es del modo pedido, el script corta con un
 error en lugar de correr los tests contra el sitio equivocado.
 
+Si lo que falla en masa son los flujos 3, 4, 5 y 7 —los que necesitan datos—, el sitio se construyó sin
+leer la base y el script lo dice antes de correr un solo test. Las dos causas, en orden de frecuencia:
+la caché de fetch de un build anterior (`rm -rf .next/cache` y volver a correr) y una API local que
+apunta a otra base (`pkill -f local-api.mjs`). El mecanismo está explicado en
+[`testing.md`](./testing.md#5-los-dos-modos-y-por-qué-son-dos-builds), y vale leerlo antes de tocar el
+script: la caché vive en disco y sobrevive al build siguiente, que es lo contrario de lo que uno supone.
+
 El detalle de los dos modos y de los tres navegadores está en [`testing.md`](./testing.md).
 
 ---
