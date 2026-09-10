@@ -95,18 +95,31 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
 
-    const duraciones = await page
-      .locator("a, button")
-      .evaluateAll((nodos) =>
-        nodos.map((nodo) => getComputedStyle(nodo).transitionDuration),
-      );
+    /**
+     * Los estilos se leen en un solo `evaluate` sobre `querySelectorAll`, y no con
+     * `evaluateAll` sobre un locator. La diferencia es una carrera: un locator resuelve
+     * los nodos en una llamada y los evalúa en otra, y si React reemplaza uno en el
+     * medio, `getComputedStyle` de un nodo desprendido devuelve la cadena vacía. Eso
+     * daba `NaN`, que la comparación reportaba como una transición demasiado larga: una
+     * falla intermitente que además acusaba a la página del problema equivocado. Acá el
+     * recorrido es sincrónico y no hay ventana donde el DOM pueda cambiar.
+     */
+    const duraciones = await page.evaluate(() =>
+      [...document.querySelectorAll("a, button")].map(
+        (nodo) => getComputedStyle(nodo).transitionDuration,
+      ),
+    );
+
+    expect(duraciones.length, "la home tiene enlaces y botones que medir").toBeGreaterThan(
+      0,
+    );
 
     for (const duracion of duraciones) {
       const segundos = Number.parseFloat(duracion.replace("ms", "").replace("s", ""));
 
       expect(
         duracion.includes("ms") ? segundos : segundos * 1000,
-        "con movimiento reducido ninguna transición pasa de 10 ms",
+        `con movimiento reducido ninguna transición pasa de 10 ms; se midió "${duracion}"`,
       ).toBeLessThanOrEqual(10);
     }
   });

@@ -666,18 +666,32 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     },
 
     audit: {
+      /**
+       * Se llama a `record_audit` y no se inserta en la tabla.
+       *
+       * Ningún rol tiene privilegio de `insert` sobre `audit_log`: la función es la
+       * única vía de escritura, y adentro comprueba que quien llama tenga alguno de
+       * los cuatro roles internos (ADR-019). Escribir con la sesión de quien actúa era
+       * lo que hacía que un `editor` no pudiera publicar una novedad y un `auditor` no
+       * pudiera abrir un comprobante: la policy pedía `admin` y ellos no lo son.
+       *
+       * `actor_id` y `occurred_at` no son parámetros. Los fija el trigger
+       * `audit_log_stamp_entry` desde el token y el reloj del servidor, y que la
+       * función no los acepte es la razón por la que no se pueden falsificar
+       * (migración 20260909120800, amenaza R1).
+       */
       async append(input): Promise<void> {
-        const { error } = await client.from("audit_log").insert({
-          action: input.action,
-          entity_table: input.entityTable,
-          entity_id: input.entityId,
-          // El `diff` del puerto es un objeto de valores desconocidos y la columna
-          // es `jsonb`; el cast dice lo que ya es cierto en la práctica, porque lo
-          // que se guarda son textos y booleanos armados por los casos de uso.
-          diff: input.diff as Json,
-          // `actor_id` y `occurred_at` los fija el trigger `audit_log_stamp_entry`
-          // desde el token y el reloj del servidor. Mandarlos desde acá no cambiaría
-          // nada, y por eso no se mandan (migración 20260909120800).
+        const { error } = await client.rpc("record_audit", {
+          p_action: input.action,
+          p_entity_table: input.entityTable,
+          // Los dos casts son del generador de tipos, no del esquema. Supabase declara
+          // todo argumento de función como no nulo, y estos dos aceptan `null`: el
+          // `uuid` cuando la entrada no habla de una fila concreta, y el `jsonb` cuando
+          // no hay nada que detallar. El `diff` además es un objeto de valores
+          // desconocidos del lado del puerto y una columna `jsonb` del lado de la base;
+          // lo que se guarda son textos y booleanos que armó la capa de aplicación.
+          p_entity_id: input.entityId as string,
+          p_diff: input.diff as Json,
         });
 
         if (error !== null) {

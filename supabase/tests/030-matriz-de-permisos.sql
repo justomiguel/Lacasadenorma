@@ -50,7 +50,7 @@
 -- convención se cumple antes de interpretar ningún resultado.
 
 begin;
-select plan(30);
+select plan(33);
 
 -- ── Filas de prueba ─────────────────────────────────────────────────────────
 
@@ -343,9 +343,11 @@ insert into esperado values
   ('auditor', 'people',           'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'payment_methods',  'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'user_roles',       'nada', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  -- `audit_log` no le otorga UPDATE ni DELETE a nadie, así que ahí la negación es
-  -- por privilegio y no por policy. Es la garantía de T2 y tiene su propio archivo.
-  ('auditor', 'audit_log',        'todo', 'denegado (RLS)', 'sin privilegio', 'sin privilegio');
+  -- `audit_log` no le otorga INSERT, UPDATE ni DELETE a **ningún** rol: la única vía
+  -- de escritura es `public.record_audit()` (ADR-019). La negación es por privilegio y
+  -- no por policy, que es la forma más fuerte. Es la garantía de T2, y el agregado por
+  -- función se verifica más abajo, en su propia sección.
+  ('auditor', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `editor` es el privilegio mínimo hecho rol: publica contenido y **no ve plata**.
 --
@@ -374,7 +376,10 @@ insert into esperado values
   ('editor', 'people',           'todo',              'denegado (RLS)', 'permitido',      'denegado (RLS)'),
   ('editor', 'payment_methods',  'todo',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('editor', 'user_roles',       'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  ('editor', 'audit_log',        'nada',              'denegado (RLS)', 'sin privilegio', 'sin privilegio');
+  -- Un `editor` puede agregar al registro con `record_audit()` y no puede leerlo: la
+  -- policy de select pide `can_read_ledger()`. Escritura sin lectura es la forma
+  -- correcta para un rol que no toca plata (ADR-019).
+  ('editor', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `admin` registra aportes y gastos, y no toca dos cosas: las cuentas de aporte
 -- (amenaza T1) y los roles de las personas. Tampoco borra una campaña entera.
@@ -394,7 +399,7 @@ insert into esperado values
   ('admin', 'people',           'todo', 'permitido',      'permitido',      'permitido'),
   ('admin', 'payment_methods',  'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('admin', 'user_roles',       'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  ('admin', 'audit_log',        'todo', 'permitido',      'sin privilegio', 'sin privilegio');
+  ('admin', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `owner` es el único que escribe cuentas de aporte y el único que otorga roles.
 -- Aun así hay tres cosas que tampoco puede hacer, y las tres son a propósito:
@@ -412,7 +417,7 @@ insert into esperado values
   ('owner', 'people',           'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'payment_methods',  'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'user_roles',       'todo', 'permitido', 'permitido',      'permitido'),
-  ('owner', 'audit_log',        'todo', 'permitido', 'sin privilegio', 'sin privilegio');
+  ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- ── Antes de medir: que lo medido sea lo que se cree ────────────────────────
 
@@ -777,6 +782,112 @@ select is(
     where id = '60000000-0000-4000-8000-000000000001'),
   '2850590940090418135201',
   'owner sí corrige el CBU de la cuenta publicada: la restricción no bloquea el camino legítimo (T1)'
+);
+
+-- ── La única vía de escritura del registro de auditoría (ADR-019) ───────────
+--
+-- La matriz de arriba dice que ningún rol puede insertar en `audit_log`. Esto dice la
+-- otra mitad, sin la cual la primera sería una tabla que nadie puede escribir: el
+-- agregado pasa por `public.record_audit()`, y **los cuatro roles internos pueden
+-- llamarla**.
+--
+-- Es la sección que faltaba. La policy pedía `admin` para insertar, y dos operaciones
+-- que no son de `admin` escriben una entrada: publicar una novedad (`editor`) y abrir
+-- un comprobante (`auditor`). Las dos quedaban a medio camino —la mutación hecha, el
+-- rastro no, y el mensaje diciendo que había fallado— y ninguna prueba lo veía, porque
+-- todas verificaban que la policy fuera la que decía el documento, y lo era.
+
+create temporary table agregado_por_rol (
+  rol text primary key,
+  veredicto text not null
+) on commit drop;
+
+do $$
+declare
+  r record;
+begin
+  for r in select nombre, db_role, claims from rol order by nombre
+  loop
+    insert into agregado_por_rol (rol, veredicto)
+    values (
+      r.nombre,
+      pg_temp.intentar(
+        r.db_role,
+        r.claims,
+        'agregado',
+        $s$select public.record_audit('prueba.agregada', 'expenses', null, null)$s$
+      )
+    );
+  end loop;
+end
+$$;
+
+select results_eq(
+  $q$ select rol, veredicto from agregado_por_rol order by rol $q$,
+  $q$
+    values ('admin', 'permitido'),
+           ('anon', 'sin privilegio'),
+           ('auditor', 'permitido'),
+           ('editor', 'permitido'),
+           ('owner', 'permitido')
+  $q$,
+  'los cuatro roles internos pueden dejar rastro con record_audit(); anon no tiene ni el EXECUTE (ADR-019)'
+);
+
+-- Una sesión con token válido y todavía sin ningún rol otorgado. `anon` falla antes,
+-- en el GRANT; éste es el caso que cubre la comprobación de adentro de la función. Se
+-- afirma el código **y el mensaje**, porque un 42501 con otro texto significaría que
+-- falló por una razón distinta de la que esta prueba dice estar verificando.
+create temporary table sin_rol (motivo text) on commit drop;
+
+do $$
+declare
+  resultado text;
+begin
+  set local role authenticated;
+  perform set_config(
+    'request.jwt.claims',
+    '{"sub": "10000000-0000-4000-8000-000000000001", "role": "authenticated", "app_metadata": {}}',
+    true
+  );
+
+  begin
+    perform public.record_audit('prueba.agregada', 'expenses', null, null);
+    resultado := 'no falló';
+  exception
+    when others then
+      resultado := sqlstate || ' ' || sqlerrm;
+  end;
+
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+
+  insert into sin_rol (motivo) values (resultado);
+end
+$$;
+
+select is(
+  (select motivo from sin_rol),
+  '42501 Sólo un rol interno puede agregar al registro de auditoría.',
+  'una sesión sin ningún rol otorgado no puede dejar rastro, aunque el token sea válido'
+);
+
+-- Y lo que hace que el rastro sirva: el actor no es un argumento. El trigger lo
+-- estampa desde el token, así que una credencial robada de `admin` no puede dejar la
+-- entrada apuntando a otra persona (amenazas R1, T2).
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "10000000-0000-4000-8000-000000000002", "role": "authenticated", "app_metadata": {"user_role": "auditor"}}';
+
+select public.record_audit('expense.receipt_viewed', 'expense_receipts', null, null);
+
+reset role;
+
+select is(
+  (select actor_id::text from public.audit_log
+    where action = 'expense.receipt_viewed' order by id desc limit 1),
+  '10000000-0000-4000-8000-000000000002',
+  'record_audit atribuye la entrada al sujeto del token y no acepta un actor por parámetro (R1)'
 );
 
 select * from finish();

@@ -105,6 +105,23 @@ export function apiLocal(): string {
 }
 
 /**
+ * La primera fila de una respuesta de PostgREST, o un error que dice qué faltaba.
+ *
+ * Desestructurar `[{ id }]` compila con `noUncheckedIndexedAccess` sólo a fuerza de
+ * casts, y cuando la lista viene vacía falla con "cannot destructure property", que no
+ * dice de qué consulta se trataba.
+ */
+export function primeraFila<T>(filas: readonly T[], que: string): T {
+  const fila = filas[0];
+
+  if (fila === undefined) {
+    throw new Error(`La API local no devolvió ${que}.`);
+  }
+
+  return fila;
+}
+
+/**
  * Un identificador distinto por proyecto de Playwright y por corrida.
  *
  * Los tres proyectos —escritorio, móvil y safari— corren en paralelo contra **la misma

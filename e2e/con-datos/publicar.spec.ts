@@ -1,7 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
-import { apiLocal, entrar, sufijoUnico, tokenDe } from "../soporte/backoffice";
+import {
+  apiLocal,
+  entrar,
+  primeraFila,
+  sufijoUnico,
+  tokenDe,
+} from "../soporte/backoffice";
 
 /**
  * Flujo crítico 9: publicar una actualización.
@@ -168,7 +174,10 @@ test.describe("flujo 9 · publicar una novedad", () => {
       `${apiLocal()}/rest/v1/campaigns?select=id&slug=eq.casa-de-norma-desarrollo`,
       { headers: { Authorization: `Bearer ${tokenEditor}` } },
     );
-    const [{ id: campaignId }] = (await campana.json()) as { id: string }[];
+    const { id: campaignId } = primeraFila(
+      (await campana.json()) as { id: string }[],
+      "la campaña del fixture",
+    );
 
     const creado = await request.post(`${apiLocal()}/rest/v1/updates`, {
       headers: {
@@ -186,7 +195,10 @@ test.describe("flujo 9 · publicar una novedad", () => {
 
     expect(creado.status(), "un editor tiene que poder crear un borrador").toBe(201);
 
-    const [{ id: updateId }] = (await creado.json()) as { id: string }[];
+    const { id: updateId } = primeraFila(
+      (await creado.json()) as { id: string }[],
+      "la novedad recién creada",
+    );
 
     // ── La pantalla ───────────────────────────────────────────────────────────
     await entrar(page, "auditor");

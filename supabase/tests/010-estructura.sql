@@ -15,7 +15,7 @@
 -- por qué cumplir sus reglas.
 
 begin;
-select plan(33);
+select plan(36);
 
 -- ── RLS ─────────────────────────────────────────────────────────────────────
 
@@ -58,12 +58,48 @@ select is_empty(
 -- policy de UPDATE ni de DELETE, Postgres niega esas operaciones a todos los
 -- roles, incluido `owner`. Como es una ausencia, hay que asertarla explícitamente
 -- o nadie se entera el día que alguien agrega `audit_log_delete`.
+--
+-- La única policy que queda es la de lectura. Escribir no es un privilegio de tabla
+-- de ningún rol: la única vía es `public.record_audit()` (ADR-019), y por eso la
+-- ausencia de policy de INSERT también hay que asertarla.
 
 select policies_are(
   'public',
   'audit_log',
-  array['audit_log_select', 'audit_log_insert'],
-  'audit_log tiene exactamente dos policies: leer y agregar (T2)'
+  array['audit_log_select'],
+  'audit_log tiene una sola policy, la de lectura: escribir pasa por record_audit() (ADR-019, T2)'
+);
+
+select has_function(
+  'public',
+  'record_audit',
+  array['text', 'text', 'uuid', 'jsonb'],
+  'existe record_audit(), la única vía de escritura del registro'
+);
+
+-- `security definer` es lo que hace que la función pueda escribir sin que ningún rol
+-- tenga el privilegio. Si alguien la cambiara a invoker, la función seguiría existiendo
+-- y dejaría de funcionar para los cuatro roles.
+select is(
+  (select p.prosecdef
+     from pg_proc p
+     join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'record_audit'),
+  true,
+  'record_audit es security definer: sin eso, ningún rol podría dejar rastro'
+);
+
+select is_empty(
+  $q$
+    select r.rolname::text
+      from pg_roles r
+     where r.rolname in ('anon', 'authenticated', 'service_role')
+       and has_function_privilege(
+             r.rolname, 'public.record_audit(text, text, uuid, jsonb)', 'execute'
+           )
+       and r.rolname <> 'authenticated'
+  $q$,
+  'sólo authenticated puede ejecutar record_audit: anon no deja rastro porque no puede llamarla (E3)'
 );
 
 select is_empty(
@@ -85,8 +121,8 @@ select is_empty(
 
 select table_privs_are(
   'public', 'audit_log', 'authenticated',
-  array['SELECT', 'INSERT'],
-  'authenticated sobre audit_log tiene exactamente SELECT e INSERT: ni UPDATE, ni DELETE, ni TRUNCATE (T2)'
+  array['SELECT'],
+  'authenticated sobre audit_log tiene exactamente SELECT: ni INSERT, ni UPDATE, ni DELETE, ni TRUNCATE (T2, ADR-019)'
 );
 
 select table_privs_are(

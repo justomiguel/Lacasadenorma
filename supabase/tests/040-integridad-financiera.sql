@@ -12,7 +12,7 @@
 --     más la ausencia del GRANT (amenaza T2).
 
 begin;
-select plan(25);
+select plan(26);
 
 -- ── Fixture ─────────────────────────────────────────────────────────────────
 
@@ -299,25 +299,23 @@ select lives_ok(
 
 -- ── El registro de auditoría ata al actor y la fecha con la sesión (R1) ─────
 --
--- `audit_log_insert` sólo exige `private.has_min_role('admin')`: la policy no mira
--- `actor_id` ni `occurred_at`, y no podría hacerlo sin rechazar la entrada en lugar
--- de corregirla. El trigger `audit_log_stamp_entry` los fija con el token y el reloj
--- del servidor, así que da igual lo que mande quien inserta.
+-- La amenaza R1 —"no se puede saber quién cambió una cifra"— se mitiga con este
+-- registro, y el modelo de amenazas lista una credencial de `admin` robada como actor
+-- posible. Si el actor fuera un dato que manda quien inserta, esa credencial alcanzaría
+-- para dejar el rastro apuntando a otra persona y fechado en cualquier momento; y como
+-- la tabla es append-only —probado más arriba—, la entrada falsa quedaría para siempre.
 --
--- Importa porque la amenaza R1 —"no se puede saber quién cambió una cifra"— se
--- mitiga con este registro, y el modelo de amenazas lista una credencial de `admin`
--- robada como actor posible. Sin el trigger, esa credencial alcanzaba para dejar el
--- rastro apuntando a otra persona y fechado en cualquier momento. Y como la tabla es
--- append-only —probado más arriba—, esa entrada falsa quedaba para siempre.
+-- Hay dos defensas y se prueban las dos, porque son independientes.
+--
+-- **Arriba: la función no acepta un actor.** `public.record_audit()` recibe la acción,
+-- la entidad y el diff, y nada más (ADR-019). No hay parámetro que falsificar.
 
 reset role;
 set local role authenticated;
 set local "request.jwt.claims" =
   '{"sub":"10000000-0000-4000-8000-000000000003","role":"authenticated","app_metadata":{"user_role":"admin"}}';
 
-insert into public.audit_log (actor_id, action, entity_table, occurred_at)
-values ('10000000-0000-4000-8000-000000000004', 'payment_method.updated', 'payment_methods',
-        timestamptz '2020-01-01');
+select public.record_audit('payment_method.updated', 'payment_methods', null, null);
 
 reset role;
 
@@ -328,7 +326,7 @@ select results_eq(
      where action = 'payment_method.updated'
   $q$,
   $q$ values ('10000000-0000-4000-8000-000000000003') $q$,
-  'admin declara a owner como actor y la entrada queda atribuida a admin, que es quien la insertó (R1)'
+  'la entrada queda atribuida al sujeto del token de quien la pidió (R1)'
 );
 
 select ok(
@@ -337,7 +335,29 @@ select ok(
       from public.audit_log
      where action = 'payment_method.updated'
   ),
-  'la fecha declarada en 2020 se reemplaza por la del servidor (R1)'
+  'la fecha la pone el reloj del servidor, no quien llama (R1)'
+);
+
+-- **Abajo: el trigger reemplaza lo que venga.** Es la defensa que importa el día que
+-- alguien agregue otro camino de escritura, y hoy sólo se puede probar insertando como
+-- dueño de la tabla, que es el único que puede. Se le declaran un actor ajeno y una
+-- fecha de 2020, y los dos se reemplazan igual.
+
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000003","role":"authenticated","app_metadata":{"user_role":"admin"}}';
+
+insert into public.audit_log (actor_id, action, entity_table, occurred_at)
+values ('10000000-0000-4000-8000-000000000004', 'contribution.voided', 'contributions',
+        timestamptz '2020-01-01');
+
+select results_eq(
+  $q$
+    select actor_id::text, occurred_at > now() - interval '1 minute'
+      from public.audit_log
+     where action = 'contribution.voided'
+  $q$,
+  $q$ values ('10000000-0000-4000-8000-000000000003', true) $q$,
+  'el trigger reemplaza el actor y la fecha declarados aunque la fila entre por otro camino (R1)'
 );
 
 -- Sin sesión no hay actor, y la columna queda nula en lugar de mentir. Es el caso

@@ -668,6 +668,15 @@ export type Database = {
     };
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      record_audit: {
+        Args: {
+          p_action: string;
+          p_diff: Json;
+          p_entity_id: string;
+          p_entity_table: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       app_role: "auditor" | "editor" | "admin" | "owner";
