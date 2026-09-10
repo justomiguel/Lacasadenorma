@@ -1,17 +1,32 @@
 name: E2E
 
-# Los nueve flujos críticos y la revisión de accesibilidad con axe, en los tres
-# proyectos de Playwright: chromium, webkit e iPhone 15.
+# Los nueve flujos críticos y la revisión de accesibilidad con axe, en dos modos y en
+# tres navegadores.
 #
-# Corre aparte de `ci.yml` porque descarga navegadores y levanta el sitio: es lo
-# más lento del repositorio y no tiene sentido que retrase el typecheck.
+# Corre aparte de `ci.yml` porque descarga navegadores y levanta el sitio: es lo más
+# lento del repositorio y no tiene sentido que retrase el typecheck.
 #
-# IMPORTANTE: esta suite corre SIN credenciales de Supabase, y eso es a propósito.
-# El sitio tiene que funcionar sin base de datos configurada: muestra el contenido
-# editorial, omite las cifras y avisa (FR-034, SC-012). Correr los E2E en ese modo
-# es la única verificación automática de que esa degradación funciona. Si algún
-# test falla por falta de datos, lo que hay que arreglar es el test o la página,
-# NO agregar secretos a este workflow.
+# ## Por qué son dos jobs y no uno
+#
+# Next reemplaza las variables `NEXT_PUBLIC_*` por su valor **durante la
+# construcción**. "El sitio con base de datos" y "el sitio sin base de datos" no son
+# dos configuraciones del mismo servidor: son dos builds, y por lo tanto dos jobs.
+# `scripts/e2e.sh` es el que sabe construir cada uno.
+#
+# - **sin datos** no necesita PostgreSQL y es el más importante de los dos, aunque
+#   parezca lo contrario: verifica que un clon del repositorio sin una sola credencial
+#   levante y sirva el contenido editorial completo, sin inventar un cero donde falta
+#   una cifra (FR-034, SC-012). Es el estado en el que va a estar el proyecto la
+#   primera vez que alguien lo abra, y el estado al que vuelve si se cae la base.
+# - **con datos** levanta PostgreSQL, aplica las migraciones, carga el fixture y sirve
+#   el sitio contra PostgREST. Es el único modo donde los flujos 3, 4, 5 y 7 tienen
+#   algo que afirmar: no se puede comprobar que la suma del detalle da el total
+#   publicado si no hay ningún gasto.
+#
+# Lo que ninguno de los dos hace es iniciar sesión en el backoffice con una sesión de
+# verdad: la API local no incluye GoTrue. Lo que sí se verifica es que ninguna ruta del
+# backoffice se abra sin sesión. El flujo 9 completo es una verificación manual contra
+# un proyecto de Supabase, y está en docs/runbook.md como paso obligatorio.
 
 on:
   pull_request:
@@ -27,9 +42,16 @@ permissions:
 
 jobs:
   flujos:
-    name: Flujos críticos y accesibilidad en tres navegadores
+    name: ${{ matrix.modo }} · flujos críticos y accesibilidad
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+
+    strategy:
+      # Sin `fail-fast`: si los dos modos se rompen, hace falta ver los dos. Cancelar
+      # el segundo esconde la mitad del diagnóstico y obliga a una corrida más.
+      fail-fast: false
+      matrix:
+        modo: [sin-datos, con-datos]
 
     steps:
       - name: Traer el código del pull request
@@ -44,9 +66,13 @@ jobs:
       - name: Instalar las dependencias fijadas en el lockfile
         run: npm ci
 
-      # Los navegadores se cachean por versión de Playwright, no por lockfile
-      # entero: cambiar cualquier otra dependencia no cambia qué navegadores hacen
-      # falta, y volver a bajar tres navegadores por eso serían minutos tirados.
+      - name: Dejar el runner con el mismo PostgreSQL que una máquina de desarrollo
+        if: matrix.modo == 'con-datos'
+        uses: ./.github/actions/postgres-local
+
+      # Los navegadores se cachean por versión de Playwright, no por lockfile entero:
+      # cambiar cualquier otra dependencia no cambia qué navegadores hacen falta, y
+      # volver a bajar tres navegadores por eso serían minutos tirados.
       - name: Averiguar qué versión de navegadores corresponde
         id: playwright
         run: |
@@ -59,27 +85,34 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
 
-      # Con el caché caliente esto sólo instala las bibliotecas del sistema que
-      # webkit necesita, que no se cachean porque viven fuera del home.
+      # Con el caché caliente esto sólo instala las bibliotecas del sistema que webkit
+      # necesita, que no se cachean porque viven fuera del home.
       - name: Instalar los navegadores y sus dependencias del sistema
         run: npx playwright install --with-deps
 
-      # `playwright.config.ts` levanta `npm run start` cuando detecta CI, o sea el
-      # servidor de producción: sin build previo no hay nada que servir.
-      - name: Construir el sitio como se construye en producción
-        run: npm run build
+      # PostgREST se descarga de su repositorio de releases la primera vez. Se cachea
+      # porque son veinte megas por corrida que no cambian nunca.
+      - name: Reusar el PostgREST ya descargado
+        if: matrix.modo == 'con-datos'
+        uses: actions/cache@v6
+        with:
+          path: .local/bin
+          key: ${{ runner.os }}-postgrest-v16.2
 
-      - name: Recorrer los nueve flujos críticos
-        run: npm run test:e2e
+      # El script prepara la base cuando corresponde, construye el sitio con el entorno
+      # del modo y corre Playwright. Los tres proyectos —escritorio, móvil y safari— y
+      # los dos viewports de axe salen de playwright.config.ts.
+      - name: Recorrer los flujos críticos en modo ${{ matrix.modo }}
+        run: ./scripts/e2e.sh ${{ matrix.modo }}
 
-      # Sólo cuando algo falla: en verde el reporte no lo mira nadie y ocupa lugar.
-      # Las trazas de Playwright pueden contener capturas del sitio, así que se
-      # retienen poco tiempo.
+      # Sólo cuando algo falla: en verde el reporte no lo mira nadie y ocupa lugar. Las
+      # trazas de Playwright pueden contener capturas del sitio, así que se retienen
+      # poco tiempo.
       - name: Guardar el reporte y las trazas de lo que falló
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-${{ github.run_id }}
+          name: playwright-${{ matrix.modo }}-${{ github.run_id }}
           path: |
             playwright-report/
             test-results/

@@ -50,60 +50,11 @@ jobs:
           node-version: 22
           cache: npm
 
-      # El runner `ubuntu-24.04` viene con PostgreSQL 16 instalado y detenido, pero
-      # con su cluster `main` ya reservado en el puerto 5432. Si queda ahí,
-      # `pg_createcluster` manda el cluster nuevo de la 17 al 5433 y todo lo que
-      # apunta a 5432 —el valor por defecto de scripts/db-local.sh— falla de una
-      # forma bastante difícil de leer. Se borra antes de instalar, no después.
-      - name: Liberar el puerto 5432 que reserva el PostgreSQL del runner
-        run: |
-          sudo systemctl stop postgresql || true
-          if pg_lsclusters --no-header | awk '$1 == "16" && $2 == "main" { found = 1 } END { exit !found }'; then
-            sudo pg_dropcluster --stop 16 main
-          fi
-          pg_lsclusters || true
-
-      # PostgreSQL 17 es la misma versión mayor que trae un proyecto nuevo de
-      # Supabase. `pgtap` prueba las policies y `plpgsql_check` es lo que
-      # `supabase db lint` habilita por debajo: las dos vienen empaquetadas en el
-      # repositorio oficial de PostgreSQL, que es el motivo de agregarlo.
-      - name: Instalar PostgreSQL 17 con pgTAP y plpgsql_check
-        run: |
-          sudo install -d /usr/share/postgresql-common/pgdg
-          sudo curl --fail --silent --show-error --location \
-            --output /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
-            https://www.postgresql.org/media/keys/ACCC4CF8.asc
-          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" \
-            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
-          sudo apt-get update
-          sudo apt-get install --yes \
-            postgresql-17 postgresql-17-pgtap postgresql-17-plpgsql-check
-
-      # `pg_prove` es el runner de TAP que corre los archivos de supabase/tests/.
-      # No viene con pgTAP: lo trae este paquete de Perl.
-      - name: Instalar pg_prove, que corre las pruebas pgTAP
-        run: sudo apt-get install --yes libtap-parser-sourcehandler-pgtap-perl
-
-      - name: Dejar el cluster 17 escuchando donde lo buscan los scripts
-        run: |
-          sudo pg_conftool 17 main set port 5432
-          sudo systemctl restart postgresql@17-main
-          for _ in $(seq 1 30); do
-            pg_isready --host 127.0.0.1 --port 5432 && break
-            sleep 1
-          done
-          pg_isready --host 127.0.0.1 --port 5432
-          psql --version
-
       - name: Instalar las dependencias fijadas en el lockfile
         run: npm ci
 
-      # `bootstrap` es lo único del script que pide privilegios del sistema y se
-      # corre una vez por máquina. Un runner es una máquina nueva en cada corrida,
-      # así que acá esa "única vez" es siempre: crea el rol `norma_local` y las
-      # bases `norma_dev` y `norma_test` que `db:verify` da por existentes.
-      - name: Crear el rol y las bases que espera el script
-        run: npm run db:bootstrap
+      - name: Dejar el runner con el mismo PostgreSQL que una máquina de desarrollo
+        uses: ./.github/actions/postgres-local
 
       # reset → shim → migraciones → db lint → db advisors → pgTAP → tipos --check.
       # El último paso falla si los tipos generados que están commiteados no

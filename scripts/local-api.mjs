@@ -28,6 +28,7 @@
  * borra entera en cada reset.
  *
  * Uso: node scripts/local-api.mjs
+ *      node scripts/local-api.mjs --print-anon-key   (sólo imprime la clave)
  */
 
 import { execFile, spawn } from "node:child_process";
@@ -82,6 +83,15 @@ const ANON_KEY = signJwt({
   iat: 1_757_376_000,
   exp: 2_072_995_200,
 });
+
+/**
+ * `scripts/e2e.sh` necesita la misma clave para construir el sitio, y copiarla allá
+ * dejaría dos definiciones de una credencial que se desincronizan.
+ */
+if (process.argv.includes("--print-anon-key")) {
+  process.stdout.write(`${ANON_KEY}\n`);
+  process.exit(0);
+}
 
 async function ensurePostgrest() {
   if (existsSync(BIN_PATH)) {
