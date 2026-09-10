@@ -117,23 +117,50 @@ huella() {
 # Playwright la vuelve a declarar en `playwright.config.ts` con
 # `reuseExistingServer: true`, así que la encuentra levantada y la reusa. Esa
 # declaración sigue haciendo falta para quien corre `npx playwright test` a mano.
+#
+# Ojo con el puerto ocupado: si ya hay una instancia escuchando, la que se levanta acá
+# muere al hacer `bind` y la vieja se queda atendiendo. Por eso la sonda de abajo no
+# pregunta si algo contesta, sino si lo que contesta ve el fixture.
+# La sonda pide **la campaña del fixture**, no el puerto y no una tabla cualquiera.
+#
+# Los dos escalones intermedios engañan. Que el puerto escuche no dice que PostgREST
+# haya leído el esquema. Y que una tabla conteste 200 no dice que conteste *filas*:
+# PostgREST cachea el esquema, así que una instancia levantada antes del `reset` sigue
+# respondiendo 200 sobre el esquema viejo y devuelve cero filas. Un build contra eso no
+# falla —no hay error de red que registrar— y hornea las once páginas con la rama del
+# dato ausente, que es el modo de falla más caro de diagnosticar que tiene este script.
+api_local_ve_el_fixture() {
+  local sonda="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1"
+
+  curl --fail --silent "$sonda" 2>/dev/null | grep -q '"slug"'
+}
+
 levantar_api_local() {
-  local sonda="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=id&limit=1"
   local registro="${TMPDIR:-/tmp}/e2e-api-local.log"
 
-  if curl --fail --silent --show-error --output /dev/null "$sonda" 2>/dev/null; then
-    say "La API local ya estaba levantada: se reusa"
+  if api_local_ve_el_fixture; then
+    say "La API local ya estaba levantada y ve el fixture: se reusa"
     return
+  fi
+
+  # Algo contesta en el puerto pero no devuelve la campaña. Es una instancia vieja
+  # —de una corrida anterior, con el esquema de antes del reset en su caché—, y
+  # reusarla produce un sitio construido sin cifras. Se dice qué pasa y qué hacer, en
+  # lugar de seguir y dejar el diagnóstico para después (principio XII).
+  if curl --fail --silent --output /dev/null \
+    "http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1" 2>/dev/null; then
+    echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve la campaña del fixture." >&2
+    echo "Es de antes del reset y tiene el esquema viejo en caché. Bajala y volvé a correr:" >&2
+    echo "  fuser -k ${LOCAL_API_PORT}/tcp 54331/tcp" >&2
+    exit 1
   fi
 
   say "Levantando la API local (hace falta para construir con datos)"
   node scripts/local-api.mjs > "$registro" 2>&1 &
   api_propia=$!
 
-  # La sonda pide una tabla, no el puerto: que PostgREST escuche no significa que ya
-  # haya leído el esquema, y un build contra un esquema sin leer falla igual.
   for _ in $(seq 1 60); do
-    if curl --fail --silent --output /dev/null "$sonda" 2>/dev/null; then
+    if api_local_ve_el_fixture; then
       return
     fi
 
@@ -147,7 +174,7 @@ levantar_api_local() {
     sleep 1
   done
 
-  echo "La API local no contestó en 60 s:" >&2
+  echo "La API local no contestó con la campaña del fixture en 60 s:" >&2
   cat "$registro" >&2
   exit 1
 }
