@@ -497,7 +497,12 @@ async function handleAuth(incoming, outgoing, url) {
     const row = await findUserById(claims.sub);
 
     if (row === null) {
-      authError(outgoing, 403, "user_not_found", "User from sub claim in JWT does not exist");
+      authError(
+        outgoing,
+        403,
+        "user_not_found",
+        "User from sub claim in JWT does not exist",
+      );
       return;
     }
 
@@ -608,7 +613,11 @@ async function main() {
         // error. Un 500 vacío acá se ve, del otro lado, como "esos datos no coinciden
         // con ninguna cuenta", que es exactamente la pista equivocada.
         console.error(`Error en ${url}: ${error.message}`);
-        json(outgoing, 500, { code: 500, error_code: "unexpected_failure", msg: error.message });
+        json(outgoing, 500, {
+          code: 500,
+          error_code: "unexpected_failure",
+          msg: error.message,
+        });
       });
       return;
     }
