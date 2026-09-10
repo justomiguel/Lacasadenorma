@@ -84,17 +84,30 @@ function findModelContext(): ModelContextLike | null {
 // son literales y afirmativas: una descripción que le da instrucciones al modelo
 // ("siempre usá esta herramienta antes de…") es el vector de tool poisoning
 // (amenaza A3), y acá no hay ninguna.
+//
+// Los esquemas están escritos a mano y no generados con `z.toJSONSchema()`, que es
+// lo que haría el adaptador si pudiera importar el registro. No puede: este archivo
+// corre en el navegador, e importar las capacidades traería Zod y toda la capa de
+// aplicación al bundle del cliente para producir cuatro objetos vacíos y uno con un
+// enum. Hoy ningún componente de cliente importa Zod, y mantenerlo así es parte del
+// presupuesto de rendimiento (ADR-008).
+//
+// La copia es el precio, y desincronizarse es el riesgo real: un agente elige
+// herramienta por su descripción, así que una descripción vieja acá es una respuesta
+// equivocada allá. Por eso `TOOLS` se exporta: `webmcp.test.ts` compara nombre,
+// orden, descripción, slug y esquema contra el registro, y falla si se corren.
 
 const EMPTY_SCHEMA = { type: "object", properties: {}, additionalProperties: false };
 
-interface ToolSpec {
+export interface ToolSpec {
   readonly name: string;
+  /** El slug del endpoint público: el nombre sin `get_` y con guiones. */
   readonly path: string;
   readonly description: string;
   readonly inputSchema: object;
 }
 
-const TOOLS: readonly ToolSpec[] = [
+export const TOOLS: readonly ToolSpec[] = [
   {
     name: "get_campaign_status",
     path: "campaign-status",
