@@ -231,8 +231,9 @@ que lo que hay que saber está acá:
 - **Las cuatro categorías ≥ 0,95**, que es lo que fija la constitución (principio VII, SC-003). Es la
   compuerta principal, y la más estable: en las mediciones da entre 0,97 y 0,99.
 - **Presupuesto de scripts: 200 KB transferidos por página.** La página más pesada mide 181 KB, de los
-  cuales 121 KB son el runtime de React y de Next. El margen alcanza para un cambio de versión y no
-  alcanza para importar Zod o un cliente de Supabase en un componente de cliente.
+  cuales 121 KB son el runtime de React y de Next y ~42 KB son código del sitio. El margen alcanza para
+  un cambio de versión y no alcanza para importar Zod o un cliente de Supabase en un componente de
+  cliente.
 - **Cero recursos de terceros.** No hay analytics invasivo ni fuentes externas: las fuentes se
   autoalojan con `next/font`. Si aparece un tercero, el presupuesto lo hace visible en el pull
   request que lo introduce, que es cuando conviene discutirlo.

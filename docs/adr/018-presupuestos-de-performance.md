@@ -23,8 +23,9 @@ mayor parte no es del sitio: es el runtime de React y de Next. Los 50 KB del arc
 presupuesto de código propio a una métrica de transferencia total. La assertion nunca midió lo que el
 plan pedía.
 
-Medido, el presupuesto del plan **se cumple**: el código propio pesa ~42 KB comprimidos contra un
-objetivo de 40 KB. Lo que no cabe en 50 KB es el framework.
+Medido, el presupuesto del plan queda **al borde y apenas por encima**: el código propio pesa ~42 KB
+comprimidos contra un objetivo de 40 KB. Son 2 KB de más, no un orden de magnitud, y el número sigue
+siendo el correcto para vigilar. Lo que no cabe en 50 KB es el framework.
 
 Transferencia de scripts en la home, con el servidor de producción y gzip:
 
