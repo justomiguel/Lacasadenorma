@@ -14,6 +14,12 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 **Organization**: agrupadas por historia de usuario, en orden de dependencias.
 
+**Estado**: las 114 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
+puede traer una persona: las seis fotos con espacio reservado, las fechas de Norma, el relevamiento de
+la obra y las cuentas de aporte reales. No frenan el build: por diseño van en `null` y la interfaz
+omite la sección o reserva el espacio y dice qué va a ir ahí (fase 2, regla del dato ausente). Están
+enumerados uno por uno en `docs/content-guide.md`, sección 3.
+
 ## Format: `[ID] [P?] [Story] Descripción`
 
 `[P]` = paralelizable (archivos distintos, sin dependencias entre sí).
@@ -29,19 +35,19 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 ## Phase 1: Setup (infraestructura compartida)
 
-- [ ] T001 Inicializar el proyecto Next 16 con TypeScript estricto, Tailwind 4 y las versiones
+- [x] T001 Inicializar el proyecto Next 16 con TypeScript estricto, Tailwind 4 y las versiones
       fijadas del ADR-001 (`package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`)
-- [ ] T002 [P] Configurar ESLint 9 flat config con `eslint-config-next`, reglas type-aware, y
+- [x] T002 [P] Configurar ESLint 9 flat config con `eslint-config-next`, reglas type-aware, y
       `require-await` desactivado; incluir `no-restricted-imports` que impone las capas del ADR-005
-- [ ] T003 [P] Configurar Prettier y `.editorconfig`
-- [ ] T004 [P] Configurar Vitest 5 (`vitest.config.mts`, `vitest.setup.ts`) con jsdom y Testing
+- [x] T003 [P] Configurar Prettier y `.editorconfig`
+- [x] T004 [P] Configurar Vitest 5 (`vitest.config.mts`, `vitest.setup.ts`) con jsdom y Testing
       Library
-- [ ] T005 [P] Configurar Playwright con proyectos chromium, webkit e iPhone 15
-- [ ] T006 [P] Crear `.env.example` con todas las variables documentadas y sin valores
-- [ ] T007 [P] Crear `AGENTS.md` que traduzca la constitución a instrucciones operativas
-- [ ] T008 Definir los design tokens de `ux.md` en `app/globals.css` con `@theme` y cargar las
+- [x] T005 [P] Configurar Playwright con proyectos chromium, webkit e iPhone 15
+- [x] T006 [P] Crear `.env.example` con todas las variables documentadas y sin valores
+- [x] T007 [P] Crear `AGENTS.md` que traduzca la constitución a instrucciones operativas
+- [x] T008 Definir los design tokens de `ux.md` en `app/globals.css` con `@theme` y cargar las
       fuentes con `next/font`
-- [ ] T009 [P] Configurar los headers de seguridad del modelo de amenazas en `next.config.ts`
+- [x] T009 [P] Configurar los headers de seguridad del modelo de amenazas en `next.config.ts`
 
 **Checkpoint**: `npm run dev` levanta, `npm run lint` y `npm run typecheck` pasan.
 
@@ -51,31 +57,31 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 ⚠️ Ninguna historia puede completarse antes de esta fase.
 
-- [ ] T010 [P] Test unitario de `Money`: rechaza no-enteros, rechaza sumar monedas distintas, formatea
+- [x] T010 [P] Test unitario de `Money`: rechaza no-enteros, rechaza sumar monedas distintas, formatea
       es-AR (**RED antes de T012**)
-- [ ] T011 [P] Test unitario de `Percentage`: acota a 0–100, devuelve `null` sin denominador
+- [x] T011 [P] Test unitario de `Percentage`: acota a 0–100, devuelve `null` sin denominador
       (**RED antes de T013**)
-- [ ] T012 Implementar `src/domain/money.ts`
-- [ ] T013 Implementar `src/domain/percentage.ts`
-- [ ] T014 [P] Definir entidades de dominio en `src/domain/entities/` según `data-model.md`
-- [ ] T015 [P] Definir puertos de repositorio en `src/domain/ports/`
-- [ ] T016 Test unitario de las reglas de agregación: saldo por moneda, porcentaje ejecutado,
+- [x] T012 Implementar `src/domain/money.ts`
+- [x] T013 Implementar `src/domain/percentage.ts`
+- [x] T014 [P] Definir entidades de dominio en `src/domain/entities/` según `data-model.md`
+- [x] T015 [P] Definir puertos de repositorio en `src/domain/ports/`
+- [x] T016 Test unitario de las reglas de agregación: saldo por moneda, porcentaje ejecutado,
       exclusión de anulados, coincidencia entre detalle y total (SC-007)
-- [ ] T017 Implementar las reglas de agregación en `src/domain/`
-- [ ] T018 [P] Logger estructurado con redacción por lista de claves, más su test (amenaza I5)
-- [ ] T019 [P] Puerto de analítica con implementación nula por defecto (ADR-010)
-- [ ] T020 Esquemas Zod del contenido versionado y cargador que falla en build si falta un campo
-- [ ] T021 Contenido editorial inicial en `content/` con los campos pendientes marcados
+- [x] T017 Implementar las reglas de agregación en `src/domain/`
+- [x] T018 [P] Logger estructurado con redacción por lista de claves, más su test (amenaza I5)
+- [x] T019 [P] Puerto de analítica con implementación nula por defecto (ADR-010)
+- [x] T020 Esquemas Zod del contenido versionado y cargador que falla en build si falta un campo
+- [x] T021 Contenido editorial inicial en `content/` con los campos pendientes marcados
       explícitamente (ADR-007, riesgo R4)
-- [ ] T022 Repositorios sobre contenido versionado, que permiten que el sitio funcione sin base
+- [x] T022 Repositorios sobre contenido versionado, que permiten que el sitio funcione sin base
       (FR-034)
-- [ ] T023 Primitivas del sistema de diseño de `ux.md` en `components/design-system/`
-- [ ] T024 [P] Tests de componente de las primitivas interactivas: `CopyField`, `CountryTabs`,
+- [x] T023 Primitivas del sistema de diseño de `ux.md` en `components/design-system/`
+- [x] T024 [P] Tests de componente de las primitivas interactivas: `CopyField`, `CountryTabs`,
       `ProgressBar`, `Ledger`
-- [ ] T025 Layout raíz con tipografía, saltos de navegación, encabezado y pie
-- [ ] T026 `AgentCapabilityService` con el registro tipado y `readOnly: true` como literal
+- [x] T025 Layout raíz con tipografía, saltos de navegación, encabezado y pie
+- [x] T026 `AgentCapabilityService` con el registro tipado y `readOnly: true` como literal
       (contrato de capacidades)
-- [ ] T027 Test que falla si alguna capacidad registrada declara mutación (amenaza A1)
+- [x] T027 Test que falla si alguna capacidad registrada declara mutación (amenaza A1)
 
 **Checkpoint**: dominio con cobertura completa, primitivas renderizando, sitio levanta sin
 credenciales.
@@ -86,29 +92,29 @@ credenciales.
 
 ### Tests
 
-- [ ] T028 [P] [US1] E2E: la home en 360 px muestra nombre, propuesta y acción principal sin
+- [x] T028 [P] [US1] E2E: la home en 360 px muestra nombre, propuesta y acción principal sin
       desplazarse (flujo 1)
-- [ ] T029 [P] [US1] E2E: las nueve preguntas están respondidas en el HTML servido (flujo 2)
-- [ ] T030 [P] [US1] E2E: cambiar de país muestra los datos correctos, también sin JavaScript
+- [x] T029 [P] [US1] E2E: las nueve preguntas están respondidas en el HTML servido (flujo 2)
+- [x] T030 [P] [US1] E2E: cambiar de país muestra los datos correctos, también sin JavaScript
       (flujo 4)
-- [ ] T031 [P] [US1] E2E: copiar un dato bancario deja el valor exacto en el portapapeles y lo
+- [x] T031 [P] [US1] E2E: copiar un dato bancario deja el valor exacto en el portapapeles y lo
       anuncia; ejecutado también sólo con teclado (flujo 5)
-- [ ] T032 [P] [US1] E2E: un método de aporte no publicado no aparece en ninguna parte (FR-007)
+- [x] T032 [P] [US1] E2E: un método de aporte no publicado no aparece en ninguna parte (FR-007)
 
 ### Implementación
 
-- [ ] T033 [US1] Caso de uso `getCampaignOverview` con su test de aplicación
-- [ ] T034 [US1] Secciones editoriales de la home según el orden de `ux.md`
-- [ ] T035 [US1] Sección de apertura con retrato a sangrado y espacio reservado honesto si no hay foto
-- [ ] T036 [US1] Página `/ayudar` con los tres países, instrucciones y copiado por campo
-- [ ] T037 [US1] Página `/norma` con ensayo fotográfico
-- [ ] T038 [US1] Página `/que-paso`, que cierra en qué se necesita ahora
-- [ ] T039 [US1] Página `/reconstruccion` con rubros, hitos y avance
-- [ ] T040 [US1] Barra de progreso que omite el porcentaje cuando no hay objetivo cargado
-- [ ] T041 [US1] Sección de preguntas: pregunta como encabezado, respuesta directa debajo
-- [ ] T042 [US1] Acción de compartir con `navigator.share` y enlaces reales como respaldo
-- [ ] T043 [US1] Barra inferior persistente de ayuda en mobile, que no tapa contenido
-- [ ] T044 [US1] Estados vacío y de datos pendientes en todas las secciones de la home
+- [x] T033 [US1] Caso de uso `getCampaignOverview` con su test de aplicación
+- [x] T034 [US1] Secciones editoriales de la home según el orden de `ux.md`
+- [x] T035 [US1] Sección de apertura con retrato a sangrado y espacio reservado honesto si no hay foto
+- [x] T036 [US1] Página `/ayudar` con los tres países, instrucciones y copiado por campo
+- [x] T037 [US1] Página `/norma` con ensayo fotográfico
+- [x] T038 [US1] Página `/que-paso`, que cierra en qué se necesita ahora
+- [x] T039 [US1] Página `/reconstruccion` con rubros, hitos y avance
+- [x] T040 [US1] Barra de progreso que omite el porcentaje cuando no hay objetivo cargado
+- [x] T041 [US1] Sección de preguntas: pregunta como encabezado, respuesta directa debajo
+- [x] T042 [US1] Acción de compartir con `navigator.share` y enlaces reales como respaldo
+- [x] T043 [US1] Barra inferior persistente de ayuda en mobile, que no tapa contenido
+- [x] T044 [US1] Estados vacío y de datos pendientes en todas las secciones de la home
 
 **Checkpoint**: la campaña se entiende y se puede colaborar. **El proyecto ya cumple su propósito.**
 
@@ -118,35 +124,35 @@ credenciales.
 
 ### Tests
 
-- [ ] T045 [P] [US2] pgTAP: `anon` no lee `contributions` (amenaza I2)
-- [ ] T046 [P] [US2] pgTAP: `anon` no lee `expense_receipts` (amenaza I1)
-- [ ] T047 [P] [US2] pgTAP: `anon` no ve filas con `published_at` nulo
-- [ ] T048 [P] [US2] pgTAP: toda vista tiene `security_invoker` (amenaza I3)
-- [ ] T049 [P] [US2] pgTAP: toda llamada `auth.*()` en una policy está envuelta en subselect
-- [ ] T050 [P] [US2] pgTAP: existe índice en cada columna que filtra una policy
-- [ ] T051 [P] [US2] pgTAP: nadie, ni `owner`, puede borrar de `audit_log` (amenaza T2)
-- [ ] T052 [P] [US2] E2E: la suma del detalle coincide con los totales y no hay acceso a comprobantes
+- [x] T045 [P] [US2] pgTAP: `anon` no lee `contributions` (amenaza I2)
+- [x] T046 [P] [US2] pgTAP: `anon` no lee `expense_receipts` (amenaza I1)
+- [x] T047 [P] [US2] pgTAP: `anon` no ve filas con `published_at` nulo
+- [x] T048 [P] [US2] pgTAP: toda vista tiene `security_invoker` (amenaza I3)
+- [x] T049 [P] [US2] pgTAP: toda llamada `auth.*()` en una policy está envuelta en subselect
+- [x] T050 [P] [US2] pgTAP: existe índice en cada columna que filtra una policy
+- [x] T051 [P] [US2] pgTAP: nadie, ni `owner`, puede borrar de `audit_log` (amenaza T2)
+- [x] T052 [P] [US2] E2E: la suma del detalle coincide con los totales y no hay acceso a comprobantes
       (flujo 7)
 
 ### Implementación
 
-- [ ] T053 [US2] Shim de plataforma en `supabase/shim/` con roles, esquemas y privilegios por defecto
-- [ ] T054 [US2] `scripts/db-local.sh` con los subcomandos `reset`, `migrate`, `lint`, `advisors`,
+- [x] T053 [US2] Shim de plataforma en `supabase/shim/` con roles, esquemas y privilegios por defecto
+- [x] T054 [US2] `scripts/db-local.sh` con los subcomandos `reset`, `migrate`, `lint`, `advisors`,
       `test`, `types`, `verify`
-- [ ] T055 [US2] `scripts/gen-types.mjs` sin Docker con `@supabase/postgrest-typegen`
-- [ ] T056 [US2] Migración: extensiones, enums, `campaigns`, `budget_items`, con RLS habilitada
-- [ ] T057 [US2] Migración: `contributions`, `expenses`, `expense_receipts`, `milestones`
-- [ ] T058 [US2] Migración: `updates`, `update_media`, `media`, `people`, `payment_methods`
-- [ ] T059 [US2] Migración: `user_roles`, `audit_log`, `private.has_min_role`,
+- [x] T055 [US2] `scripts/gen-types.mjs` sin Docker con `@supabase/postgrest-typegen`
+- [x] T056 [US2] Migración: extensiones, enums, `campaigns`, `budget_items`, con RLS habilitada
+- [x] T057 [US2] Migración: `contributions`, `expenses`, `expense_receipts`, `milestones`
+- [x] T058 [US2] Migración: `updates`, `update_media`, `media`, `people`, `payment_methods`
+- [x] T059 [US2] Migración: `user_roles`, `audit_log`, `private.has_min_role`,
       `custom_access_token_hook`
-- [ ] T060 [US2] Migración: policies RLS completas según la matriz de `data-model.md`
-- [ ] T061 [US2] Migración: vista `campaign_totals` con `security_invoker = true`
-- [ ] T062 [US2] Migración: buckets de Storage y sus policies
-- [ ] T063 [US2] Repositorios Supabase que implementan los puertos
-- [ ] T064 [US2] Casos de uso de transparencia con sus tests de aplicación
-- [ ] T065 [US2] Página `/transparencia` con cifras, libro de gastos y método explicado
-- [ ] T066 [US2] Aviso visible cuando la conciliación tiene más de treinta días
-- [ ] T067 [US2] Página `/novedades` y `/novedades/[slug]`
+- [x] T060 [US2] Migración: policies RLS completas según la matriz de `data-model.md`
+- [x] T061 [US2] Migración: vista `campaign_totals` con `security_invoker = true`
+- [x] T062 [US2] Migración: buckets de Storage y sus policies
+- [x] T063 [US2] Repositorios Supabase que implementan los puertos
+- [x] T064 [US2] Casos de uso de transparencia con sus tests de aplicación
+- [x] T065 [US2] Página `/transparencia` con cifras, libro de gastos y método explicado
+- [x] T066 [US2] Aviso visible cuando la conciliación tiene más de treinta días
+- [x] T067 [US2] Página `/novedades` y `/novedades/[slug]`
 
 **Checkpoint**: `npm run db:verify` en verde, transparencia publicada y verificable.
 
@@ -156,25 +162,25 @@ credenciales.
 
 ### Tests
 
-- [ ] T068 [P] [US4] E2E: metadata de OpenGraph correcta en todas las páginas (flujo 6)
-- [ ] T069 [P] [US4] Test de los datos estructurados: sólo contenido visible, sin figura legal
+- [x] T068 [P] [US4] E2E: metadata de OpenGraph correcta en todas las páginas (flujo 6)
+- [x] T069 [P] [US4] Test de los datos estructurados: sólo contenido visible, sin figura legal
       inexistente, sin fechas estimadas
-- [ ] T070 [P] [US4] Tests de las cinco capacidades: forma de salida y ausencia de datos privados
+- [x] T070 [P] [US4] Tests de las cinco capacidades: forma de salida y ausencia de datos privados
       (amenaza A6)
-- [ ] T071 [P] [US4] Test de equivalencia entre el adaptador REST y el caso de uso (amenaza A5)
+- [x] T071 [P] [US4] Test de equivalencia entre el adaptador REST y el caso de uso (amenaza A5)
 
 ### Implementación
 
-- [ ] T072 [US4] Metadata por página con canónicas y `generateMetadata`
-- [ ] T073 [P] [US4] `sitemap.ts` y `robots.ts` con un único bloque permisivo
-- [ ] T074 [P] [US4] `opengraph-image.tsx` generada con la tipografía del sitio
-- [ ] T075 [P] [US4] JSON-LD: `Organization`, `WebSite`, `Person`, `Article`, `BreadcrumbList`,
+- [x] T072 [US4] Metadata por página con canónicas y `generateMetadata`
+- [x] T073 [P] [US4] `sitemap.ts` y `robots.ts` con un único bloque permisivo
+- [x] T074 [P] [US4] `opengraph-image.tsx` generada con la tipografía del sitio
+- [x] T075 [P] [US4] JSON-LD: `Organization`, `WebSite`, `Person`, `Article`, `BreadcrumbList`,
       `DonateAction`
-- [ ] T076 [P] [US4] `llms.txt` escrito a mano y enlazado con `rel="describedby"`
-- [ ] T077 [US4] Implementar las cinco capacidades de lectura
-- [ ] T078 [US4] Adaptador REST en `app/api/public/` con límite de tasa y `503` explícito
-- [ ] T079 [US4] Adaptador WebMCP en un solo archivo con feature detection y tipos propios
-- [ ] T080 [P] [US4] `app/api/health` con `dataSource`
+- [x] T076 [P] [US4] `llms.txt` escrito a mano y enlazado con `rel="describedby"`
+- [x] T077 [US4] Implementar las cinco capacidades de lectura
+- [x] T078 [US4] Adaptador REST en `app/api/public/` con límite de tasa y `503` explícito
+- [x] T079 [US4] Adaptador WebMCP en un solo archivo con feature detection y tipos propios
+- [x] T080 [P] [US4] `app/api/health` con `dataSource`
 
 **Checkpoint**: el sitio es indexable, compartible y consultable por agentes.
 
@@ -184,28 +190,28 @@ credenciales.
 
 ### Tests
 
-- [ ] T081 [P] [US3] pgTAP: matriz completa de rol × tabla × operación (amenazas E1, E2)
-- [ ] T082 [P] [US3] pgTAP: sólo `owner` escribe en `payment_methods` (amenaza T1)
-- [ ] T083 [P] [US3] pgTAP: `anon` no puede ejecutar `private.has_min_role` (amenaza E3)
-- [ ] T084 [P] [US3] pgTAP: un rol declarado en `user_metadata` no otorga permisos (amenaza S3)
-- [ ] T085 [P] [US3] Test de integración: un SVG renombrado a `.png` es rechazado (amenaza T6)
-- [ ] T086 [P] [US3] Test: una acción de servidor sin sesión válida es rechazada (amenaza T7)
-- [ ] T087 [P] [US3] E2E: login, roles insuficientes y publicación de una actualización (flujos 8 y 9)
+- [x] T081 [P] [US3] pgTAP: matriz completa de rol × tabla × operación (amenazas E1, E2)
+- [x] T082 [P] [US3] pgTAP: sólo `owner` escribe en `payment_methods` (amenaza T1)
+- [x] T083 [P] [US3] pgTAP: `anon` no puede ejecutar `private.has_min_role` (amenaza E3)
+- [x] T084 [P] [US3] pgTAP: un rol declarado en `user_metadata` no otorga permisos (amenaza S3)
+- [x] T085 [P] [US3] Test de integración: un SVG renombrado a `.png` es rechazado (amenaza T6)
+- [x] T086 [P] [US3] Test: una acción de servidor sin sesión válida es rechazada (amenaza T7)
+- [x] T087 [P] [US3] E2E: login, roles insuficientes y publicación de una actualización (flujos 8 y 9)
 
 ### Implementación
 
-- [ ] T088 [US3] Clientes de Supabase para navegador y servidor, con los headers de `setAll` copiados
-- [ ] T089 [US3] `proxy.ts` con redirect optimista, documentado como no-frontera
-- [ ] T090 [US3] `/admin/login` y cierre de sesión
-- [ ] T091 [US3] Layout de `/admin` con revalidación de permisos en cada carga
-- [ ] T092 [US3] Guardas de autorización server-side reutilizables por rol
-- [ ] T093 [US3] `/admin/novedades`: crear, editar y publicar, con `alt` obligatorio en las fotos
-- [ ] T094 [US3] `/admin/gastos`: registrar, anular y subir comprobante al bucket privado
-- [ ] T095 [US3] `/admin/aportes`: registrar, anular y marcar conciliación
-- [ ] T096 [US3] `/admin/hitos` y `/admin/objetivos`
-- [ ] T097 [US3] `/admin/cuentas`: sólo `owner`, con validación de esquema antes de publicar
-- [ ] T098 [US3] Registro en `audit_log` en toda mutación financiera
-- [ ] T099 [US3] Revalidación por etiquetas al publicar, con `revalidateTag(tag, 'max')`
+- [x] T088 [US3] Clientes de Supabase para navegador y servidor, con los headers de `setAll` copiados
+- [x] T089 [US3] `proxy.ts` con redirect optimista, documentado como no-frontera
+- [x] T090 [US3] `/admin/login` y cierre de sesión
+- [x] T091 [US3] Layout de `/admin` con revalidación de permisos en cada carga
+- [x] T092 [US3] Guardas de autorización server-side reutilizables por rol
+- [x] T093 [US3] `/admin/novedades`: crear, editar y publicar, con `alt` obligatorio en las fotos
+- [x] T094 [US3] `/admin/gastos`: registrar, anular y subir comprobante al bucket privado
+- [x] T095 [US3] `/admin/aportes`: registrar, anular y marcar conciliación
+- [x] T096 [US3] `/admin/hitos` y `/admin/objetivos`
+- [x] T097 [US3] `/admin/cuentas`: sólo `owner`, con validación de esquema antes de publicar
+- [x] T098 [US3] Registro en `audit_log` en toda mutación financiera
+- [x] T099 [US3] Revalidación por etiquetas al publicar, con `revalidateTag(tag, 'max')`
 
 **Checkpoint**: el sitio se mantiene al día desde un teléfono.
 
@@ -213,29 +219,29 @@ credenciales.
 
 ## Phase 7: User Story 5 — Conocer el capítulo siguiente (P3)
 
-- [ ] T100 [P] [US5] Página `/legado` sobre Fundación Norma, sin afirmar personería inexistente
-- [ ] T101 [P] [US5] Página `/riacho-conecta` con los temas del programa
-- [ ] T102 [P] [US5] Páginas `/legales/privacidad` y `/legales/terminos`
+- [x] T100 [P] [US5] Página `/legado` sobre Fundación Norma, sin afirmar personería inexistente
+- [x] T101 [P] [US5] Página `/riacho-conecta` con los temas del programa
+- [x] T102 [P] [US5] Páginas `/legales/privacidad` y `/legales/terminos`
 
 ---
 
 ## Phase 8: Polish y transversales
 
-- [ ] T103 [P] Suite de accesibilidad con axe sobre todas las páginas públicas, en dos viewports
-- [ ] T104 [P] `scripts/check-no-placeholders.mjs` y su integración en el build (riesgo R4)
-- [ ] T105 [P] Script en CI que verifica que la clave secreta no aparece en código de cliente
+- [x] T103 [P] Suite de accesibilidad con axe sobre todas las páginas públicas, en dos viewports
+- [x] T104 [P] `scripts/check-no-placeholders.mjs` y su integración en el build (riesgo R4)
+- [x] T105 [P] Script en CI que verifica que la clave secreta no aparece en código de cliente
       (amenaza I4)
-- [ ] T106 [P] Workflow `ci.yml`
-- [ ] T107 [P] Workflow `db.yml` con Postgres de apt
-- [ ] T108 [P] Workflow `e2e.yml`
-- [ ] T109 [P] Workflow `quality.yml` con Lighthouse y presupuestos
-- [ ] T110 [P] Higiene del repositorio: `CODEOWNERS`, plantillas de PR e issues, Dependabot
-- [ ] T111 [P] `README.md` que permita levantar el proyecto desde cero sin credenciales
-- [ ] T112 [P] `docs/architecture.md`, `deployment.md`, `security.md`, `testing.md`, `seo.md`,
+- [x] T106 [P] Workflow `ci.yml`
+- [x] T107 [P] Workflow `db.yml` con Postgres de apt
+- [x] T108 [P] Workflow `e2e.yml`
+- [x] T109 [P] Workflow `quality.yml` con Lighthouse y presupuestos
+- [x] T110 [P] Higiene del repositorio: `CODEOWNERS`, plantillas de PR e issues, Dependabot
+- [x] T111 [P] `README.md` que permita levantar el proyecto desde cero sin credenciales
+- [x] T112 [P] `docs/architecture.md`, `deployment.md`, `security.md`, `testing.md`, `seo.md`,
       `webmcp.md`, `content-guide.md`, `runbook.md`, `privacy.md`
-- [ ] T113 Loop de revisión visual: capturas en 360 px y 1440 px de cada página, análisis, corrección
+- [x] T113 Loop de revisión visual: capturas en 360 px y 1440 px de cada página, análisis, corrección
       y nueva captura, hasta cumplir los criterios de aceptación visual de `ux.md`
-- [ ] T114 Verificación final completa: typecheck, lint, unitarios, componentes, pgTAP, build, E2E,
+- [x] T114 Verificación final completa: typecheck, lint, unitarios, componentes, pgTAP, build, E2E,
       axe
 
 ---
