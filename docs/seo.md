@@ -187,7 +187,9 @@ Core Web Vitals son un requisito funcional del proyecto, no una optimización po
 son señal de ranking. Lo que está hecho:
 
 - Dos tipografías variables, autoalojadas por `next/font` con subconjunto latino y `display: swap`:
-  ningún pedido a un tercero y ningún origen más en la CSP.
+  ningún pedido a un tercero y ningún origen más en la CSP. Se precargan las dos que se dibujan en la
+  primera pantalla, y sólo esas: la itálica de la serif se declara aparte y baja recién cuando aparece
+  un `<em>` ([ADR-018](./adr/018-presupuestos-de-performance.md)).
 - Sin librería de componentes, sin librería de animación, sin librería de iconos. El bundle de
   cliente son unos pocos componentes interactivos: copiar un dato, cambiar de pestaña, compartir.
 - `next/image` con AVIF y WebP, y calidades acotadas a dos valores.
@@ -195,7 +197,11 @@ son señal de ranking. Lo que está hecho:
   layout.
 - Presupuestos y umbrales en `lighthouserc.json`, con Lighthouse en CI.
 
-El detalle de los presupuestos y cómo se corren está en [`testing.md`](./testing.md).
+Medido sobre las nueve páginas, tres corridas cada una: las cuatro categorías entre 0,97 y 0,99, FCP de
+0,76 s, CLS 0.
+
+Cómo se corren está en [`testing.md`](./testing.md); de dónde salen los números de cada presupuesto, en
+[`deployment.md`](./deployment.md) §8 y en [ADR-018](./adr/018-presupuestos-de-performance.md).
 
 ---
 
