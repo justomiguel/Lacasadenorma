@@ -8,6 +8,28 @@ import type { NextConfig } from "next";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseOrigin = supabaseUrl ? new URL(supabaseUrl).origin : null;
 
+/**
+ * ¿El sitio se sirve por http?
+ *
+ * Sólo puede pasar en desarrollo y en las pruebas E2E, que corren el servidor de
+ * producción en `127.0.0.1`. Cuando pasa, hay dos cabeceras que **hay que omitir**:
+ *
+ * - `upgrade-insecure-requests`, que le pide al navegador que reescriba a https todo
+ *   lo que la página cargue. Chromium exceptúa los orígenes locales; **WebKit no**, y
+ *   el resultado es que la hoja de estilos, las fuentes y todo el JavaScript fallan
+ *   con un error de TLS contra un servidor que no habla https. La página se sirve
+ *   entera y sin estilos, y lo que se rompe primero es lo que menos se sospecha: los
+ *   objetivos táctiles quedan en 22 px y axe reporta docenas de violaciones de
+ *   contraste y de tamaño que no existen. Se descubrió exactamente así.
+ * - `Strict-Transport-Security`, que un navegador ignora sobre http de todos modos,
+ *   pero que declarado ahí es una afirmación falsa sobre el despliegue.
+ *
+ * Sin variable configurada se asume https, que es el caso de producción: la duda se
+ * resuelve del lado seguro.
+ */
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+const servesOverHttp = siteUrl !== undefined && siteUrl.startsWith("http://");
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'none'",
@@ -27,15 +49,19 @@ const contentSecurityPolicy = [
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
   "manifest-src 'self'",
-  "upgrade-insecure-requests",
+  ...(servesOverHttp ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
+  ...(servesOverHttp
+    ? []
+    : [
+        {
+          key: "Strict-Transport-Security",
+          value: "max-age=63072000; includeSubDomains; preload",
+        },
+      ]),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

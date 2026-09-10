@@ -72,7 +72,20 @@ export default async function proxy(request: NextRequest): Promise<NextResponse>
   const isSignedIn = typeof data?.claims.sub === "string";
   const { pathname } = request.nextUrl;
 
-  if (!isSignedIn && pathname.startsWith("/admin") && pathname !== "/admin/login") {
+  // La ruta del comprobante queda afuera del redirect. No es una página: devuelve un
+  // archivo, y un 307 hacia el HTML de la pantalla de acceso contestando a una descarga
+  // es una respuesta que el cliente no sabe interpretar —se ve como un archivo roto—.
+  // Su manejador contesta 403 con "Tu sesión venció. Volvé a entrar.", que dice más que
+  // un redirect. No se debilita nada: la comprobación de permiso la hace el caso de
+  // uso, y abajo de todo, la policy RLS del bucket.
+  const esUnArchivo = pathname.startsWith("/admin/comprobantes");
+
+  if (
+    !isSignedIn &&
+    !esUnArchivo &&
+    pathname.startsWith("/admin") &&
+    pathname !== "/admin/login"
+  ) {
     const target = request.nextUrl.clone();
     target.pathname = "/admin/login";
     // Se conserva a dónde quería ir, para volver ahí después de entrar. Sólo la
