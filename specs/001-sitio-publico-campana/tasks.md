@@ -14,7 +14,7 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 **Organization**: agrupadas por historia de usuario, en orden de dependencias.
 
-**Estado**: las 132 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
+**Estado**: las 135 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
 puede traer una persona: las seis fotos con espacio reservado, las fechas de Norma, el relevamiento de
 la obra y las cuentas de aporte reales. No frenan el build: por diseño van en `null` y la interfaz
 omite la sección o reserva el espacio y dice qué va a ir ahí (fase 2, regla del dato ausente). Están
@@ -335,7 +335,7 @@ cuatro siguen siendo un juicio, con las capturas como material de trabajo.
 
 ---
 
-## Phase 11: La auditoría de cierre, y el hallazgo que dejó
+## Phase 11: La auditoría de cierre, y los dos hallazgos que dejó
 
 **Objetivo**: verificar el backoffice operación por operación contra el código, no contra la memoria
 de haberlo escrito.
@@ -357,8 +357,25 @@ olvido que el signo de pregunta del tipo hacía posible.
 - [x] T132 Documentar la invariante donde se busca: `docs/security.md` §3, `data-model.md`, el índice
       de ADR y las cifras de `testing.md`
 
+La verificación de la propia auditoría dejó el segundo hallazgo, y éste era del harness: una corrida
+de `con-datos` devolvió veinte pruebas rojas en los flujos 3, 4, 5 y 7 con el fixture cargado y la API
+contestando.
+
+- [x] T133 `scripts/e2e.sh` borra `.next/cache/fetch-cache` antes de construir. Next guarda en disco
+      cada lectura de Supabase, las entradas viven la ventana de `revalidate` y **sobreviven al build
+      siguiente**: dos builds separados por menos de cinco minutos hornean los mismos datos, y si el
+      primero corrió con la base vacía el segundo no tiene una sola cifra
+- [x] T134 Y después de construir, el script mira lo construido: las cuatro páginas con cifras tienen
+      que traer un `data-figure` o corta con un error que dice qué mirar. El modo de falla es silencioso
+      por diseño —la página muestra la rama del dato ausente en lugar de romperse (FR-034)—, así que
+      sin la guardia la corrida gasta seis minutos para devolver fallos que parecen de la aplicación
+- [x] T135 Documentar el mecanismo en `testing.md` §5 y el diagnóstico en `runbook.md` §8, incluida la
+      consecuencia fuera del harness: Vercel restaura la caché de build entre despliegues, así que un
+      deploy puede prerenderizar cifras leídas hasta cinco minutos antes
+
 **Checkpoint**: "toda operación del backoffice deja rastro" pasa de ser una frase en un comentario a
-una propiedad que sostiene el compilador.
+una propiedad que sostiene el compilador, y el harness ya no puede construir un sitio sin datos y
+llamarlo una falla de la aplicación.
 
 ---
 
