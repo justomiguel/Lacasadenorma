@@ -39,7 +39,7 @@ siendo rechazada por una policy RLS. Es la única capa que no se puede saltear o
 ```
 
 La flecha de infraestructura apunta **hacia arriba, al dominio**, y no al revés. Es lo que hace que el
-dominio se pueda probar sin base de datos, sin red y sin navegador: 119 de los 378 tests corren sobre
+dominio se pueda probar sin base de datos, sin red y sin navegador: 119 de los 386 tests corren sobre
 `src/domain/` y ninguno necesita más que Node.
 
 | Capa | Dónde | Qué contiene | Qué **no** puede importar |

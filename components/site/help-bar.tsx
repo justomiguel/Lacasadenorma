@@ -27,12 +27,24 @@ import { useEffect, useRef, useState } from "react";
 export function HelpBar() {
   const pathname = usePathname();
   const barra = useRef<HTMLDivElement>(null);
-  const [redundante, setRedundante] = useState(false);
+
+  /**
+   * La medición se guarda junto a la ruta en la que se hizo, y se descarta al
+   * renderizar si la ruta cambió. Es lo que evita el reinicio dentro del efecto: en una
+   * navegación de cliente el observador se rearma sobre el DOM nuevo, y hasta que
+   * conteste hay un render con la medición de la página anterior, que diría "retirate"
+   * en una página donde la acción primaria no está. Derivarlo acá cuesta una comparación
+   * y no un render en cascada.
+   */
+  const [medicion, setMedicion] = useState<{ ruta: string; redundante: boolean } | null>(
+    null,
+  );
+
+  const redundante =
+    medicion !== null && medicion.ruta === pathname && medicion.redundante;
 
   useEffect(() => {
     const acciones = document.querySelectorAll("[data-help-primary]");
-
-    setRedundante(false);
 
     if (acciones.length === 0) {
       return;
@@ -55,7 +67,7 @@ export function HelpBar() {
         return;
       }
 
-      setRedundante(visibles.size > 0);
+      setMedicion({ ruta: pathname, redundante: visibles.size > 0 });
     });
 
     for (const accion of acciones) {
@@ -78,6 +90,13 @@ export function HelpBar() {
       {redundante ? null : (
         <div
           ref={barra}
+          // Declara que esta barra aparece y desaparece según el scroll. Lo consume el
+          // recorrido con Tab de `e2e/comun/accesibilidad.spec.ts`, que verifica que
+          // nada quede fuera del orden de tabulación y necesita saber qué elementos no
+          // están siempre: al final de una página larga la acción primaria queda a la
+          // vista, la barra se retira y su enlace nunca recibe el foco. No se pierde
+          // nada, porque lo que la barra ofrece es justamente lo que está en pantalla.
+          data-foco-condicional=""
           className="fixed inset-x-0 bottom-0 z-10 border-t border-rule bg-paper px-5 py-sm sm:hidden"
         >
           <Link

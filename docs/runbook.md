@@ -413,6 +413,7 @@ desde el resumen del banco.
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
 | Antes de cada despliegue | `npm run verify` en verde | CI, y conviene también en local |
+| Cuando cambia una página, y sin excepción cuando lleguen las fotos | El loop de revisión visual: `node scripts/screenshots.mjs` y mirar las once páginas en los dos anchos. Los seis criterios medibles ya los sostiene CI; lo que hay que mirar son los cuatro que son un juicio (`docs/testing.md`) | Quien la cambió |
 
 ## Documentos relacionados
 

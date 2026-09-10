@@ -22,15 +22,15 @@ menos que uno que verifica que algo no se puede hacer.**
 | Dominio | Vitest | 119 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
 | Aplicación | Vitest con dobles en memoria | 142 | Casos de uso, las quince operaciones del backoffice, las cinco capacidades, la equivalencia REST | Persistencia real |
 | Infraestructura | Vitest | 49 | Redacción del logger, validación de archivos por contenido, límite de tasa, honestidad del JSON-LD | El comportamiento de Supabase |
-| Componentes | Vitest + Testing Library | 56 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
+| Componentes | Vitest + Testing Library | 64 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas, la barra de ayuda y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
 | Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
-| Punta a punta | Playwright, tres navegadores, dos modos | 484 | Los nueve flujos críticos | Rendimiento medido |
+| Punta a punta | Playwright, tres navegadores, dos modos | 502 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
 
-Los totales: **378 tests en 28 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **484
-tests de Playwright** entre los dos modos (231 sin datos, 253 con datos).
+Los totales: **386 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **502
+tests de Playwright** entre los dos modos (240 sin datos, 262 con datos).
 
 ### TDD, donde es obligatorio
 
@@ -45,6 +45,33 @@ opcional en el resto:
 
 No se aplica en maquetación ni estilos. Ahí el mecanismo de verificación es el loop de revisión
 visual, y un test que sólo re-describe el JSX no aporta nada más que trabajo cuando el JSX cambia.
+
+### El loop de revisión visual, y qué quedó medido
+
+Los diez criterios están en `ux.md` §12. La primera pasada completa —once páginas, dos anchos,
+capturas de pliegue y de página entera— encontró tres cosas, y **ninguna de las tres se veía en una
+captura**:
+
+| Hallazgo | Cómo se veía | Cómo se encontró |
+| --- | --- | --- |
+| La medida de lectura decía 68 caracteres y entregaba entre 98 y 104 | Como una página normal. Un párrafo ancho no se ve ancho | Midiendo el ancho de la caja contra el ancho real del carácter en la tipografía cargada |
+| La barra de ayuda del teléfono duplicaba el botón de la apertura | Como dos botones iguales, que en una maqueta parece una decisión | Contando superficies con acento sobre el pliegue |
+| Las reglas del encabezado y del pie caían en una tercera extensión | 96 px de diferencia sobre 1440. A ojo, nada | Midiendo las cajas con borde de cada página |
+
+Por eso **seis de los diez criterios dejaron de depender de la vista** y viven en
+`e2e/comun/revision-visual.spec.ts`, que corre en las once páginas, en los tres navegadores y en los
+dos modos: desborde horizontal, medida de la prosa, superficies con acento sobre el pliegue,
+gradientes y sombras y esquinas redondeadas, números tabulares, y proporción declarada de cada
+imagen. Un séptimo —el anillo de foco— vive en `accesibilidad.spec.ts`, que recorre con Tab todo lo
+enfocable de cada página: axe no tiene ninguna regla de foco visible, y una utilidad `outline-none`
+en un componente nuevo no rompería nada más.
+
+Lo que sigue necesitando ojos son los cuatro criterios que son un juicio y no una medida: si la
+primera pantalla comunica, si el orden de lectura acompaña, si el tono es el correcto, si la página se
+parece a un documento y no a un producto. Para ésos está `node scripts/screenshots.mjs`, que captura
+las once páginas en los dos anchos, en pliegue y completas.
+
+Un test no reemplaza el loop: lo deja concentrado en lo que de verdad hay que mirar.
 
 ### Cobertura
 
@@ -324,7 +351,7 @@ llamaba el rol que lo llama de verdad, y ninguna sesión se habría podido emiti
 
 | Workflow | Job (el nombre que se pide en la protección de rama) | Qué protege |
 | --- | --- | --- |
-| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 378 tests, cifras de relleno, secretos en el bundle, build |
+| `ci.yml` | `Todo lo que rompe el merge` | Tipos, reglas de capas, formato, 386 tests, cifras de relleno, secretos en el bundle, build |
 | `ci.yml` | `Riesgo conocido en las dependencias` | `npm audit` |
 | `e2e.yml` | `sin-datos · flujos críticos y accesibilidad` | El sitio sin credenciales |
 | `e2e.yml` | `con-datos · flujos críticos y accesibilidad` | Los flujos con cifras |

@@ -345,16 +345,43 @@ número sin fecha no es un dato, es una afirmación.
 
 ## 12. Criterios de aceptación visual
 
-El loop de revisión visual cierra sólo cuando, en capturas de 360 px y de 1440 px:
+El loop de revisión visual cierra sólo cuando, en 360 px y en el ancho de escritorio, las once
+páginas cumplen los diez criterios. Cada uno dice con qué se comprueba, y eso es la mitad del
+criterio: seis se miden en cada corrida de CI, y sólo cuatro dependen de que alguien mire.
 
-- [ ] La primera pantalla en mobile comunica qué es esto y qué se puede hacer, sin desplazarse.
-- [ ] No hay ningún gradiente, blob, sombra difusa ni card decorativa.
-- [ ] Hay como máximo tres superficies con relleno de acento por pantalla (sección 3: los enlaces no
-      cuentan).
-- [ ] La prosa no supera los 68 caracteres por línea en ningún viewport.
-- [ ] Las cifras están alineadas y no bailan.
-- [ ] Cada foto (o su espacio reservado) mantiene su proporción sin saltos de layout.
-- [ ] El foco es visible en todos los elementos interactivos, recorridos con Tab.
-- [ ] Copiar un dato bancario desde la home toma tres toques o menos.
-- [ ] Ninguna cifra o dato de ejemplo aparece en pantalla.
-- [ ] La página se puede leer completa con el ancho de un teléfono, sin scroll horizontal.
+- [x] La primera pantalla en mobile comunica qué es esto y qué se puede hacer, sin desplazarse.
+      → `e2e/comun/home.spec.ts` (SC-001) y la captura `home--mobile-fold`.
+- [x] No hay ningún gradiente, blob, sombra difusa ni card decorativa.
+      → medido: `e2e/comun/revision-visual.spec.ts`, criterio 2.
+- [x] Hay como máximo tres superficies con relleno de acento por pantalla (sección 3: los enlaces no
+      cuentan). → medido, criterio 3.
+- [x] La prosa no supera los 68 caracteres por línea en ningún viewport. → medido, criterio 4.
+- [x] Las cifras están alineadas y no bailan. → medido, criterio 5.
+- [x] Cada foto (o su espacio reservado) mantiene su proporción sin saltos de layout.
+      → medido, criterio 6: toda imagen declara su proporción antes de cargar.
+- [x] El foco es visible en todos los elementos interactivos, recorridos con Tab.
+      → `e2e/comun/accesibilidad.spec.ts`, que recorre con Tab **todo** lo enfocable de cada página.
+- [x] Copiar un dato bancario desde la home toma tres toques o menos.
+      → `e2e/con-datos/aportes.spec.ts` (SC-002) para el camino corto, y el flujo 5
+      (`portapapeles.spec.ts`) para que lo copiado sea exactamente lo que estaba en pantalla.
+- [x] Ninguna cifra o dato de ejemplo aparece en pantalla.
+      → `npm run check:placeholders`, y el modo sin datos exige que no haya **ningún** `data-figure`.
+- [x] La página se puede leer completa con el ancho de un teléfono, sin scroll horizontal.
+      → medido, criterio 10.
+
+### Lo que el loop encontró, y lo que decidió no cambiar
+
+Los tres hallazgos —la medida que decía 68 y daba 104, la barra que duplicaba el botón de la
+apertura, las reglas en tres extensiones distintas— están explicados en las secciones 2, 9 y 4. Los
+tres se corrigieron y los tres tienen ahora una comprobación que los sostiene. Ninguno se veía en una
+captura, y eso es lo que hay que recordar del loop: mirar sirve para juzgar, no para medir.
+
+Queda algo que se vio y **no** se cambió, y conviene que esté escrito para que no se "arregle" sin
+leer esto. En escritorio, una sección de sólo prosa deja la columna de texto a la izquierda con dos
+tercios de la página vacíos a su derecha. Es la consecuencia aritmética del criterio 4: con 17 px de
+Newsreader, una columna que entre en 68 caracteres mide 442 px, y para llenar 700 px con 68
+caracteres habría que subir el cuerpo a 24 px, que es el tamaño de una bajada. El criterio 4 no se
+negocia, así que la columna es angosta por definición. Y el lado derecho no está vacío por descuido:
+es donde va la fotografía, que es el elemento con más peso del sitio y el que hoy falta (sección 10).
+La apertura y la lista de novedades ya lo reservan explícitamente. Cuando las fotos lleguen, esa
+mitad se ocupa sin mover una línea de layout.

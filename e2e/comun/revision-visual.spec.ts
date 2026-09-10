@@ -5,12 +5,12 @@ import { PAGINAS_PUBLICAS, VIEWPORT_MINIMO } from "../soporte/paginas";
 /**
  * Los criterios medibles del loop de revisión visual (`ux.md` §12).
  *
- * De los diez criterios, tres se pueden medir, y para ésos una captura es peor
+ * De los diez criterios, seis se pueden medir, y para ésos una captura es peor
  * evidencia que un número: nadie cuenta caracteres por línea a ojo, y un desborde
  * horizontal de tres píxeles no se ve en una captura pero se siente al hacer scroll.
- * Los otros siete se miran, o los sostienen otras suites —el foco y los objetivos
- * táctiles, `accesibilidad.spec.ts`; el copiado en tres toques, el flujo 5; los datos
- * de ejemplo, `check:placeholders`—.
+ * Los otros cuatro se miran, o los sostienen otras suites —el foco y los objetivos
+ * táctiles, `accesibilidad.spec.ts`; el copiado en tres toques, `con-datos/aportes.spec.ts`;
+ * los datos de ejemplo, `check:placeholders`—.
  *
  * Están acá y no en un script aparte para que corran en CI con el sitio ya construido
  * y la base ya cargada, sin orquestar nada nuevo, y para que la regla exista una sola

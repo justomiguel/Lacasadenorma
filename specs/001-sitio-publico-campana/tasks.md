@@ -14,7 +14,7 @@ obligatorios en maquetación, donde verifica el loop de revisión visual.
 
 **Organization**: agrupadas por historia de usuario, en orden de dependencias.
 
-**Estado**: las 121 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
+**Estado**: las 128 tareas están hechas. Lo que queda no son tareas de esta lista sino datos que sólo
 puede traer una persona: las seis fotos con espacio reservado, las fechas de Norma, el relevamiento de
 la obra y las cuentas de aporte reales. No frenan el build: por diseño van en `null` y la interfaz
 omite la sección o reserva el espacio y dice qué va a ir ahí (fase 2, regla del dato ausente). Están
@@ -292,12 +292,55 @@ firmados y el comportamiento de GoTrue.
 
 ---
 
+## Phase 10: El loop de revisión visual, y los tres hallazgos que dejó
+
+**Objetivo**: cerrar los diez criterios de `ux.md` §12 con evidencia, no con una casilla marcada.
+
+La pasada completa —once páginas, 360 px y 1440 px, capturas de pliegue y de página entera— encontró
+tres defectos, y **ninguno de los tres se veía en una captura**. Eso es el resultado más útil de la
+fase: mirar sirve para juzgar, no para medir, y los criterios que son una medida tenían que dejar de
+depender de que alguien los mirara.
+
+### Hallazgos y corrección
+
+- [x] T122 `--container-measure` en `em` y no en `ch`. `1ch` es el ancho de avance del «0», así que
+      el token decía 68 caracteres y entregaba entre 98 y 104 en las once páginas. Calibrado midiendo
+      los tres tamaños de prosa: `26em` deja la medida entre 61 y 66 (`ux.md` §2)
+- [x] T123 La barra de ayuda del teléfono se retira mientras la acción primaria está en pantalla. Sobre
+      el pliegue de la home duplicaba el botón de la apertura: dos llamadas idénticas al mismo destino
+      y cuatro superficies con acento donde el sistema admite tres. Por omisión visible, así que sin
+      JavaScript se comporta como antes (`ux.md` §9)
+- [x] T124 Las reglas del encabezado y del pie van a sangrado, como la de la apertura. Caían en una
+      tercera extensión —ni a sangrado ni alineada con la columna—, y el sitio ahora distingue dos:
+      las que cierran una banda y las que dividen contenido (`ux.md` §4)
+
+### Lo que quedó medido, para que no vuelva a pasar
+
+- [x] T125 `e2e/comun/revision-visual.spec.ts`: seis de los diez criterios, en las once páginas, los
+      tres navegadores y los dos modos. Desborde horizontal, medida de la prosa contra el ancho real
+      del carácter, superficies con acento sobre el pliegue, la firma del template —gradientes,
+      sombras, desenfoques, esquinas de más de 2 px—, números tabulares y proporción declarada de cada
+      imagen
+- [x] T126 El anillo de foco, recorriendo con Tab **todo** lo enfocable de cada página
+      (`accesibilidad.spec.ts`). axe no tiene ninguna regla de foco visible, y un `outline-none` en un
+      componente nuevo no rompería nada más
+- [x] T127 `components/site/help-bar.test.tsx`: la barra se retira, vuelve, no se va con el foco
+      adentro, y su HTML servido ya trae la acción
+- [x] T128 Cerrar `ux.md` §12 con la evidencia de cada uno de los diez criterios, y dejar escrito lo
+      que el loop vio y decidió **no** cambiar: en escritorio la columna de prosa es angosta por
+      aritmética del criterio 4, y el lado derecho está reservado para la fotografía que falta
+
+**Checkpoint**: los diez criterios visuales están cerrados; seis los sostiene CI en cada corrida y
+cuatro siguen siendo un juicio, con las capturas como material de trabajo.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
 Setup (1) → Foundational (2) → US1 (3) → US2 (4) → US4 (5) → US3 (6) → US5 (7) → Polish (8) →
-Cerrar el flujo 9 (9)
+Cerrar el flujo 9 (9) → Loop de revisión visual (10)
 
 US4 va antes que US3 a propósito: las capacidades de lectura se apoyan en los casos de uso de US1 y
 US2, y no dependen de autenticación.

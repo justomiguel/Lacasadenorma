@@ -187,9 +187,16 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
             // `getClientRects()` y no `offsetParent`: en un elemento `position: fixed`
             // —la barra de ayuda del teléfono— `offsetParent` es `null`, y la barra
             // habría quedado fuera de la cuenta justo en el viewport donde existe.
+            // `data-foco-condicional` marca los contenedores que aparecen y desaparecen
+            // con el scroll: hoy, la barra de ayuda del teléfono. Al final de una página
+            // larga la acción primaria queda a la vista, la barra se retira y su enlace
+            // nunca recibe el foco —y no se pierde nada, porque lo que ofrece es lo que
+            // está en pantalla—. Sin esta excepción la comprobación acusaría un control
+            // fuera del orden de tabulación que sí está en el orden de tabulación.
             (nodo) =>
               nodo.tabIndex >= 0 &&
               nodo.getClientRects().length > 0 &&
+              nodo.closest("[data-foco-condicional]") === null &&
               !nodo.hasAttribute("data-foco-visitado"),
           )
           .map(
