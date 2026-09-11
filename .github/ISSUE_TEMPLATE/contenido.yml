@@ -1,0 +1,64 @@
+name: Corrección de contenido
+description: Una cifra, una fecha, un nombre o un texto del sitio que está mal o quedó viejo.
+title: "Contenido: "
+labels: [contenido]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Este es el tipo de aviso más importante que puede recibir el proyecto. El sitio pide plata
+        para reconstruir una casa: si publica un dato equivocado, lo que se pierde es la confianza,
+        que es lo único que tiene.
+
+        Si lo que viste es un **dato bancario incorrecto**, no abras un issue: avisá primero por el
+        canal directo de la familia. Un CBU equivocado publicado es urgente y no puede esperar a que
+        alguien lea GitHub.
+
+  - type: input
+    id: donde
+    attributes:
+      label: Dónde está
+      description: La dirección de la página, y si podés, en qué parte de la página.
+      placeholder: /transparencia, en la tabla de gastos
+    validations:
+      required: true
+
+  - type: textarea
+    id: dice
+    attributes:
+      label: Qué dice ahora
+      description: Copiá el texto o la cifra tal cual aparece.
+    validations:
+      required: true
+
+  - type: textarea
+    id: deberia
+    attributes:
+      label: Qué debería decir
+      description:
+        Si es una cifra o una fecha, poné el valor correcto. Si no lo sabés con certeza,
+        escribilo igual y aclaralo abajo; el sitio prefiere omitir un dato antes que publicarlo mal.
+    validations:
+      required: true
+
+  - type: textarea
+    id: respaldo
+    attributes:
+      label: De dónde sale el dato correcto
+      description:
+        Un comprobante, un presupuesto, una conversación con la familia, una nota. No hace
+        falta adjuntar nada sensible; alcanza con decir qué lo respalda y quién lo puede confirmar.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gravedad
+    attributes:
+      label: Qué tan grave es
+      options:
+        - Un dato de plata o una cuenta de aporte
+        - Un dato sobre Norma, la familia o la casa
+        - Una fecha, un enlace o un número que no es de plata
+        - Una errata o algo de redacción
+    validations:
+      required: true

@@ -1,0 +1,93 @@
+{
+  "updatedOn": "2026-09-09",
+  "privacy": {
+    "title": "Privacidad",
+    "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
+    "paragraphs": [
+      "La versión corta: este sitio no te pide ningún dato, no usa cookies de terceros y no te sigue por otras páginas."
+    ],
+    "sections": [
+      {
+        "heading": "Qué no hacemos",
+        "paragraphs": [
+          "No hay formularios de contacto, ni registro, ni newsletter. El sitio no pide tu nombre, tu correo, tu teléfono ni tus datos de pago.",
+          "No se procesan pagos en el sitio: las transferencias las hacés desde tu banco, y esa operación es entre tu banco y el nuestro.",
+          "No usamos cookies publicitarias, ni píxeles de redes sociales, ni servicios que armen un perfil tuyo."
+        ]
+      },
+      {
+        "heading": "Qué se mide",
+        "paragraphs": [
+          "Se cuentan visitas y algunos eventos de uso: cuánta gente entra, desde qué tipo de enlace llega, cuántas veces se copia un dato bancario, cuántas veces se comparte la página y desde qué país se abre.",
+          "Esas mediciones son agregadas y no se pueden asociar a una persona. No se guarda tu dirección IP completa, ni un identificador que te siga entre visitas.",
+          "Sirven para una sola cosa: saber si la página se entiende y si el camino para colaborar funciona."
+        ]
+      },
+      {
+        "heading": "Aportes",
+        "paragraphs": [
+          "Si aportás por transferencia, tu banco le informa al nuestro los datos de la operación. Esa información queda en el registro contable interno y sirve para conciliar los totales.",
+          "No se publica el nombre de quien aporta ni el monto individual. Todos los aportes se publican sumados.",
+          "El registro interno se conserva mientras la campaña esté abierta y por el plazo que exija la rendición de cuentas."
+        ]
+      },
+      {
+        "heading": "Comprobantes de gastos",
+        "paragraphs": [
+          "Las facturas y los recibos de la obra se guardan en un almacenamiento privado. No son públicos porque suelen tener datos de terceros, como el nombre y el domicilio de un proveedor.",
+          "El sitio publica que el comprobante existe. El archivo lo puede revisar una persona con rol de auditoría, con un acceso temporal."
+        ]
+      },
+      {
+        "heading": "Cambios y contacto",
+        "paragraphs": [
+          "Si esta política cambia, cambia la fecha del encabezado y el cambio queda registrado en el historial público del código del sitio.",
+          "Todavía no hay una dirección de contacto publicada. Cuando la haya, va a estar en esta página."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Términos de uso",
+    "lead": "Qué es este sitio, qué no es, y qué podés esperar de él.",
+    "paragraphs": [
+      "Este sitio pertenece a la familia de Norma y existe para reunir los fondos de la reconstrucción de su casa y para rendir cuentas de cómo se usan."
+    ],
+    "sections": [
+      {
+        "heading": "Qué es un aporte",
+        "paragraphs": [
+          "Un aporte es una donación voluntaria a una familia. No es una compra, no da derecho a nada a cambio, y no es deducible de impuestos: el proyecto no es una entidad con personería jurídica.",
+          "Los aportes no se devuelven, salvo un error de la transferencia que se pueda demostrar con el comprobante del banco."
+        ]
+      },
+      {
+        "heading": "En qué se usa el dinero",
+        "paragraphs": [
+          "En la obra de la casa: materiales, mano de obra, servicios, herramientas y traslados. Cada gasto se publica en la página de transparencia con su fecha, su concepto y su categoría.",
+          "Si en algún momento sobrara dinero de la obra, se va a publicar el destino antes de usarlo."
+        ]
+      },
+      {
+        "heading": "Exactitud de la información",
+        "paragraphs": [
+          "Las cifras publicadas se actualizan después de conciliar con el banco, así que pueden estar algunos días atrasadas respecto de la realidad. La fecha de la última conciliación está siempre visible.",
+          "Cuando un dato todavía no está verificado, la sección se omite. Este sitio no muestra montos, fechas ni datos bancarios de ejemplo."
+        ]
+      },
+      {
+        "heading": "Cuidado con los sitios falsos",
+        "paragraphs": [
+          "Verificá siempre la dirección del sitio antes de transferir. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras.",
+          "Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta."
+        ]
+      },
+      {
+        "heading": "Contenido",
+        "paragraphs": [
+          "Los textos y las fotografías del sitio pertenecen a la familia. Se pueden compartir para difundir la campaña; no se pueden usar con fines comerciales."
+        ]
+      }
+    ]
+  }
+}

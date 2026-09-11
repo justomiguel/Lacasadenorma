@@ -1,0 +1,63 @@
+name: Base de datos
+
+# Las policies RLS son la frontera que impide que se filtre un comprobante o la
+# identidad de quien aportó. Se prueban de verdad, contra un PostgreSQL real.
+#
+# Por qué es un workflow aparte de `ci.yml`:
+#
+#   1. Necesita instalar PostgreSQL 17 con dos extensiones desde el repositorio
+#      oficial, lo que tarda varios minutos. Metido en `ci.yml` haría esperar ese
+#      tiempo a cada corrección de una coma en el copy.
+#   2. Sólo puede cambiar de resultado si cambia el esquema. Por eso corre cuando
+#      el pull request toca `supabase/**` o el script que arma la base, y en cada
+#      push a `main` como red de seguridad.
+#
+# No usa Docker (ADR-013): en el entorno donde se desarrolla este proyecto no hay,
+# así que `supabase start` no es una opción y CI reproduce paso por paso lo mismo
+# que hace `scripts/db-local.sh` en la máquina de quien desarrolla. Si las dos
+# cosas divergen, el CI deja de significar algo.
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "scripts/db-local.sh"
+      - "scripts/gen-types.mjs"
+      - ".github/workflows/db.yml"
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  esquema:
+    name: Migraciones, advisors y policies RLS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      - name: Dejar el runner con el mismo PostgreSQL que una máquina de desarrollo
+        uses: ./.github/actions/postgres-local
+
+      # reset → shim → migraciones → db lint → db advisors → pgTAP → tipos --check.
+      # El último paso falla si los tipos generados que están commiteados no
+      # coinciden con el esquema, que es la forma de que no se olviden.
+      - name: Aplicar las migraciones y probar las policies RLS
+        run: npm run db:verify

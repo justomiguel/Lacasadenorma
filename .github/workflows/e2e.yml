@@ -1,0 +1,121 @@
+name: E2E
+
+# Los nueve flujos críticos y la revisión de accesibilidad con axe, en dos modos y en
+# tres navegadores.
+#
+# Corre aparte de `ci.yml` porque descarga navegadores y levanta el sitio: es lo más
+# lento del repositorio y no tiene sentido que retrase el typecheck.
+#
+# ## Por qué son dos jobs y no uno
+#
+# Next reemplaza las variables `NEXT_PUBLIC_*` por su valor **durante la
+# construcción**. "El sitio con base de datos" y "el sitio sin base de datos" no son
+# dos configuraciones del mismo servidor: son dos builds, y por lo tanto dos jobs.
+# `scripts/e2e.sh` es el que sabe construir cada uno.
+#
+# - **sin datos** no necesita PostgreSQL y es el más importante de los dos, aunque
+#   parezca lo contrario: verifica que un clon del repositorio sin una sola credencial
+#   levante y sirva el contenido editorial completo, sin inventar un cero donde falta
+#   una cifra (FR-034, SC-012). Es el estado en el que va a estar el proyecto la
+#   primera vez que alguien lo abra, y el estado al que vuelve si se cae la base.
+# - **con datos** levanta PostgreSQL, aplica las migraciones, carga el fixture y sirve
+#   el sitio contra PostgREST. Es el único modo donde los flujos 3, 4, 5 y 7 tienen
+#   algo que afirmar: no se puede comprobar que la suma del detalle da el total
+#   publicado si no hay ningún gasto.
+#
+# El modo con datos también inicia sesión de verdad: la API local emite tokens firmados
+# con el secreto que valida PostgREST, con los claims que arma el hook de la migración,
+# así que el flujo 9 recorre la cadena de autorización completa. Lo que sigue sin
+# cubrirse acá es Storage, los enlaces firmados y el comportamiento de GoTrue, y está
+# en docs/runbook.md sección 7 como verificación obligatoria antes de desplegar.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  flujos:
+    name: ${{ matrix.modo }} · flujos críticos y accesibilidad
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    strategy:
+      # Sin `fail-fast`: si los dos modos se rompen, hace falta ver los dos. Cancelar
+      # el segundo esconde la mitad del diagnóstico y obliga a una corrida más.
+      fail-fast: false
+      matrix:
+        modo: [sin-datos, con-datos]
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      - name: Dejar el runner con el mismo PostgreSQL que una máquina de desarrollo
+        if: matrix.modo == 'con-datos'
+        uses: ./.github/actions/postgres-local
+
+      # Los navegadores se cachean por versión de Playwright, no por lockfile entero:
+      # cambiar cualquier otra dependencia no cambia qué navegadores hacen falta, y
+      # volver a bajar tres navegadores por eso serían minutos tirados.
+      - name: Averiguar qué versión de navegadores corresponde
+        id: playwright
+        run: |
+          version="$(node --print "require('./package-lock.json').packages['node_modules/@playwright/test'].version")"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Reusar los navegadores ya descargados
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
+
+      # Con el caché caliente esto sólo instala las bibliotecas del sistema que webkit
+      # necesita, que no se cachean porque viven fuera del home.
+      - name: Instalar los navegadores y sus dependencias del sistema
+        run: npx playwright install --with-deps
+
+      # PostgREST se descarga de su repositorio de releases la primera vez. Se cachea
+      # porque son veinte megas por corrida que no cambian nunca.
+      - name: Reusar el PostgREST ya descargado
+        if: matrix.modo == 'con-datos'
+        uses: actions/cache@v6
+        with:
+          path: .local/bin
+          key: ${{ runner.os }}-postgrest-v16.2
+
+      # El script prepara la base cuando corresponde, construye el sitio con el entorno
+      # del modo y corre Playwright. Los tres proyectos —escritorio, móvil y safari— y
+      # los dos viewports de axe salen de playwright.config.ts.
+      - name: Recorrer los flujos críticos en modo ${{ matrix.modo }}
+        run: ./scripts/e2e.sh ${{ matrix.modo }}
+
+      # Sólo cuando algo falla: en verde el reporte no lo mira nadie y ocupa lugar. Las
+      # trazas de Playwright pueden contener capturas del sitio, así que se retienen
+      # poco tiempo.
+      - name: Guardar el reporte y las trazas de lo que falló
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-${{ matrix.modo }}-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore

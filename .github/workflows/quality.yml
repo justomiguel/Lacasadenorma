@@ -1,0 +1,79 @@
+name: Calidad
+
+# Performance, accesibilidad, buenas prácticas y SEO medidos, no supuestos.
+# La constitución fija ≥ 95 en las cuatro categorías (principio VII, SC-003), así
+# que acá el número no es una aspiración: es una compuerta.
+#
+# Se mide contra el servidor de producción (`npm run start`), nunca contra `dev`:
+# el servidor de desarrollo no minifica, no cachea y no comprime, y daría un
+# resultado que no se parece a lo que ve una persona en 4G.
+#
+# La configuración —qué URLs, cuántas corridas, qué presupuestos— vive en
+# `lighthouserc.json`, que es JSON y no admite comentarios; lo que hay que
+# explicar de ella está en `docs/deployment.md` y en los comentarios de acá.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Presupuestos de performance, accesibilidad y SEO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Traer el código del pull request
+        uses: actions/checkout@v7
+
+      - name: Preparar Node 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar las dependencias fijadas en el lockfile
+        run: npm ci
+
+      - name: Construir el sitio como se construye en producción
+        run: npm run build
+
+      # Sin credenciales de Supabase, igual que en `e2e.yml`: las páginas públicas
+      # tienen que rendir bien también cuando omiten las cifras.
+      - name: Levantar el sitio y esperar a que conteste
+        run: |
+          npm run start > /tmp/servidor.log 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl --silent --fail --output /dev/null http://127.0.0.1:3000/; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "El servidor no contestó en 120 s. Salida del proceso:"
+          cat /tmp/servidor.log
+          exit 1
+
+      # La acción sólo ejecuta `lhci autorun` con la configuración del repositorio:
+      # no hace falta agregar `@lhci/cli` a package.json para esto.
+      - name: Medir las nueve páginas públicas contra los presupuestos
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: false
+
+      - name: Guardar las mediciones de la corrida que falló
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-${{ github.run_id }}
+          path: .lighthouseci/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,35 @@
+# Configuración de Supabase para este proyecto.
+#
+# El desarrollo local de este repositorio **no usa `supabase start`**: no hay
+# Docker en el entorno de trabajo, y montar una plataforma completa para verificar
+# migraciones es desproporcionado (ADR-013). Se usa un Postgres de `apt` más el
+# shim de `supabase/shim/`, y los comandos del CLI que aceptan `--db-url`.
+#
+# Este archivo existe igual porque el CLI lo necesita para resolver el proyecto y
+# para `supabase db push --linked` en CI.
+
+project_id = "la-casa-de-norma"
+
+[db]
+# Misma versión mayor que los proyectos nuevos de Supabase. El Postgres local de
+# `scripts/db-local.sh` se instala en esta misma versión desde el repositorio
+# oficial de PostgreSQL, para que una migración que pasa local no falle en
+# producción por una diferencia de versión (ADR-013).
+major_version = 17
+
+[db.migrations]
+# Las migraciones se aplican en orden de nombre de archivo, que lleva timestamp.
+schema_paths = []
+
+[auth]
+enable_signup = false
+
+[auth.hook.custom_access_token]
+# El rol viaja en el token como claim de `app_metadata`, que sólo el servidor de
+# auth puede escribir. Leerlo de `user_metadata` sería una escalada de privilegios
+# trivial (amenaza S3).
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
+
+[storage]
+enabled = true

@@ -1,0 +1,59 @@
+name: Mejora o funcionalidad nueva
+description: Algo que el sitio todavía no hace, o que podría hacer mejor.
+title: "Mejora: "
+labels: [mejora]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de escribir: en este repositorio, una decisión de producto o de arquitectura se
+        documenta antes de codearse. Este issue es el lugar donde empieza esa conversación, así que
+        importa más el problema que la solución propuesta.
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description:
+        Contá la situación concreta, no la funcionalidad. "No se entiende cuánto falta
+        para llegar al objetivo" es un problema; "poner una barra de progreso" ya es una solución.
+    validations:
+      required: true
+
+  - type: textarea
+    id: quien
+    attributes:
+      label: A quién le pasa
+      description:
+        Quien visita el sitio, quien aporta, quien administra la campaña, quien audita
+        las cifras, un buscador, un agente.
+    validations:
+      required: true
+
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Qué proponés
+      description: Opcional. Si ya tenés una idea de cómo resolverlo, escribila acá.
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Qué otra cosa se podría hacer
+      description:
+        Opcional, y más útil de lo que parece. Incluido "no hacer nada" y por qué eso
+        sería peor.
+
+  - type: checkboxes
+    id: consideraciones
+    attributes:
+      label: Cosas que esto podría tocar
+      description:
+        Marcá lo que se te ocurra. Sirve para saber qué hay que revisar antes de
+        implementarlo.
+      options:
+        - label: Muestra o modifica datos de plata (aportes, gastos, saldos, cuentas).
+        - label: Necesita que alguien tenga sesión iniciada o un rol determinado.
+        - label: Agrega JavaScript de cliente a una página pública.
+        - label: Cambia el modelo de datos o necesita una migración.
+        - label: Cambia cómo se ve el sitio en celular.

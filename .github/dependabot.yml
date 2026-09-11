@@ -1,0 +1,59 @@
+version: 2
+
+# Este repositorio fija todas sus versiones exactas y a mano, por un motivo medido:
+# las versiones `latest` de `typescript` y de `eslint` rompen el ecosistema hoy
+# (ADR-001). Así que Dependabot está para avisar, no para conducir.
+#
+# El acuerdo es:
+#
+#   · menores y parches → agrupados en un solo pull request por ecosistema y por
+#     semana. Son los que traen los arreglos de seguridad y los que casi nunca
+#     rompen nada; revisar veinte pull requests sueltos garantiza que no se revise
+#     ninguno.
+#   · mayores → cada uno por separado, y se miran a mano contra sus
+#     `peerDependencies` antes de aceptarlos. Un salto mayor de Next, de React o
+#     de ESLint no es una actualización de dependencia: es una decisión, y varias
+#     veces termina en un ADR.
+#
+# Las alertas de seguridad no dependen de esta configuración: llegan por su cuenta
+# y tienen prioridad sobre el día de la semana que diga acá.
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Argentina/Buenos_Aires
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      menores-y-parches:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      # Node 22 es la versión que corre en Vercel y en CI; el salto a la 24 se
+      # decide, no se acepta desde un pull request automático.
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+
+  # Las acciones se fijan por etiqueta mayor (`@v7`), o sea que los parches entran
+  # solos. Esto avisa cuando aparece una mayor nueva, que es lo que sí hay que leer.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Argentina/Buenos_Aires
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      menores-y-parches:
+        patterns: ["*"]
+        update-types: [minor, patch]
