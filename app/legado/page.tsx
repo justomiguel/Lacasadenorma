@@ -31,7 +31,7 @@ export const metadata = pageMetadata({
 export default function LegadoPage() {
   return (
     <>
-      <PageHeader label="Lo que sigue" title={legacy.title} lead={legacy.lead} />
+      <PageHeader title={legacy.title} lead={legacy.lead} />
 
       <Container>
         <Section>
@@ -63,11 +63,7 @@ export default function LegadoPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="primer-programa">
-          <SectionHeading
-            label="El primer programa"
-            title={riachoConecta.title}
-            id="primer-programa"
-          />
+          <SectionHeading title={riachoConecta.title} id="primer-programa" />
           <Paragraphs items={riachoConecta.paragraphs.slice(0, 1)} />
           <p className="mt-lg">
             <InlineLink href="/riacho-conecta">

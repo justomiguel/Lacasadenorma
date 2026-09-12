@@ -28,11 +28,7 @@ export const metadata = pageMetadata({
 export default function RiachoConectaPage() {
   return (
     <>
-      <PageHeader
-        label="El programa"
-        title={riachoConecta.title}
-        lead={riachoConecta.lead}
-      />
+      <PageHeader title={riachoConecta.title} lead={riachoConecta.lead} />
 
       <Container>
         <Section>
@@ -42,7 +38,7 @@ export default function RiachoConectaPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="temas">
-          <SectionHeading label="Contenidos" title="Los temas" id="temas" />
+          <SectionHeading title="Los temas" id="temas" />
 
           <ol className="max-w-measure border-t border-rule">
             {riachoConecta.topics.map((topic, index) => (

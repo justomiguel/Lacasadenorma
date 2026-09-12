@@ -68,11 +68,7 @@ export default async function NovedadesPage() {
 
   return (
     <>
-      <PageHeader
-        label="El diario de la obra"
-        title="Novedades"
-        lead="Cada avance, el día que pasó."
-      />
+      <PageHeader title="Novedades" lead="Cada avance, el día que pasó." />
 
       <Container>
         <Section>

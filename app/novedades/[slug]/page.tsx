@@ -122,7 +122,7 @@ export default async function NovedadPage({
           ])}
         />
 
-        <p className="font-ui text-label uppercase tracking-label text-ink-muted">
+        <p className="font-ui text-label text-ink-muted">
           <InlineLink href="/novedades" className="text-ink-muted">
             Novedades
           </InlineLink>
@@ -151,7 +151,8 @@ export default async function NovedadPage({
 
         <p className="mt-2xl font-ui text-small text-ink-muted">
           <InlineLink href="/novedades">Ver todas las novedades</InlineLink>
-          {" · "}
+        </p>
+        <p className="mt-sm font-ui text-small text-ink-muted">
           <InlineLink href="/transparencia">Ver la rendición de cuentas</InlineLink>
         </p>
       </Section>

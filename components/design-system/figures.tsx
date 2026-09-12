@@ -32,7 +32,7 @@ export function Stat({
 
   return (
     <div className={cn("border-t border-rule pt-sm", className)}>
-      <dt className="font-ui text-label uppercase text-ink-muted">{label}</dt>
+      <dt className="font-ui text-label text-ink-muted">{label}</dt>
       <dd className="mt-2xs font-ui text-figure font-medium" data-figure>
         {value}
       </dd>

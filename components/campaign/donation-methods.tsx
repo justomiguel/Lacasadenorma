@@ -53,8 +53,8 @@ function MethodDetail({
 }) {
   return (
     <div>
-      <p className="font-ui text-label uppercase text-ink-muted">
-        {method.label} · {method.currency}
+      <p className="font-ui text-label text-ink-muted">
+        {method.label} ({method.currency})
       </p>
 
       <div className="mt-md">
@@ -71,7 +71,7 @@ function MethodDetail({
             />
           ) : (
             <div key={field.label} className="border-b border-rule py-sm">
-              <p className="font-ui text-label uppercase text-ink-muted">{field.label}</p>
+              <p className="font-ui text-label text-ink-muted">{field.label}</p>
               <p className="mt-3xs font-ui text-subheading font-medium">{field.value}</p>
               {field.hint === null ? null : (
                 <p className="mt-3xs font-ui text-small text-ink-muted">{field.hint}</p>

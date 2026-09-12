@@ -51,7 +51,7 @@ export default async function AyudarPage() {
 
   return (
     <>
-      <PageHeader label="Colaborar" title={help.title} lead={help.lead} />
+      <PageHeader title={help.title} lead={help.lead} />
 
       <Container>
         <Section>
@@ -69,11 +69,7 @@ export default async function AyudarPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="cuentas">
-          <SectionHeading
-            label="Cuentas"
-            title="Elegí desde dónde transferís"
-            id="cuentas"
-          />
+          <SectionHeading title="Elegí desde dónde transferís" id="cuentas" />
 
           {donations.status === "ok" ? (
             <DonationMethods
@@ -88,11 +84,7 @@ export default async function AyudarPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="despues">
-          <SectionHeading
-            label="Después"
-            title="Qué pasa cuando transferís"
-            id="despues"
-          />
+          <SectionHeading title="Qué pasa cuando transferís" id="despues" />
           <Paragraphs items={help.afterTransfer} />
 
           <p className="mt-lg max-w-measure text-body">

@@ -58,7 +58,7 @@ function CurrencyBlock({ totals, label }: { totals: CurrencyTotals; label?: stri
   return (
     <div>
       {label === undefined ? null : (
-        <p className="mb-md font-ui text-label uppercase tracking-label text-ink-muted">
+        <p className="mb-md font-ui text-label text-ink-muted">
           {label}
         </p>
       )}
@@ -87,15 +87,11 @@ export default async function TransparenciaPage() {
 
   return (
     <>
-      <PageHeader label="Rendición" title={content.title} lead={content.lead} />
+      <PageHeader title={content.title} lead={content.lead} />
 
       <Container>
         <Section labelledBy="cifras">
-          <SectionHeading
-            label="Las cifras"
-            title="Cuánto entró y cuánto salió"
-            id="cifras"
-          />
+          <SectionHeading title="Cuánto entró y cuánto salió" id="cifras" />
 
           {report.status === "ok" ? (
             <div className="space-y-2xl">
@@ -136,7 +132,7 @@ export default async function TransparenciaPage() {
       {report.status === "ok" && report.data.summary.byCategory.length > 0 ? (
         <Container>
           <Section className="border-t border-rule" labelledBy="por-rubro">
-            <SectionHeading label="Distribución" title="En qué se gastó" id="por-rubro" />
+            <SectionHeading title="En qué se gastó" id="por-rubro" />
             <dl className="max-w-measure border-t border-rule">
               {report.data.summary.byCategory.map((entry) => (
                 <div
@@ -156,7 +152,7 @@ export default async function TransparenciaPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="libro">
-          <SectionHeading label="El detalle" title="Cada gasto, uno por uno" id="libro" />
+          <SectionHeading title="Cada gasto, uno por uno" id="libro" />
 
           {report.status === "ok" ? (
             report.data.summary.expenseCount === 0 ? (
@@ -187,7 +183,7 @@ export default async function TransparenciaPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="metodo">
-          <SectionHeading label="El método" title="Cómo se lleva la cuenta" id="metodo" />
+          <SectionHeading title="Cómo se lleva la cuenta" id="metodo" />
           <Paragraphs items={content.method} />
           {content.paragraphs.length === 0 ? null : (
             <Paragraphs items={content.paragraphs} className="mt-lg" />
