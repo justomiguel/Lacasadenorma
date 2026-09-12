@@ -17,10 +17,31 @@ números y avance. Por eso la página no se abre con el accidente: se abre con N
 Referencia conceptual: un libro documental o un suplemento dominical bien hecho. No una landing.
 No un dashboard.
 
+### La regla operativa entre emoción y lástima
+
+La distinción de arriba estaba escrita pero no era operativa, y durante un tiempo se cumplió por
+omisión: no mostrando nada. El resultado fue un sitio que pedía plata para reconstruir una casa sin
+decir que se había incendiado, y que por eso no emocionaba —no estaba contando nada— ni generaba
+confianza. La regla que reemplaza a la omisión, de [ADR-021](../../docs/adr/021-segunda-direccion-visual.md):
+
+> **La pérdida se muestra una vez y en pasado. El trabajo se muestra siempre y en presente.**
+
+En la práctica: las fotos del incendio existen, van completas y sin suavizar, y van **una vez**, en su
+sección. Las del trabajo —los escombros que ya se juntaron, la pala cargadora, los vecinos con palas,
+las piezas del taller rescatadas— vuelven a aparecer y se actualizan. El par «así quedó / así está
+hoy», fechado, es el argumento entero de la campaña en dos imágenes, y es factual: no hay un adjetivo,
+hay dos fotos y dos fechas.
+
+Y el relato lo escribe la familia. Cualquier adjetivo que agregue el sitio es exactamente la lástima
+que esta sección prohíbe.
+
 ### Lo que está prohibido, y por qué es fácil caer
 
 | Prohibido | Por qué se cae solo | Qué se hace en su lugar |
 |---|---|---|
+| **Sobrelínea en VERSALES arriba de cada título** | Se siente editorial y es gratis de agregar | Etiqueta sólo si transporta información que el título no tiene |
+| **Un solo plano: un contenedor, una superficie, un ancho** | Es la consecuencia de no romper nunca la grilla | Sangrado para la fotografía, bandas de superficie entre secciones |
+| **Un solo tamaño de texto haciendo de jerarquía** | La escala está en los tokens y no se usa | Un momento por página sube a display; el resto se queda quieto |
 | Gradientes decorativos | Es el default de todo generador | Papel plano, tinta plana |
 | Glassmorphism, blobs | Estética 2021 de plantilla | Nada. Silencio visual |
 | Una card para cada cosa | Es la forma más rápida de agrupar | Reglas de un pixel y espacio en blanco |
@@ -31,6 +52,19 @@ No un dashboard.
 | Iconos por todos lados | Rellenan huecos | Icono sólo cuando reemplaza una palabra que no cabe |
 | Sombras difusas | Simula profundidad que no hace falta | Ninguna sombra. Jerarquía por tipografía y espacio |
 | Animación de entrada en todo | Se ve "moderno" | Movimiento sólo cuando comunica un cambio de estado |
+
+Las tres primeras filas se agregaron después, y conviene decir de dónde salieron porque son las
+únicas que el proyecto **incumplió mientras la tabla estaba escrita**. La skill oficial
+`frontend-design` de Anthropic enumera los grupos estéticos donde se agrupa hoy el diseño generado por
+IA, y este sitio caía en cuatro a la vez: crema cálido con display serif y acento terracota, layout de
+broadsheet con reglas de un pixel, sobrelínea en versales arriba de cada encabezado, y metadatos
+unidos con puntos medios. Había **39 repeticiones** del patrón «etiqueta en versales + título +
+regla» en nueve páginas, cero elementos a sangrado y cero superficies distintas de `paper`.
+
+Ninguna de esas decisiones es ilegítima por separado —el ladrillo viene de la tierra colorada de
+Formosa, Archivo es una grotesca de Buenos Aires—. El problema es que las cuatro juntas, sin
+fotografía, son el default. El detalle está en
+[ADR-021](../../docs/adr/021-segunda-direccion-visual.md).
 
 ---
 
@@ -178,6 +212,22 @@ Las composiciones son **asimétricas**: la prosa ocupa las columnas 2–8, los e
 columna 10–12, y las fotos importantes se van a sangrado completo. Centrar todo es la firma del
 template.
 
+### Las tres formas de romper el plano
+
+Estaban prometidas y no se usaban: durante mucho tiempo el sitio tuvo **cero** elementos a sangrado y
+**cero** superficies distintas de `paper` en páginas públicas. Un documento con un solo plano es plano,
+y ninguna cantidad de espacio en blanco lo arregla.
+
+| Recurso | Cuándo | Límite |
+|---|---|---|
+| **Sangrado completo** | Sólo fotografía, y sólo la que lleva el peso del relato | Como máximo una por página. Requiere resolución real: una foto de 600 px estirada a 1440 se ve peor que la misma foto chica y bien puesta |
+| **Banda de superficie** | Secciones enteras sobre `paper-sunk`; **una sola** sobre tinta, la de qué ocurrió | El tono oscuro no es un efecto: sólo se usa donde el contenido lo justifica. Contraste y foco se verifican igual que sobre papel |
+| **Margen editorial** | La columna 10–12, que antes quedaba vacía, lleva la foto, el epígrafe, la fecha o la cifra al margen | Es información, no decoración. Si no hay qué poner, la sección va a ancho de prosa y listo |
+
+El color fuerte lo aportan **las fotos**, no los tokens: el verde agua del frente de la casa, el
+ladrillo real de los escombros, el verde de los árboles. El acento ladrillo sigue siendo el único
+acento de interfaz y sigue el límite de tres superficies con acento por pantalla (sección 3).
+
 **Reglas** (`1px solid var(--color-rule)`) separan secciones. Es el recurso que reemplaza a las
 cards y es lo que hace que el sitio se lea como un impreso.
 
@@ -292,9 +342,24 @@ El orden responde las nueve preguntas en la secuencia en que una persona las hac
 
 ### Navegación
 
-Encabezado mínimo: el nombre del proyecto a la izquierda y *Ayudar* a la derecha. En mobile,
-**sin menú hamburguesa**: el encabezado lleva sólo esas dos cosas y la navegación completa vive en
-el pie. Un menú oculto en un sitio de nueve páginas agrega un toque y JavaScript sin dar nada.
+La decisión original —«encabezado mínimo, sin menú hamburguesa, la navegación completa vive en el
+pie»— acertó en la mitad. El menú oculto sigue descartado: agrega un toque y JavaScript para esconder
+ocho enlaces. Lo que no se sostuvo es que el pie alcance. En la home son **11 497 px de alto en un
+teléfono de 360 px, casi quince pantallas**, y hasta hoy ése era el único lugar del sitio donde se
+decía que había otras páginas. La familia lo dijo así: «no veo clara la navegación».
+
+- **Escritorio**: las seis rutas primarias visibles en el encabezado, con `aria-current="page"` en la
+  actual. El nombre del proyecto a la izquierda y *Ayudar* como acción a la derecha.
+- **Teléfono**: el encabezado mantiene el nombre y *Ayudar*, y la navegación aparece **dentro del
+  documento**, como sumario, inmediatamente después de la apertura. Es el recurso de una publicación
+  impresa —una lista real de enlaces, cada uno con lo que hay en esa página—, no chrome de aplicación.
+  Nada queda oculto detrás de un toque.
+- Cada página termina en dos enlaces concretos de a dónde ir después, con texto propio. **Nunca «ver
+  más»**: un lector de pantalla puede pedir la lista de enlaces fuera de contexto.
+
+Se descartó la barra de navegación fija en teléfono: come alto de pantalla en el dispositivo donde
+menos hay, y ya hay una barra fija abajo. Dos barras fijas en 360 px dejan una ventana de lectura de
+nada.
 
 La acción de ayudar es persistente en mobile como una barra inferior compacta, que **no** tapa
 contenido (el `body` reserva su altura) y que desaparece en la propia página de aportes.
@@ -312,11 +377,32 @@ la barra se comporta como antes y la acción nunca se pierde.
 
 ## 10. Fotografía
 
-Es el elemento con más peso de la página, y hoy es el que falta.
+Es el elemento con más peso de la página, y es lo que **estructura** el documento: el resto se ordena
+alrededor de ella. No es un adorno que se agrega al final.
+
+Viene por dos caminos, siguiendo la misma división por frecuencia de cambio que el resto del contenido
+(ADR-007, extendido por ADR-021):
+
+| Fuente | Qué fotos | Cómo se edita |
+|---|---|---|
+| `public/fotos/`, declaradas en `content/*.json` | Las editoriales: el retrato de Norma, el frente, el interior, el garage, la limpieza. Se eligen una vez | Commit y pull request |
+| Supabase Storage vía `/admin` | Las del avance de la obra, adjuntas a cada novedad y fechadas | Backoffice, sin despliegue |
+
+Las editoriales no van a la base porque son parte del relato, no un dato operativo, y tienen que estar
+en pantalla también cuando la base no responde. Una foto **no es una cifra** —no afirma un número—, así
+que publicarla sin base de datos no viola FR-034 ni la verificación del modo `sin-datos`, que sigue
+exigiendo cero `data-figure`.
 
 - Sin fotos reales, **no se usan ilustraciones ni imágenes de stock ni imágenes generadas**. Se
   reserva el espacio con la proporción correcta y un texto honesto de qué va ahí. Un espacio vacío
-  con intención se lee como respeto; una foto de stock se lee como mentira.
+  con intención se lee como respeto; una foto de stock se lee como mentira. Pero es un **estado
+  transitorio**: si el material puede tardar, la página tiene que verse terminada sin él (sección 12).
+- **La orientación del material manda.** Lo que se filmó con el teléfono en la mano es 9:16 y no se
+  recorta a apaisado sin perder algo: va al ancho completo en teléfono, que es su formato nativo, y al
+  margen en escritorio. Estirar una foto de 600 px a 1440 se ve peor que la misma foto chica y bien
+  puesta.
+- **Una cara identificable necesita permiso de esa persona.** En el material de la limpieza hay vecinos
+  que fueron a ayudar; hasta que estén los permisos se usan los encuadres donde nadie es reconocible.
 - Toda imagen pasa por `next/image` con `width` y `height` reales.
 - `alt` describe lo que importa de la imagen, no el archivo. Es obligatorio en el esquema de la
   base.
@@ -369,6 +455,18 @@ criterio: seis se miden en cada corrida de CI, y sólo cuatro dependen de que al
 - [x] La página se puede leer completa con el ancho de un teléfono, sin scroll horizontal.
       → medido, criterio 10.
 
+Los cuatro que agrega [ADR-021](../../docs/adr/021-segunda-direccion-visual.md), después de que la
+familia dijera que el sitio estaba monótono:
+
+- [ ] Ninguna página pública muestra un espacio reservado de foto donde ya hay material disponible.
+      → medido, criterio 11.
+- [ ] La home presenta al menos una imagen a sangrado y al menos dos superficies de sección distintas.
+      → medido, criterio 12.
+- [ ] Desde la apertura, en teléfono, se llega a cualquiera de las seis rutas primarias sin recorrer la
+      página entera. → `e2e/comun/navegacion.spec.ts`.
+- [ ] No queda ninguna sobrelínea en versales que sólo repita el título de su sección.
+      → medido, criterio 13.
+
 ### Lo que el loop encontró, y lo que decidió no cambiar
 
 Los tres hallazgos —la medida que decía 68 y daba 104, la barra que duplicaba el botón de la
@@ -376,12 +474,30 @@ apertura, las reglas en tres extensiones distintas— están explicados en las s
 tres se corrigieron y los tres tienen ahora una comprobación que los sostiene. Ninguno se veía en una
 captura, y eso es lo que hay que recordar del loop: mirar sirve para juzgar, no para medir.
 
-Queda algo que se vio y **no** se cambió, y conviene que esté escrito para que no se "arregle" sin
-leer esto. En escritorio, una sección de sólo prosa deja la columna de texto a la izquierda con dos
-tercios de la página vacíos a su derecha. Es la consecuencia aritmética del criterio 4: con 17 px de
-Newsreader, una columna que entre en 68 caracteres mide 442 px, y para llenar 700 px con 68
-caracteres habría que subir el cuerpo a 24 px, que es el tamaño de una bajada. El criterio 4 no se
-negocia, así que la columna es angosta por definición. Y el lado derecho no está vacío por descuido:
-es donde va la fotografía, que es el elemento con más peso del sitio y el que hoy falta (sección 10).
-La apertura y la lista de novedades ya lo reservan explícitamente. Cuando las fotos lleguen, esa
-mitad se ocupa sin mover una línea de layout.
+### Lo que se defendió mal, y hay que leer antes de volver a defenderlo
+
+Hubo algo que se vio y **no** se cambió, y quedó escrito acá como decisión deliberada. Era un error, y
+se deja el argumento a la vista porque la forma del error es más útil que su corrección.
+
+El argumento decía: en escritorio, una sección de sólo prosa deja la columna de texto a la izquierda
+con dos tercios de la página vacíos a su derecha; es la consecuencia aritmética del criterio 4 —con
+17 px de Newsreader, una columna de 68 caracteres mide 442 px—; el criterio 4 no se negocia, así que la
+columna es angosta por definición; y el lado derecho no está vacío por descuido, es donde va la
+fotografía. Cerraba con: «Cuando las fotos lleguen, esa mitad se ocupa sin mover una línea de layout».
+
+Las dos primeras partes son ciertas. La conclusión no. **Un diseño que sólo funciona cuando llega un
+material que no controlás no es un diseño con espacio reservado: es una promesa.** Y mientras la
+promesa no se cumplió, lo que la familia vio fue esto: once páginas con un solo contenedor, una sola
+superficie, un solo ancho de prosa, cero imágenes, treinta y nueve encabezados iguales y dos tercios de
+pantalla en beige. La palabra que usaron fue «monótona», y describe una propiedad medible.
+
+Dos lecciones, y la segunda es la que importa:
+
+1. El espacio reservado es honesto como **estado transitorio**, no como layout. Si el material puede
+   tardar, la página tiene que verse terminada sin él.
+2. **Un argumento correcto puede defender un resultado malo.** Cada paso de ese razonamiento era
+   válido y la conclusión era indefendible en cuanto alguien mirara la pantalla. Es la misma forma que
+   tuvo el hallazgo de `ink-faint`: una restricción escrita en esta página, incumplida en seis lugares
+   de esta página. La diferencia es que a `ink-faint` lo encontró axe, y a esto no lo encontró nada
+   porque no había con qué medirlo. De ahí los cuatro criterios nuevos de
+   [ADR-021](../../docs/adr/021-segunda-direccion-visual.md), que sí se miden.

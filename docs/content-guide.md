@@ -94,24 +94,41 @@ Esta es la lista que ADR-007 promete. Está ordenada por lo que más cambia la p
 
 ### Fotografías
 
-Ningún archivo de imagen está en el proyecto. Los seis espacios reservados, con el texto que se ve
-hoy en pantalla:
+La familia entregó el primer material el 11 de septiembre de 2026. Antes de eso el sitio no tenía una
+sola imagen, y era la causa principal de que se viera plano ([ADR-021](./adr/021-segunda-direccion-visual.md)).
 
-| Dónde | Qué va | Proporción |
+#### Lo que hay, y dónde va
+
+El material se clasifica por **momento**, porque ese es el eje del relato: la pérdida se muestra una
+vez y en pasado, el trabajo se muestra siempre y en presente.
+
+| Momento | Foto | Dónde va | Notas |
+|---|---|---|---|
+| — | **Retrato de Norma** en la cocina, blusa fucsia, flores detrás | Apertura de la home y `/norma`. Es la imagen que abre el sitio | Es la más importante y la de peor resolución: 603 × 406 px recortada del collage. **Hace falta el original** |
+| Antes de la limpieza | **El frente de la casa**: pared verde agua, la mancha negra sobre la ventana, la reja | `/que-paso`, primera del ensayo | Lleva impresa la etiqueta «ASÍ QUEDÓ EL FRENTE DE LA CASA» del collage. Hace falta el original sin etiqueta |
+| Antes de la limpieza | **El interior sin techo**: ladrillo desnudo, la viga colgando, los escombros donde cayeron | `/que-paso`, segunda | Ídem |
+| Antes de la limpieza | **El garage con el auto calcinado** | `/que-paso`, tercera | Ídem |
+| Durante la limpieza | **Los escombros juntados** en un montículo, la pala cargadora al fondo, tres personas paleando | `/reconstruccion`, y en la home como el par de «así está hoy» | Es un cuadro de video, **vertical 9:16**. Al ancho completo en teléfono, al margen en escritorio |
+| Durante la limpieza | **Las piezas del taller rescatadas**, clasificadas en el piso y en la mesa, gente trabajando alrededor de la camioneta | `/reconstruccion` | 1125 × 2000 px, la mejor resolución del lote. Hay **una cara identificable**: necesita permiso |
+
+Las fotos editoriales viven en `public/fotos/` y se declaran en `content/*.json` con `width`,
+`height`, `alt` y, si corresponde, epígrafe y crédito. El esquema de Zod las valida al importar, igual
+que el resto del contenido. Las del **avance de la obra** siguen viniendo de la base: se suben desde
+`/admin` con cada novedad, así que aparecen fechadas y sin despliegue.
+
+El `alt` describe lo que se ve para alguien que no puede verlo, y no repite el epígrafe.
+
+#### Lo que falta, en orden de cuánto cambia la página
+
+| Qué | Por qué importa | Quién |
 |---|---|---|
-| Home, portada | "Acá va un retrato de Norma. Su familia está eligiendo la fotografía." | Vertical |
-| Home, sección de la historia | "Acá va una foto de Norma trabajando en la radio." | Horizontal |
-| `/norma` | "Acá va el retrato de Norma que elija la familia." | Vertical |
-| `/norma` | "Acá va una foto de Norma en la radio de Riacho He Hé." | Horizontal |
-| `/legado` | "Acá va una foto de Norma en la radio, la que explica de dónde viene todo esto." | Vertical |
-| `/reconstruccion` | "Acá van las fotos del avance de la obra, con su fecha." | Horizontal |
+| **El original del retrato de Norma** | Es el elemento más importante del sitio y hoy está en 603 px. No alcanza para la apertura en escritorio | La familia elige cuál |
+| **Los originales de las tres fotos del incendio**, sin la etiqueta del collage impresa | El sitio tiene epígrafes reales con su propia tipografía; una etiqueta quemada en el pixel es de otra pieza gráfica | La familia |
+| **Una foto del terreno ya limpio**, después de retirar los escombros | Es la que cierra el par «así quedó / así está hoy» y la que muestra el punto de partida de la obra que se pide financiar. Hoy el sitio puede mostrar la pérdida y el esfuerzo, pero no el punto cero | La familia |
+| **Norma en la radio** | Es lo que vuelve concreto que fue comunicadora, y es la foto que explica `/legado` y Riacho Conecta | La familia, si existe |
+| **Permiso de la persona identificable** en la foto del taller | Sin permiso no se publica una cara. Mientras no esté, se usa un encuadre donde nadie sea reconocible | El equipo pregunta |
 
-Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más. Las del avance de la
-obra se suben desde el backoffice junto con cada novedad, así que aparecen fechadas y sin
-despliegue.
-
-Cuando lleguen: se suben a Supabase Storage desde `/admin`, con su texto alternativo. El alt describe
-lo que se ve para alguien que no puede verlo, no repite el epígrafe.
+Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más.
 
 ### Texto
 

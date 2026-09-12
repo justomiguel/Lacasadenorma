@@ -110,7 +110,12 @@ lista de desgracias:
 | Momento | Material | Qué comunica |
 |---|---|---|
 | **Antes de la limpieza** | frente quemado, interior sin techo con los escombros donde cayeron, garage con el auto calcinado | qué se perdió |
-| **Durante la limpieza** | los escombros ya juntados en un montículo con la pala cargadora al lado, vecinos con palas; las piezas del taller rescatadas y clasificadas en el piso | que hay trabajo en marcha y gente ayudando |
+| **Durante la limpieza** | los escombros ya juntados en un montículo con la pala cargadora al lado, tres personas paleando para cargarla; las piezas del taller rescatadas y clasificadas en el piso | que hay trabajo en marcha y gente ayudando |
+
+Un tercer momento —**después de la limpieza**, el terreno despejado y listo para empezar— **no existe
+en el material entregado**, y es el que más falta. Es la foto que cierra el par: sin ella, el sitio
+puede mostrar la pérdida y el esfuerzo, pero no el punto de partida de la obra que pide financiar.
+Está en la lista de lo que falta en `content-guide.md`.
 
 El sitio los presenta **apareados y fechados**, no mezclados. Ese par es el argumento entero de la
 campaña en dos imágenes, y es factual: no hay un adjetivo, hay dos fotos y dos fechas.
@@ -194,9 +199,14 @@ contado, con las palabras de quien tiene derecho a contarlo.
   pero **no alcanzan para un sangrado completo en escritorio** y hay que pedir los originales. El
   retrato de Norma queda en 603 × 406 px, que es poco para el elemento más importante del sitio.
   Mientras eso no llegue, el sangrado se reserva para el material del que sí hay resolución.
-- **Hay caras identificables** en el material de la limpieza: vecinos que fueron a ayudar. Publicar una
-  cara necesita permiso de esa persona, y eso no lo resuelve el diseño. Hasta que estén los permisos,
-  se usan los encuadres donde la persona no es reconocible, que además son los mejores encuadres.
+- **El material de la limpieza es vertical (9:16)**, porque se filmó con el teléfono en la mano. No hay
+  forma de recortarlo a apaisado sin perder algo: o se cortan las personas, o la máquina, o el
+  montículo. Así que la banda a sangrado de escritorio **no puede** alimentarse con ese material; va en
+  la columna del margen y en el ancho completo sólo en teléfono, donde 9:16 es el formato nativo.
+- **Hay una cara identificable** en el material de la limpieza —la persona de gorra azul que palea, a
+  media distancia— y las otras tres no lo son. Publicar una cara necesita permiso de esa persona, y eso
+  no lo resuelve el diseño. Hasta que esté el permiso se usan los encuadres donde nadie es reconocible,
+  que además son los mejores encuadres: el montículo con la pala al fondo y las manos trabajando.
 - Aparece un `public/` con imágenes en el repositorio, que hasta hoy no existía. Es peso en el árbol y
   hay que cuidar que no se conviertan en un cajón de archivos sueltos: sólo entran las editoriales, y
   cada una está declarada en `content/` o no se sirve.
