@@ -45,5 +45,6 @@ código sigue siendo legible para cualquier developer. Las URLs son coherentes c
   encabezados rompería la compatibilidad con los comandos que los leen.
 - Un colaborador que no hable castellano no podrá leer las specs. Se acepta: la prioridad es la
   comunidad del proyecto, y el código con sus tipos comunica lo suficiente para contribuir.
-- La internacionalización del sitio queda fuera de alcance. La arquitectura no la bloquea, pero no se
-  paga su costo hoy.
+- La internacionalización del sitio quedó fuera de alcance en v1 y se pagó después, cuando el
+  sitio ya estaba en pie y había un corredor de donación en inglés que la justificaba. Ver
+  [ADR-023](./023-i18n-estructural.md).
