@@ -58,13 +58,25 @@ captura**:
 | La barra de ayuda del teléfono duplicaba el botón de la apertura | Como dos botones iguales, que en una maqueta parece una decisión | Contando superficies con acento sobre el pliegue |
 | Las reglas del encabezado y del pie caían en una tercera extensión | 96 px de diferencia sobre 1440. A ojo, nada | Midiendo las cajas con borde de cada página |
 
-Por eso **seis de los diez criterios dejaron de depender de la vista** y viven en
+Por eso **nueve de los catorce criterios dejaron de depender de la vista** y viven en
 `e2e/comun/revision-visual.spec.ts`, que corre en las once páginas, en los tres navegadores y en los
 dos modos: desborde horizontal, medida de la prosa, superficies con acento sobre el pliegue,
-gradientes y sombras y esquinas redondeadas, números tabulares, y proporción declarada de cada
-imagen. Un séptimo —el anillo de foco— vive en `accesibilidad.spec.ts`, que recorre con Tab todo lo
-enfocable de cada página: axe no tiene ninguna regla de foco visible, y una utilidad `outline-none`
-en un componente nuevo no rompería nada más.
+gradientes y sombras y esquinas redondeadas, números tabulares, proporción declarada de cada imagen,
+huecos de foto reservados, texto en versales, y que la home rompa el plano. Un décimo —el anillo de
+foco— vive en `accesibilidad.spec.ts`, que recorre con Tab todo lo enfocable de cada página: axe no
+tiene ninguna regla de foco visible, y una utilidad `outline-none` en un componente nuevo no rompería
+nada más. Y el de la navegación, en `navegacion.spec.ts`.
+
+Los cuatro últimos los agregó [ADR-021](./adr/021-segunda-direccion-visual.md), después de que la
+familia dijera que el sitio estaba monótono. Vale anotar por qué hacían falta: **la página pasaba los
+diez criterios anteriores**. Cada regla se cumplía y el conjunto se leía como una plantilla, porque
+ninguna medición preguntaba si había una foto, si había más de una superficie, ni dónde estaba la
+navegación. Un criterio que no se puede fallar no es un criterio.
+
+Dos de los cuatro encontraron defectos en su primera corrida, ninguno visible en una captura: el
+sumario del sitio salía **sin nombre accesible** —`Container` recibía `aria-label` y lo descartaba en
+silencio—, y los tres puntos de navegación del sitio se llamaban igual, o sea que desde el teclado
+eran tres landmarks indistinguibles.
 
 Lo que sigue necesitando ojos son los cuatro criterios que son un juicio y no una medida: si la
 primera pantalla comunica, si el orden de lectura acompaña, si el tono es el correcto, si la página se

@@ -458,14 +458,20 @@ criterio: seis se miden en cada corrida de CI, y sólo cuatro dependen de que al
 Los cuatro que agrega [ADR-021](../../docs/adr/021-segunda-direccion-visual.md), después de que la
 familia dijera que el sitio estaba monótono:
 
-- [ ] Ninguna página pública muestra un espacio reservado de foto donde ya hay material disponible.
-      → medido, criterio 11.
-- [ ] La home presenta al menos una imagen a sangrado y al menos dos superficies de sección distintas.
-      → medido, criterio 12.
-- [ ] Desde la apertura, en teléfono, se llega a cualquiera de las seis rutas primarias sin recorrer la
-      página entera. → `e2e/comun/navegacion.spec.ts`.
-- [ ] No queda ninguna sobrelínea en versales que sólo repita el título de su sección.
-      → medido, criterio 13.
+- [x] Ninguna página pública muestra un espacio reservado de foto donde ya hay material disponible.
+      → medido, criterio 11: el número de huecos por página es **exacto**, y el único que queda es la
+      foto de Norma en la radio, que puede no existir.
+- [x] La home presenta al menos una imagen que llega al borde de la pantalla en 360 px y más de una
+      superficie de sección. → medido, criterio 12. El sangrado es **en teléfono** y no en escritorio:
+      todas las fotos que hay son verticales o casi cuadradas, y a 1440 px de ancho una foto de
+      proporción 1,03 no es una banda, es una pared de 1390 px de alto (§10).
+- [x] Desde la apertura, en teléfono, se llega a cualquiera de las seis rutas primarias sin recorrer la
+      página entera. → `e2e/comun/navegacion.spec.ts`. La primera corrida de ese archivo encontró el
+      pie en lugar del sumario: el sumario salía sin nombre accesible porque `Container` no pasaba
+      `aria-label`, y los tres puntos de navegación se llamaban igual.
+- [x] No queda ninguna sobrelínea en versales que sólo repita el título de su sección.
+      → medido, criterio 13, que va más lejos que el criterio: **ninguna** página pública tiene texto
+      en versales. `/admin` sí las conserva, porque es una herramienta interna y densa.
 
 ### Lo que el loop encontró, y lo que decidió no cambiar
 
