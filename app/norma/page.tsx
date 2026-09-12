@@ -77,8 +77,12 @@ export default function NormaPage() {
 
             <aside className="lg:col-span-4 lg:col-start-9">
               <div className="space-y-lg">
-                {norma.photos.map((photo, index) => (
-                  <BleedOnMobile key={photo.url} media={photo} priority={index === 0} />
+                {/* Sin `priority`: en teléfono la columna de fotos va después de
+                    todo el relato, así que la primera está a varias pantallas del
+                    pliegue. La única foto del sitio que se precarga es el retrato de
+                    la apertura de la home. */}
+                {norma.photos.map((photo) => (
+                  <BleedOnMobile key={photo.url} media={photo} />
                 ))}
                 {/* Sigue faltando la que explica de dónde viene todo esto. */}
                 <ReservedSpace

@@ -223,9 +223,15 @@ export function PhotoSequence({
                 media={photo}
                 reservedFor=""
                 sizes="(min-width: 40rem) 50vw, 100vw"
-                /* La primera de cada tramo es la que se ve entera antes de
-                   desplazarse, así que es la que conviene cargar con prioridad. */
-                priority={index === 0}
+                /* Ninguna lleva `priority`, y eso es una corrección: antes la
+                   primera de cada tramo lo llevaba, «porque se ve entera antes de
+                   desplazarse». No se ve. En las dos páginas que usan este
+                   componente el ensayo empieza después del título, la bajada y los
+                   párrafos de introducción, y en un teléfono eso es una pantalla y
+                   media. `priority` precarga con prioridad alta, así que estaba
+                   poniendo hasta 114 KB de fotos que nadie mira todavía delante del
+                   texto que sí se está mirando: en `/reconstruccion` el LCP es un
+                   párrafo y llegaba a 3 040 ms con un presupuesto de 2 800. */
                 /* Cuando el tramo tiene una cantidad impar de fotos, la primera
                    ocupa las dos columnas: así no queda un hueco al final de la
                    grilla, y la que abre el tramo es la que más se ve. */
@@ -258,13 +264,14 @@ export function PhotoEssay({
 
   return (
     <div className={cn("grid gap-md sm:grid-cols-2", className)}>
-      {media.map((item, index) => (
+      {/* Sin `priority`, por lo mismo que en `PhotoSequence`: las fotos de una
+          novedad van dentro del cuerpo de la novedad, nunca arriba. */}
+      {media.map((item) => (
         <Figure
           key={item.id}
           media={item}
           reservedFor=""
           sizes="(min-width: 40rem) 50vw, 100vw"
-          priority={index === 0}
         />
       ))}
     </div>
