@@ -27,7 +27,7 @@ menos que uno que verifica que algo no se puede hacer.**
 | Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
 | Punta a punta | Playwright, tres navegadores, dos modos | 532 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
-| Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
+| Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos, con la red estrangulada de verdad (ADR-022) | Lo que sólo se ve en dispositivos reales |
 
 Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **532
 tests de Playwright** entre los dos modos (255 sin datos, 277 con datos).

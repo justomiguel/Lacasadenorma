@@ -8,6 +8,12 @@ name: Calidad
 # el servidor de desarrollo no minifica, no cachea y no comprime, y daría un
 # resultado que no se parece a lo que ve una persona en 4G.
 #
+# El estrangulamiento es **real** y no simulado (`throttlingMethod: "devtools"`).
+# El motivo está medido y explicado en `docs/adr/022-medicion-de-performance.md`:
+# con el modelo simulado la misma página daba 2 334 ms y 2 936 ms de LCP en
+# corridas consecutivas del mismo build, y ocultaba un desplazamiento de layout
+# real. Con estrangulamiento real la variación entre corridas es de ±15 ms.
+#
 # La configuración —qué URLs, cuántas corridas, qué presupuestos— vive en
 # `lighthouserc.json`, que es JSON y no admite comentarios; lo que hay que
 # explicar de ella está en `docs/deployment.md` y en los comentarios de acá.
@@ -63,17 +69,18 @@ jobs:
 
       # La acción sólo ejecuta `lhci autorun` con la configuración del repositorio:
       # no hace falta agregar `@lhci/cli` a package.json para esto.
+      #
+      # `uploadArtifacts: true` **siempre**, no sólo cuando falla. Antes estaba en
+      # `false` con un paso propio de `upload-artifact` condicionado a `failure()`,
+      # y no funcionó: `lhci` corta en la aserción, antes de escribir los informes
+      # en el directorio del repositorio, así que el paso no encontraba nada y con
+      # `if-no-files-found: ignore` no dijo una palabra. El resultado fue un ciclo
+      # entero diagnosticando a ciegas una falla de la que sólo se veía el resumen.
+      # Los informes de una corrida que pasó también sirven: son la línea de base
+      # contra la que se compara la próxima.
       - name: Medir las nueve páginas públicas contra los presupuestos
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: ./lighthouserc.json
-          uploadArtifacts: false
-
-      - name: Guardar las mediciones de la corrida que falló
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: lighthouse-${{ github.run_id }}
-          path: .lighthouseci/
-          retention-days: 7
-          if-no-files-found: ignore
+          uploadArtifacts: true
+          artifactName: lighthouse-${{ github.run_id }}

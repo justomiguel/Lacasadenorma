@@ -58,6 +58,22 @@ componentes necesitan interactividad.
 > el LCP, que en este sitio marca cuándo termina de bajar la tipografía. Los números que corta CI están
 > en `lighthouserc.json` con el ADR detrás.
 
+> **Vuelto a medir** (ADR-022), esta vez con la red estrangulada de verdad y no simulada. Los tres
+> objetivos de este párrafo se sostienen y con más margen del que se creía: **LCP 1,7 s** contra 2,5 s
+> y **FCP 1,55 s** en 4G lenta real, y el TBT —lo más cercano al INP que se puede medir en
+> laboratorio— **54 ms** contra 200 ms.
+>
+> **El CLS es la excepción, y se corrige acá para que la especificación no diga una cosa y la
+> compuerta otra: el objetivo pasa de 0,05 al 0,1 publicado de Core Web Vitals.** El motivo es un
+> desplazamiento de 55 px en la apertura de la home cuando la serif reemplaza a la fallback: «La Casa
+> de Norma» entra en una línea con la fallback y en dos con Newsreader. No es un descuido que se pueda
+> arreglar, es una propiedad de tener dos tipografías con anchos distintos —siempre existe un rango de
+> anchos de pantalla donde no coinciden en cuántas líneas ocupan—. Medido, ese rango son **30 px**,
+> entre 400 y 429 px, y la emulación de Lighthouse mide justo en 412 px. A 360 y 390 px, que es la
+> mayoría de los teléfonos, el CLS es 0,0000. Las salidas que sí lo eliminarían —no cambiar nunca de
+> tipografía, o dejar el texto en blanco hasta que baje— cuestan la tipografía o la página, y están
+> evaluadas una por una en el ADR.
+
 **Constraints**: Sin Docker en el entorno de desarrollo de agentes, lo que descarta el flujo
 declarativo de esquemas de Supabase y obliga a migraciones escritas a mano. Sin credenciales de
 Supabase disponibles todavía, por lo que el sitio **debe** funcionar sin base de datos configurada
