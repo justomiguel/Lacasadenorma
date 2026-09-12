@@ -10,8 +10,7 @@
         "http://127.0.0.1:3000/ayudar",
         "http://127.0.0.1:3000/transparencia",
         "http://127.0.0.1:3000/novedades",
-        "http://127.0.0.1:3000/legado",
-        "http://127.0.0.1:3000/riacho-conecta"
+        "http://127.0.0.1:3000/legado"
       ],
       "settings": {
         "throttlingMethod": "devtools",

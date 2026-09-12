@@ -223,7 +223,7 @@ export async function TransparencyScreen({ locale }: { locale: Locale }) {
 
       <Container>
         <Section tight className="border-t border-rule">
-          <h2 className="font-prose text-heading">{ui.transparencyPage.helpHeading}</h2>
+          <h2 className="font-display text-heading">{ui.transparencyPage.helpHeading}</h2>
           <p className="mt-sm max-w-measure text-body text-ink-muted">
             {ui.transparencyPage.helpLead}{" "}
             <InlineLink href={localizedHref("/novedades", locale)}>

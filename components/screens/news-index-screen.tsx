@@ -107,10 +107,10 @@ export async function NewsIndexScreen({ locale }: { locale: Locale }) {
                 const cover = update.media[0];
                 const titleAndExcerpt = (
                   <>
-                    <h2 className="mt-xs font-prose text-heading">
+                    <h2 className="mt-xs font-display text-heading">
                       <InlineLink
                         href={localizedHref(`/novedades/${update.slug}`, locale)}
-                        className="text-ink decoration-brick hover:text-brick-strong"
+                        className="text-ink decoration-aqua hover:text-aqua-strong"
                       >
                         {update.title}
                       </InlineLink>

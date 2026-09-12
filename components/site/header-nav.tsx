@@ -80,7 +80,7 @@ export function HeaderNav({
                   {...(actual ? { "aria-current": "page" as const } : {})}
                   className={
                     actual
-                      ? "inline-flex min-h-touch items-center font-ui text-small text-ink underline decoration-brick decoration-2 underline-offset-4"
+                      ? "inline-flex min-h-touch items-center font-ui text-small text-ink underline decoration-aqua decoration-2 underline-offset-4"
                       : "inline-flex min-h-touch items-center font-ui text-small text-ink-muted transition-colors duration-fast hover:text-ink"
                   }
                 >
@@ -109,7 +109,7 @@ export function HeaderNav({
       <Link
         href={helpHref}
         {...(helpIsCurrent ? { "aria-current": "page" as const } : {})}
-        className="inline-flex min-h-touch shrink-0 items-center font-ui text-small font-medium text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+        className="inline-flex min-h-touch shrink-0 items-center font-ui text-small font-medium text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
       >
         {helpLabel}
       </Link>

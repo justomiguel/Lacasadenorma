@@ -54,13 +54,13 @@ function Block({ node }: { node: BlockNode }): ReactNode {
       // `h3` porque el título de la novedad es el `h1` de la página y las
       // secciones del sitio son `h2`. El nivel no es una decisión del componente.
       return (
-        <h3 className="mt-xl font-prose text-subheading font-medium first:mt-0">
+        <h3 className="mt-xl font-display text-subheading font-medium first:mt-0">
           <Inline nodes={node.content} />
         </h3>
       );
     case "quote":
       return (
-        <blockquote className="border-l-2 border-brick pl-lg text-lead text-ink-muted">
+        <blockquote className="border-l-2 border-aqua pl-lg text-lead text-ink-muted">
           <Inline nodes={node.content} />
         </blockquote>
       );

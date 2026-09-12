@@ -38,7 +38,7 @@ export function PageIndex({ locale, ui }: { locale: Locale; ui: UiContent }) {
                 href={localizedHref(item.href, locale)}
                 className="flex min-h-touch flex-col justify-center py-md transition-colors duration-fast hover:bg-paper-sunk"
               >
-                <span className="font-prose text-subheading font-medium text-ink">
+                <span className="font-display text-subheading font-medium text-ink">
                   {copy.label}
                 </span>
                 <span className="mt-3xs max-w-measure font-ui text-small text-ink-muted">

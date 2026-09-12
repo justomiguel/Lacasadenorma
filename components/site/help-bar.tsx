@@ -114,7 +114,7 @@ export function HelpBar({
         >
           <Link
             href={href}
-            className="flex min-h-touch w-full items-center justify-center rounded-sm bg-brick px-lg font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial active:bg-brick-strong"
+            className="flex min-h-touch w-full items-center justify-center rounded-sm bg-aqua px-lg font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial active:bg-aqua-strong"
           >
             {label}
           </Link>

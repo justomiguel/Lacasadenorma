@@ -34,7 +34,7 @@ export function SiteFooter({
       <Container className="py-3xl">
         <div className="grid gap-2xl lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="font-prose text-heading">{site.name}</p>
+            <p className="font-display text-heading">{site.name}</p>
             <p className="mt-sm max-w-measure text-small text-ink-muted">
               {site.tagline}
             </p>
@@ -50,7 +50,7 @@ export function SiteFooter({
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-brick"
+                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
                   >
                     {ui.primaryNav[item.href].label}
                   </Link>
@@ -66,7 +66,7 @@ export function SiteFooter({
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-brick"
+                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
                   >
                     {ui.secondaryNav[item.href].label}
                   </Link>
@@ -82,7 +82,7 @@ export function SiteFooter({
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-small text-ink-muted underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-brick"
+                    className="inline-flex min-h-touch items-center text-small text-ink-muted underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
                   >
                     {ui.legalNav[item.href].label}
                   </Link>

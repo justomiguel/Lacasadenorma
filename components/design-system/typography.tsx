@@ -7,6 +7,13 @@ import { intlLocale, type Locale } from "@/src/i18n/locale";
 /**
  * Tipografía del sistema. Los tamaños vienen de los tokens de `ux.md`; ningún
  * componente escribe un tamaño arbitrario.
+ *
+ * Desde ADR-024 el reparto de familias tiene un criterio y no una costumbre: la
+ * grotesca (`font-display`, `font-ui`) es la voz **del sitio** —títulos, etiquetas,
+ * cifras, navegación—, y la serif (`font-prose`) es la voz **de quien habla**: la
+ * prosa, las bajadas y la cita de la familia. Por eso `Testimony` es el único
+ * componente de este archivo que se queda en serif a escala de título: es la única
+ * frase del sitio que no la escribimos nosotros.
  */
 
 /** Prosa larga con medida y ritmo vertical. */
@@ -69,6 +76,13 @@ export function Paragraphs({
  * La etiqueta **no** es un encabezado: es una sobrelínea. Si fuera un `h3`
  * dentro de un `h2` rompería la jerarquía, que es una de las cosas que axe
  * detecta y que un lector de pantalla sufre.
+ *
+ * **La regla es sólo del `h2`.** La regla de un pixel es el recurso con el que este
+ * sitio reemplaza a las cards, y lo que significa es «acá empieza una sección». Un
+ * `h3` es una parte de la sección que ya empezó: dibujarle la misma regla convierte
+ * el separador en decoración, y en la única sección que tiene subtítulo dejaba tres
+ * filetes en ciento veinte píxeles —el último rubro del presupuesto, el subtítulo y
+ * la barra de progreso—.
  */
 export function SectionHeading({
   label,
@@ -86,20 +100,20 @@ export function SectionHeading({
   const Heading = level === 2 ? "h2" : "h3";
 
   return (
-    <div className={cn("mb-xl", className)}>
+    <div className={cn(level === 2 ? "mb-xl" : "mb-lg", className)}>
       {label === undefined ? null : (
         <p className="mb-sm font-ui text-small text-ink-muted">{label}</p>
       )}
       <Heading
         {...(id === undefined ? {} : { id })}
         className={cn(
-          "font-prose",
+          "font-display",
           level === 2 ? "text-heading" : "text-subheading font-medium",
         )}
       >
         {title}
       </Heading>
-      <hr className="mt-md border-t border-rule" />
+      {level === 2 ? <hr className="mt-md border-t border-rule" /> : null}
     </div>
   );
 }
@@ -135,7 +149,7 @@ export function Testimony({
           el tamaño de la cita, y `em` resuelve contra el `font-size` del **propio**
           elemento. Puesto en el `figure`, que hereda el cuerpo de 17 px, 20em daban
           340 px y la cita salía en seis líneas de tres palabras. */}
-      <blockquote className="max-w-quote border-l-2 border-brick pl-lg font-prose text-title">
+      <blockquote className="max-w-quote border-l-2 border-aqua pl-lg font-prose text-title">
         {quote}
       </blockquote>
       {/* La atribución no se atenúa con color: la jerarquía la hace el tamaño, y así

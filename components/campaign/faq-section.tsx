@@ -39,7 +39,7 @@ export function FaqSection({
             className="border-t border-rule py-xl first:border-t-0 first:pt-0"
           >
             <dt>
-              <h3 className="max-w-measure font-prose text-subheading font-medium">
+              <h3 className="max-w-measure font-display text-subheading font-medium">
                 {item.question}
               </h3>
             </dt>
@@ -52,7 +52,7 @@ export function FaqSection({
               <dd className="mt-sm">
                 <Link
                   href={localizedHref(item.href, locale)}
-                  className="font-ui text-small text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+                  className="font-ui text-small text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
                 >
                   {item.linkLabel}
                 </Link>

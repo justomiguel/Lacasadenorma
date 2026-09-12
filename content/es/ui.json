@@ -61,12 +61,17 @@
     }
   },
   "secondaryNav": {
-    "/legado": { "label": "El legado" },
-    "/riacho-conecta": { "label": "Riacho Conecta" }
+    "/legado": {
+      "label": "El legado"
+    }
   },
   "legalNav": {
-    "/legales/privacidad": { "label": "Privacidad" },
-    "/legales/terminos": { "label": "Términos de uso" }
+    "/legales/privacidad": {
+      "label": "Privacidad"
+    },
+    "/legales/terminos": {
+      "label": "Términos de uso"
+    }
   },
   "countries": {
     "AR": "Argentina",
@@ -150,33 +155,34 @@
     "introAnd": "y"
   },
   "home": {
+    "openingLead": "El 7 de septiembre un incendio destruyó la casa de la familia en Riacho He Hé, Formosa, y Norma murió esa madrugada.",
+    "openingNeed": "Su marido se salvó y está en tratamiento. Estamos reuniendo lo que cuesta reconstruir la casa.",
+    "shareOpening": "Cómo compartirla",
+    "portraitReserved": "Acá va un retrato de Norma. Su familia está eligiendo la fotografía.",
     "whoWasHeading": "Quién fue Norma",
     "readFullStory": "Leer la historia completa",
-    "radioPhotoReserved": "Acá va una foto de Norma trabajando en la radio.",
     "seePhotosAndNeeds": "Ver las fotos y qué se necesita ahora",
+    "workStartedHeading": "El trabajo ya empezó",
+    "workStartedLead": "Antes de levantar una pared hay que vaciar la casa. Eso lo está haciendo la familia con gente del pueblo y una máquina prestada.",
     "rebuildHeading": "Qué hay que reconstruir",
     "rebuildDetail": "Ver el detalle de la obra",
-    "howItsGoing": "Cómo va",
+    "howItsGoing": "Cómo va la obra",
     "howToHelp": "Cómo ayudar",
     "seeFullDetails": "Ver los datos completos",
     "seeWhereItWent": "Ver en qué se usó",
     "whereItWent": "En qué se usó",
     "transparencyBlurb": "Cada gasto está publicado con su fecha, su concepto y la indicación de si tiene comprobante. Los totales de arriba son la suma de ese detalle, no un número escrito a mano.",
     "seeFullReport": "Ver la rendición completa",
-    "knowFoundation": "Conocer Fundación Norma",
-    "seeRiacho": "Ver Riacho Conecta",
+    "knowFoundation": "Leer qué se propone el legado",
     "faqHeading": "Lo que suelen preguntarnos",
     "shareHeading": "Compartir la campaña",
-    "shareLead": "La mayoría de la gente va a llegar acá porque alguien le pasó el enlace. Si podés, pasalo vos.",
-    "knowNormaStory": "Conocer la historia de Norma",
-    "portraitReserved": "Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
+    "shareLead": "La mayoría de la gente va a llegar acá porque alguien le pasó el enlace. Si podés, pasalo vos."
   },
   "normaPage": {
     "title": "Quién fue {name}",
     "seoDescription": "Quién fue Norma Edith Bedoya, qué hizo en Riacho He Hé y qué dejó hecho. La historia de la persona, no de una causa.",
     "contribution": "Si la conociste y querés que algo de esto figure en su historia, la familia lo va a escuchar. Todavía no hay una dirección publicada para eso; cuando la haya, va a estar acá y en la",
     "privacyLink": "página de privacidad",
-    "radioReserved": "Acá va una foto de Norma en la radio de Riacho He Hé.",
     "photosNote": "Las fotos de Norma las eligió su familia. Falta la de la radio, y ese espacio queda vacío hasta que aparezca: no vamos a poner una imagen de archivo en el lugar de una foto de ella.",
     "shareHeading": "Compartir su historia"
   },
@@ -240,26 +246,13 @@
     "helpLeadTail": "cuentan cada avance a medida que pasa."
   },
   "legacyPage": {
-    "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada, en qué estado está hoy el proyecto y qué es Riacho Conecta.",
+    "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada y en qué estado está hoy el proyecto: una intención, todavía sin organización.",
     "statusTitle": "En qué estado está",
     "statusBody": "Fundación Norma es una intención, no una entidad. No tiene personería jurídica, ni estatuto, ni CUIT, ni cuenta propia. Los aportes de hoy van a la reconstrucción de la casa y se rinden en",
     "accountsLink": "la página de cuentas",
     "statusTail": ". Cuando la fundación exista de verdad, esta página va a decirlo con los papeles a la vista.",
-    "radioReserved": "Acá va una foto de Norma en la radio, la que explica de dónde viene todo esto.",
-    "seeTopics": "Ver los temas de Riacho Conecta",
     "houseFirst": "Primero, la casa",
     "houseFirstLead": "Nada de esto empieza antes de que la familia tenga dónde vivir. Ese es el trabajo de ahora."
-  },
-  "riachoPage": {
-    "seoDescription": "Formación gratuita en herramientas digitales en Riacho He Hé: los temas que se proponen cubrir y en qué estado está el programa.",
-    "topicsHeading": "Los temas",
-    "noSignupTitle": "Todavía no hay inscripción",
-    "noSignup": "No hay fechas ni cupos, así que no hay nada a lo que anotarse. Cuando el programa tenga calendario se publica en",
-    "newsLink": "las novedades",
-    "noSignupTail": "y en esta misma página. No pedimos tu correo para avisarte: preferimos no guardar datos de gente para algo que todavía no existe.",
-    "whereHeading": "Dónde queda",
-    "whereLead": "{locality} es una localidad del departamento Pilcomayo, en {province}, {country}. El programa se piensa para dar clases ahí, no para invitar a la gente a irse.",
-    "legacyLink": "Cómo encaja en Fundación Norma"
   },
   "legalPage": {
     "privacySeo": "Este sitio no pide datos, no usa cookies de terceros y no te sigue por otras páginas. Qué se mide, para qué y cuánto se conserva.",

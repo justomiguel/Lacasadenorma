@@ -41,8 +41,7 @@ directorios.
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
-| `legado.json` | `/legado` | Fundación Norma como intención, no como organización |
-| `riacho-conecta.json` | `/riacho-conecta` | `topics` son intenciones declaradas, no un programa con fechas |
+| `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
 | `preguntas.json` | Las nueve preguntas de la home y el `FAQPage` | Mínimo nueve, y el esquema lo exige |
 | `legales.json` | `/legales/privacidad` y `/legales/terminos` | `updatedOn` se cambia cuando cambia el texto |
 
@@ -96,6 +95,14 @@ inventado pierde lo único que tiene. `npm run check:placeholders` recorre todos
 guión. Corre en `npm run verify` y en CI. Un `TODO` en un comentario es normal; un `TODO` en el texto
 que lee una persona es un fallo de producto.
 
+Y lo que el script no puede ver hay que auditarlo a mano, porque el relleno más peligroso no dice
+`TODO`: dice una oración bien escrita sobre algo que nadie afirmó. La auditoría de
+[ADR-024](./adr/024-tercera-direccion-visual.md) encontró cuatro casos que llevaban meses publicados —un
+currículum de ocho materias para un programa que no existe, una organización descrita en presente, y una
+respuesta frecuente que contradecía a `/que-paso`— y ninguno tenía un marcador que un `grep` pudiera
+encontrar. La prueba que sí funciona es preguntarle a cada oración **quién la dijo**: si la respuesta no
+es la familia, un documento del proyecto o la base de datos, no va.
+
 Cuando el hueco es una **foto**, el sitio no lo esconde: reserva el espacio con su proporción final y
 dice qué va a ir ahí. El espacio reservado tiene dos ventajas sobre no poner nada: cuando llegue la
 foto no habrá salto de layout, y mientras tanto la ausencia se lee como una espera y no como un
@@ -148,9 +155,9 @@ El `alt` describe lo que se ve para alguien que no puede verlo, y no repite el e
 |---|---|---|
 | **Los originales de las tres fotos del incendio**, sin la etiqueta del collage impresa | El sitio tiene epígrafes reales con su propia tipografía; una etiqueta quemada en el pixel es de otra pieza gráfica, y los recortes que las evitan quedaron en 602 px de ancho | La familia |
 | **Una foto del terreno ya limpio**, después de retirar los escombros | Es la que cierra el par «así quedó / así está hoy» y la que muestra el punto de partida de la obra que se pide financiar. Hoy el sitio puede mostrar la pérdida y el esfuerzo, pero no el punto cero | La familia |
-| **Norma en la radio** | Es lo que vuelve concreto que fue comunicadora, y es la foto que explica `/legado` y Riacho Conecta | La familia, si existe |
+| **Norma en la radio** | Es lo que volvería concreto que fue comunicadora, y la que explica `/legado`. **Ya no se le reserva el espacio**: hasta ADR-024 había un hueco esperándola en `/norma` y otro en `/legado`, y es una foto que esta misma tabla marca como «si existe». Un hueco es honesto como estado transitorio, no como layout | La familia, si existe |
 | **Permiso de las personas identificables** en las fotos de la limpieza | Sin permiso no se publica una cara. Mientras no esté, se usan los encuadres recortados donde nadie es reconocible, y eso deja fuera de cuadro a la gente que fue a ayudar, que es media historia | El equipo pregunta |
-| **El año del incendio** | La familia afirma «lunes 7 de septiembre» y el día no está en duda, pero el 7 de septiembre de 2024 fue sábado. `norma.diedOn` sigue en `null` y el relato se publica sin año: una fecha estimada en el día en que murió una persona no es un dato, es un invento | La familia |
+| **El año del incendio, si la familia quiere publicarlo** | La familia afirma «lunes 7 de septiembre», y eso es consistente: el 7 de septiembre de 2026 **fue lunes**, y este repositorio se creó el 9 de septiembre de 2026, dos días después. Esta fila decía antes que había una contradicción porque «el 7 de septiembre de 2024 fue sábado», y era cierto de 2024 y de ningún año que importe acá ([ADR-024](./adr/024-tercera-direccion-visual.md)). No hay nada que resolver: sólo falta decidir si el año se publica. `norma.diedOn` sigue en `null` hasta que la familia lo diga, porque la fecha en que murió una persona no la completa nadie más | La familia |
 
 Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más.
 
@@ -158,6 +165,7 @@ Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie m�
 
 | Campo | Estado | Quién lo completa |
 |---|---|---|
+| `norma.fullName` | Publicado como **«Norma Edith Bedoya»**, que es lo que dice el material de la familia y la nota biográfica de junio de 2026. Pero la crónica policial de esos días la nombra **«Bedolla»**, y no hay forma de saber desde acá cuál de las dos grafías es la del documento. Se deja como está —el apellido de una persona lo dice su familia, no un parte de prensa— y queda anotado por una razón concreta: **no se enlaza ni se cita prensa desde el sitio hasta resolverlo**, porque enlazar una nota que la nombra distinto sembraría la duda de si es la misma persona | La familia |
 | `norma.bornOn`, `norma.diedOn` | `null`. **No se estiman ni se sacan de una noticia** | La familia, si decide publicarlas |
 | `reconstruccion.scope` | Lista vacía: el relevamiento de la obra está en curso | La familia con gente del pueblo, a medida que cada parte se cotiza |
 | `transparencia.paragraphs` | Lista vacía. El método sí está escrito; falta la introducción | Quien escribe |

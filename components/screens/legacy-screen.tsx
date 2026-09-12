@@ -2,8 +2,7 @@ import { HelpCta } from "@/components/campaign/help-cta";
 import { InlineLink } from "@/components/design-system/actions";
 import { Callout } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
-import { ReservedSpace } from "@/components/design-system/photo";
-import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
+import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
@@ -33,9 +32,17 @@ export function legacyMetadata(locale: Locale) {
  * Por la misma razón no hay datos estructurados de `Organization` acá: declarar una
  * organización con datos que no existen sería justamente la clase de dato
  * estructurado engañoso que la spec prohíbe.
+ *
+ * Tenía dos cosas más y las dos se fueron en ADR-024. Una era una sección con el
+ * primer programa y un enlace a `/riacho-conecta`, que publicaba un temario de ocho
+ * materias sin respaldo en ninguna parte del proyecto. La otra era un espacio
+ * reservado para una foto de Norma en la radio que la guía de contenido marca como
+ * «si existe»: reservarle la mitad de la página a una foto que puede no llegar es
+ * la promesa que `ux.md` §12 ya documentó como error. Sin las dos, la página es más
+ * corta y dice lo mismo, que es todo lo que se puede afirmar.
  */
 export function LegacyScreen({ locale }: { locale: Locale }) {
-  const { legacy, riachoConecta, ui } = getContent(locale);
+  const { legacy, ui } = getContent(locale);
 
   return (
     <>
@@ -43,47 +50,23 @@ export function LegacyScreen({ locale }: { locale: Locale }) {
 
       <Container>
         <Section>
-          <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg">
-            <div className="lg:col-span-7">
-              <Paragraphs items={legacy.paragraphs} />
+          <Paragraphs items={legacy.paragraphs} />
 
-              <Callout
-                tone="neutral"
-                title={ui.legacyPage.statusTitle}
-                className="mt-2xl"
-              >
-                <p>
-                  {ui.legacyPage.statusBody}{" "}
-                  <InlineLink href={localizedHref("/transparencia", locale)}>
-                    {ui.legacyPage.accountsLink}
-                  </InlineLink>
-                  {ui.legacyPage.statusTail}
-                </p>
-              </Callout>
-            </div>
-
-            <div className="lg:col-span-4 lg:col-start-9">
-              <ReservedSpace ratio="portrait" description={ui.legacyPage.radioReserved} />
-            </div>
-          </div>
-        </Section>
-      </Container>
-
-      <Container>
-        <Section className="border-t border-rule" labelledBy="primer-programa">
-          <SectionHeading title={riachoConecta.title} id="primer-programa" />
-          <Paragraphs items={riachoConecta.paragraphs.slice(0, 1)} />
-          <p className="mt-lg">
-            <InlineLink href={localizedHref("/riacho-conecta", locale)}>
-              {ui.legacyPage.seeTopics}
-            </InlineLink>
-          </p>
+          <Callout tone="neutral" title={ui.legacyPage.statusTitle} className="mt-2xl">
+            <p>
+              {ui.legacyPage.statusBody}{" "}
+              <InlineLink href={localizedHref("/transparencia", locale)}>
+                {ui.legacyPage.accountsLink}
+              </InlineLink>
+              {ui.legacyPage.statusTail}
+            </p>
+          </Callout>
         </Section>
       </Container>
 
       <Container>
         <Section tight className="border-t border-rule">
-          <h2 className="font-prose text-heading">{ui.legacyPage.houseFirst}</h2>
+          <h2 className="font-display text-heading">{ui.legacyPage.houseFirst}</h2>
           <p className="mt-sm max-w-measure text-body text-ink-muted">
             {ui.legacyPage.houseFirstLead}
           </p>

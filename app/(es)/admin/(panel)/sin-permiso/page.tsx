@@ -30,7 +30,7 @@ export default async function SinPermisoPage() {
       </p>
 
       <p className="mt-lg">
-        <Link href="/admin" className="text-brick underline underline-offset-2">
+        <Link href="/admin" className="text-aqua underline underline-offset-2">
           Volver al tablero
         </Link>
       </p>

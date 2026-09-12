@@ -133,7 +133,7 @@ export function ProgressBar({
         className="mt-md h-2xs w-full overflow-hidden bg-paper-sunk"
       >
         <div
-          className="h-full bg-brick"
+          className="h-full bg-aqua"
           style={{ width: `${String(Math.max(percent, 0.5))}%` }}
         />
       </div>

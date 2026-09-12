@@ -14,9 +14,23 @@
  */
 @theme inline {
   --font-*: initial;
-  --font-prose: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  /* Tres roles, dos familias (ADR-024).
+   *
+   * `display` y `ui` son la misma grotesca de Buenos Aires y están separadas a
+   * propósito: un `h1` no es interfaz, y escribir `font-ui` en un título deja el
+   * archivo diciendo lo contrario de lo que el sistema decidió. El día que el
+   * display se vaya a otra familia, se cambia una línea y no ciento veintiocho.
+   *
+   * Los roles estaban al revés hasta ADR-024: la serif llevaba los títulos, que
+   * es lo primero que alguien lee, y con eso el sitio cumplía el rasgo del
+   * «display serif de alto contraste» que la skill `frontend-design` enumera
+   * entre los delatores de página generada. */
+  --font-display:
+    var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ui:
     var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-prose: var(--font-newsreader), ui-serif, Georgia, serif;
 }
 
 @theme {
@@ -34,22 +48,30 @@
    */
   --color-*: initial;
 
-  --color-paper: oklch(98.6% 0.006 85);
-  --color-paper-sunk: oklch(96.4% 0.008 85);
+  --color-paper: oklch(98.4% 0.004 200);
+  --color-paper-sunk: oklch(95.8% 0.009 200);
 
   /* Segundo nivel de papel, para el texto secundario **sobre** tinta. Es el
    * espejo de `ink-muted`: la banda oscura necesita jerarquía igual que el papel,
-   * y `ink-muted` sobre tinta no se lee. 7,3:1 sobre `ink` (ADR-021). */
-  --color-paper-muted: oklch(80% 0.01 85);
+   * y `ink-muted` sobre tinta no se lee. 9,5:1 sobre `ink`. */
+  --color-paper-muted: oklch(80% 0.012 200);
 
-  --color-ink: oklch(22% 0.014 65);
-  --color-ink-muted: oklch(48% 0.014 65);
-  --color-ink-faint: oklch(54% 0.012 65);
-  --color-rule: oklch(88% 0.008 65);
+  --color-ink: oklch(21% 0.021 215);
+  --color-ink-muted: oklch(47% 0.021 215);
+  --color-ink-faint: oklch(53% 0.018 215);
+  --color-rule: oklch(87% 0.011 200);
 
-  /* Tierra colorada de Formosa y ladrillo de obra. Acento único. */
-  --color-brick: oklch(52% 0.142 38);
-  --color-brick-strong: oklch(44% 0.148 38);
+  /* El verde agua del frente de la casa de Norma. Acento único (ADR-024).
+   *
+   * Era `--color-brick`, un terracota justificado por la tierra colorada de
+   * Formosa. El argumento era cierto y era sobre una provincia entera; el verde
+   * agua está en la pared de esta casa y en el `alt` de dos fotos publicadas.
+   *
+   * Va oscurecido y desaturado respecto del color real de la pared por dos
+   * razones medidas: el de la pared no llega a 4,5:1 sobre papel, y un turquesa
+   * saturado se lee como marca de SaaS en lugar de pintura de obra. */
+  --color-aqua: oklch(48% 0.075 195);
+  --color-aqua-strong: oklch(40% 0.08 195);
 
   --color-success: oklch(48% 0.11 150);
   --color-warning: oklch(58% 0.13 75);
@@ -239,7 +261,7 @@
   }
 
   ::selection {
-    background-color: color-mix(in oklab, var(--color-brick) 22%, transparent);
+    background-color: color-mix(in oklab, var(--color-aqua) 22%, transparent);
   }
 
   /* El foco dentro de una foto a sangrado necesita contraste contra la imagen. */
@@ -266,30 +288,47 @@
  * de Tailwind leen la variable (`.text-ink-muted { color: var(--color-ink-muted) }`),
  * la primitiva de siempre sigue funcionando y se adapta sola.
  *
- * `brick` no se toca: sigue siendo el acento, y el filete del testimonio a 3:1
- * sobre tinta cumple 1.4.11 por ser un elemento no textual. Lo que sí necesita
- * corrección es el enlace, que es texto y necesita 4,5:1 (ver abajo).
+ * El acento **también** se aclara, y eso es nuevo. El de papel está calculado para
+ * leerse sobre papel: sobre tinta da 2,81:1, y el filete del testimonio es lo único
+ * que separa la frase de la familia del resto de la banda. A 62% de luminosidad da
+ * 5,05:1 y sigue siendo el mismo verde.
+ *
+ * La contrapartida conviene tenerla escrita: adentro de la banda `bg-aqua` es un
+ * fondo claro, así que un botón primario acá abajo saldría con texto papel sobre
+ * verde claro. Hoy no hay ninguno —la banda lleva prosa, la cita y un enlace— y no
+ * debería haberlo: la acción primaria de la home vive en la apertura.
+ *
+ * Lo que igual necesita corrección es el enlace, que es texto y necesita 4,5:1
+ * (ver abajo).
  */
 [data-tone="ink"] {
   --color-ink: var(--color-paper);
   --color-ink-muted: var(--color-paper-muted);
   --color-ink-faint: var(--color-paper-muted);
 
-  /* El filete claro desaparece sobre tinta. 52% de luminosidad da 3:1. */
-  --color-rule: oklch(52% 0.008 65);
+  --color-aqua: oklch(62% 0.09 195);
+
+  /* El filete claro desaparece sobre tinta. En el tono nuevo, 51% de luminosidad
+   * da 3,09:1, que es el umbral de elemento no textual; el 52% del tono cálido
+   * anterior acá daba 2,96:1 y se quedaba corto (ADR-024). */
+  --color-rule: oklch(51% 0.014 215);
 }
 
 /*
  * Los enlaces de la banda oscura se vuelven monocromos.
  *
- * El acento ladrillo da 5,7:1 sobre papel y **3:1 sobre tinta**, por debajo del
- * 4,5:1 que necesita el texto. Esto va como regla de la banda y no como variante
+ * Sobrevive a la aclaración del acento a propósito. Con el verde de 62% un enlace
+ * sí llegaría a 5:1 sobre tinta, así que la regla ya no es estrictamente necesaria
+ * para cumplir; se queda porque un enlace de color adentro de una banda que ya es
+ * un cambio de superficie son dos señales peleando por lo mismo, y porque el día
+ * que alguien ajuste el acento medio punto de luminosidad el enlace no se vuelve
+ * ilegible sin que nadie se entere. Esto va como regla de la banda y no como variante
  * de `InlineLink` a propósito: el riesgo real no es el enlace que hay hoy, es el
  * que alguien agregue mañana usando la primitiva de siempre y no se entere de que
  * ahí abajo no se lee. La banda protege a lo que le pongan adentro.
  *
  * Y va **fuera de toda capa**, no en `base`: las utilidades de Tailwind viven en
- * una capa posterior, así que `text-brick` de `InlineLink` le gana a cualquier
+ * una capa posterior, así que `text-aqua` de `InlineLink` le gana a cualquier
  * regla de `base` por más específica que sea. El CSS sin capa le gana a todas.
  * Que la banda pueda pisar una utilidad es justamente lo que se busca acá.
  *

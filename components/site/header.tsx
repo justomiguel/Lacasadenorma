@@ -46,7 +46,7 @@ export function SiteHeader({
     <Container as="header" className="flex items-baseline justify-between gap-lg py-lg">
       <Link
         href={localizedHref("/", locale)}
-        className="shrink-0 font-prose text-subheading font-medium tracking-tight text-ink"
+        className="shrink-0 font-display text-subheading font-medium tracking-tight text-ink"
       >
         {siteName}
       </Link>

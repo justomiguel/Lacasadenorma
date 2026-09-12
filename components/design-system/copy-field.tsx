@@ -102,7 +102,7 @@ export function CopyField({
             void copy();
           }}
           aria-describedby={valueId}
-          className="inline-flex min-h-touch shrink-0 items-center rounded-sm px-sm font-ui text-small font-medium text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-brick-strong"
+          className="inline-flex min-h-touch shrink-0 items-center rounded-sm px-sm font-ui text-small font-medium text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-aqua-strong"
         >
           {state === "copied" ? copiedLabel : copyLabel}
         </button>

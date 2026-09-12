@@ -3,8 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getContent } from "./pack";
 import { parseContent, personSchema, siteSchema } from "./schema";
 
-const { faq, help, legacy, legal, norma, riachoConecta, site, transparency } =
-  getContent("es");
+const { faq, help, legacy, legal, norma, site, transparency } = getContent("es");
 
 /** Sin acentos, sin puntuación y en minúsculas: compara la frase, no su formato. */
 function normalizar(text: string): string {
@@ -159,7 +158,6 @@ describe("contenido publicado", () => {
       help,
       transparency,
       legacy,
-      riachoConecta,
       faq,
       legal,
     ]).toLowerCase();
@@ -176,7 +174,6 @@ describe("contenido publicado", () => {
       help,
       transparency,
       legacy,
-      riachoConecta,
       faq,
       legal,
     ]);

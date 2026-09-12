@@ -1,7 +1,7 @@
 import { ShareBlock } from "@/components/campaign/share-block";
 import { InlineLink } from "@/components/design-system/actions";
 import { Container, Section } from "@/components/design-system/layout";
-import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
+import { BleedOnMobile } from "@/components/design-system/photo";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { StructuredData } from "@/components/site/structured-data";
@@ -97,11 +97,6 @@ export function NormaScreen({ locale }: { locale: Locale }) {
                 {norma.photos.map((photo) => (
                   <BleedOnMobile key={photo.url} media={photo} />
                 ))}
-                {/* Sigue faltando la que explica de dónde viene todo esto. */}
-                <ReservedSpace
-                  ratio="landscape"
-                  description={ui.normaPage.radioReserved}
-                />
               </div>
               <p className="mt-md max-w-measure font-ui text-small text-ink-muted">
                 {ui.normaPage.photosNote}
@@ -113,7 +108,7 @@ export function NormaScreen({ locale }: { locale: Locale }) {
 
       <Container>
         <Section tight className="border-t border-rule">
-          <h2 className="font-prose text-heading">{ui.normaPage.shareHeading}</h2>
+          <h2 className="font-display text-heading">{ui.normaPage.shareHeading}</h2>
           <ShareBlock
             className="mt-lg"
             url={`${siteUrl}${localizedHref("/norma", locale)}`}

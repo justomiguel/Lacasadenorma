@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { getContent } from "@/content/pack";
 import { VIEWPORT_MINIMO } from "../soporte/paginas";
 
-const { faq, site } = getContent("es");
+const { faq, site, ui } = getContent("es");
 
 /**
  * Flujos críticos 1 y 2: abrir la home y entender la campaña.
@@ -20,24 +20,42 @@ const { faq, site } = getContent("es");
  */
 
 test.describe("flujo 1 · abrir la home", () => {
-  test("el nombre, la propuesta y la acción se ven sin desplazarse en 360 px", async ({
+  /**
+   * Las cinco respuestas de la apertura, arriba del pliegue del teléfono más chico.
+   *
+   * Eran tres —nombre, propuesta y acción— y la propuesta era el eslogan del
+   * proyecto, que no dice qué casa ni por qué. ADR-024 §5 fija las cinco: qué
+   * ocurrió, a quién estamos ayudando, qué hay que reconstruir, cómo ayudar y cómo
+   * compartir.
+   *
+   * El test es exigente a propósito, porque el presupuesto es de verdad: las cinco
+   * cierran a 623 px y el pliegue está en 640. Con la frase del medio en cuatro
+   * líneas en lugar de tres, el enlace de compartir se iba 36 px afuera y nada lo
+   * notaba. Si esto falla, la pregunta no es cómo apretar más el margen: es qué
+   * frase sobra.
+   */
+  test("las cinco respuestas de la apertura se ven sin desplazarse en 360 px", async ({
     page,
   }) => {
     await page.setViewportSize(VIEWPORT_MINIMO);
     await page.goto("/");
 
-    // Todo se busca dentro de la apertura: la propuesta se repite en el pie, y un
-    // test que la encuentre allá estaría midiendo el final de la página.
+    // Todo se busca dentro de la apertura: un test que encuentre estas frases más
+    // abajo estaría midiendo el medio de la página.
     const apertura = page.getByRole("region", { name: site.name });
 
     const nombre = apertura.getByRole("heading", { level: 1, name: site.name });
-    const propuesta = apertura.getByText(site.tagline, { exact: true });
+    const quePaso = apertura.getByText(ui.home.openingLead, { exact: true });
+    const aQuien = apertura.getByText(ui.home.openingNeed, { exact: true });
     const accion = apertura.getByRole("link", { name: /ayudar a reconstruir/i }).first();
+    const compartir = apertura.getByRole("link", { name: ui.home.shareOpening });
 
     for (const [que, locator] of [
       ["el nombre", nombre],
-      ["la propuesta", propuesta],
+      ["qué pasó", quePaso],
+      ["a quién estamos ayudando", aQuien],
       ["la acción principal", accion],
+      ["cómo compartir", compartir],
     ] as const) {
       await expect(locator, `${que} tiene que ser visible`).toBeVisible();
 
@@ -62,9 +80,23 @@ test.describe("flujo 1 · abrir la home", () => {
     await expect(
       apertura.getByRole("link", { name: /ayudar a reconstruir/i }),
     ).toHaveCount(1);
-    await expect(
-      apertura.getByRole("link", { name: /conocer la historia de norma/i }),
-    ).toHaveCount(1);
+    await expect(apertura.getByRole("link", { name: ui.home.shareOpening })).toHaveCount(
+      1,
+    );
+  });
+
+  test("compartir se contesta desde la apertura y no catorce pantallas más abajo", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const apertura = page.getByRole("region", { name: site.name });
+    const aCompartir = apertura.getByRole("link", { name: ui.home.shareOpening });
+
+    // El destino tiene que existir. Un ancla que apunta a un `id` que nadie escribió
+    // no falla: no hace nada, y es exactamente el tipo de rotura que nadie reporta.
+    await expect(aCompartir).toHaveAttribute("href", "#compartir");
+    await expect(page.locator("#compartir")).toBeAttached();
   });
 
   test("el primer pliegue no espera más tipografía que la que dibuja", async ({
@@ -145,7 +177,6 @@ test.describe("flujo 2 · entender la campaña", () => {
       "/reconstruccion",
       "/transparencia",
       "/legado",
-      "/riacho-conecta",
     ]) {
       // `:visible`, y no `.first()`: desde ADR-021 el encabezado también enlaza a
       // estas rutas, pero está oculto abajo de `lg`. Sin el filtro, en el proyecto
