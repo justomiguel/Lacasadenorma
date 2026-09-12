@@ -1,4 +1,6 @@
-import { norma, site } from "@/content";
+import { getContent } from "@/content";
+
+const { norma, site } = getContent("es");
 
 /**
  * La historia de Norma.

@@ -1,15 +1,11 @@
-import type { Route } from "next";
-
 import { localizeHref, type Locale } from "./locale";
 
 /**
- * La ruta tipada que `<Link>` acepta.
+ * La ruta que `<Link>` acepta, con el prefijo de idioma aplicado.
  *
- * `localizeHref` devuelve `string` porque el prefijo `/en` no está en el mapa
- * de rutas hasta que existen los archivos. El aserto es el puente: las rutas
- * canónicas (`/norma`) son las que el árbol declara, y el prefijo es el idioma,
- * no un slug inventado.
+ * `localizeHref` es la función de verdad. Esta existe para que el call site
+ * de un enlace no tenga que repetir el import de locale sólo por el tipo.
  */
-export function localizedHref(path: string, locale: Locale): Route {
-  return localizeHref(path, locale) as Route;
+export function localizedHref(path: string, locale: Locale) {
+  return localizeHref(path, locale);
 }

@@ -52,9 +52,7 @@ export function Unavailable({
   return (
     <Callout
       tone={reason === "error" ? "warning" : "neutral"}
-      title={
-        title ?? (reason === "error" ? copy.errorTitle : copy.emptyTitle)
-      }
+      title={title ?? (reason === "error" ? copy.errorTitle : copy.emptyTitle)}
       {...(className === undefined ? {} : { className })}
     >
       <p>{message}</p>

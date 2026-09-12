@@ -203,10 +203,7 @@ function photoKeys(value: unknown): { url: string; width: number; height: number
   return typeof record.url === "string" &&
     typeof record.width === "number" &&
     typeof record.height === "number"
-    ? [
-        { url: record.url, width: record.width, height: record.height },
-        ...nested,
-      ]
+    ? [{ url: record.url, width: record.width, height: record.height }, ...nested]
     : nested;
 }
 
@@ -222,4 +219,3 @@ describe("los dos idiomas declaran las mismas fotografías", () => {
     expect(getContent("en").faq).toHaveLength(9);
   });
 });
-

@@ -35,7 +35,9 @@ export function SiteFooter({
         <div className="grid gap-2xl lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="font-prose text-heading">{site.name}</p>
-            <p className="mt-sm max-w-measure text-small text-ink-muted">{site.tagline}</p>
+            <p className="mt-sm max-w-measure text-small text-ink-muted">
+              {site.tagline}
+            </p>
             <p className="mt-md max-w-measure text-small text-ink-muted">
               {site.place.locality}, {site.place.province}, {site.place.country}.
             </p>
@@ -72,7 +74,9 @@ export function SiteFooter({
               ))}
             </ul>
 
-            <p className="mb-md mt-xl font-ui text-label text-ink-muted">{ui.nav.legal}</p>
+            <p className="mb-md mt-xl font-ui text-label text-ink-muted">
+              {ui.nav.legal}
+            </p>
             <ul className="space-y-xs">
               {LEGAL_NAV.map((item) => (
                 <li key={item.href}>

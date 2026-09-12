@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { HelpBar } from "./help-bar";
+import { localizedHref } from "@/src/i18n/href";
 
 /**
  * La barra hace una sola cosa difícil: decidir cuándo *no* estar. Y esa decisión
@@ -78,6 +79,16 @@ describe("HelpBar", () => {
     const { container } = render(<HelpBar />);
 
     expect(barra(container)).toBeNull();
+  });
+
+  it("tampoco se muestra en /en/ayudar: es la misma página, en el otro idioma", () => {
+    mockDePathname.mockReturnValue("/en/ayudar");
+
+    const { container } = render(
+      <HelpBar href={localizedHref("/ayudar", "en")} label="Help rebuild" />,
+    );
+
+    expect(within(container).queryByRole("link", { name: "Help rebuild" })).toBeNull();
   });
 
   it("se retira mientras la acción primaria está en pantalla", () => {

@@ -16,7 +16,8 @@ const DEFAULT_LEDGER: UiContent["ledger"] = {
   yes: "Sí",
   receiptYes: "Tiene {count} comprobante{plural} en el archivo interno",
   receiptMissing: "Sin cargar",
-  caption: "{count} gastos publicados. La suma de esta tabla es el total gastado de más arriba.",
+  caption:
+    "{count} gastos publicados. La suma de esta tabla es el total gastado de más arriba.",
 };
 
 const DEFAULT_CATEGORIES: UiContent["expenseCategories"] = {

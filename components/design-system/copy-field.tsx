@@ -44,7 +44,8 @@ export function CopyField({
   const copyLabel = ui?.copy ?? "Copiar";
   const copiedLabel = ui?.copied ?? "Copiado";
   const copiedAnnouncement = ui?.copiedAnnouncement ?? "Se copió {label}.";
-  const copyFailed = ui?.copyFailed ??
+  const copyFailed =
+    ui?.copyFailed ??
     "No pudimos copiar {label} automáticamente. Seleccionalo y copialo a mano.";
 
   async function copy() {

@@ -297,6 +297,13 @@ describe("donateActionSchema", () => {
 
     expect(isJsonObject(target) && target.urlTemplate).toBe(`${SITE}/ayudar`);
   });
+
+  it("en inglés el DonateAction apunta a /en/ayudar", () => {
+    const node = emitOne(donateActionSchema(SITE, "en"));
+    const target = node.target;
+
+    expect(isJsonObject(target) && target.urlTemplate).toBe(`${SITE}/en/ayudar`);
+  });
 });
 
 describe("garantías que valen para todo el grafo", () => {

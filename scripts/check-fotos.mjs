@@ -87,12 +87,25 @@ function declaredPhotos(value) {
 const problems = [];
 const declared = new Set();
 
-const contentFiles = (await readdir(CONTENT_DIR)).filter((name) =>
-  name.endsWith(".json"),
-);
+const jsonFiles = [];
 
-for (const name of contentFiles) {
-  const file = path.join(CONTENT_DIR, name);
+async function collectJson(dir) {
+  const names = await readdir(dir, { withFileTypes: true });
+
+  for (const name of names) {
+    const file = path.join(dir, name.name);
+
+    if (name.isDirectory()) {
+      await collectJson(file);
+    } else if (name.name.endsWith(".json")) {
+      jsonFiles.push(file);
+    }
+  }
+}
+
+await collectJson(CONTENT_DIR);
+
+for (const file of jsonFiles) {
   const photos = declaredPhotos(JSON.parse(await readFile(file, "utf8")));
 
   for (const photo of photos) {

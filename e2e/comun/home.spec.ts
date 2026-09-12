@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-import { faq, site } from "@/content";
-
+import { getContent } from "@/content/pack";
 import { VIEWPORT_MINIMO } from "../soporte/paginas";
+
+const { faq, site } = getContent("es");
 
 /**
  * Flujos críticos 1 y 2: abrir la home y entender la campaña.

@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { UiContent } from "@/content/schema";
-import type { Route } from "next";
-
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { otherLocale, stripLocalePrefix, switchLocaleHref } from "@/src/i18n/locale";
@@ -62,6 +60,7 @@ export function HeaderNav({
   const canonical = stripLocalePrefix(pathname);
   const switchHref = switchLocaleHref(pathname, otherLocale(locale));
   const helpIsCurrent = canonical === "/ayudar";
+  const onAdmin = canonical === "/admin" || canonical.startsWith("/admin/");
 
   return (
     <>
@@ -93,14 +92,16 @@ export function HeaderNav({
         </ul>
       </nav>
 
-      <Link
-        href={switchHref as Route}
-        hrefLang={languageSwitcher.hrefLang}
-        lang={languageSwitcher.lang}
-        className="inline-flex min-h-touch shrink-0 items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-ink"
-      >
-        {languageSwitcher.label}
-      </Link>
+      {onAdmin ? null : (
+        <Link
+          href={switchHref}
+          hrefLang={languageSwitcher.hrefLang}
+          lang={languageSwitcher.lang}
+          className="inline-flex min-h-touch shrink-0 items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-ink"
+        >
+          {languageSwitcher.label}
+        </Link>
+      )}
 
       {/* La acción también se marca cuando es la página abierta. Es la única ruta
           primaria que no está en la lista de arriba, y si no se marcara acá sería

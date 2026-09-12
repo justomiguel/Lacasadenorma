@@ -62,7 +62,8 @@ export function CountryTabs({
   className?: string;
 }) {
   const ui = useUiOptional()?.ui;
-  const countryName = (country: CountryCode) => ui?.countries[country] ?? COUNTRY_NAMES[country];
+  const countryName = (country: CountryCode) =>
+    ui?.countries[country] ?? COUNTRY_NAMES[country];
   const tabsLabel = ui?.countryTabsLabel ?? "Elegí desde qué país vas a transferir";
   const enhanced = useHydrated();
   const [selected, setSelected] = useState<CountryCode>(

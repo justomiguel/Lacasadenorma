@@ -5,9 +5,9 @@ import {
   size,
 } from "@/src/infrastructure/seo/opengraph-card";
 
-export const alt = openGraphAlt("es");
+export const alt = openGraphAlt("en");
 export { size, contentType };
 
 export default function OpenGraphImage() {
-  return renderOpenGraphImage("es");
+  return renderOpenGraphImage("en");
 }

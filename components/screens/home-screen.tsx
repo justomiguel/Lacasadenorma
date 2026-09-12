@@ -32,8 +32,6 @@ import {
 } from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
-export const revalidate = 300;
-
 export async function HomeScreen({ locale }: { locale: Locale }) {
   const { legacy, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
   const dataLayer = getPublicDataLayer();
