@@ -49,7 +49,9 @@ sangrado ni bandas, y un solo tamaño de texto haciendo de jerarquía.
 
 La fotografía estructura la página. Las editoriales viven en `public/fotos/` declaradas en
 `content/*.json`; las del avance vienen de la base con cada novedad. Sin foto real no se pone stock ni
-ilustración: se reserva el espacio y se dice qué va ahí.
+ilustración: se reserva el espacio y se dice qué va ahí, y el hueco se cuenta: `revision-visual.spec.ts`
+exige el número **exacto** de espacios reservados por página, así que si el material llegó y nadie lo
+ubicó, falla. `npm run check:fotos` comprueba que cada foto declarada exista y mida lo que dice.
 
 ## Comandos
 
