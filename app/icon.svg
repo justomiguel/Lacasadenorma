@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="La Casa de Norma">
+  <!--
+    La casa, con la puerta iluminada.
+
+    A 16 px no entra un dibujo: entra una silueta. Así que hay tres formas y nada
+    más, en los colores del sitio (`app/globals.css`): el ladrillo de fondo, la
+    casa en papel y el vano de la puerta en tinta. Sin degradados, sin sombra y
+    sin esquinas redondeadas: a escuadra, como las fotos.
+
+    Los colores van en hexadecimal y no en `oklch()`: el favicon lo dibujan
+    también el gestor de marcadores, la pantalla de inicio de Android y algún
+    lector de RSS, y no todos entienden espacios de color modernos. Son los
+    mismos valores convertidos, no otros.
+  -->
+  <rect width="32" height="32" fill="#aa4423" />
+  <path d="M16 5 28 15v12H4V15Z" fill="#fcfaf6" />
+  <path d="M13 18h6v9h-6z" fill="#1f1914" />
+</svg>
