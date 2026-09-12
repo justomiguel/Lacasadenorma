@@ -1,0 +1,81 @@
+{
+  "title": "What happened",
+  "lead": "The house burned down.",
+  "paragraphs": [
+    "On Monday, 7 September, at 4.30 in the morning, a fire destroyed the family house in Riacho He Hé, Formosa. The flames took most of the home and everything inside it.",
+    "Norma died in that fire. Her husband got out, but he inhaled a great deal of smoke and today his lung capacity is at 50%. He is in treatment and needs time and care to recover.",
+    "These are the photographs of that night and of what was left. They appear here once, because anyone who is going to help needs to know what happened, and they do not appear again on the rest of the site."
+  ],
+  "testimony": {
+    "quote": "My focus now is rebuilding my father's house and walking with him through his recovery.",
+    "author": "Justo Miguel Vargas",
+    "relation": "Son"
+  },
+  "photoEssay": [
+    {
+      "heading": "That night",
+      "note": "The firefighters of Riacho He Hé working on the front of the house.",
+      "photos": [
+        {
+          "url": "/fotos/incendio-bomberos-frente.jpg",
+          "alt": "A firefighter in a helmet and breathing gear steps through the door of the house at night. The wall is sea-green; through the barred window the orange glow of the fire is visible inside.",
+          "caption": "The front of the house while the fire was being put out.",
+          "credit": null,
+          "width": 1220,
+          "height": 1568,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-bomberos-puerta.jpg",
+          "alt": "Two firefighters with a hose in front of an opening from which high flames and black smoke are coming. The water has already wet the floor.",
+          "caption": null,
+          "credit": null,
+          "width": 1220,
+          "height": 1178,
+          "takenOn": null
+        }
+      ]
+    },
+    {
+      "heading": "What was left",
+      "note": "The photographs the family took when they went in, before anything was removed.",
+      "photos": [
+        {
+          "url": "/fotos/incendio-frente.jpg",
+          "alt": "The front of the house in daylight. The sea-green wall is stained black above the window and the paint has lifted from the heat. The sheet metal of the eaves is twisted.",
+          "caption": "The front, from the street.",
+          "credit": null,
+          "width": 602,
+          "height": 335,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-interior.jpg",
+          "alt": "A room with no roof. The walls are bare brick, black in one corner; a burned timber beam hangs in the empty space and the floor is covered in rubble.",
+          "caption": "Inside, there was no roof left.",
+          "credit": null,
+          "width": 602,
+          "height": 282,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-garage.jpg",
+          "alt": "The garage with a burned-out car in the centre. The walls and the sheet-metal roof are black and the floor is covered in burned remains.",
+          "caption": "The car, in the garage.",
+          "credit": null,
+          "width": 602,
+          "height": 266,
+          "takenOn": null
+        }
+      ]
+    }
+  ],
+  "needNow": {
+    "title": "What is needed now",
+    "paragraphs": [
+      "The house has to be rebuilt. It is a job the family cannot take on alone.",
+      "That is what this page is for: to raise what is needed and to show, peso by peso, where it goes.",
+      "Thank you to everyone who came close, wrote and is standing with us at this time."
+    ]
+  }
+}

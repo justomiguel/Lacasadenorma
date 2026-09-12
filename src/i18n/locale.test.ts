@@ -5,6 +5,7 @@ import {
   LOCALES,
   htmlLang,
   isLocale,
+  languageAlternates,
   localizeHref,
   ogLocale,
   stripLocalePrefix,
@@ -71,5 +72,20 @@ describe("etiquetas para el HTML y OpenGraph", () => {
   it("el idioma por omisión es el de origen", () => {
     expect(DEFAULT_LOCALE).toBe("es");
     expect(LOCALES).toEqual(["es", "en"]);
+  });
+});
+
+describe("languageAlternates", () => {
+  it("lista castellano, inglés y x-default al origen", () => {
+    expect(languageAlternates("/norma")).toEqual({
+      "es-AR": "/norma",
+      en: "/en/norma",
+      "x-default": "/norma",
+    });
+    expect(languageAlternates("/")).toEqual({
+      "es-AR": "/",
+      en: "/en",
+      "x-default": "/",
+    });
   });
 });

@@ -101,16 +101,20 @@ export function isPositive(amount: Money): boolean {
 }
 
 /**
- * Formato es-AR. Los centavos se muestran sólo si existen: "$ 1.240.000" se lee
- * mejor que "$ 1.240.000,00" y no pierde información.
+ * Formato de moneda. Por omisión es-AR, que es el del sitio en castellano y el
+ * del backoffice. Las páginas en inglés pasan `en-US`: `$1,240,000` y no
+ * `$ 1.240.000` (ADR-023).
+ *
+ * Los centavos se muestran sólo si existen: "$ 1.240.000" se lee mejor que
+ * "$ 1.240.000,00" y no pierde información.
  */
-export function formatMoney(amount: Money): string {
+export function formatMoney(amount: Money, locale = "es-AR"): string {
   const digits = MINOR_UNIT_DIGITS[amount.currency];
   const divisor = 10 ** digits;
   const major = amount.amountMinor / divisor;
   const hasFraction = digits > 0 && amount.amountMinor % divisor !== 0;
 
-  return new Intl.NumberFormat("es-AR", {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: amount.currency,
     minimumFractionDigits: hasFraction ? digits : 0,
@@ -121,12 +125,12 @@ export function formatMoney(amount: Money): string {
 }
 
 /** Sólo el número, sin símbolo. Para tablas donde la moneda está en el encabezado. */
-export function formatAmount(amount: Money): string {
+export function formatAmount(amount: Money, locale = "es-AR"): string {
   const digits = MINOR_UNIT_DIGITS[amount.currency];
   const divisor = 10 ** digits;
   const hasFraction = digits > 0 && amount.amountMinor % divisor !== 0;
 
-  return new Intl.NumberFormat("es-AR", {
+  return new Intl.NumberFormat(locale, {
     minimumFractionDigits: hasFraction ? digits : 0,
     maximumFractionDigits: hasFraction ? digits : 0,
   }).format(amount.amountMinor / divisor);

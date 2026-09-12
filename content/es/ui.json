@@ -1,0 +1,268 @@
+{
+  "skipToContent": "Ir al contenido",
+  "helpCta": "Ayudar a reconstruir",
+  "helpShort": "Ayudar",
+  "copy": "Copiar",
+  "copied": "Copiado",
+  "copiedAnnouncement": "Se copió {label}.",
+  "copyFailed": "No pudimos copiar {label} automáticamente. Seleccionalo y copialo a mano.",
+  "share": "Compartir",
+  "copyLink": "Copiar enlace",
+  "linkCopied": "Enlace copiado",
+  "linkCopiedLive": "Se copió el enlace de la página.",
+  "languageName": "Castellano",
+  "otherLanguageName": "English",
+  "countryTabsLabel": "Elegí desde qué país vas a transferir",
+  "homeLabel": "Inicio",
+  "legalLabel": "Legales",
+  "publishedOn": "Publicado el",
+  "lastUpdated": "Última actualización:",
+  "footerNote": "Última actualización de los textos legales: {date}. Este sitio no procesa pagos ni pide datos de tarjeta.",
+  "ogCardFooter": "Aportes y rendición de cuentas publicada",
+  "nav": {
+    "primary": "Principal",
+    "index": "Índice de secciones",
+    "footer": "Secciones del sitio",
+    "project": "El proyecto y sus términos",
+    "campaign": "La campaña",
+    "next": "Lo que sigue",
+    "legal": "Legales"
+  },
+  "primaryNav": {
+    "/norma": {
+      "label": "La historia de Norma",
+      "shortLabel": "Norma",
+      "summary": "Quién fue y qué dejó hecho."
+    },
+    "/que-paso": {
+      "label": "Qué ocurrió",
+      "shortLabel": "Qué ocurrió",
+      "summary": "La noche del incendio y lo que quedó."
+    },
+    "/reconstruccion": {
+      "label": "La reconstrucción",
+      "shortLabel": "La obra",
+      "summary": "Qué hay que hacer, cuánto sale y cómo va."
+    },
+    "/ayudar": {
+      "label": "Cómo ayudar",
+      "shortLabel": "Ayudar",
+      "summary": "Los datos para transferir desde Argentina, Chile o Estados Unidos."
+    },
+    "/transparencia": {
+      "label": "Transparencia",
+      "shortLabel": "Transparencia",
+      "summary": "En qué se usó cada peso, con fecha y comprobante."
+    },
+    "/novedades": {
+      "label": "Novedades",
+      "shortLabel": "Novedades",
+      "summary": "Lo que va pasando en la obra, fechado."
+    }
+  },
+  "secondaryNav": {
+    "/legado": { "label": "El legado" },
+    "/riacho-conecta": { "label": "Riacho Conecta" }
+  },
+  "legalNav": {
+    "/legales/privacidad": { "label": "Privacidad" },
+    "/legales/terminos": { "label": "Términos de uso" }
+  },
+  "countries": {
+    "AR": "Argentina",
+    "CL": "Chile",
+    "US": "Estados Unidos"
+  },
+  "expenseCategories": {
+    "materiales": "Materiales",
+    "mano_de_obra": "Mano de obra",
+    "servicios": "Servicios",
+    "transporte": "Transporte",
+    "herramientas": "Herramientas",
+    "otros": "Otros"
+  },
+  "figures": {
+    "received": "Recibido",
+    "receivedIn": "Recibido en {currency}",
+    "spent": "Gastado",
+    "balance": "Saldo",
+    "executedNote": "{percent} del objetivo ya ejecutado",
+    "otherCurrency": "Recibido en otra moneda ({currency})",
+    "unquoted": "Sin cotizar",
+    "noGoal": "recaudado. El objetivo todavía no está publicado, así que no mostramos un porcentaje.",
+    "raisedOfGoal": "{raised} recaudados de un objetivo de {goal}",
+    "ofGoal": "de {goal}",
+    "percentOfGoal": "{percent} del objetivo"
+  },
+  "progress": {
+    "noReconciliation": "Todavía no hubo una conciliación bancaria, así que esta cifra es provisoria.",
+    "reconciledOn": "Cifras conciliadas con el resumen del banco al {date}.",
+    "otherCurrencies": "También se recibieron {amounts}. No los convertimos a pesos: no hay un tipo de cambio con fecha que podamos publicar.",
+    "milestones": "De la obra están completados {completed} de {total} hitos.",
+    "staleTitle": "Dato desactualizado",
+    "staleBody": "Pasaron más de treinta días desde la última conciliación. La cifra que ves puede estar atrasada respecto de lo que hay en la cuenta."
+  },
+  "budget": {
+    "emptyTitle": "El presupuesto se está armando",
+    "emptyBody": "La familia está relevando la obra con gente del pueblo. Cada rubro aparece acá con su monto en cuanto queda cotizado. Preferimos una lista incompleta a un número inventado.",
+    "noneQuoted": "Ningún rubro está cotizado todavía.",
+    "someQuoted": "{quoted} de {total} rubros están cotizados. El resto aparece sin monto hasta que lo esté."
+  },
+  "ledger": {
+    "date": "Fecha",
+    "concept": "Concepto",
+    "category": "Categoría",
+    "receipt": "Comprobante",
+    "amount": "Monto",
+    "yes": "Sí",
+    "receiptYes": "Tiene {count} comprobante{plural} en el archivo interno",
+    "receiptMissing": "Sin cargar",
+    "caption": "{count} gastos publicados. La suma de esta tabla es el total gastado de más arriba."
+  },
+  "donations": {
+    "emptyTitle": "Todavía no hay una cuenta publicada",
+    "emptyBody": "Estamos verificando los datos bancarios antes de publicarlos. Preferimos que esta sección esté vacía unos días a que aparezca un dato que después haya que corregir: si alguien transfiere a la cuenta equivocada, el error no se deshace."
+  },
+  "unavailable": {
+    "errorTitle": "No pudimos leer las cifras",
+    "emptyTitle": "Cifras todavía no publicadas",
+    "notConfigured": "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
+    "error": "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+    "notPublished": "La campaña todavía no está publicada."
+  },
+  "news": {
+    "title": "Novedades",
+    "lead": "Cada avance, el día que pasó.",
+    "seoDescription": "Cada avance de la obra contado el día que pasó, con su fecha y sus fotos. Lo que se compró, lo que se hizo y lo que falta.",
+    "fallbackTitle": "Novedad",
+    "intro": "El diario de la obra se escribe a medida que pasa: lo que se compró, la semana de trabajo que se hizo, y también lo que salió distinto de lo previsto. Cada entrada lleva su fecha y, cuando hay, sus fotos.",
+    "introLinks": "La historia no depende de este índice y se puede leer completa:",
+    "whoWas": "quién fue Norma",
+    "whatToRebuild": "qué hay que reconstruir",
+    "howToHelp": "cómo colaborar",
+    "unavailableTitle": "Las novedades todavía no se están publicando acá",
+    "emptyTitle": "Todavía no hay novedades publicadas",
+    "emptyBody": "La primera va a ser el día en que empiece la obra.",
+    "shareHeading": "Compartir esta novedad",
+    "seeAll": "Ver todas las novedades",
+    "seeTransparency": "Ver la rendición de cuentas",
+    "originalLanguage": "Esta novedad está escrita en castellano. Todavía no hay una redacción en inglés.",
+    "introAnd": "y"
+  },
+  "home": {
+    "whoWasHeading": "Quién fue Norma",
+    "readFullStory": "Leer la historia completa",
+    "radioPhotoReserved": "Acá va una foto de Norma trabajando en la radio.",
+    "seePhotosAndNeeds": "Ver las fotos y qué se necesita ahora",
+    "rebuildHeading": "Qué hay que reconstruir",
+    "rebuildDetail": "Ver el detalle de la obra",
+    "howItsGoing": "Cómo va",
+    "howToHelp": "Cómo ayudar",
+    "seeFullDetails": "Ver los datos completos",
+    "seeWhereItWent": "Ver en qué se usó",
+    "whereItWent": "En qué se usó",
+    "transparencyBlurb": "Cada gasto está publicado con su fecha, su concepto y la indicación de si tiene comprobante. Los totales de arriba son la suma de ese detalle, no un número escrito a mano.",
+    "seeFullReport": "Ver la rendición completa",
+    "knowFoundation": "Conocer Fundación Norma",
+    "seeRiacho": "Ver Riacho Conecta",
+    "faqHeading": "Lo que suelen preguntarnos",
+    "shareHeading": "Compartir la campaña",
+    "shareLead": "La mayoría de la gente va a llegar acá porque alguien le pasó el enlace. Si podés, pasalo vos.",
+    "knowNormaStory": "Conocer la historia de Norma",
+    "portraitReserved": "Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
+  },
+  "normaPage": {
+    "title": "Quién fue {name}",
+    "seoDescription": "Quién fue Norma Edith Bedoya, qué hizo en Riacho He Hé y qué dejó hecho. La historia de la persona, no de una causa.",
+    "contribution": "Si la conociste y querés que algo de esto figure en su historia, la familia lo va a escuchar. Todavía no hay una dirección publicada para eso; cuando la haya, va a estar acá y en la",
+    "privacyLink": "página de privacidad",
+    "radioReserved": "Acá va una foto de Norma en la radio de Riacho He Hé.",
+    "photosNote": "Las fotos de Norma las eligió su familia. Falta la de la radio, y ese espacio queda vacío hasta que aparezca: no vamos a poner una imagen de archivo en el lugar de una foto de ella.",
+    "shareHeading": "Compartir su historia"
+  },
+  "whatHappenedPage": {
+    "seoDescription": "El 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma falleció. Ésta es la historia, las fotos y qué se necesita ahora.",
+    "whereLabel": "Dónde",
+    "whenLabel": "Cuándo",
+    "whenValue": "Lunes 7 de septiembre, 4.30 de la mañana",
+    "lostLabel": "Qué se perdió",
+    "lostValue": "Gran parte de la vivienda y todo lo que había adentro",
+    "photosHeading": "Las fotos del incendio",
+    "seeBefore": "Si querés ver antes en qué se va a usar la plata, está todo en",
+    "rebuildLink": "la reconstrucción",
+    "and": "y en",
+    "transparencyLink": "la rendición de cuentas",
+    "end": "."
+  },
+  "reconstructionPage": {
+    "seoDescription": "Qué hay que reconstruir en la casa, el presupuesto por rubro con los montos ya cotizados, los hitos de la obra y el avance publicado.",
+    "workHeading": "El trabajo hasta ahora",
+    "scopeHeading": "Qué hay que hacer",
+    "budgetHeading": "Cuánto sale cada rubro",
+    "progressHeading": "Cómo va la obra",
+    "noMilestonesTitle": "Todavía no hay hitos publicados",
+    "noMilestonesBody": "Los hitos se cargan cuando la obra tiene un plan con etapas. Hasta entonces no hay una línea de tiempo que mostrar, y una vacía no diría nada.",
+    "photosNote": "Las fotos del avance se publican junto con cada novedad, así que cada una queda fechada y se puede compartir por separado.",
+    "seeNews": "Ver las novedades de la obra",
+    "helpHeading": "Ayudar con la obra",
+    "helpLead": "Cada aporte se registra y cada gasto se publica. Podés ver los dos números en la misma página."
+  },
+  "helpPage": {
+    "seoDescription": "Datos para transferir desde Argentina, Chile o Estados Unidos. Esta página no cobra ni pide datos de tarjeta: los aportes van por transferencia bancaria.",
+    "beforeTransferTitle": "Antes de transferir",
+    "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
+    "accountsHeading": "Elegí desde dónde transferís",
+    "afterHeading": "Qué pasa cuando transferís",
+    "afterLinkLead": "Todo lo que entra y todo lo que sale está en",
+    "reportLink": "la rendición de cuentas",
+    "afterLinkTail": ", con la fecha de la última conciliación a la vista.",
+    "shareHeading": "Otra forma de ayudar",
+    "shareLead": "Si no podés aportar, compartir el enlace ayuda igual. La mayoría de la gente que llegó hasta acá lo hizo porque alguien se lo pasó."
+  },
+  "transparencyPage": {
+    "seoDescription": "Total recibido, total gastado, saldo y el detalle de cada gasto con su fecha, su concepto y si tiene comprobante. Cómo se lleva la cuenta, explicado.",
+    "totalsHeading": "Cuánto entró y cuánto salió",
+    "noReconciliation": "Todavía no hubo una conciliación con el resumen del banco, así que estas cifras son provisorias.",
+    "reconciledOn": "Conciliado con el resumen del banco al {date}.",
+    "currenciesNote": " Las monedas no se suman entre sí: no hay un tipo de cambio con fecha que podamos publicar.",
+    "staleTitle": "Dato desactualizado",
+    "staleBody": "Pasaron más de treinta días desde la última conciliación. Las cifras de arriba pueden estar atrasadas respecto de lo que hay en la cuenta.",
+    "byCategoryHeading": "En qué se gastó",
+    "ledgerHeading": "Cada gasto, uno por uno",
+    "noExpensesTitle": "Todavía no se gastó nada",
+    "noExpensesBody": "Los aportes están en la cuenta y sin ejecutar. Cuando se pague el primer material va a aparecer acá, con su fecha y su comprobante.",
+    "noReceipts": "Ninguno de estos gastos tiene todavía su comprobante cargado.",
+    "receiptsNote": "Hay {count} comprobantes archivados. Los archivos no se publican porque suelen tener datos de terceros: los puede revisar una persona con rol de auditoría.",
+    "methodHeading": "Cómo se lleva la cuenta",
+    "helpHeading": "Sumar a la cuenta",
+    "helpLead": "Todo lo que entre por acá va a aparecer en esta misma página, con su fecha.",
+    "newsLink": "Las novedades",
+    "helpLeadTail": "cuentan cada avance a medida que pasa."
+  },
+  "legacyPage": {
+    "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada, en qué estado está hoy el proyecto y qué es Riacho Conecta.",
+    "statusTitle": "En qué estado está",
+    "statusBody": "Fundación Norma es una intención, no una entidad. No tiene personería jurídica, ni estatuto, ni CUIT, ni cuenta propia. Los aportes de hoy van a la reconstrucción de la casa y se rinden en",
+    "accountsLink": "la página de cuentas",
+    "statusTail": ". Cuando la fundación exista de verdad, esta página va a decirlo con los papeles a la vista.",
+    "radioReserved": "Acá va una foto de Norma en la radio, la que explica de dónde viene todo esto.",
+    "seeTopics": "Ver los temas de Riacho Conecta",
+    "houseFirst": "Primero, la casa",
+    "houseFirstLead": "Nada de esto empieza antes de que la familia tenga dónde vivir. Ese es el trabajo de ahora."
+  },
+  "riachoPage": {
+    "seoDescription": "Formación gratuita en herramientas digitales en Riacho He Hé: los temas que se proponen cubrir y en qué estado está el programa.",
+    "topicsHeading": "Los temas",
+    "noSignupTitle": "Todavía no hay inscripción",
+    "noSignup": "No hay fechas ni cupos, así que no hay nada a lo que anotarse. Cuando el programa tenga calendario se publica en",
+    "newsLink": "las novedades",
+    "noSignupTail": "y en esta misma página. No pedimos tu correo para avisarte: preferimos no guardar datos de gente para algo que todavía no existe.",
+    "whereHeading": "Dónde queda",
+    "whereLead": "{locality} es una localidad del departamento Pilcomayo, en {province}, {country}. El programa se piensa para dar clases ahí, no para invitar a la gente a irse.",
+    "legacyLink": "Cómo encaja en Fundación Norma"
+  },
+  "legalPage": {
+    "privacySeo": "Este sitio no pide datos, no usa cookies de terceros y no te sigue por otras páginas. Qué se mide, para qué y cuánto se conserva.",
+    "termsSeo": "Qué es este sitio, quién lo sostiene, cómo se usan los aportes y qué pasa si la campaña no llega al objetivo."
+  }
+}

@@ -42,10 +42,13 @@ export function ratioAsPercentage(
   return percentage((part / whole) * 100, onOutOfRange);
 }
 
-export function formatPercentage(value: number, options?: { decimals?: number }): string {
+export function formatPercentage(
+  value: number,
+  options?: { decimals?: number; locale?: string },
+): string {
   const decimals = options?.decimals ?? 0;
 
-  return new Intl.NumberFormat("es-AR", {
+  return new Intl.NumberFormat(options?.locale ?? "es-AR", {
     style: "percent",
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,

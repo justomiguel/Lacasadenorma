@@ -1,16 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  faq,
-  help,
-  legacy,
-  legal,
-  norma,
-  riachoConecta,
-  site,
-  transparency,
-} from "./index";
+import { getContent } from "./pack";
 import { parseContent, personSchema, siteSchema } from "./schema";
+
+const { faq, help, legacy, legal, norma, riachoConecta, site, transparency } =
+  getContent("es");
 
 /** Sin acentos, sin puntuación y en minúsculas: compara la frase, no su formato. */
 function normalizar(text: string): string {
@@ -38,10 +32,10 @@ function parecido(a: string, b: string): number {
 describe("parseContent", () => {
   it("falla nombrando el archivo y el campo cuando falta un dato", () => {
     expect(() =>
-      parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json"),
-    ).toThrow(/content\/site\.json/);
+      parseContent(siteSchema, { name: "La Casa de Norma" }, "es/site.json"),
+    ).toThrow(/content\/es\/site\.json/);
     expect(() =>
-      parseContent(siteSchema, { name: "La Casa de Norma" }, "site.json"),
+      parseContent(siteSchema, { name: "La Casa de Norma" }, "es/site.json"),
     ).toThrow(/tagline/);
   });
 
@@ -66,6 +60,9 @@ describe("contenido publicado", () => {
   it("valida al importarse, así que un error rompe el build y no la página", () => {
     expect(site.name).toBe("La Casa de Norma");
     expect(site.tagline).toBe("Reconstruimos una casa. Construimos un legado.");
+    expect(getContent("en").site.tagline).toBe(
+      "We are rebuilding a house. We are building a legacy.",
+    );
   });
 
   it("responde las nueve preguntas del proyecto (FR-001)", () => {
@@ -190,3 +187,39 @@ describe("contenido publicado", () => {
     expect(contenido).not.toMatch(/lorem ipsum/i);
   });
 });
+
+function photoKeys(value: unknown): { url: string; width: number; height: number }[] {
+  if (Array.isArray(value)) {
+    return value.flatMap(photoKeys);
+  }
+
+  if (value === null || typeof value !== "object") {
+    return [];
+  }
+
+  const record = value as Record<string, unknown>;
+  const nested = Object.values(record).flatMap(photoKeys);
+
+  return typeof record.url === "string" &&
+    typeof record.width === "number" &&
+    typeof record.height === "number"
+    ? [
+        { url: record.url, width: record.width, height: record.height },
+        ...nested,
+      ]
+    : nested;
+}
+
+describe("los dos idiomas declaran las mismas fotografías", () => {
+  it("url, ancho y alto coinciden: el archivo no se duplica, sólo el alt", () => {
+    const es = photoKeys(getContent("es"));
+    const en = photoKeys(getContent("en"));
+
+    expect(en).toEqual(es);
+  });
+
+  it("el inglés también responde las nueve preguntas", () => {
+    expect(getContent("en").faq).toHaveLength(9);
+  });
+});
+

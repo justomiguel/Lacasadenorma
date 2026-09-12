@@ -13,16 +13,18 @@
  * como el 7 en cualquier navegador al oeste de Greenwich. Un gasto que aparece
  * un día antes que en el resumen del banco es un error de conciliación que nadie
  * puede explicar.
+ *
+ * El locale por omisión es es-AR. Las páginas en inglés pasan `en-US`.
  */
 
-const LONG = new Intl.DateTimeFormat("es-AR", {
+const OPTIONS: Intl.DateTimeFormatOptions = {
   day: "numeric",
   month: "long",
   year: "numeric",
   timeZone: "UTC",
-});
+};
 
-/** Una fecha `AAAA-MM-DD` como "8 de septiembre de 2026". */
-export function formatLongDate(iso: string): string {
-  return LONG.format(new Date(iso));
+/** Una fecha `AAAA-MM-DD` como "8 de septiembre de 2026" (o el equivalente en el locale). */
+export function formatLongDate(iso: string, locale = "es-AR"): string {
+  return new Intl.DateTimeFormat(locale, OPTIONS).format(new Date(iso));
 }
