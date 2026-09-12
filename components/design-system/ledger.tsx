@@ -31,34 +31,19 @@ export function Ledger({
       </caption>
       <thead className="hidden md:table-header-group">
         <tr className="border-b border-rule">
-          <th
-            scope="col"
-            className="py-sm pr-md font-ui text-label text-ink-muted"
-          >
+          <th scope="col" className="py-sm pr-md font-ui text-label text-ink-muted">
             Fecha
           </th>
-          <th
-            scope="col"
-            className="py-sm pr-md font-ui text-label text-ink-muted"
-          >
+          <th scope="col" className="py-sm pr-md font-ui text-label text-ink-muted">
             Concepto
           </th>
-          <th
-            scope="col"
-            className="py-sm pr-md font-ui text-label text-ink-muted"
-          >
+          <th scope="col" className="py-sm pr-md font-ui text-label text-ink-muted">
             Categoría
           </th>
-          <th
-            scope="col"
-            className="py-sm pr-md font-ui text-label text-ink-muted"
-          >
+          <th scope="col" className="py-sm pr-md font-ui text-label text-ink-muted">
             Comprobante
           </th>
-          <th
-            scope="col"
-            className="py-sm text-right font-ui text-label text-ink-muted"
-          >
+          <th scope="col" className="py-sm text-right font-ui text-label text-ink-muted">
             Monto
           </th>
         </tr>

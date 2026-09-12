@@ -58,9 +58,7 @@ function CurrencyBlock({ totals, label }: { totals: CurrencyTotals; label?: stri
   return (
     <div>
       {label === undefined ? null : (
-        <p className="mb-md font-ui text-label text-ink-muted">
-          {label}
-        </p>
+        <p className="mb-md font-ui text-label text-ink-muted">{label}</p>
       )}
       <StatGroup>
         <Stat label={`Recibido en ${totals.currency}`} amount={totals.received} />
