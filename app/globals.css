@@ -31,13 +31,13 @@
 
   --color-ink: #1c1c1c;
   --color-ink-muted: #5c5f56;
-  --color-ink-faint: #6e7268;
+  --color-ink-faint: #585c54;
   --color-rule: #d4cfc0;
 
   /* Verde principal del mockup. Bloqueado. */
   --color-forest: #153a2e;
   --color-forest-strong: #0f2c23;
-  --color-olive: #5c6b45;
+  --color-olive: #3f4a32;
   --color-sage: #c5cdb0;
 
   /*
@@ -217,8 +217,8 @@
   --color-rule: color-mix(in oklab, var(--color-paper) 22%, transparent);
 }
 
-[data-tone="ink"] a,
-[data-tone="forest"] a {
+[data-tone="ink"] a:not(.bg-sage):not(.bg-paper),
+[data-tone="forest"] a:not(.bg-sage):not(.bg-paper) {
   color: var(--color-paper);
   text-decoration-color: var(--color-paper-muted);
 }

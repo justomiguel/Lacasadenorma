@@ -193,7 +193,7 @@ export function DonationBoard({
           <div
             role="tablist"
             aria-label={ui.countryTabsLabel}
-            className="mb-lg flex gap-sm"
+            className="mb-lg flex gap-sm lg:hidden"
             onKeyDown={(event) => {
               const next = nextItem(COUNTRIES, country, event.key);
 
@@ -241,18 +241,14 @@ export function DonationBoard({
           </div>
         ) : null}
 
-        {enhanced ? (
-          country === "AR" ? (
+        <div className="grid gap-3xl lg:grid-cols-2 lg:gap-2xl">
+          <div className={enhanced && country !== "AR" ? "max-lg:hidden" : ""}>
             <ArgentinaFields account={help.accounts.AR} onCopied={onCopied} />
-          ) : (
-            <ChileFields account={help.accounts.CL} onCopied={onCopied} />
-          )
-        ) : (
-          <div className="space-y-3xl">
-            <ArgentinaFields account={help.accounts.AR} onCopied={onCopied} />
+          </div>
+          <div className={enhanced && country !== "CL" ? "max-lg:hidden" : ""}>
             <ChileFields account={help.accounts.CL} onCopied={onCopied} />
           </div>
-        )}
+        </div>
       </div>
     );
   }

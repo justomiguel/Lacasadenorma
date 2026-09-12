@@ -77,11 +77,11 @@ export function SiteHeader({
       <div className="mx-auto flex w-full max-w-page items-center justify-between gap-md px-5 py-md sm:px-xl lg:px-4xl">
         <Link
           href={localizedHref("/", locale)}
+          aria-label={siteName}
           className="shrink-0 font-display text-small font-medium leading-tight tracking-tight text-paper"
         >
           <span className="block uppercase tracking-label">La Casa</span>
           <span className="block text-[0.7em] uppercase tracking-label">de Norma</span>
-          <span className="sr-only">{siteName}</span>
         </Link>
 
         <nav aria-label={ui.nav.primary} className="hidden lg:block">

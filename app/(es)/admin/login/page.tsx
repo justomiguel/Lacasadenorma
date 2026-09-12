@@ -28,7 +28,7 @@ export default async function LoginPage({
       <p className="mt-sm font-ui text-small text-ink-muted">
         Esta parte del sitio es para quienes mantienen la campaña al día. Si buscabas cómo
         colaborar, está en{" "}
-        <Link href="/ayudar" className="text-aqua underline underline-offset-2">
+        <Link href="/ayudar" className="text-forest underline underline-offset-2">
           ayudar a reconstruir
         </Link>
         .
@@ -38,7 +38,7 @@ export default async function LoginPage({
         <LoginForm next={next} />
       </div>
 
-      <p className="mt-2xl font-ui text-small text-ink-faint">
+      <p className="mt-2xl font-ui text-small text-ink-muted">
         Si perdiste el acceso, la contraseña se restablece desde el panel de Supabase.
         Está explicado en el runbook del proyecto.
       </p>

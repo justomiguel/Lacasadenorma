@@ -45,6 +45,16 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
   test("Argentina y Chile muestran sus propios datos", async ({ page }) => {
     await page.goto("/ayudar");
 
+    const ancho = page.viewportSize()?.width ?? 0;
+
+    if (ancho >= 1024) {
+      await expect(page.getByRole("heading", { name: /argentina/i })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /chile/i })).toBeVisible();
+      await expect(page.getByText(help.accounts.AR.alias, { exact: true })).toBeVisible();
+      await expect(page.getByText(help.accounts.CL.rut, { exact: true })).toBeVisible();
+      return;
+    }
+
     const paises = page.getByRole("tablist", { name: ui.countryTabsLabel });
 
     await expect(paises.getByRole("tab")).toHaveCount(2);

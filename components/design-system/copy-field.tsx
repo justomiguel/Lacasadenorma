@@ -112,12 +112,16 @@ export function CopyField({
         ) : null}
       </div>
 
-      {/* Región viva siempre presente: si apareciera junto con el mensaje, algunos
-          lectores de pantalla no lo anunciarían. */}
-      <p aria-live="polite" className="mt-3xs font-ui text-small text-ink-muted">
-        {state === "copied" ? fill(copiedAnnouncement, { label }) : null}
-        {state === "failed" ? fill(copyFailed, { label }) : null}
-      </p>
+      {copyable ? (
+        // Región viva siempre presente en los campos que se copian: si apareciera
+        // junto con el mensaje, algunos lectores de pantalla no lo anunciarían.
+        // Los campos no copiables no la montan: si no, el primer `aria-live` del
+        // panel queda vacío y quien busca el anuncio no lo encuentra.
+        <p aria-live="polite" className="mt-3xs font-ui text-small text-ink-muted">
+          {state === "copied" ? fill(copiedAnnouncement, { label }) : null}
+          {state === "failed" ? fill(copyFailed, { label }) : null}
+        </p>
+      ) : null}
     </div>
   );
 }

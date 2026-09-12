@@ -160,16 +160,16 @@
     "knowStory": "Read the story",
     "scrollHint": "Scroll to read the story",
     "chapterWhatHappened": "01. What happened",
-    "fireTitle": "The fire took our house",
+    "fireTitle": "The fire took\nour house",
     "fireLead": "On Monday 7 September, at 4.30 in the morning, a fire destroyed the family home in Riacho He Hé. Norma died. Her husband survived and is in treatment.",
     "houseNote": "This is what was left of our house.",
     "chapterCommunity": "02. The community",
-    "communityTitle": "People showed up",
+    "communityTitle": "People\nshowed up",
     "communityLead": "Family, neighbours and friends. In the same days as the fire, the community organised to clear and haul debris.",
-    "communityNote": "Together, everything is possible.",
+    "communityNote": "Together,\neverything is possible.",
     "seeStory": "See the story",
     "chapterHelp": "03. How to help",
-    "helpTitle": "Your help counts too",
+    "helpTitle": "Your help\ncounts too",
     "helpKicker": "Three ways to make a difference",
     "debrisTitle": "Clear debris",
     "debrisBody": "If you can give a hand in person, we are organising a crew to clear and haul debris.",
@@ -205,6 +205,11 @@
     "lead": "To help on the ground, the published contact is Saúl.",
     "whatsapp": "Write on WhatsApp",
     "call": "Call"
+  },
+  "notFoundPage": {
+    "title": "This page is not here",
+    "lead": "That link does not lead to a page of La Casa de Norma.",
+    "home": "Back to the home page"
   },
   "normaPage": {
     "title": "Who {name} was",

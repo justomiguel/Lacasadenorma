@@ -14,7 +14,8 @@ import { cn } from "./cn";
  * stock se lee como mentira. Pero es un estado **transitorio**: si el material
  * puede tardar, la página tiene que verse terminada sin él.
  *
- * Las fotos no llevan radio: van a escuadra, como en un impreso.
+ * El mockup (ADR-025) redondea las fotos. El recorte sigue siendo el del archivo:
+ * `object-cover` no deforma.
  */
 
 /**
@@ -75,7 +76,7 @@ export function Figure({
         height={media.height}
         sizes={sizes}
         priority={priority}
-        className="h-auto w-full object-cover"
+        className="h-auto w-full rounded-md object-cover"
       />
       {media.caption === null && media.credit === null ? null : (
         <figcaption className="mt-sm max-w-measure font-ui text-small text-ink-muted">

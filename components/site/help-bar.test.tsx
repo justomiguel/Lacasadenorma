@@ -68,6 +68,14 @@ describe("HelpBar sin JavaScript", () => {
     const html = renderToStaticMarkup(<HelpBar />);
 
     expect(html).toContain("Ayudar a reconstruir");
+    expect(html).toContain('href="#donaciones"');
+  });
+
+  it("en una página interior el destino es la página de aportes", () => {
+    mockDePathname.mockReturnValue("/norma");
+
+    const html = renderToStaticMarkup(<HelpBar />);
+
     expect(html).toContain('href="/ayudar#donaciones"');
   });
 });

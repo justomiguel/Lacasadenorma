@@ -437,6 +437,11 @@ export const uiSchema = z.object({
     whatsapp: phrase,
     call: phrase,
   }),
+  notFoundPage: z.object({
+    title: phrase,
+    lead: phrase,
+    home: phrase,
+  }),
   normaPage: z.object({
     title: phrase,
     seoDescription: phrase,

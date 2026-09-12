@@ -110,6 +110,15 @@ describe("CopyField", () => {
     expect(screen.getByText(CBU)).toBeInTheDocument();
   });
 
+  it("un campo que no se copia no publica una región viva vacía", () => {
+    const { container } = render(
+      <CopyField label="Titular" value="Justo Miguel Vargas" copyable={false} />,
+    );
+
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(container.querySelector("[aria-live]")).toBeNull();
+  });
+
   it("no le pasa el valor copiado a la analítica", async () => {
     const { user } = conPortapapeles();
     const onCopied = vi.fn();

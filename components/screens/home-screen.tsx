@@ -56,7 +56,10 @@ export function HomeScreen({ locale }: { locale: Locale }) {
               >
                 {ui.home.chapterWhatHappened}
               </p>
-              <h2 id="lo-que-paso" className="mt-sm font-display text-title">
+              <h2
+                id="lo-que-paso"
+                className="mt-sm whitespace-pre-line font-display text-title"
+              >
                 {ui.home.fireTitle}
               </h2>
               <p className="mt-lg max-w-measure text-body">{ui.home.fireLead}</p>
@@ -87,7 +90,9 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                   ))}
                 </div>
               )}
-              <p className="mt-md font-hand text-hand text-olive">{ui.home.houseNote}</p>
+              <p className="mt-md max-w-measure font-hand text-hand text-olive">
+                {ui.home.houseNote}
+              </p>
             </div>
           </div>
         </Section>
@@ -115,11 +120,16 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 >
                   {ui.home.chapterCommunity}
                 </p>
-                <h2 id="la-comunidad" className="mt-sm font-display text-title">
+                <h2
+                  id="la-comunidad"
+                  className="mt-sm whitespace-pre-line font-display text-title"
+                >
                   {ui.home.communityTitle}
                 </h2>
                 <p className="mt-lg max-w-measure text-body">{ui.home.communityLead}</p>
-                <p className="mt-lg font-hand text-hand">{ui.home.communityNote}</p>
+                <p className="mt-lg max-w-measure whitespace-pre-line font-hand text-hand">
+                  {ui.home.communityNote}
+                </p>
                 <p className="mt-lg">
                   <InlineLink href={localizedHref("/que-paso", locale)}>
                     {ui.home.seeStory} →
@@ -139,7 +149,10 @@ export function HomeScreen({ locale }: { locale: Locale }) {
           >
             {ui.home.chapterHelp}
           </p>
-          <h2 id="como-ayudar" className="mt-sm font-display text-title">
+          <h2
+            id="como-ayudar"
+            className="mt-sm whitespace-pre-line font-display text-title"
+          >
             {ui.home.helpTitle}
           </h2>
           <p
@@ -151,7 +164,8 @@ export function HomeScreen({ locale }: { locale: Locale }) {
 
           <div className="mt-2xl grid gap-lg md:grid-cols-3">
             <article className="rounded-md border border-rule bg-paper p-lg shadow-card">
-              <h3 className="font-display text-heading">{ui.home.debrisTitle}</h3>
+              <p className="font-ui text-label text-olive">1.</p>
+              <h3 className="mt-xs font-display text-heading">{ui.home.debrisTitle}</h3>
               <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
               <div className="mt-lg">
                 <ContactActions
@@ -166,7 +180,10 @@ export function HomeScreen({ locale }: { locale: Locale }) {
             </article>
 
             <article className="rounded-md border border-rule bg-paper p-lg shadow-card">
-              <h3 className="font-display text-heading">{ui.home.materialsTitle}</h3>
+              <p className="font-ui text-label text-olive">2.</p>
+              <h3 className="mt-xs font-display text-heading">
+                {ui.home.materialsTitle}
+              </h3>
               <p className="mt-md text-body text-ink-muted">{ui.home.materialsBody}</p>
               <ul className="mt-md flex flex-wrap gap-xs">
                 {help.materials.map((item) => (
@@ -180,8 +197,9 @@ export function HomeScreen({ locale }: { locale: Locale }) {
               </ul>
             </article>
 
-            <article className="rounded-md bg-forest p-lg text-paper" data-tone="forest">
-              <h3 className="font-display text-heading">{ui.home.remoteTitle}</h3>
+            <article className="rounded-md bg-forest p-lg text-paper">
+              <p className="font-ui text-label text-sage">3.</p>
+              <h3 className="mt-xs font-display text-heading">{ui.home.remoteTitle}</h3>
               <p className="mt-md text-body">{ui.home.remoteBody}</p>
               <p className="mt-lg">
                 <a
@@ -197,7 +215,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
       </Container>
 
       <Container>
-        <Section id="donaciones" labelledBy="donaciones-titulo">
+        <Section id="donaciones" labelledBy="donaciones-titulo" className="scroll-mt-24">
           <p
             data-kicker=""
             className="font-ui text-label uppercase tracking-label text-olive"
@@ -211,7 +229,9 @@ export function HomeScreen({ locale }: { locale: Locale }) {
             {ui.home.donateLead}
           </p>
           <DonationBoard help={help} ui={ui} className="mt-2xl" />
-          <p className="mt-xl font-hand text-hand text-olive">{ui.home.thanksNote}</p>
+          <p className="mt-xl max-w-measure font-hand text-hand text-olive">
+            {ui.home.thanksNote}
+          </p>
         </Section>
       </Container>
 
@@ -223,7 +243,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 media={community[1]}
                 sizes="100vw"
                 position="center"
-                className="opacity-25"
+                className="opacity-40"
               />
             </div>
           )}
@@ -240,7 +260,9 @@ export function HomeScreen({ locale }: { locale: Locale }) {
               </h2>
               <p className="mt-lg max-w-measure text-lead">{ui.home.nextLead}</p>
               <p className="mt-md max-w-measure text-body">{ui.home.nextBody}</p>
-              <p className="mt-lg font-hand text-hand">{ui.home.nextNote}</p>
+              <p className="mt-lg max-w-measure font-hand text-hand">
+                {ui.home.nextNote}
+              </p>
               <p className="mt-xl">
                 <SecondaryAction
                   href={localizedHref("/legado", locale)}

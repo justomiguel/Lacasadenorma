@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -64,9 +63,13 @@ export function HelpBar({
     };
   }, [pathname]);
 
-  if (stripLocalePrefix(pathname) === "/ayudar") {
+  const canonical = stripLocalePrefix(pathname);
+
+  if (canonical === "/ayudar") {
     return null;
   }
+
+  const destino = canonical === "/" ? "#donaciones" : `${href}#donaciones`;
 
   return (
     <>
@@ -78,15 +81,15 @@ export function HelpBar({
           data-foco-condicional=""
           className="fixed inset-x-0 bottom-0 z-10 bg-forest px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-sm sm:hidden"
         >
-          <Link
-            href={`${href}#donaciones`}
+          <a
+            href={destino}
             className="flex min-h-touch w-full items-center justify-center rounded-pill bg-sage px-lg font-ui text-subheading font-medium text-forest"
             onClick={() => {
               track({ name: "ayudar_click", props: { origen: "barra" } });
             }}
           >
             {label} →
-          </Link>
+          </a>
         </div>
       )}
     </>

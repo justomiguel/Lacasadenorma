@@ -47,7 +47,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
     // Por posición y no por nombre accesible: el nombre es justamente lo que va a
     // cambiar, y un localizador por nombre dejaría de encontrar el botón que acaba de
     // apretarse.
-    const boton = panel.getByRole("button", { name: /^copiar$/i }).first();
+    const boton = panel.getByRole("button", { name: /copiar|copiado/i }).first();
 
     await boton.click();
 
@@ -81,7 +81,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
 
     const boton = page
       .getByRole("tabpanel")
-      .getByRole("button", { name: /^copiar$/i })
+      .getByRole("button", { name: /copiar|copiado/i })
       .first();
 
     await boton.focus();

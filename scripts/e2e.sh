@@ -193,23 +193,21 @@ levantar_api_local() {
 # servidor arranca, y la corrida gasta seis minutos para devolver veinte pruebas rojas
 # que parecen defectos de la aplicación y son del harness. Ya pasó.
 #
-# `data-figure` es la marca de las cifras del sitio. Aparece decenas de veces en las
-# cuatro páginas cuando hay datos y **cero** veces cuando no hay: no depende del
-# fixture, sólo de que la campaña tenga números que mostrar.
+# `data-figure` marca los datos bancarios copiables. Están en la home y en
+# `/ayudar`. Transparencia y reconstrucción ya no publican cifras (ADR-025).
 verificar_que_el_build_tiene_datos() {
   local sin_datos=()
   local pagina
 
-  for pagina in index ayudar transparencia reconstruccion; do
+  for pagina in index ayudar; do
     if ! grep -q 'data-figure' ".next/server/app/${pagina}.html" 2>/dev/null; then
       sin_datos+=("$pagina")
     fi
   done
 
   if (( ${#sin_datos[@]} > 0 )); then
-    echo "El sitio se construyó sin una sola cifra: ${sin_datos[*]}." >&2
-    echo "El build no leyó la base, así que las páginas estáticas quedaron con la rama" >&2
-    echo "del dato ausente y los flujos 3, 4, 5 y 7 van a fallar en masa." >&2
+    echo "El sitio se construyó sin los datos bancarios: ${sin_datos[*]}." >&2
+    echo "El HTML estático de la home o de /ayudar no tiene campos copiables." >&2
     echo "Qué mirar, en este orden:" >&2
     echo "  1. curl 'http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug'" >&2
     echo "  2. rm -rf .next/cache && volvé a correr" >&2

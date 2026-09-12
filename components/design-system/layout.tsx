@@ -62,7 +62,7 @@ export function Section({
     <section
       {...(id === undefined ? {} : { id })}
       {...(labelledBy === undefined ? {} : { "aria-labelledby": labelledBy })}
-      className={cn(tight ? "py-2xl lg:py-3xl" : "py-4xl lg:py-5xl", className)}
+      className={cn(tight ? "py-2xl lg:py-3xl" : "py-3xl lg:py-4xl", className)}
     >
       {children}
     </section>

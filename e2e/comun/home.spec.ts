@@ -58,11 +58,15 @@ test.describe("flujo 1 · abrir la home", () => {
   test("el relato del mockup está en la home", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: ui.home.fireTitle })).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: ui.home.communityTitle }),
+      page.getByRole("heading", { name: ui.home.fireTitle.replaceAll("\n", " ") }),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: ui.home.helpTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: ui.home.communityTitle.replaceAll("\n", " ") }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: ui.home.helpTitle.replaceAll("\n", " ") }),
+    ).toBeVisible();
     await expect(page.getByRole("heading", { name: ui.home.donateTitle })).toBeVisible();
     await expect(page.getByRole("heading", { name: ui.home.nextTitle })).toBeVisible();
   });

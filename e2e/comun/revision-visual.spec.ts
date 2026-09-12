@@ -144,6 +144,10 @@ async function medir(page: Page): Promise<Medicion> {
             continue;
           }
 
+          if (bloque.classList.contains("font-hand")) {
+            continue;
+          }
+
           // Sólo bloques cuyo texto es una sola corrida de líneas. Un `li` que contiene
           // una fecha, un título y un resumen en bloques separados tiene un `textContent`
           // que nunca fue una línea, y medirlo da números inventados: así aparecían "154

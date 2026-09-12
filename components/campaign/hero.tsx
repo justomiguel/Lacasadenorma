@@ -29,9 +29,9 @@ export function Hero({ locale }: { locale: Locale }) {
             priority
             sizes="100vw"
             position="center 30%"
-            className="opacity-50 lg:opacity-40"
+            className="opacity-55 lg:opacity-50"
           />
-          <div className="absolute inset-0 bg-forest/55" />
+          <div className="absolute inset-0 bg-forest/45" />
         </div>
       )}
 
@@ -57,7 +57,8 @@ export function Hero({ locale }: { locale: Locale }) {
           <div className="mt-xl flex flex-col items-start gap-md sm:flex-row sm:items-center">
             <HelpCta
               origen="apertura"
-              href={localizedHref("/ayudar", locale)}
+              fragment="donaciones"
+              tone="sage"
               label={`${ui.helpCta} →`}
             />
             <SecondaryAction

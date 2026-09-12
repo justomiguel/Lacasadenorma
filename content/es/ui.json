@@ -160,16 +160,16 @@
     "knowStory": "Conocer la historia",
     "scrollHint": "Deslizá para conocer la historia",
     "chapterWhatHappened": "01. Lo que pasó",
-    "fireTitle": "El fuego se llevó nuestra casa",
+    "fireTitle": "El fuego se llevó\nnuestra casa",
     "fireLead": "El lunes 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma falleció. Su marido se salvó y está en tratamiento.",
     "houseNote": "Así quedó nuestra casa.",
     "chapterCommunity": "02. La comunidad",
-    "communityTitle": "La gente apareció",
+    "communityTitle": "La gente\napareció",
     "communityLead": "Familia, vecinos y amigos. En los mismos días del incendio, la comunidad se organizó para limpiar y retirar escombros.",
-    "communityNote": "Entre todos, todo es posible.",
+    "communityNote": "Entre todos,\ntodo es posible.",
     "seeStory": "Ver la historia",
     "chapterHelp": "03. Cómo ayudar",
-    "helpTitle": "Tu ayuda también suma",
+    "helpTitle": "Tu ayuda\ntambién suma",
     "helpKicker": "Tres formas de hacer la diferencia",
     "debrisTitle": "Retirar escombros",
     "debrisBody": "Si querés dar una mano presencialmente, estamos organizando una cuadrilla para limpiar y retirar escombros.",
@@ -205,6 +205,11 @@
     "lead": "Para dar una mano en el terreno, el contacto publicado es Saúl.",
     "whatsapp": "Escribir por WhatsApp",
     "call": "Llamar"
+  },
+  "notFoundPage": {
+    "title": "Esta página no está",
+    "lead": "El enlace no lleva a ninguna página de La Casa de Norma.",
+    "home": "Volver al inicio"
   },
   "normaPage": {
     "title": "Quién fue {name}",

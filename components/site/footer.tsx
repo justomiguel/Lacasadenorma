@@ -37,7 +37,10 @@ export function SiteFooter({
           </div>
 
           <nav aria-label={ui.nav.campaign} className="lg:col-span-4">
-            <p className="mb-md font-ui text-label uppercase tracking-label text-paper-muted">
+            <p
+              data-kicker=""
+              className="mb-md font-ui text-label uppercase tracking-label text-paper-muted"
+            >
               {ui.nav.campaign}
             </p>
             <ul className="space-y-xs">
@@ -55,7 +58,10 @@ export function SiteFooter({
           </nav>
 
           <nav aria-label={ui.nav.project} className="lg:col-span-4">
-            <p className="mb-md font-ui text-label uppercase tracking-label text-paper-muted">
+            <p
+              data-kicker=""
+              className="mb-md font-ui text-label uppercase tracking-label text-paper-muted"
+            >
               {ui.nav.next}
             </p>
             <ul className="space-y-xs">
@@ -71,7 +77,10 @@ export function SiteFooter({
               ))}
             </ul>
 
-            <p className="mb-md mt-xl font-ui text-label uppercase tracking-label text-paper-muted">
+            <p
+              data-kicker=""
+              className="mb-md mt-xl font-ui text-label uppercase tracking-label text-paper-muted"
+            >
               {ui.nav.legal}
             </p>
             <ul className="space-y-xs">
