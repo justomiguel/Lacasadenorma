@@ -67,8 +67,8 @@ Un solo acento, como siempre (`ux.md` §3). Cambia cuál.
 
 | Token | Antes | Ahora | Contraste sobre papel |
 |---|---|---|---|
-| `--color-aqua` | `--color-brick` `#aa4423` | **`#176b6b`** | 6,02:1 |
-| `--color-aqua-strong` | `--color-brick-strong` `#922800` | **`#005455`** | 8,32:1 |
+| `--color-aqua` | `--color-brick` `#aa4423` | **`#176b6b`** | 6,01:1 |
+| `--color-aqua-strong` | `--color-brick-strong` `#922800` | **`#005455`** | 8,40:1 |
 
 Está oscurecido y desaturado respecto del verde agua de la pared a propósito: el color de la pared, tal
 cual, no llega a 4,5:1 sobre papel, y un turquesa saturado se lee como marca de SaaS. Éste se lee como
@@ -88,15 +88,28 @@ Los tres niveles de tinta y las dos variantes de foco se recalcularon en el mism
 texto/fondo se midieron con un conversor `oklch`→sRGB y la fórmula de WCAG 2.x antes de escribir el
 CSS, porque la tabla de contraste de `ux.md` §3 ya estuvo mal una vez y la encontró axe:
 
+Las cifras son las del color **ya cuantizado a 8 bits**, que es el que el navegador pinta, y no las del
+oklch en coma flotante: entre las dos hay hasta cuatro centésimas de diferencia, y el par más justo del
+sistema pasa a 4,63:1.
+
 | Tinta | Sobre `paper` | Sobre `paper-sunk` |
 |---|---|---|
-| `ink` | 16,87:1 | 15,66:1 |
-| `ink-muted` | 6,47:1 | 6,01:1 |
-| `ink-faint` | 5,01:1 | 4,65:1 |
-| `aqua` | 6,02:1 | 5,59:1 |
+| `ink` | 16,91:1 | 15,65:1 |
+| `ink-muted` | 6,50:1 | 6,01:1 |
+| `ink-faint` | 5,01:1 | 4,63:1 |
+| `aqua` | 6,01:1 | 5,56:1 |
 
 `--color-rule` sobre la banda oscura se subió a 51 % de luminosidad para quedar en 3,09:1, que es el
 umbral de elemento no textual (WCAG 1.4.11); en el tono nuevo, el 52 % anterior daba 2,96:1.
+
+Y el acento se aclara **adentro** de la banda, a 62 % de luminosidad. Ésta la encontró la medición y no
+el ojo: el comentario que había en `globals.css` afirmaba que el filete del testimonio cumplía 3:1 sobre
+tinta, y con el verde nuevo da **2,81:1**. Ese filete es lo único que separa la frase de la familia del
+resto de la banda, y es la única frase del sitio que no escribimos nosotros. Aclarado da 5,05:1.
+
+La contrapartida queda escrita en el CSS: adentro de la banda, `bg-aqua` es un fondo claro, así que un
+botón primario ahí saldría con texto papel sobre verde claro. Hoy no hay ninguno y no debería haberlo
+—la acción primaria de la home vive en la apertura—, pero es el tipo de cosa que se rompe sola.
 
 ### 3. La voz más fuerte de la página pasa a ser argentina
 
@@ -137,9 +150,16 @@ en presente» y la cumplió a medias: el trabajo se muestra en `/reconstruccion`
 En la home, la única cosa que se ve del relato es la banda oscura de la pérdida. Un visitante que lee la
 home entera ve la desgracia y no ve a los vecinos con la pala.
 
-Las dos fotos de la limpieza existen desde ADR-021 y están publicadas en una página interior. Pasan
-también a la home, en su propia sección, con su fecha. No hay material nuevo, no hay texto inventado:
-hay una sección que ordena lo que ya estaba.
+Las dos fotos de la limpieza existen desde ADR-021 y están publicadas en una página interior. Una de las
+dos pasa también a la home, en su propia sección. No hay material nuevo, no hay texto inventado: hay una
+sección que ordena lo que ya estaba.
+
+Va **una** y no las dos, y es una decisión de la implementación contra lo que este ADR planeaba. Las dos
+son verticales de teléfono: puestas juntas en la mitad de una grilla de doce columnas, cada una queda en
+190 px de ancho y no se ve lo que la foto fue a buscar. La que va es la de los escombros, porque es la
+que muestra lo que el texto afirma: una persona con la pala y la máquina prestada detrás. La otra —las
+piezas del taller separadas una por una— necesita su epígrafe para entenderse, y ese epígrafe está en
+`/reconstruccion`, que es de donde no se movió.
 
 También se fusionan «qué hay que reconstruir» y «cómo va» en una sola sección: son el mismo asunto —la
 obra— y estaban separadas por herencia del orden de las nueve preguntas, no por una razón de lectura.
@@ -152,14 +172,25 @@ qué ocurrió y a quién:
 | Pregunta | Dónde se responde en la apertura |
 |---|---|
 | Qué ocurrió | La bajada, en prosa y con la fecha |
-| A quién estamos ayudando | El retrato de Norma con su nombre, y la mención del marido |
-| Qué hay que reconstruir | La bajada: la casa |
+| A quién estamos ayudando | El retrato de Norma con su nombre, y la segunda frase, que nombra al marido |
+| Qué hay que reconstruir | La segunda frase: la casa |
 | Cómo puedo ayudar | La acción primaria |
-| Cómo puedo compartir | Un enlace de texto, junto a las otras dos acciones |
+| Cómo puedo compartir | Un enlace de texto al lado de la acción primaria |
 
 Compartir estaba **al final** de la home, después de once secciones y unas catorce pantallas de
 teléfono. Un enlace en la apertura no agrega una superficie con acento —los enlaces no cuentan
-(`ux.md` §3)— y es la diferencia entre que la campaña circule o no.
+(`ux.md` §3)— y es la diferencia entre que la campaña circule o no. El destino es la última sección de la
+misma página, así que es un ancla y no una ruta: con `typedRoutes`, un `href` que es sólo un fragmento no
+es una ruta del sitio, y la primitiva nueva `InPageAction` existe para no mentirle al compilador.
+
+Las cinco respuestas entran arriba del pliegue de 360×640, y el orden se decidió midiendo. La frase que
+dice a quién estamos ayudando estuvo un rato **abajo** del botón, por miedo a empujarlo fuera del
+pliegue; ahí parecía la letra chica de la que pide plata. Arriba del botón, la apertura completa cierra a
+606 px y el pliegue está en 640.
+
+El enlace a la historia de Norma se va de la apertura. Eran dos enlaces y una acción para cinco
+preguntas, y ese enlace no contestaba ninguna: la sección inmediatamente siguiente es la historia de
+Norma y ya tiene su propio «leer la historia completa».
 
 ## Limpieza de contenido
 
@@ -177,7 +208,8 @@ hace con cada cosa.
 | 5 | «Norma murió en un accidente. No damos más detalles que los necesarios» | `preguntas.json` #3 | **Contradice `/que-paso`**, que publica el incendio y las fotos de esa madrugada. Es texto anterior a ADR-021 que quedó vivo |
 | 6 | `roleLabel: "Pionera de la comunicación en Riacho He Hé"` | `norma.json` | «Pionera» es un adjetivo nuestro. La fuente dice «una de las primeras comunicadoras sociales», y eso es lo que se publica |
 | 7 | **Los dos espacios reservados de «Norma en la radio»** | `/norma` y `/legado` | Reservan lugar para una foto que `content-guide.md` §3 marca como «la familia, **si existe**». `ux.md` §12 ya escribió la lección: el hueco es honesto como estado transitorio, no como layout, y un diseño que depende de material que no controlás es una promesa |
-| 8 | `home.radioPhotoReserved` y `home.seeRiacho` | `ui.json` | Copy que queda sin uso |
+| 8 | `home.radioPhotoReserved`, `home.seeRiacho`, `home.knowNormaStory`, `normaPage.radioReserved`, `legacyPage.radioReserved`, `legacyPage.seeTopics` | `ui.json` y `schema.ts` | Copy que queda sin uso. Se va también del esquema: una clave obligatoria que nadie renderiza es una promesa de que en algún lugar se muestra |
+| 9 | «Conocer Fundación Norma» | `ui.json` → `home.knowFoundation` | Nombra la fundación como si existiera, y el enlace lleva a la página que explica que no. Pasa a «Leer qué se propone el legado» |
 
 Ningún texto eliminado se reemplaza inventando otro. Donde no queda contenido, no queda sección.
 

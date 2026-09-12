@@ -156,18 +156,18 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
               colocación explícita en la grilla y no con `order`, así el texto sigue
               primero en el documento: en el teléfono el título tiene que aparecer
               antes que la imagen que ilustra. */}
-          <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg lg:items-end">
-            <div className="lg:col-span-5 lg:col-start-8">
+          <div className="grid gap-2xl lg:grid-cols-12 lg:items-start lg:gap-lg">
+            <div className="lg:col-span-6 lg:col-start-7">
               <SectionHeading title={ui.home.workStartedHeading} id="el-trabajo" />
               <p className="max-w-measure text-body">{ui.home.workStartedLead}</p>
             </div>
 
             {workPhoto === null ? null : (
-              <div className="lg:col-span-6 lg:col-start-1 lg:row-start-1">
+              <div className="lg:col-span-5 lg:col-start-1 lg:row-start-1">
                 <Figure
                   media={workPhoto}
                   reservedFor=""
-                  sizes="(min-width: 64rem) 50vw, 100vw"
+                  sizes="(min-width: 64rem) 40vw, 100vw"
                 />
               </div>
             )}

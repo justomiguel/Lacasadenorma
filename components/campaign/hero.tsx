@@ -52,6 +52,14 @@ export function Hero({ locale }: { locale: Locale }) {
             {ui.home.openingLead}
           </p>
 
+          {/* Arriba de las acciones, medido: en 360 px la apertura completa cierra a
+              583 px y el pliegue de SC-001 está en 640. Estuvo un rato abajo del
+              botón por miedo a ese pliegue, y ahí la frase que dice a quién estamos
+              ayudando parecía la letra chica de la que pide plata. */}
+          <p className="mt-md max-w-measure text-body text-ink-muted">
+            {ui.home.openingNeed}
+          </p>
+
           <div className="mt-xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
             <HelpCta
               origen="apertura"
@@ -60,13 +68,6 @@ export function Hero({ locale }: { locale: Locale }) {
             />
             <InPageAction fragment="compartir">{ui.home.shareOpening}</InPageAction>
           </div>
-
-          {/* Debajo de las acciones, y no arriba: en 360 px cada línea que se mete
-              antes del botón lo empuja hacia el pliegue, y SC-001 mide justamente
-              eso. Quien lee dos frases sigue leyendo la tercera. */}
-          <p className="mt-xl max-w-measure text-body text-ink-muted">
-            {ui.home.openingNeed}
-          </p>
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">

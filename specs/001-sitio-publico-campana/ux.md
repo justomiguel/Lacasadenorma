@@ -188,10 +188,10 @@ saturado se lee como marca de SaaS. Éste se lee como pintura de obra.
 | `--color-danger` | `oklch(50% 0.17 25)` | Errores, anulaciones |
 | `--color-focus` | `oklch(45% 0.19 250)` | Anillo de foco. **Azul deliberadamente distinto del acento** para que se lea como "el sistema me está indicando algo", no como decoración |
 
-**El acento se usa poco.** Si hay más de tres elementos color ladrillo en una pantalla, algo está
+**El acento se usa poco.** Si hay más de tres elementos con el acento en una pantalla, algo está
 mal. En una página editorial el color es un señalador, no un relleno.
 
-Lo que se cuenta son las **superficies rellenas** con el acento: un botón ladrillo, la barra de
+Lo que se cuenta son las **superficies rellenas** con el acento: el botón, la barra de
 progreso, un bloque destacado. No se cuentan los enlaces, aunque lleven el mismo token en el texto y
 en la regla de un pixel: ésa es la forma que tiene un enlace en este sistema, y contarla convertiría
 el límite en "no más de tres enlaces por pantalla", que en una página editorial es absurdo. La
@@ -207,14 +207,23 @@ Todo par texto/fondo cumple al menos 4.5:1 en cualquier tamaño, medido sobre lo
 
 | Tinta | Sobre `paper` | Sobre `paper-sunk` |
 |---|---|---|
-| `ink` | 16,87:1 | 15,66:1 |
-| `ink-muted` | 6,47:1 | 6,01:1 |
-| `ink-faint` | 5,01:1 | 4,65:1 |
-| `aqua` | 6,02:1 | 5,59:1 |
+| `ink` | 16,91:1 | 15,65:1 |
+| `ink-muted` | 6,50:1 | 6,01:1 |
+| `ink-faint` | 5,01:1 | 4,63:1 |
+| `aqua` | 6,01:1 | 5,56:1 |
 
 Los valores se calculan convirtiendo cada `oklch` a sRGB y aplicando la fórmula de WCAG 2.x, **antes**
 de escribir el CSS. No se estiman: la tabla anterior estuvo mal y la encontró axe en la corrida de E2E,
 no una revisión a ojo.
+
+Y se calculan sobre el color **ya cuantizado a 8 bits**, que es el que el navegador pinta. La diferencia
+con el oklch en coma flotante llega a cuatro centésimas, que en el par más justo del sistema es lo que
+separa 4,67 de 4,63.
+
+Sobre la banda oscura el acento se aclara a `oklch(62% 0.09 195)`. El de papel da 2,81:1 sobre tinta, y
+el filete del testimonio es lo único que separa la frase de la familia del resto de la banda; aclarado
+da 5,05:1. Adentro de la banda, entonces, `bg-aqua` es un fondo **claro**: un botón primario ahí saldría
+con texto papel sobre verde claro, y no hay ninguno porque la acción primaria vive en la apertura.
 
 `ink-faint` estuvo definido en `62%`, por debajo del umbral, con la condición de usarse sólo en
 texto de 24 px o más —lo que WCAG 2.2 permite—. La condición no se sostuvo: los seis lugares donde
@@ -351,16 +360,21 @@ El orden recorre los cuatro movimientos —pérdida, comunidad, reconstrucción,
 responde las nueve preguntas en la secuencia en que una persona las hace:
 
 1. **Apertura.** Retrato de Norma a sangrado en teléfono, y sobre el papel: "La Casa de Norma" en
-   display, **qué ocurrió en prosa y con la fecha**, y tres cosas que hacer: *Ayudar a reconstruir*
-   (acción primaria), *Leer qué ocurrió* y *Compartir* (las dos como enlace de texto, no como botón:
-   dos botones compitiendo diluyen la decisión). Tiene que responder las cinco preguntas de
-   [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) sin desplazarse en 360 px.
+   display, **qué ocurrió en prosa y con la fecha**, a quién estamos ayudando, y dos cosas que hacer:
+   *Ayudar a reconstruir* (acción primaria) y *Cómo compartirla* (enlace de texto, no botón: dos botones
+   compitiendo diluyen la decisión). El enlace de compartir es un ancla a la última sección de esta
+   misma página. Tiene que responder las cinco preguntas de
+   [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) sin desplazarse en 360 px: cierra a 606 px
+   con el pliegue en 640.
 2. **Quién fue Norma.** Tres párrafos, con foto lateral. Termina en enlace a la historia completa.
 3. **Qué pasó.** Banda sobre tinta. Dos párrafos sobrios y la frase de la familia, atribuida. Enlace a
    la página completa. Es el único lugar de la home donde se habla de la pérdida.
-4. **El trabajo empezó.** Las dos fotos de la limpieza, fechadas, con gente del pueblo y la máquina
-   prestada. Es el movimiento de comunidad, y existe porque sin él la home mostraba la desgracia y no
-   mostraba el trabajo (ADR-024).
+4. **El trabajo empezó.** La foto de la limpieza —una persona con la pala, la máquina prestada detrás—
+   y dos oraciones. Es el movimiento de comunidad, y existe porque sin él la home mostraba la desgracia
+   y no mostraba el trabajo (ADR-024). En escritorio la foto va a la izquierda y el título a la derecha,
+   al revés que en las otras dos secciones con foto: la colocación es explícita en la grilla y no con
+   `order`, así el texto sigue primero en el documento y en el teléfono el título aparece antes que la
+   imagen que ilustra.
 5. **La obra.** Qué hay que reconstruir y cómo va, en una sola sección: rubros del presupuesto con
    monto cuando existe, barra de progreso, monto recaudado, fecha de conciliación y avance de hitos.
    Estaban separadas por herencia del orden de las preguntas, no por una razón de lectura. Si no hay
@@ -379,7 +393,7 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
 | Ruta | Contenido |
 |---|---|
 | `/norma` | La historia completa. Ensayo fotográfico. Es la página que hace que el proyecto sea de una persona, no de una causa |
-| `/que-paso` | El accidente, con respeto. Sin detalles gráficos. Termina en qué se necesita ahora, para que no cierre en la pérdida |
+| `/que-paso` | El incendio, con respeto. Sin detalles gráficos. Termina en qué se necesita ahora, para que no cierre en la pérdida |
 | `/reconstruccion` | Qué se perdió, qué hay que reparar, presupuesto por rubro, hitos, fotos del avance |
 | `/ayudar` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |

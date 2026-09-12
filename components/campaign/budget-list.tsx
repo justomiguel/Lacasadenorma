@@ -58,7 +58,11 @@ export function BudgetList({
             key={item.id}
             className="grid gap-2xs border-b border-rule py-md sm:grid-cols-[1fr_auto] sm:gap-lg"
           >
-            <dt className="text-body font-medium">{item.title}</dt>
+            {/* `font-ui` y no la serif del cuerpo: el nombre del rubro es un dato de
+                la campaña, no prosa, y comparte fila con un monto que ya está en la
+                voz de interfaz. Con las dos familias en la misma línea la mezcla se
+                lee como un descuido y no como una jerarquía (ADR-024). */}
+            <dt className="font-ui text-body font-medium">{item.title}</dt>
             <dd className="font-ui text-subheading font-medium sm:text-right" data-figure>
               {item.estimatedAmount === null ? (
                 <span className="font-normal text-ink-muted">{ui.figures.unquoted}</span>
