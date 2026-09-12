@@ -8,11 +8,22 @@ de revisión visual.
 
 ## 1. Intención
 
-La experiencia tiene que recorrer, en este orden: **memoria → ayuda → reconstrucción → futuro**.
+La experiencia tiene que recorrer, en este orden: **pérdida → comunidad → reconstrucción → legado**
+([ADR-024](../../docs/adr/024-tercera-direccion-visual.md)).
+
+El orden original era «memoria → ayuda → reconstrucción → futuro», y le faltaba un movimiento: la
+comunidad. El sitio mostraba la pérdida en la home y el trabajo en una página interior, así que quien
+leía la home entera veía la desgracia y no veía a los vecinos con la pala. Ése es el movimiento que
+convierte una lista de desgracias en una campaña.
 
 Debe generar empatía, confianza y esperanza. **No** debe generar lástima. La diferencia es
 concreta: la lástima se produce insistiendo en la pérdida; la confianza se produce mostrando trabajo,
-números y avance. Por eso la página no se abre con el accidente: se abre con Norma.
+números y avance. Por eso la página **no se abre con las fotos del incendio**: se abre con Norma.
+
+Lo que sí hace la apertura es **decir qué pasó, en prosa y con la fecha**. Durante un tiempo abrió con
+un eslogan —«Reconstruimos una casa. Construimos un legado.»— y con eso alguien que llegaba de WhatsApp
+no se enteraba de que había habido un incendio hasta la tercera sección. Contar el hecho no es lástima;
+el eslogan, además, no informaba nada.
 
 Referencia conceptual: un libro documental o un suplemento dominical bien hecho. No una landing.
 No un dashboard.
@@ -61,10 +72,17 @@ broadsheet con reglas de un pixel, sobrelínea en versales arriba de cada encabe
 unidos con puntos medios. Había **39 repeticiones** del patrón «etiqueta en versales + título +
 regla» en nueve páginas, cero elementos a sangrado y cero superficies distintas de `paper`.
 
-Ninguna de esas decisiones es ilegítima por separado —el ladrillo viene de la tierra colorada de
+Ninguna de esas decisiones es ilegítima por separado —el ladrillo venía de la tierra colorada de
 Formosa, Archivo es una grotesca de Buenos Aires—. El problema es que las cuatro juntas, sin
 fotografía, son el default. El detalle está en
 [ADR-021](../../docs/adr/021-segunda-direccion-visual.md).
+
+ADR-021 corrigió dos de las cuatro —la sobrelínea y el plano único— y apostó a que la fotografía
+cambiara la lectura de las otras dos, con una condición escrita: si con las fotos adentro la paleta
+seguía leyéndose como default, se reevaluaba con evidencia. Se midió con las diez fotos publicadas y
+seguía: papel `#fcfaf6`, acento `#aa4423`, títulos en serif. Las dos restantes se corrigen en
+[ADR-024](../../docs/adr/024-tercera-direccion-visual.md): el acento pasa a ser el verde agua de la casa
+y el display pasa a Archivo.
 
 ---
 
@@ -74,8 +92,14 @@ Dos voces, elegidas deliberadamente:
 
 | Uso | Familia | Motivo |
 |---|---|---|
-| Títulos y prosa | **Newsreader** (variable) | Serif diseñada para leer en pantalla, con eje óptico. Da voz humana y editorial sin sonar antigua |
-| Interfaz, etiquetas, cifras | **Archivo** (variable) | Grotesca de **Omnibus-Type, Buenos Aires**. La voz funcional del sitio es tipografía argentina; no es decorativo, es de dónde viene el proyecto |
+| Display, títulos, interfaz, cifras | **Archivo** (variable) | Grotesca de **Omnibus-Type, Buenos Aires**. La voz que se lee primero es tipografía argentina; no es decorativo, es de dónde viene el proyecto |
+| Prosa, bajadas, citas | **Newsreader** (variable) | Serif diseñada para leer en pantalla, con eje óptico. Es la voz del texto largo, que es lo que se lee en el teléfono |
+
+Los roles estaban al revés hasta [ADR-024](../../docs/adr/024-tercera-direccion-visual.md): Archivo se
+usaba en las etiquetas y las cifras, y los títulos —lo primero que alguien lee— se dibujaban con la
+serif. Con eso el sitio cumplía el segundo de los tres rasgos que la skill `frontend-design` enumera para
+el diseño generado por IA, «un display serif de alto contraste». Invertir los roles lo saca de esa lista
+sin agregar una familia nueva ni un archivo más al presupuesto de fuentes.
 
 Ambas se autoalojan con `next/font` (sin pedidos a terceros, sin FOUT). Sólo los pesos que se usan.
 
@@ -143,14 +167,22 @@ correctas; Tailwind emite el fallback hexadecimal automáticamente.
 
 | Token | Valor | Uso |
 |---|---|---|
-| `--color-paper` | `oklch(98.6% 0.006 85)` | Fondo. Blanco cálido, no `#fff`: el blanco puro sobre pantalla brillante cansa |
-| `--color-paper-sunk` | `oklch(96.4% 0.008 85)` | Bloques diferenciados, sin bordes |
-| `--color-ink` | `oklch(22% 0.014 65)` | Texto. Casi negro **cálido**, no gris azulado |
-| `--color-ink-muted` | `oklch(48% 0.014 65)` | Epígrafes, metadatos. Contraste ≥ 4.5:1 sobre papel |
-| `--color-ink-faint` | `oklch(54% 0.012 65)` | Tercer nivel: créditos de foto, "(opcional)", línea legal. Contraste ≥ 4.5:1 sobre papel |
-| `--color-rule` | `oklch(88% 0.008 65)` | Reglas de un pixel. Reemplazan a las cards |
-| `--color-brick` | `oklch(52% 0.142 38)` | **Acento único.** Tierra colorada de Formosa y ladrillo de obra. Enlaces, acciones, la barra de progreso |
-| `--color-brick-strong` | `oklch(44% 0.148 38)` | Estado activo y `:hover` |
+| `--color-paper` | `oklch(98.4% 0.004 200)` | Fondo. Blanco a la cal, apenas frío. No `#fff`: el blanco puro sobre pantalla brillante cansa |
+| `--color-paper-sunk` | `oklch(95.8% 0.009 200)` | Bloques diferenciados, sin bordes |
+| `--color-ink` | `oklch(21% 0.021 215)` | Texto. Pizarra mojada, no negro teñido |
+| `--color-ink-muted` | `oklch(47% 0.021 215)` | Epígrafes, metadatos. Contraste ≥ 4.5:1 sobre papel |
+| `--color-ink-faint` | `oklch(53% 0.018 215)` | Tercer nivel: créditos de foto, "(opcional)", línea legal. Contraste ≥ 4.5:1 sobre papel |
+| `--color-rule` | `oklch(87% 0.011 200)` | Reglas de un pixel. Reemplazan a las cards |
+| `--color-aqua` | `oklch(48% 0.075 195)` | **Acento único.** El verde agua del frente de la casa de Norma. Enlaces, acciones, la barra de progreso |
+| `--color-aqua-strong` | `oklch(40% 0.08 195)` | Estado activo y `:hover` |
+
+El acento **sale de la casa, no de la provincia**
+([ADR-024](../../docs/adr/024-tercera-direccion-visual.md)). Era `--color-brick`, un terracota
+`#aa4423` justificado por la tierra colorada de Formosa; el argumento era cierto y era sobre una
+provincia de 72 000 km². El verde agua está en la pared del frente y en el `alt` de dos fotos
+publicadas: es el dato más específico que tiene el proyecto. Va oscurecido y desaturado respecto del
+color real de la pared porque el de la pared no llega a 4,5:1 sobre papel, y porque un turquesa
+saturado se lee como marca de SaaS. Éste se lee como pintura de obra.
 | `--color-success` | `oklch(48% 0.11 150)` | Hito completado |
 | `--color-warning` | `oklch(58% 0.13 75)` | Dato desactualizado |
 | `--color-danger` | `oklch(50% 0.17 25)` | Errores, anulaciones |
@@ -175,16 +207,21 @@ Todo par texto/fondo cumple al menos 4.5:1 en cualquier tamaño, medido sobre lo
 
 | Tinta | Sobre `paper` | Sobre `paper-sunk` |
 |---|---|---|
-| `ink` | 16,7:1 | 15,6:1 |
-| `ink-muted` | 6,3:1 | 5,9:1 |
-| `ink-faint` | 4,9:1 | 4,6:1 |
-| `brick` | 5,7:1 | 5,3:1 |
+| `ink` | 16,87:1 | 15,66:1 |
+| `ink-muted` | 6,47:1 | 6,01:1 |
+| `ink-faint` | 5,01:1 | 4,65:1 |
+| `aqua` | 6,02:1 | 5,59:1 |
+
+Los valores se calculan convirtiendo cada `oklch` a sRGB y aplicando la fórmula de WCAG 2.x, **antes**
+de escribir el CSS. No se estiman: la tabla anterior estuvo mal y la encontró axe en la corrida de E2E,
+no una revisión a ojo.
 
 `ink-faint` estuvo definido en `62%`, por debajo del umbral, con la condición de usarse sólo en
 texto de 24 px o más —lo que WCAG 2.2 permite—. La condición no se sostuvo: los seis lugares donde
 el sistema necesita un tercer nivel de tinta son texto chico, porque es ahí donde la jerarquía hace
 falta. Una restricción que ningún uso real respeta es una trampa, así que el token se oscureció a
-`54%` y la restricción desapareció. Lo encontró axe en la suite E2E, no una revisión a ojo, y por
+`54%` —hoy `53%`, recalculado en el tono nuevo— y la restricción desapareció. Lo encontró axe en la
+suite E2E, no una revisión a ojo, y por
 eso la comprobación automática vale: la regla estaba escrita en esta misma página y aun así se
 incumplió en seis lugares.
 
@@ -303,28 +340,39 @@ Cada primitiva tiene test de componente con Testing Library y aparece en las cor
 
 ## 9. Estructura de páginas
 
-Nueve páginas públicas. El nombre de cada URL está en castellano porque el sitio es en castellano.
+**Diez** páginas públicas. El nombre de cada URL está en castellano porque el sitio es en castellano.
+Eran once hasta [ADR-024](../../docs/adr/024-tercera-direccion-visual.md), que retiró
+`/riacho-conecta`: era una página entera dedicada a un programa que no existe, y su contenido
+verificable son dos oraciones que viven en `/legado`.
 
 ### Home `/`
 
-El orden responde las nueve preguntas en la secuencia en que una persona las hace:
+El orden recorre los cuatro movimientos —pérdida, comunidad, reconstrucción, legado— y dentro de eso
+responde las nueve preguntas en la secuencia en que una persona las hace:
 
-1. **Apertura.** Retrato de Norma a sangrado, y sobre el papel debajo: "La Casa de Norma" en
-   display, la línea "Reconstruimos una casa. Construimos un legado.", y dos acciones: *Ayudar a
-   reconstruir* (primaria) y *Conocer la historia de Norma* (secundaria, enlace de texto con regla,
-   no un segundo botón: dos botones compitiendo diluyen la decisión).
-2. **Quién fue Norma.** Tres o cuatro párrafos, con foto lateral. Termina en enlace a la historia
-   completa.
-3. **Qué pasó.** Dos párrafos sobrios. Enlace a la página completa.
-4. **Qué hay que reconstruir.** Rubros del presupuesto con monto cuando existe; si no, sólo el
-   rubro.
-5. **Cómo va.** Barra de progreso, monto recaudado, fecha de conciliación, y avance de hitos. Si no
-   hay objetivo cargado, se muestra lo recaudado sin porcentaje.
+1. **Apertura.** Retrato de Norma a sangrado en teléfono, y sobre el papel: "La Casa de Norma" en
+   display, **qué ocurrió en prosa y con la fecha**, y tres cosas que hacer: *Ayudar a reconstruir*
+   (acción primaria), *Leer qué ocurrió* y *Compartir* (las dos como enlace de texto, no como botón:
+   dos botones compitiendo diluyen la decisión). Tiene que responder las cinco preguntas de
+   [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) sin desplazarse en 360 px.
+2. **Quién fue Norma.** Tres párrafos, con foto lateral. Termina en enlace a la historia completa.
+3. **Qué pasó.** Banda sobre tinta. Dos párrafos sobrios y la frase de la familia, atribuida. Enlace a
+   la página completa. Es el único lugar de la home donde se habla de la pérdida.
+4. **El trabajo empezó.** Las dos fotos de la limpieza, fechadas, con gente del pueblo y la máquina
+   prestada. Es el movimiento de comunidad, y existe porque sin él la home mostraba la desgracia y no
+   mostraba el trabajo (ADR-024).
+5. **La obra.** Qué hay que reconstruir y cómo va, en una sola sección: rubros del presupuesto con
+   monto cuando existe, barra de progreso, monto recaudado, fecha de conciliación y avance de hitos.
+   Estaban separadas por herencia del orden de las preguntas, no por una razón de lectura. Si no hay
+   objetivo cargado, se muestra lo recaudado sin porcentaje.
 6. **Cómo ayudar.** Los tres países, con la cuenta del país detectado por idioma/región primero, y
    copiado directo desde la home (SC-002: máximo tres toques).
 7. **En qué se usó.** Tres cifras (recibido, gastado, saldo) y enlace a la transparencia completa.
-8. **Qué sigue.** Fundación Norma y Riacho Conecta, en dos párrafos.
+8. **Qué sigue.** El legado, en dos párrafos, y un solo enlace. Se dice que la fundación todavía no
+   existe como organización, porque es verdad y porque decir lo contrario sería el primer dato falso
+   del proyecto.
 9. **Preguntas.** Las nueve preguntas como `h3` con respuesta directa debajo, en prosa.
+10. **Compartir.** Sigue al final, y ya no es la única vez: la apertura tiene su enlace.
 
 ### Resto de las páginas
 
@@ -336,8 +384,7 @@ El orden responde las nueve preguntas en la secuencia en que una persona las hac
 | `/ayudar` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |
 | `/novedades` y `/novedades/[slug]` | Actualizaciones fechadas; cada una compartible con su propia vista previa |
-| `/legado` | Fundación Norma: qué se propone, en qué estado está |
-| `/riacho-conecta` | El programa de formación y sus temas |
+| `/legado` | Fundación Norma: qué se propone, en qué estado está, y que todavía no existe como organización |
 | `/legales/privacidad`, `/legales/terminos` | Qué se recolecta, para qué, cuánto se conserva |
 
 ### Navegación
@@ -459,8 +506,10 @@ Los cuatro que agrega [ADR-021](../../docs/adr/021-segunda-direccion-visual.md),
 familia dijera que el sitio estaba monótono:
 
 - [x] Ninguna página pública muestra un espacio reservado de foto donde ya hay material disponible.
-      → medido, criterio 11: el número de huecos por página es **exacto**, y el único que queda es la
-      foto de Norma en la radio, que puede no existir.
+      → medido, criterio 11: el número de huecos por página es **exacto**, y desde
+      [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) es **cero en todas**. Los dos que
+      quedaban esperaban la foto de Norma en la radio, que la guía de contenido marca como «si existe»:
+      un hueco es honesto como estado transitorio, no como layout.
 - [x] La home presenta al menos una imagen que llega al borde de la pantalla en 360 px y más de una
       superficie de sección. → medido, criterio 12. El sangrado es **en teléfono** y no en escritorio:
       todas las fotos que hay son verticales o casi cuadradas, y a 1440 px de ancho una foto de
@@ -472,6 +521,13 @@ familia dijera que el sitio estaba monótono:
 - [x] No queda ninguna sobrelínea en versales que sólo repita el título de su sección.
       → medido, criterio 13, que va más lejos que el criterio: **ninguna** página pública tiene texto
       en versales. `/admin` sí las conserva, porque es una herramienta interna y densa.
+
+Y el que agrega [ADR-024](../../docs/adr/024-tercera-direccion-visual.md):
+
+- [x] Ninguna página pública usa el acento retirado. → medido, criterio 14: se lee el color computado de
+      todo lo que pinta, y el terracota de `--color-brick` no puede volver por un `text-brick` copiado
+      de un componente viejo. Es la comprobación que faltó las dos veces anteriores: la paleta se
+      cambió en los tokens y nada impedía que un archivo quedara atrás.
 
 ### Lo que el loop encontró, y lo que decidió no cambiar
 
