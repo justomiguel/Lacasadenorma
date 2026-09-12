@@ -39,6 +39,20 @@ updates:
       # decide, no se acepta desde un pull request automático.
       - dependency-name: "@types/node"
         update-types: [version-update:semver-major]
+      # Estas dos ya rompieron `main` una vez, el 12 de septiembre de 2026: se
+      # aceptaron los pull requests #3 (`typescript` 7.0.2) y #4 (`eslint`
+      # 10.10.0), `typescript-eslint` se volvió insatisfacible, npm lo sacó del
+      # árbol, y `next typegen` y el lint murieron los dos porque
+      # `eslint.config.ts` lo importa. El comentario de arriba ya decía que una
+      # mayor de ESLint «no es una actualización de dependencia: es una
+      # decisión», pero un comentario no frena un merge. Ahora Dependabot no las
+      # propone y el salto hay que venir a buscarlo acá, que es el lugar donde
+      # está escrito por qué no se puede dar todavía
+      # (`docs/research/2026-09-toolchain.md`).
+      - dependency-name: "typescript"
+        update-types: [version-update:semver-major]
+      - dependency-name: "eslint"
+        update-types: [version-update:semver-major]
 
   # Las acciones se fijan por etiqueta mayor (`@v7`), o sea que los parches entran
   # solos. Esto avisa cuando aparece una mayor nueva, que es lo que sí hay que leer.

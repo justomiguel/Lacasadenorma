@@ -21,6 +21,35 @@ proyecto.
 **Regla del proyecto:** antes de fijar una dependencia se verifican sus `peerDependencies`. El tag
 `latest` no es una recomendación de compatibilidad.
 
+### Esto ya pasó, y así se vio
+
+El 12 de septiembre de 2026 se aceptaron los pull requests **#3** (`typescript` 7.0.2) y **#4**
+(`eslint` 10.10.0) y se mergearon a `main`. Las dos filas de la tabla de arriba se cumplieron, y el
+modo de falla fue peor que un error de instalación:
+
+1. `npm ci` **terminó bien**, con «found 0 vulnerabilities». No hubo ninguna señal ahí.
+2. Pero `typescript-eslint@8.70.0` se volvió insatisfacible, así que npm lo **sacó del árbol**: dejó de
+   estar en `node_modules` y desapareció del `package-lock.json`.
+3. `eslint.config.ts` lo importa por nombre, así que se cayeron **las dos** compuertas a la vez:
+   `npm run typecheck` con `eslint.config.ts(4,22): error TS2307: Cannot find module
+   'typescript-eslint'`, y `npm run lint` con una excepción al cargar la config.
+
+Es decir: la dependencia que faltaba no era una que el código usara en tiempo de ejecución, era la que
+sostiene el linter, y el síntoma no apareció hasta correr las tareas. CI lo marcó —`CI`, `Calidad` y
+`E2E` en rojo en `main`—, pero recién después del merge.
+
+Dos cosas cambiaron por esto:
+
+- **`typescript-eslint` pasa a estar declarado en `package.json`.** La línea de más abajo dice «no
+  duplicar» lo que ya trae `eslint-config-next`, y sigue valiendo para los *plugins* y las *configs*:
+  no se declaran `eslint-plugin-react` ni `jsx-a11y` ni `import`. Pero `typescript-eslint` no se usa
+  por herencia de la config: se **importa por nombre** en `eslint.config.ts`, y un paquete que se
+  importa se declara. Se fija en la misma 8.70.0 que ya resolvía, así que no hay copia nueva: una sola
+  entrada en el lock y un solo directorio en `node_modules`, verificado.
+- **Dependabot deja de proponer las mayores de `typescript` y de `eslint`**, con la razón escrita en
+  `.github/dependabot.yml`. El acuerdo de ese archivo ya decía que una mayor de ESLint «es una
+  decisión», pero estaba en un comentario, y un comentario no frena un merge.
+
 ## 2. Versiones elegidas
 
 ```
