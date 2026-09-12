@@ -2,9 +2,10 @@ import { BudgetList } from "@/components/campaign/budget-list";
 import { HelpCta } from "@/components/campaign/help-cta";
 import { CampaignProgress } from "@/components/campaign/progress";
 import { Unavailable } from "@/components/campaign/unavailable";
+import { InlineLink } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Band, Container, Section } from "@/components/design-system/layout";
-import { PhotoSequence, ReservedSpace } from "@/components/design-system/photo";
+import { PhotoSequence } from "@/components/design-system/photo";
 import { Timeline } from "@/components/design-system/timeline";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
@@ -47,8 +48,11 @@ export default async function ReconstruccionPage() {
     <>
       <PageHeader title={reconstruction.title} lead={reconstruction.lead} />
 
+      {/* `tight`: son dos párrafos de introducción, y con el ritmo largo quedaban
+          solos en la primera pantalla de escritorio con la banda de fotos abajo del
+          pliegue. Lo que tiene que ver quien llega acá es el trabajo. */}
       <Container>
-        <Section>
+        <Section tight>
           <Paragraphs items={reconstruction.paragraphs} />
         </Section>
       </Container>
@@ -127,14 +131,18 @@ export default async function ReconstruccionPage() {
                 )}
               </div>
 
+              {/* Acá había un rectángulo vacío que decía «acá van las fotos del avance».
+                  Se fue: la página ya muestra el trabajo hecho más arriba, y el hueco
+                  reservado prometía por segunda vez algo que llega por otro camino. Las
+                  fotos del avance se publican con cada novedad, fechadas, y el lugar
+                  donde se ven es `/novedades` (ADR-021, criterio 11). */}
               <aside className="lg:col-span-4 lg:col-start-9">
-                <ReservedSpace
-                  ratio="landscape"
-                  description="Acá van las fotos del avance de la obra, con su fecha."
-                />
-                <p className="mt-md max-w-measure font-ui text-small text-ink-muted">
+                <p className="max-w-measure border-t border-rule pt-md font-ui text-small text-ink-muted">
                   Las fotos del avance se publican junto con cada novedad, así que cada
                   una queda fechada y se puede compartir por separado.
+                </p>
+                <p className="mt-md">
+                  <InlineLink href="/novedades">Ver las novedades de la obra</InlineLink>
                 </p>
               </aside>
             </div>

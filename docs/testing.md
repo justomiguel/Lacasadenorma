@@ -25,12 +25,12 @@ menos que uno que verifica que algo no se puede hacer.**
 | Componentes | Vitest + Testing Library | 64 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas, la barra de ayuda y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
 | Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
-| Punta a punta | Playwright, tres navegadores, dos modos | 502 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
+| Punta a punta | Playwright, tres navegadores, dos modos | 532 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
 
-Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **502
-tests de Playwright** entre los dos modos (240 sin datos, 262 con datos).
+Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **532
+tests de Playwright** entre los dos modos (255 sin datos, 277 con datos).
 
 ### TDD, donde es obligatorio
 
