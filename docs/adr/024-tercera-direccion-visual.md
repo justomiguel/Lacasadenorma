@@ -304,4 +304,5 @@ Y uno que depende de mirar, en 360 px y en 1440 px: que la apertura responda las
 | [`012-design-system.md`](./012-design-system.md) | Los tokens, que acá cambian de valor y de nombre |
 | [`../../specs/001-sitio-publico-campana/ux.md`](../../specs/001-sitio-publico-campana/ux.md) | Las secciones 1, 2, 3 y 9 que este ADR enmienda |
 | [`../content-guide.md`](../content-guide.md) | La lista de lo que falta, y el razonamiento del año que se corrige |
+| [`../research/2026-09-campanas-reconstruccion.md`](../research/2026-09-campanas-reconstruccion.md) | Campañas reales de reconstrucción y legados, que verifican estas decisiones a posteriori |
 | [`018-presupuestos-de-performance.md`](./018-presupuestos-de-performance.md) | El presupuesto que la sección nueva no puede exceder |
