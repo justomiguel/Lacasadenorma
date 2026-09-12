@@ -21,7 +21,10 @@ import { PRIMARY_NAV } from "./navigation";
  */
 export function PageIndex() {
   return (
-    <Container as="nav" aria-label="Secciones del sitio" className="lg:hidden">
+    /* El nombre lo distingue del encabezado y del pie a propósito: tres puntos de
+       navegación con el mismo nombre son tres landmarks indistinguibles para quien
+       navega por landmarks, y el sumario y el pie conviven en el teléfono. */
+    <Container as="nav" aria-label="Índice de secciones" className="lg:hidden">
       <ul className="border-t border-rule">
         {PRIMARY_NAV.map((item) => (
           <li key={item.href} className="border-b border-rule">

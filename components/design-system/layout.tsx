@@ -11,18 +11,31 @@ import { cn } from "./cn";
  * olvidar.
  */
 
-/** Margen lateral y ancho máximo de página. 20 px en mobile, hasta 96 px en desktop. */
+/**
+ * Margen lateral y ancho máximo de página. 20 px en mobile, hasta 96 px en desktop.
+ *
+ * Acepta `aria-label` porque sin eso un `nav` o una `section` construidos con esta
+ * primitiva **no pueden tener nombre**. Y la falla es silenciosa de la peor manera:
+ * el atributo se escribe en el llamado, TypeScript no se queja de una propiedad de
+ * más, y el elemento sale al HTML sin nombre accesible. Pasó con el sumario del
+ * sitio, y lo detectó un test de navegación que encontró el pie en su lugar.
+ */
 export function Container({
   children,
   className,
   as: Tag = "div",
+  "aria-label": ariaLabel,
 }: {
   children: ReactNode;
   className?: string;
   as?: "div" | "header" | "footer" | "section" | "article" | "nav" | "main";
+  "aria-label"?: string;
 }) {
   return (
-    <Tag className={cn("mx-auto w-full max-w-page px-5 sm:px-xl lg:px-4xl", className)}>
+    <Tag
+      {...(ariaLabel === undefined ? {} : { "aria-label": ariaLabel })}
+      className={cn("mx-auto w-full max-w-page px-5 sm:px-xl lg:px-4xl", className)}
+    >
       {children}
     </Tag>
   );

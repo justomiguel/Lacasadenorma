@@ -41,7 +41,7 @@ export function SiteHeader() {
         {site.name}
       </Link>
 
-      <nav aria-label="Secciones del sitio" className="hidden lg:block">
+      <nav aria-label="Principal" className="hidden lg:block">
         <ul className="flex items-baseline gap-lg">
           {/* Sin `/ayudar`: es la acción de la derecha, y tenerla también en la lista
               ponía dos enlaces al mismo destino en la misma línea. El pie y el
@@ -68,8 +68,12 @@ export function SiteHeader() {
         </ul>
       </nav>
 
+      {/* La acción también se marca cuando es la página abierta. Es la única ruta
+          primaria que no está en la lista de arriba, y si no se marcara acá sería
+          la única del sitio donde el lector de pantalla no sabe dónde está. */}
       <Link
         href="/ayudar"
+        {...(pathname === "/ayudar" ? { "aria-current": "page" } : {})}
         className="inline-flex min-h-touch shrink-0 items-center font-ui text-small font-medium text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
       >
         Ayudar
