@@ -56,6 +56,45 @@ export function Section({
   );
 }
 
+/**
+ * Banda de superficie: una sección entera sobre otro fondo, de borde a borde.
+ *
+ * Es uno de los tres recursos con los que el documento deja de ser un solo plano
+ * (ADR-021). Estuvo prometido en `ux.md` §4 desde el principio y tuvo **cero** uso
+ * en páginas públicas, y eso —junto con la ausencia de fotos— es lo que hacía que
+ * once páginas se vieran iguales.
+ *
+ * `ink` es deliberadamente escasa: **una sola sección en todo el sitio**, la de qué
+ * ocurrió. El tono oscuro ahí no es un efecto, es lo único que la separa del resto
+ * del documento, y usarlo dos veces lo convierte en decoración.
+ *
+ * El fondo y el `data-tone` van en **elementos distintos**, y no es un descuido: de
+ * `data-tone="ink"` cuelga la inversión de la paleta de `globals.css`, que redefine
+ * `--color-ink` y compañía para lo que esté adentro. Si el mismo elemento llevara
+ * `bg-ink`, su propio fondo se volvería papel.
+ */
+export function Band({
+  children,
+  tone,
+  className,
+}: {
+  children: ReactNode;
+  tone: "sunk" | "ink";
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        tone === "ink" ? "bg-ink text-paper" : "bg-paper-sunk",
+        "border-y border-rule",
+        className,
+      )}
+    >
+      {tone === "ink" ? <div data-tone="ink">{children}</div> : children}
+    </div>
+  );
+}
+
 /** Medida de lectura: 68 caracteres. Una línea de 140 no se lee. */
 export function Measure({
   children,

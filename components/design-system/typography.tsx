@@ -55,7 +55,15 @@ export function Paragraphs({
 }
 
 /**
- * Etiqueta en mayúsculas + título + regla.
+ * Título de sección con su regla, y —sólo si hace falta— una sobrelínea.
+ *
+ * **`label` casi nunca corresponde.** Se usaba en las treinta y nueve secciones del
+ * sitio y en ninguna decía algo que el título no dijera: «LA OBRA» arriba de «Qué
+ * hay que reconstruir», «EL AVANCE» arriba de «Cómo va». Una etiqueta que sólo
+ * anuncia el título es chrome, y es uno de los delatores de página generada que
+ * enumera la skill `frontend-design` (ADR-021). La etiqueta se pone cuando
+ * transporta información que el título no tiene —un estado, una fecha, un país— y en
+ * ese caso va en la voz de interfaz, sin versales.
  *
  * La etiqueta **no** es un encabezado: es una sobrelínea. Si fuera un `h3`
  * dentro de un `h2` rompería la jerarquía, que es una de las cosas que axe
@@ -79,7 +87,7 @@ export function SectionHeading({
   return (
     <div className={cn("mb-xl", className)}>
       {label === undefined ? null : (
-        <p className="mb-sm font-ui text-label uppercase text-ink-muted">{label}</p>
+        <p className="mb-sm font-ui text-small text-ink-muted">{label}</p>
       )}
       <Heading
         {...(id === undefined ? {} : { id })}
@@ -92,6 +100,51 @@ export function SectionHeading({
       </Heading>
       <hr className="mt-md border-t border-rule" />
     </div>
+  );
+}
+
+/**
+ * La frase de la familia, atribuida.
+ *
+ * Es el **único** momento del sitio que sube a escala de título, y es deliberado.
+ * La jerarquía tipográfica estaba en los tokens y no se usaba: todos los `h2` del
+ * sitio tenían el mismo tamaño y la escala de display se gastaba una sola vez, en
+ * el nombre del proyecto. Un documento donde nada es más grande que lo demás no
+ * tiene jerarquía, tiene un promedio (ADR-021).
+ *
+ * Va con `<blockquote>` y `<cite>` reales, no con comillas decorativas y un `div`:
+ * la atribución es parte del significado. Y va sin comillas tipográficas dibujadas
+ * a mano —esas comillas gigantes de apertura son ornamento— porque la cita ya se
+ * distingue por escala, por sangría y por la regla del margen.
+ */
+export function Testimony({
+  quote,
+  author,
+  relation,
+  className,
+}: {
+  quote: string;
+  author: string;
+  relation: string;
+  className?: string;
+}) {
+  return (
+    <figure className={className}>
+      {/* La medida va acá y no en el `figure`: el token está en `em` para escalar con
+          el tamaño de la cita, y `em` resuelve contra el `font-size` del **propio**
+          elemento. Puesto en el `figure`, que hereda el cuerpo de 17 px, 20em daban
+          340 px y la cita salía en seis líneas de tres palabras. */}
+      <blockquote className="max-w-quote border-l-2 border-brick pl-lg font-prose text-title">
+        {quote}
+      </blockquote>
+      {/* La atribución no se atenúa con color: la jerarquía la hace el tamaño, y así
+          el componente sirve igual sobre papel y sobre la banda oscura, donde
+          `ink-muted` no se leería. */}
+      <figcaption className="mt-lg pl-lg font-ui text-small">
+        <cite className="not-italic">{author}</cite>
+        <span className="block">{relation}</span>
+      </figcaption>
+    </figure>
   );
 }
 
