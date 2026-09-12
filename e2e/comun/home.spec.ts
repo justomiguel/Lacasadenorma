@@ -146,8 +146,12 @@ test.describe("flujo 2 · entender la campaña", () => {
       "/legado",
       "/riacho-conecta",
     ]) {
+      // `:visible`, y no `.first()`: desde ADR-021 el encabezado también enlaza a
+      // estas rutas, pero está oculto abajo de `lg`. Sin el filtro, en el proyecto
+      // móvil el primer enlace del documento es uno con `display: none` y el test
+      // falla afirmando que la home no enlaza lo que enlaza tres veces.
       await expect(
-        page.locator(`a[href="${destino}"]`).first(),
+        page.locator(`a[href="${destino}"]:visible`).first(),
         `la home tiene que enlazar a ${destino}`,
       ).toBeVisible();
     }

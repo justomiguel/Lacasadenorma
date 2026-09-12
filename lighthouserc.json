@@ -14,6 +14,7 @@
         "http://127.0.0.1:3000/riacho-conecta"
       ],
       "settings": {
+        "throttlingMethod": "devtools",
         "budgets": [
           {
             "path": "/*",
@@ -51,15 +52,19 @@
         ],
         "first-contentful-paint": [
           "error",
-          { "maxNumericValue": 1200, "aggregationMethod": "median" }
+          { "maxNumericValue": 1800, "aggregationMethod": "median" }
         ],
         "largest-contentful-paint": [
           "error",
-          { "maxNumericValue": 2800, "aggregationMethod": "median" }
+          { "maxNumericValue": 2500, "aggregationMethod": "median" }
+        ],
+        "total-blocking-time": [
+          "error",
+          { "maxNumericValue": 200, "aggregationMethod": "median" }
         ],
         "cumulative-layout-shift": [
           "error",
-          { "maxNumericValue": 0.05, "aggregationMethod": "median" }
+          { "maxNumericValue": 0.1, "aggregationMethod": "median" }
         ]
       }
     },

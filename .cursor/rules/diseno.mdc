@@ -1,0 +1,73 @@
+---
+description: Dirección visual del sitio público. Se aplica al tocar cualquier pantalla, componente o token.
+globs: app/**,components/**,content/**
+alwaysApply: false
+---
+
+# Diseño de La Casa de Norma
+
+Fuente de verdad: `specs/001-sitio-publico-campana/ux.md` y
+`docs/adr/021-segunda-direccion-visual.md`. Si algo de acá contradice esos documentos, ganan ellos.
+Si una decisión de diseño no está en ninguno de los dos, **paralo y documentalo primero** (principio
+XXXII del brief: nada importante se implementa antes de estar escrito).
+
+## La fotografía estructura la página
+
+No es decoración ni relleno: es el elemento con más peso. Las fotos editoriales viven en
+`public/fotos/` declaradas en `content/*.json`; las del avance de la obra vienen de la base, adjuntas
+a cada novedad.
+
+- Prohibido el stock, la ilustración de relleno y la imagen generada. Si no hay foto real, se reserva
+  el espacio con su proporción y se dice qué va ahí.
+- Toda imagen por `next/image` con `width`/`height` reales y `alt` que informe.
+- La pérdida se muestra **una vez y en pasado**. El trabajo se muestra **siempre y en presente**. La
+  emoción sale de la secuencia, no del énfasis.
+
+## Los delatores de página generada
+
+Estos son los que este sitio ya tuvo, y por los que la familia dijo que estaba monótono:
+
+- **Sobrelínea en VERSALES arriba de cada título.** `SectionHeading` lleva `label` sólo si la etiqueta
+  transporta información que el título no tiene. Si sólo anuncia el título, se borra.
+- **Un solo plano.** Toda página pública necesita más de una superficie y algo que salga del
+  contenedor. Sin sangrado y sin bandas, el documento es plano.
+- **Un solo tamaño.** La jerarquía la hace la escala. Un momento por página puede subir a display; el
+  resto se queda quieto.
+- Metadatos unidos con puntos medios (`A · B · C`), monoespaciada para etiquetas chicas, `→` pegado al
+  texto de un enlace, negro teñido (`#0B0B0B`) en lugar de los tokens de tinta.
+- Gradientes decorativos, glassmorphism, blobs, una card para cada cosa, radios grandes, sombras
+  difusas, emojis decorativos, iconos de relleno.
+- Animación de entrada por sección. El movimiento sólo comunica un cambio de estado.
+
+## Tokens
+
+Viven en `app/globals.css` dentro de `@theme`. **No** se usan valores por defecto de Tailwind ni
+valores arbitrarios (`text-[13px]`) en producción: si la utilidad no existe, el token falta y se
+agrega ahí.
+
+Máximo tres superficies con relleno de acento por pantalla; los enlaces no cuentan. El color fuerte
+lo aportan las fotos, no los tokens.
+
+## Piso de calidad, no negociable
+
+360 px primero, después escritorio. Medida de prosa hasta 68 caracteres. Contraste 4.5:1 en cualquier
+tamaño, incluida la banda oscura. Foco visible siempre, nunca `outline: none`. Objetivo táctil de
+44 px por padding, no agrandando el elemento. `prefers-reduced-motion` respetado.
+
+Los estados vacío, de carga y de error se diseñan: un estado sin diseñar es un bug abierto. Un dato
+sin verificar no se muestra —ni cero, ni ejemplo, ni estimación—: la sección se omite.
+
+## Copy
+
+Castellano rioplatense, voseo, frases cortas. Concreto en lugar de abstracto: «faltan las chapas del
+techo», no «ayudanos a reconstruir sueños». Si la oración podría estar en cualquier otra campaña sin
+cambiar una palabra, no sirve.
+
+El relato del incendio y de Norma se escribe con las palabras de la familia. Cualquier adjetivo que
+agreguemos nosotros es la lástima que `ux.md` §1 prohíbe.
+
+## Antes de decir que está listo
+
+Mirarlo. `node scripts/screenshots.mjs` y abrir las capturas en 360 px y en 1440 px. El loop de
+revisión visual falló una vez por no hacer esto: había seis incumplimientos de contraste escritos en
+la misma página que los prohibía.

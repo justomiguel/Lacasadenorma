@@ -379,12 +379,56 @@ llamarlo una falla de la aplicación.
 
 ---
 
+## Phase 12: La segunda dirección visual
+
+**Objetivo**: que el sitio se vea como lo que es. La familia lo dijo sin rodeos —«está muy monótona,
+sin estilo», «no veo clara la navegación»— y con la queja llegó el material que faltaba: las fotos de
+Norma, las del incendio y las de la limpieza.
+
+El diagnóstico, la evidencia medida y las cinco decisiones están en
+[ADR-021](../../docs/adr/021-segunda-direccion-visual.md). Lo que importa acá es que **el sitio pasaba
+los diez criterios visuales anteriores**: cero fotos, cero superficies, 39 sobrelíneas en versales
+repitiendo el título de su sección, y ninguna medición preguntaba por eso.
+
+- [x] T136 La skill `frontend-design` en el harness, y una regla de diseño del proyecto en
+      `.cursor/rules/diseno.mdc`. La skill sirvió para lo contrario de lo que uno espera: no propuso,
+      **diagnosticó**. Cuatro de los cinco grupos estéticos que documenta como delatores de página
+      generada eran el sitio
+- [x] T137 ADR-021, revisión de `ux.md` (§1 la regla entre emoción y lástima, §4 las tres formas de
+      romper el plano, §9 navegación, §10 fotografía, §12 lo que se defendió mal) y la guía de contenido
+- [x] T138 Las fotos entran al repositorio en `public/fotos/` y se declaran en `content/*.json` con
+      `alt` y dimensiones. Dos caminos según qué tan seguido cambia la foto (ADR-007, ADR-021)
+- [x] T139 `npm run check:fotos`: que cada foto declarada exista, mida lo que dice y no haya archivos
+      que nadie muestre. Zod valida que el número sea un entero; no que sea **ese** entero, y del número
+      depende el espacio reservado
+- [x] T140 El relato del incendio con las palabras de la familia y el testimonio del hijo firmado. La
+      página sobre un incendio no mencionaba el incendio
+- [x] T141 Las primitivas que faltaban: `Band`, `Testimony`, `BleedOnMobile`, `PhotoSequence`, y la
+      inversión de paleta de la banda oscura, que protege a lo que le pongan adentro
+- [x] T142 La navegación sale del pie: seis rutas en el encabezado desde `lg` con `aria-current`, y
+      `PageIndex` en el documento para el teléfono
+- [x] T143 Fuera las 39 sobrelíneas en versales y los puntos medios. `--text-label` pierde el tracking
+      de fábrica: cualquier etiqueta salía espaciada aunque no estuviera en mayúsculas
+- [x] T144 La vista previa de WhatsApp lleva la cara de Norma. Es el único diseño del proyecto que se
+      ve **antes** de decidir si abrir el enlace
+- [x] T145 Los cuatro criterios nuevos de `ux.md` §12, medidos: huecos reservados por página (número
+      exacto, no máximo), la home rompiendo el plano, cero versales, y `e2e/comun/navegacion.spec.ts`
+- [x] T146 Los dos defectos que encontró el criterio de navegación en su primera corrida: `Container`
+      recibía `aria-label` y lo descartaba en silencio, así que el sumario del sitio salía sin nombre
+      accesible; y los tres puntos de navegación se llamaban igual
+
+**Checkpoint**: el sitio tiene diez fotografías, una banda oscura, navegación visible y ninguna
+versal, y los cuatro criterios que lo sostienen fallan si alguien vuelve atrás.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
 Setup (1) → Foundational (2) → US1 (3) → US2 (4) → US4 (5) → US3 (6) → US5 (7) → Polish (8) →
-Cerrar el flujo 9 (9) → Loop de revisión visual (10) → Auditoría de cierre (11)
+Cerrar el flujo 9 (9) → Loop de revisión visual (10) → Auditoría de cierre (11) → Segunda dirección
+visual (12)
 
 US4 va antes que US3 a propósito: las capacidades de lectura se apoyan en los casos de uso de US1 y
 US2, y no dependen de autenticación.

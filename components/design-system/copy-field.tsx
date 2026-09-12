@@ -66,7 +66,7 @@ export function CopyField({
     <div className={cn("border-b border-rule py-sm", className)}>
       <div className="flex items-baseline justify-between gap-md">
         <div className="min-w-0">
-          <p className="font-ui text-label uppercase text-ink-muted">{label}</p>
+          <p className="font-ui text-label text-ink-muted">{label}</p>
           {/*
             `break-words` y no `break-all`: los dos parten un CBU de 22 dígitos que
             no entra en 360 px, pero `break-all` parte también donde no hace falta,

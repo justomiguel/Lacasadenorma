@@ -3,7 +3,7 @@ import { ShareBlock } from "@/components/campaign/share-block";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { Callout } from "@/components/design-system/callout";
 import { InlineLink } from "@/components/design-system/actions";
-import { Container, Section } from "@/components/design-system/layout";
+import { Container, Editorial, Section } from "@/components/design-system/layout";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { help, site } from "@/content";
@@ -51,29 +51,34 @@ export default async function AyudarPage() {
 
   return (
     <>
-      <PageHeader label="Colaborar" title={help.title} lead={help.lead} />
+      <PageHeader title={help.title} lead={help.lead} />
 
       <Container>
         <Section>
-          <Paragraphs items={help.paragraphs} />
-
-          <Callout tone="warning" title="Antes de transferir" className="mt-2xl">
-            <p>
-              Verificá que estés en el dominio correcto. Si los datos bancarios que ves no
-              coinciden con los que difundimos por nuestros canales, no transfieras. Nunca
-              vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.
-            </p>
-          </Callout>
+          {/* La advertencia va al margen y no debajo del texto. Es el lugar donde una
+              publicación pone la nota que hay que leer sin interrumpir la lectura, y en
+              escritorio la columna de la derecha estaba vacía en la única página del
+              sitio donde alguien está a punto de mover plata (ADR-021). */}
+          <Editorial
+            aside={
+              <Callout tone="warning" title="Antes de transferir">
+                <p>
+                  Verificá que estés en el dominio correcto. Si los datos bancarios que
+                  ves no coinciden con los que difundimos por nuestros canales, no
+                  transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni
+                  los datos de tu tarjeta.
+                </p>
+              </Callout>
+            }
+          >
+            <Paragraphs items={help.paragraphs} />
+          </Editorial>
         </Section>
       </Container>
 
       <Container>
         <Section className="border-t border-rule" labelledBy="cuentas">
-          <SectionHeading
-            label="Cuentas"
-            title="Elegí desde dónde transferís"
-            id="cuentas"
-          />
+          <SectionHeading title="Elegí desde dónde transferís" id="cuentas" />
 
           {donations.status === "ok" ? (
             <DonationMethods
@@ -88,11 +93,7 @@ export default async function AyudarPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="despues">
-          <SectionHeading
-            label="Después"
-            title="Qué pasa cuando transferís"
-            id="despues"
-          />
+          <SectionHeading title="Qué pasa cuando transferís" id="despues" />
           <Paragraphs items={help.afterTransfer} />
 
           <p className="mt-lg max-w-measure text-body">

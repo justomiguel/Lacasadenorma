@@ -94,24 +94,50 @@ Esta es la lista que ADR-007 promete. Está ordenada por lo que más cambia la p
 
 ### Fotografías
 
-Ningún archivo de imagen está en el proyecto. Los seis espacios reservados, con el texto que se ve
-hoy en pantalla:
+La familia entregó material en dos entregas, las dos del 11 de septiembre de 2026: primero el collage
+y el video de la limpieza, después los retratos de Norma y las fotos de los bomberos esa madrugada.
+Antes de eso el sitio no tenía una sola imagen, y era la causa principal de que se viera plano
+([ADR-021](./adr/021-segunda-direccion-visual.md)).
 
-| Dónde | Qué va | Proporción |
+#### Lo que hay, y dónde va
+
+El material se clasifica por **momento**, porque ese es el eje del relato: la pérdida se muestra una
+vez y en pasado, el trabajo se muestra siempre y en presente.
+
+| Momento | Foto | Dónde va | Notas |
+|---|---|---|---|
+| — | **Retrato de Norma** en la cocina, con las fotos familiares detrás — `norma-cocina.jpg`, 1220 × 1512 | Apertura de la home y vista previa de WhatsApp | Es la imagen que abre el sitio, y la única que se ve **antes** de decidir si abrir el enlace |
+| — | **Norma de camisa celeste** — `norma-retrato.jpg`, 1220 × 1529 | `/norma`, al lado del relato | La segunda de la entrega de retratos |
+| — | **Norma con las flores** — `norma-flores.jpg`, 603 × 406 | `/norma` | Recorte del collage: la de peor resolución del lote |
+| Esa noche | **Los bomberos frente a la casa**, la manguera tendida, todo en penumbra — `incendio-bomberos-frente.jpg`, 1220 × 1568 | `/que-paso`, grupo «Esa noche» | Es de esa madrugada. Es la única foto del sitio donde el incendio está ocurriendo |
+| Esa noche | **Un bombero en la puerta**, el interior encendido por la linterna — `incendio-bomberos-puerta.jpg`, 1220 × 1178 | `/que-paso`, grupo «Esa noche» | |
+| Antes de la limpieza | **El frente de la casa**: pared verde agua, la mancha negra sobre la ventana, la reja — `incendio-frente.jpg`, 602 × 335 | `/que-paso`, grupo «Así quedó» | Recortada del collage para excluir la etiqueta «ASÍ QUEDÓ EL FRENTE DE LA CASA» que traía impresa. Hace falta el original |
+| Antes de la limpieza | **El interior sin techo**: ladrillo desnudo, la viga colgando, los escombros donde cayeron — `incendio-interior.jpg`, 602 × 282 | `/que-paso`, grupo «Así quedó» | Ídem |
+| Antes de la limpieza | **El garage con el auto calcinado** — `incendio-garage.jpg`, 602 × 266 | `/que-paso`, grupo «Así quedó» | Ídem |
+| Durante la limpieza | **Los escombros juntados** en un montículo, la pala cargadora al fondo, gente paleando — `limpieza-escombros.jpg`, 800 × 1150 | `/reconstruccion`, «Lo primero fue sacar los escombros» | Es un cuadro de video, **vertical**. Recortada para excluir la única cara identificable. Al ancho del teléfono, al margen en escritorio |
+| Durante la limpieza | **Las piezas del taller rescatadas**, clasificadas en el piso y en la mesa — `limpieza-taller.jpg`, 1125 × 1300 | `/reconstruccion` | Recortada para excluir las caras |
+
+Las fotos editoriales viven en `public/fotos/` y se declaran en `content/*.json` con `width`,
+`height`, `alt` y, si corresponde, epígrafe y crédito. El esquema de Zod las valida al importar, igual
+que el resto del contenido, y `npm run check:fotos` comprueba lo que Zod no puede: que el archivo
+exista y que **mida lo que dice**. Los números declarados son los que reservan el espacio antes de que
+la imagen llegue; si no son los del archivo, el texto salta cuando llega. Las del **avance de la
+obra** siguen viniendo de la base: se suben desde `/admin` con cada novedad, así que aparecen fechadas
+y sin despliegue.
+
+El `alt` describe lo que se ve para alguien que no puede verlo, y no repite el epígrafe.
+
+#### Lo que falta, en orden de cuánto cambia la página
+
+| Qué | Por qué importa | Quién |
 |---|---|---|
-| Home, portada | "Acá va un retrato de Norma. Su familia está eligiendo la fotografía." | Vertical |
-| Home, sección de la historia | "Acá va una foto de Norma trabajando en la radio." | Horizontal |
-| `/norma` | "Acá va el retrato de Norma que elija la familia." | Vertical |
-| `/norma` | "Acá va una foto de Norma en la radio de Riacho He Hé." | Horizontal |
-| `/legado` | "Acá va una foto de Norma en la radio, la que explica de dónde viene todo esto." | Vertical |
-| `/reconstruccion` | "Acá van las fotos del avance de la obra, con su fecha." | Horizontal |
+| **Los originales de las tres fotos del incendio**, sin la etiqueta del collage impresa | El sitio tiene epígrafes reales con su propia tipografía; una etiqueta quemada en el pixel es de otra pieza gráfica, y los recortes que las evitan quedaron en 602 px de ancho | La familia |
+| **Una foto del terreno ya limpio**, después de retirar los escombros | Es la que cierra el par «así quedó / así está hoy» y la que muestra el punto de partida de la obra que se pide financiar. Hoy el sitio puede mostrar la pérdida y el esfuerzo, pero no el punto cero | La familia |
+| **Norma en la radio** | Es lo que vuelve concreto que fue comunicadora, y es la foto que explica `/legado` y Riacho Conecta | La familia, si existe |
+| **Permiso de las personas identificables** en las fotos de la limpieza | Sin permiso no se publica una cara. Mientras no esté, se usan los encuadres recortados donde nadie es reconocible, y eso deja fuera de cuadro a la gente que fue a ayudar, que es media historia | El equipo pregunta |
+| **El año del incendio** | La familia afirma «lunes 7 de septiembre» y el día no está en duda, pero el 7 de septiembre de 2024 fue sábado. `norma.diedOn` sigue en `null` y el relato se publica sin año: una fecha estimada en el día en que murió una persona no es un dato, es un invento | La familia |
 
-Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más. Las del avance de la
-obra se suben desde el backoffice junto con cada novedad, así que aparecen fechadas y sin
-despliegue.
-
-Cuando lleguen: se suben a Supabase Storage desde `/admin`, con su texto alternativo. El alt describe
-lo que se ve para alguien que no puede verlo, no repite el epígrafe.
+Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más.
 
 ### Texto
 

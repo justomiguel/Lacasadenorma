@@ -35,9 +35,7 @@ export function SiteFooter() {
           </div>
 
           <nav aria-label="Secciones del sitio" className="lg:col-span-4">
-            <p className="mb-md font-ui text-label uppercase text-ink-muted">
-              La campaña
-            </p>
+            <p className="mb-md font-ui text-label text-ink-muted">La campaña</p>
             <ul className="space-y-xs">
               {PRIMARY_NAV.map((item) => (
                 <li key={item.href}>
@@ -53,9 +51,7 @@ export function SiteFooter() {
           </nav>
 
           <nav aria-label="El proyecto y sus términos" className="lg:col-span-4">
-            <p className="mb-md font-ui text-label uppercase text-ink-muted">
-              Lo que sigue
-            </p>
+            <p className="mb-md font-ui text-label text-ink-muted">Lo que sigue</p>
             <ul className="space-y-xs">
               {SECONDARY_NAV.map((item) => (
                 <li key={item.href}>
@@ -69,9 +65,7 @@ export function SiteFooter() {
               ))}
             </ul>
 
-            <p className="mb-md mt-xl font-ui text-label uppercase text-ink-muted">
-              Legales
-            </p>
+            <p className="mb-md mt-xl font-ui text-label text-ink-muted">Legales</p>
             <ul className="space-y-xs">
               {LEGAL_NAV.map((item) => (
                 <li key={item.href}>

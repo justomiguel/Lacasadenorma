@@ -228,22 +228,36 @@ que lo que hay que saber está acá:
 - **Las nueve páginas públicas**, tres corridas cada una, contra `npm run start` (nunca contra `npm
   run dev`: el servidor de desarrollo no minifica ni comprime, y daría un número que no se parece a
   lo que ve una persona en 4G).
+- **Estrangulamiento real, no simulado** (`throttlingMethod: "devtools"`): 150 ms de latencia,
+  1,6 Mbps y CPU 4×, aplicados de verdad. Es lo que hace que los números de abajo signifiquen algo;
+  con el modelo simulado la misma página daba 2334 ms y 2936 ms de LCP en corridas consecutivas del
+  mismo build. Por eso la corrida tarda ~11 minutos y no ~2.
 - **Las cuatro categorías ≥ 0,95**, que es lo que fija la constitución (principio VII, SC-003). Es la
-  compuerta principal, y la más estable: en las mediciones da entre 0,97 y 0,99.
-- **Presupuesto de scripts: 200 KB transferidos por página.** La página más pesada mide 181 KB, de los
-  cuales 121 KB son el runtime de React y de Next y ~42 KB son código del sitio. El margen alcanza para
-  un cambio de versión y no alcanza para importar Zod o un cliente de Supabase en un componente de
-  cliente.
+  compuerta principal, y la más estable: en las mediciones da 0,99 en performance y 1,00 en las otras
+  tres, en las nueve páginas.
+- **Presupuesto de scripts: 200 KB transferidos por página.** La página más pesada mide 169 KB, de los
+  cuales ~121 KB son el runtime de React y de Next y el resto es código del sitio. El margen alcanza
+  para un cambio de versión y no alcanza para importar Zod o un cliente de Supabase en un componente
+  de cliente. Ese último caso ya ocurrió una vez: un `"use client"` en el encabezado arrastró los diez
+  JSON de contenido y Zod entero al navegador, y fue el presupuesto el que lo dijo.
 - **Cero recursos de terceros.** No hay analytics invasivo ni fuentes externas: las fuentes se
   autoalojan con `next/font`. Si aparece un tercero, el presupuesto lo hace visible en el pull
   request que lo introduce, que es cuando conviene discutirlo.
-- **LCP ≤ 2,8 s y CLS ≤ 0,05.**
+- **FCP ≤ 1,8 s, LCP ≤ 2,5 s, TBT ≤ 200 ms y CLS ≤ 0,1**, que son los umbrales «bueno» publicados de
+  Core Web Vitals. Medido: 1,55 s, 1,7 s, 54 ms y 0 – 0,054.
 
-Los dos primeros números y el del LCP salen de una medición, no del plan: los que estaban antes se
-escribieron antes de que existiera un build y ninguno era alcanzable. Por qué son estos, con las
-mediciones, está en [`adr/018-presupuestos-de-performance.md`](./adr/018-presupuestos-de-performance.md).
-Ahí también está la razón por la que el LCP no está en 2,5 s: sobre un build sin cambios, la métrica
-se mueve 700 ms entre corridas, y un umbral dentro de esa banda se pone rojo por azar.
+Los umbrales de tiempo son los de Google y no números propios, y eso es una decisión reciente: se
+pudieron adoptar recién cuando la medición pasó a ser real. La historia completa —qué medía cada
+número antes, los tres defectos que la investigación encontró y el desplazamiento de layout que la
+simulación reportaba como cero— está en
+[`adr/022-medicion-de-performance.md`](./adr/022-medicion-de-performance.md). El presupuesto de
+scripts y la separación entre código propio y runtime del framework siguen viniendo de
+[`adr/018-presupuestos-de-performance.md`](./adr/018-presupuestos-de-performance.md).
+
+Los informes de cada corrida quedan como artefacto del workflow, pase o falle. Es la forma de
+diagnosticar una regresión sin reproducirla a mano: antes se subían sólo cuando fallaba, el paso
+nunca encontró los archivos porque `lhci` corta antes de escribirlos, y el resultado fue un ciclo
+entero de diagnóstico a ciegas.
 
 Se agrega para comparar contra la mediana de las tres corridas, no contra la mejor: una corrida
 afortunada no es el sitio.

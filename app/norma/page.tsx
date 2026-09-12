@@ -1,7 +1,7 @@
 import { ShareBlock } from "@/components/campaign/share-block";
 import { InlineLink } from "@/components/design-system/actions";
 import { Container, Section } from "@/components/design-system/layout";
-import { ReservedSpace } from "@/components/design-system/photo";
+import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { StructuredData } from "@/components/site/structured-data";
@@ -19,9 +19,12 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * La historia de Norma.
  *
  * Es la página que hace que el proyecto sea de una persona y no de una causa, y
- * por eso es la única cuya prosa no tiene ninguna cifra al lado. Cuando exista el
- * ensayo fotográfico va acá; mientras no exista, los huecos mantienen su
- * proporción y dicen qué foto va en cada uno.
+ * por eso es la única cuya prosa no tiene ninguna cifra al lado.
+ *
+ * Las fotos que eligió la familia van en el margen y sangran en teléfono, donde
+ * cualquiera de ellas es más ancha que la pantalla. El único hueco que queda es el
+ * de la radio, que es la foto que explica de dónde viene el proyecto y todavía no
+ * apareció.
  */
 export const metadata = pageMetadata({
   title: `Quién fue ${norma.fullName}`,
@@ -74,19 +77,23 @@ export default function NormaPage() {
 
             <aside className="lg:col-span-4 lg:col-start-9">
               <div className="space-y-lg">
-                <ReservedSpace
-                  ratio="portrait"
-                  description="Acá va el retrato de Norma que elija la familia."
-                />
+                {/* Sin `priority`: en teléfono la columna de fotos va después de
+                    todo el relato, así que la primera está a varias pantallas del
+                    pliegue. La única foto del sitio que se precarga es el retrato de
+                    la apertura de la home. */}
+                {norma.photos.map((photo) => (
+                  <BleedOnMobile key={photo.url} media={photo} />
+                ))}
+                {/* Sigue faltando la que explica de dónde viene todo esto. */}
                 <ReservedSpace
                   ratio="landscape"
                   description="Acá va una foto de Norma en la radio de Riacho He Hé."
                 />
               </div>
               <p className="mt-md max-w-measure font-ui text-small text-ink-muted">
-                Las fotografías las está reuniendo la familia. Hasta que lleguen, estos
-                espacios quedan vacíos: no vamos a poner una imagen de archivo en el lugar
-                de una foto de ella.
+                Las fotos de Norma las eligió su familia. Falta la de la radio, y ese
+                espacio queda vacío hasta que aparezca: no vamos a poner una imagen de
+                archivo en el lugar de una foto de ella.
               </p>
             </aside>
           </div>

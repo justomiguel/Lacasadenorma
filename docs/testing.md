@@ -25,12 +25,12 @@ menos que uno que verifica que algo no se puede hacer.**
 | Componentes | Vitest + Testing Library | 64 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas, la barra de ayuda y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
 | Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
-| Punta a punta | Playwright, tres navegadores, dos modos | 502 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
+| Punta a punta | Playwright, tres navegadores, dos modos | 532 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 11 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
-| Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos | |
+| Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos, con la red estrangulada de verdad (ADR-022) | Lo que sólo se ve en dispositivos reales |
 
-Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **502
-tests de Playwright** entre los dos modos (240 sin datos, 262 con datos).
+Los totales: **391 tests en 29 archivos** con Vitest, **155 aserciones pgTAP** en 6 suites, **532
+tests de Playwright** entre los dos modos (255 sin datos, 277 con datos).
 
 ### TDD, donde es obligatorio
 
@@ -58,13 +58,25 @@ captura**:
 | La barra de ayuda del teléfono duplicaba el botón de la apertura | Como dos botones iguales, que en una maqueta parece una decisión | Contando superficies con acento sobre el pliegue |
 | Las reglas del encabezado y del pie caían en una tercera extensión | 96 px de diferencia sobre 1440. A ojo, nada | Midiendo las cajas con borde de cada página |
 
-Por eso **seis de los diez criterios dejaron de depender de la vista** y viven en
+Por eso **nueve de los catorce criterios dejaron de depender de la vista** y viven en
 `e2e/comun/revision-visual.spec.ts`, que corre en las once páginas, en los tres navegadores y en los
 dos modos: desborde horizontal, medida de la prosa, superficies con acento sobre el pliegue,
-gradientes y sombras y esquinas redondeadas, números tabulares, y proporción declarada de cada
-imagen. Un séptimo —el anillo de foco— vive en `accesibilidad.spec.ts`, que recorre con Tab todo lo
-enfocable de cada página: axe no tiene ninguna regla de foco visible, y una utilidad `outline-none`
-en un componente nuevo no rompería nada más.
+gradientes y sombras y esquinas redondeadas, números tabulares, proporción declarada de cada imagen,
+huecos de foto reservados, texto en versales, y que la home rompa el plano. Un décimo —el anillo de
+foco— vive en `accesibilidad.spec.ts`, que recorre con Tab todo lo enfocable de cada página: axe no
+tiene ninguna regla de foco visible, y una utilidad `outline-none` en un componente nuevo no rompería
+nada más. Y el de la navegación, en `navegacion.spec.ts`.
+
+Los cuatro últimos los agregó [ADR-021](./adr/021-segunda-direccion-visual.md), después de que la
+familia dijera que el sitio estaba monótono. Vale anotar por qué hacían falta: **la página pasaba los
+diez criterios anteriores**. Cada regla se cumplía y el conjunto se leía como una plantilla, porque
+ninguna medición preguntaba si había una foto, si había más de una superficie, ni dónde estaba la
+navegación. Un criterio que no se puede fallar no es un criterio.
+
+Dos de los cuatro encontraron defectos en su primera corrida, ninguno visible en una captura: el
+sumario del sitio salía **sin nombre accesible** —`Container` recibía `aria-label` y lo descartaba en
+silencio—, y los tres puntos de navegación del sitio se llamaban igual, o sea que desde el teclado
+eran tres landmarks indistinguibles.
 
 Lo que sigue necesitando ojos son los cuatro criterios que son un juicio y no una medida: si la
 primera pantalla comunica, si el orden de lectura acompaña, si el tono es el correcto, si la página se

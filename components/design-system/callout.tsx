@@ -39,7 +39,7 @@ export function Callout({
       )}
     >
       {title === undefined ? null : (
-        <p className="mb-2xs font-ui text-label uppercase text-ink-muted">{title}</p>
+        <p className="mb-2xs font-ui text-label text-ink-muted">{title}</p>
       )}
       <div className="text-small text-ink">{children}</div>
     </div>

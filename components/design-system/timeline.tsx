@@ -43,7 +43,7 @@ export function Timeline({
               {MILESTONE_STATUS_LABELS[milestone.status]}
               {milestone.happenedOn === null ? null : (
                 <>
-                  {" · "}
+                  {", "}
                   <time dateTime={milestone.happenedOn}>
                     {formatLongDate(milestone.happenedOn)}
                   </time>

@@ -37,12 +37,21 @@ identificadores, los commits y los nombres de tablas están en inglés** (ADR-01
 
 ## Diseño
 
-Leé `specs/001-sitio-publico-campana/ux.md` antes de tocar una pantalla. Los tokens viven en
-`app/globals.css` dentro de `@theme`; **no** se usan valores por defecto de Tailwind ni valores
-arbitrarios (`text-[13px]`) en producción.
+Leé `specs/001-sitio-publico-campana/ux.md` y `docs/adr/021-segunda-direccion-visual.md` antes de
+tocar una pantalla. La regla `.cursor/rules/diseno.mdc` resume las dos y se adjunta sola al editar
+`app/`, `components/` o `content/`. Los tokens viven en `app/globals.css` dentro de `@theme`; **no** se
+usan valores por defecto de Tailwind ni valores arbitrarios (`text-[13px]`) en producción.
 
 Prohibido: gradientes decorativos, glassmorphism, blobs, cards para todo, radios grandes, sombras
-difusas, emojis decorativos, iconos de relleno, animaciones sin función, copy de folleto.
+difusas, emojis decorativos, iconos de relleno, animaciones sin función, copy de folleto. Y los tres
+delatores que este sitio ya tuvo: la sobrelínea en VERSALES arriba de cada título, un solo plano sin
+sangrado ni bandas, y un solo tamaño de texto haciendo de jerarquía.
+
+La fotografía estructura la página. Las editoriales viven en `public/fotos/` declaradas en
+`content/*.json`; las del avance vienen de la base con cada novedad. Sin foto real no se pone stock ni
+ilustración: se reserva el espacio y se dice qué va ahí, y el hueco se cuenta: `revision-visual.spec.ts`
+exige el número **exacto** de espacios reservados por página, así que si el material llegó y nadie lo
+ubicó, falla. `npm run check:fotos` comprueba que cada foto declarada exista y mida lo que dice.
 
 ## Comandos
 

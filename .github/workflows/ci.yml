@@ -63,6 +63,11 @@ jobs:
       - name: Comprobar que ninguna cifra de relleno llegó al contenido
         run: npm run check:placeholders
 
+      # Las dimensiones declaradas son las que reservan el espacio de cada foto.
+      # Si no son las del archivo, el texto salta cuando la imagen llega.
+      - name: Comprobar que las fotos existen y miden lo que dicen
+        run: npm run check:fotos
+
       - name: Construir el sitio como se construye en producción
         run: npm run build
 

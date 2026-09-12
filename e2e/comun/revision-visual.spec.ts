@@ -56,6 +56,24 @@ const MAX_ACENTOS = 3;
  */
 const RADIO_MAXIMO = 2;
 
+/**
+ * Criterio 11: cuántos huecos de foto reservados tiene cada página, exactamente.
+ *
+ * El número es **exacto** y no un máximo, a propósito. Cada entrada distinta de cero
+ * es una foto que todavía no existe y está anotada en `docs/content-guide.md` §3; si
+ * la foto llega y alguien la ubica, este test falla y obliga a bajar el número, que
+ * es la única forma de que la tabla no envejezca en silencio.
+ *
+ * Las páginas que no están acá no reservan ningún hueco.
+ */
+const ESPACIOS_RESERVADOS = new Map<string, number>([
+  // Las dos esperan la **misma** foto: Norma en la radio. Es la que volvería
+  // concreto que fue comunicadora, la que explica de dónde viene Fundación Norma,
+  // y la única del proyecto que puede no existir. Cuando llegue, las dos bajan a 0.
+  ["/norma", 1],
+  ["/legado", 1],
+]);
+
 type Medicion = {
   desborde: number;
   prosa: { caracteres: number; texto: string }[];
@@ -63,6 +81,8 @@ type Medicion = {
   firmaDeTemplate: string[];
   cifrasSinTabular: string[];
   imagenesSinProporcion: string[];
+  espaciosReservados: number;
+  versales: string[];
 };
 
 async function medir(page: Page): Promise<Medicion> {
@@ -223,6 +243,27 @@ async function medir(page: Page): Promise<Medicion> {
         )
         .map((imagen) => `img[src="${imagen.getAttribute("src")?.slice(0, 40) ?? ""}"]`);
 
+      // Criterio 13. La sobrelínea en VERSALES espaciada arriba de cada título es uno
+      // de los delatores de página generada que documenta la skill `frontend-design`,
+      // y el sitio la tenía en las treinta y nueve secciones que tenía (ADR-021).
+      // Se mide el estilo computado y no la clase: lo que importa es lo que se ve.
+      const versales = [...document.querySelectorAll("body *")]
+        .filter((nodo) => {
+          const texto = (nodo.textContent ?? "").trim();
+
+          return (
+            texto.length > 0 &&
+            getComputedStyle(nodo).textTransform === "uppercase" &&
+            // Sólo el nodo que lo declara, no los que lo heredan: si no, un solo
+            // título en versales acusa también a cada `span` que tenga adentro.
+            (nodo.parentElement === null ||
+              getComputedStyle(nodo.parentElement).textTransform !== "uppercase")
+          );
+        })
+        .map(
+          (nodo) => `${seña(nodo)}: "${(nodo.textContent ?? "").trim().slice(0, 32)}"`,
+        );
+
       return {
         desborde,
         prosa: medirProsa(),
@@ -230,6 +271,8 @@ async function medir(page: Page): Promise<Medicion> {
         firmaDeTemplate,
         cifrasSinTabular,
         imagenesSinProporcion,
+        espaciosReservados: document.querySelectorAll("[data-espacio-reservado]").length,
+        versales,
       };
     },
     [acentos, MAX_CARACTERES, RADIO_MAXIMO] as [string[], number, number],
@@ -247,6 +290,8 @@ async function revisar(page: Page, donde: string) {
       firmaDeTemplate,
       cifrasSinTabular,
       imagenesSinProporcion,
+      espaciosReservados,
+      versales,
     } = await medir(page);
 
     expect(
@@ -278,6 +323,17 @@ async function revisar(page: Page, donde: string) {
       imagenesSinProporcion,
       `${pagina.path} en ${donde} tiene imágenes sin proporción declarada, que empujan el layout al cargar (criterio 6)`,
     ).toEqual([]);
+
+    expect(
+      espaciosReservados,
+      `${pagina.path} en ${donde} reserva ${String(espaciosReservados)} huecos de foto (criterio 11). ` +
+        `Si el material ya está, ubicalo; si de verdad falta, anotalo en docs/content-guide.md §3 y acá`,
+    ).toBe(ESPACIOS_RESERVADOS.get(pagina.path) ?? 0);
+
+    expect(
+      versales,
+      `${pagina.path} en ${donde} tiene texto en versales (criterio 13): ${versales.join(" · ")}`,
+    ).toEqual([]);
   }
 }
 
@@ -291,5 +347,58 @@ test.describe("revisión visual · ux.md §12", () => {
   test("las once páginas cumplen los criterios medibles en 360 px", async ({ page }) => {
     await page.setViewportSize(VIEWPORT_MINIMO);
     await revisar(page, "360 px");
+  });
+
+  /**
+   * Criterio 12: la home rompe el plano.
+   *
+   * Es el criterio que resume el diagnóstico de ADR-021. Once páginas compartían un
+   * único contenedor centrado sobre un único fondo, y ninguna medición existente lo
+   * notaba: cada regla se cumplía y el conjunto se leía como una plantilla. Se piden
+   * las dos cosas que lo rompen —una foto que llega al borde y más de una superficie—
+   * en 360 px, que es donde llega la mayoría.
+   */
+  test("la home tiene una foto que llega al borde y más de una superficie (criterio 12)", async ({
+    page,
+  }) => {
+    await page.setViewportSize(VIEWPORT_MINIMO);
+    await page.goto("/");
+
+    const { sangradas, superficies } = await page.evaluate(() => {
+      // El ancho de referencia es el del `body`, no el del viewport:
+      // `scrollbar-gutter: stable` reserva el canal de la barra de desplazamiento, así
+      // que el elemento más ancho posible del documento mide hasta 15 px menos que la
+      // pantalla. Medir contra el viewport daba «ninguna foto sangra» en Chrome de
+      // escritorio y «sangra» en los otros dos, que es la peor clase de test.
+      const ancho = document.body.clientWidth;
+
+      const sangradas = [...document.querySelectorAll("main img")]
+        .filter((imagen) => imagen.getBoundingClientRect().width >= ancho - 1)
+        .map((imagen) => imagen.getAttribute("src")?.slice(0, 40) ?? "");
+
+      // El fondo de la página cuenta como una superficie: lo que se mide es cuántas
+      // hay, no cuántas bandas se agregaron.
+      const superficies = new Set([getComputedStyle(document.body).backgroundColor]);
+
+      for (const nodo of document.querySelectorAll("main *")) {
+        const fondo = getComputedStyle(nodo).backgroundColor;
+
+        if (fondo !== "rgba(0, 0, 0, 0)" && nodo.getBoundingClientRect().width > 320) {
+          superficies.add(fondo);
+        }
+      }
+
+      return { sangradas, superficies: [...superficies] };
+    });
+
+    expect(
+      sangradas.length,
+      "la home tiene que tener al menos una foto al ancho de la pantalla en 360 px",
+    ).toBeGreaterThan(0);
+
+    expect(
+      superficies.length,
+      `la home tiene que tener más de una superficie de sección: ${superficies.join(" · ")}`,
+    ).toBeGreaterThan(1);
   });
 });
