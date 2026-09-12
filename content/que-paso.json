@@ -1,15 +1,81 @@
 {
   "title": "Qué ocurrió",
-  "lead": "Norma murió en un accidente.",
+  "lead": "Se incendió la casa.",
   "paragraphs": [
-    "No vamos a dar más detalles de los que hacen falta. No hay nada que agregar que le sirva a alguien, y su familia prefiere que se la recuerde por cómo vivió.",
-    "Si alguna vez se cuenta lo que pasó, va a ser con las palabras de la familia y en el momento que ellos elijan. Hasta entonces, esta página no lo cuenta."
+    "El lunes 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé, Formosa. Las llamas consumieron gran parte de la vivienda y todo lo que había adentro.",
+    "En ese incendio Norma falleció. Su marido logró salir, pero inhaló mucho humo y hoy su capacidad pulmonar está al 50%. Está en tratamiento y necesita tiempo y cuidados para recuperarse.",
+    "Estas son las fotos de esa noche y de lo que quedó. Están acá una vez, porque quien va a colaborar necesita saber qué pasó, y no vuelven a aparecer en el resto del sitio."
+  ],
+  "testimony": {
+    "quote": "Ahora mi foco está en reconstruir la casa de mi papá y acompañarlo en su recuperación.",
+    "author": "Justo Miguel Vargas",
+    "relation": "Hijo"
+  },
+  "photoEssay": [
+    {
+      "heading": "Esa noche",
+      "note": "Los bomberos de Riacho He Hé trabajando sobre el frente de la casa.",
+      "photos": [
+        {
+          "url": "/fotos/incendio-bomberos-frente.jpg",
+          "alt": "Un bombero con casco y equipo de respiración entra por la puerta de la casa, de noche. La pared es verde agua y por la ventana enrejada se ve el resplandor naranja del fuego adentro.",
+          "caption": "El frente de la casa mientras se apagaba el fuego.",
+          "credit": null,
+          "width": 1220,
+          "height": 1568,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-bomberos-puerta.jpg",
+          "alt": "Dos bomberos con manguera frente a una abertura de la que salen llamas altas y humo negro. El agua ya mojó el piso.",
+          "caption": null,
+          "credit": null,
+          "width": 1220,
+          "height": 1178,
+          "takenOn": null
+        }
+      ]
+    },
+    {
+      "heading": "Así quedó",
+      "note": "Las fotos que sacó la familia cuando entró, antes de retirar nada.",
+      "photos": [
+        {
+          "url": "/fotos/incendio-frente.jpg",
+          "alt": "El frente de la casa de día. La pared verde agua está manchada de negro arriba de la ventana y la pintura se levantó por el calor. La chapa del alero está retorcida.",
+          "caption": "El frente, desde la calle.",
+          "credit": null,
+          "width": 602,
+          "height": 335,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-interior.jpg",
+          "alt": "Una habitación sin techo. Las paredes quedaron de ladrillo desnudo y negro en un rincón, una viga de madera quemada cuelga del vacío y el piso está cubierto de escombros.",
+          "caption": "Adentro no quedó techo.",
+          "credit": null,
+          "width": 602,
+          "height": 282,
+          "takenOn": null
+        },
+        {
+          "url": "/fotos/incendio-garage.jpg",
+          "alt": "El garage con un auto calcinado en el centro. Las paredes y el techo de chapa están negros y el piso está cubierto de restos quemados.",
+          "caption": "El auto, en el garage.",
+          "credit": null,
+          "width": 602,
+          "height": 266,
+          "takenOn": null
+        }
+      ]
+    }
   ],
   "needNow": {
     "title": "Qué se necesita ahora",
     "paragraphs": [
-      "La casa de la familia necesita ser reconstruida. Es una obra que no pueden afrontar solos.",
-      "Para eso existe esta página: para reunir lo que hace falta y mostrar, peso por peso, en qué se usa."
+      "La casa necesita ser reconstruida. Es una obra que la familia no puede afrontar sola.",
+      "Para eso existe esta página: para reunir lo que hace falta y mostrar, peso por peso, en qué se usa.",
+      "Gracias a todos los que se acercaron, escribieron y están acompañando en este momento."
     ]
   }
 }

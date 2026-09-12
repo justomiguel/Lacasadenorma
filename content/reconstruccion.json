@@ -5,5 +5,31 @@
     "El relevamiento de la obra lo está haciendo la familia con gente del pueblo. A medida que cada parte queda cotizada, aparece acá con su monto, su avance y sus fotos.",
     "Mientras un rubro no esté cotizado, se muestra sin monto. Preferimos una lista incompleta a un número inventado."
   ],
-  "scope": []
+  "scope": [],
+  "photoEssay": [
+    {
+      "heading": "Lo primero fue sacar los escombros",
+      "note": "Antes de levantar una pared hay que vaciar la casa. Eso es lo que se está haciendo ahora, con gente del pueblo y una máquina prestada.",
+      "photos": [
+        {
+          "url": "/fotos/limpieza-escombros.jpg",
+          "alt": "Un hombre con pala junta escombros en un montículo de ladrillos partidos y ceniza. Detrás, la pala de una máquina cargadora amarilla ya está llena de restos quemados.",
+          "caption": "Los escombros salen a mano y se cargan a máquina.",
+          "credit": null,
+          "width": 800,
+          "height": 1150,
+          "takenOn": "2026-09-11"
+        },
+        {
+          "url": "/fotos/limpieza-taller.jpg",
+          "alt": "Piezas de motor quemadas apoyadas en el piso y sobre una mesa, ordenadas por tipo: caños, múltiples de escape, un cajón azul con herramientas. Se ven las piernas de varias personas trabajando alrededor.",
+          "caption": "Lo que se puede recuperar del taller se separa pieza por pieza.",
+          "credit": null,
+          "width": 1125,
+          "height": 1300,
+          "takenOn": null
+        }
+      ]
+    }
+  ]
 }
