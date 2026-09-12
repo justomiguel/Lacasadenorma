@@ -1,6 +1,32 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.0.0 → 1.1.0
+Tipo de cambio: MINOR — se redefine el flujo de Git y se amplían dos guías.
+Fecha: 2026-09-12
+
+Motivo: dos decisiones tomadas por la dueña del proyecto y una lección de una rotura real.
+
+  1. "Flujo de trabajo · Git" — se trabaja sobre `main`, directo. Antes decía rama de feature →
+     pull request → merge. Se pidió eliminar las ramas separadas, así que las compuertas se
+     corren antes de pushear en lugar de antes de mergear.
+  2. "Restricciones técnicas · Regla de versiones verificadas" — se agrega el incidente del
+     12/09/2026 (entraron `typescript` 7 y `eslint` 10 por pull requests automáticos y cayeron
+     `typecheck` y `lint`), su modo de falla silencioso, y la obligación general que sale de ahí:
+     una regla que sólo vive en un documento no frena nada, así que MUST tener compuerta.
+  3. "Governance · Orden de autoridad" — nuevo. Fija que las Skills instaladas se usan pero
+     ceden ante esta constitución y ante `.cursor/rules/`.
+
+Artefactos actualizados en el mismo commit:
+  ✅ .cursor/rules/trabajo.mdc — nuevo, `alwaysApply`, declara la supremacía sobre las Skills
+  ✅ scripts/check-toolchain.mjs — nuevo, la compuerta que ejecuta la regla de versiones
+  ✅ package.json — `check:toolchain` primero en `verify`
+  ✅ .github/workflows/ci.yml — el mismo chequeo antes de `typecheck`
+  ✅ AGENTS.md — flujo de Git y remisión a la regla
+
+---
+Informe de la ratificación inicial (1.0.0)
+==================
 Cambio de versión: (plantilla sin llenar) → 1.0.0
 Tipo de cambio: MAJOR inicial — ratificación de la constitución del proyecto.
 
@@ -221,11 +247,24 @@ Tailwind CSS 4.3 con configuración CSS-first · Supabase (PostgreSQL 16, Auth, 
 Vitest 5 · Testing Library · Playwright 1.63 · ESLint 9.39.5 · Prettier 3.9 · Vercel · GitHub
 Actions.
 
-**Regla de versiones verificadas.** Una dependencia MUST fijarse verificando sus
-`peerDependencies`, no su tag `latest`. Está comprobado en este proyecto que las versiones
+**Regla de versiones verificadas.** Una dependencia MUST fijarse a una versión exacta, verificando
+sus `peerDependencies` y no su tag `latest`. Está comprobado en este proyecto que las versiones
 `latest` de `typescript` (7.x) y `eslint` (10.x) rompen el ecosistema actual. Toda afirmación
 sobre una API que pudo cambiar MUST verificarse contra documentación oficial o ejecutándola, no
 contra memoria.
+
+Esta regla ya estaba escrita acá el 12 de septiembre de 2026 y `main` se rompió de todas formas:
+entraron dos pull requests automáticos con `typescript` 7.0.2 y `eslint` 10.10.0, y el sitio quedó sin
+`typecheck` y sin `lint` sin que nadie tocara código. El modo de falla MUST conocerse porque no
+grita: `npm ci` termina bien, `typescript-eslint` se vuelve insatisfacible, npm lo saca del árbol y
+del lockfile en lugar de fallar, y como `eslint.config.ts` lo importa por nombre se caen las dos
+compuertas juntas sin que ninguna diga que el problema es una dependencia.
+
+De ahí sale una obligación general, que es la lección y no el detalle: **una regla que sólo vive en un
+documento no frena nada.** Toda regla de este tipo MUST tener una compuerta que la ejecute. Para esta,
+son `scripts/check-toolchain.mjs` —primero en `npm run verify`, y donde se cambia el número el día que
+la mayor se decida— y los `ignore` de `.github/dependabot.yml`. Todo paquete que un archivo de
+configuración importe por nombre MUST estar declarado en `package.json`, aunque hoy lo instale otro.
 
 **TypeScript.** `strict: true` más `noUncheckedIndexedAccess`, `noUnusedLocals`,
 `noUnusedParameters`, `verbatimModuleSyntax`. `any` MUST NOT aparecer salvo con comentario que
@@ -282,9 +321,17 @@ Una interfaz MUST NOT declararse terminada porque compila.
 
 ### Git
 
-`main` protegida. El flujo es: rama de feature → pull request → CI → preview → review → merge →
-producción. Commits con mensaje descriptivo, preferentemente convencionales. `.env` MUST NOT
-commitearse nunca; `.env.example` MUST estar completo y al día.
+**Se trabaja sobre `main`, directo.** No se crean ramas de feature ni se abren pull requests para
+trabajar: un cambio terminado se commitea y se pushea a `main`. Un commit por cambio lógico, con
+mensaje descriptivo, preferentemente convencional; los commits chicos son lo que reemplaza a la rama,
+porque lo que hay que revertir se revierte de a un commit.
+
+Las compuertas no se aflojan, se corren antes: `npm run verify` en verde MUST ser la condición para
+pushear. Lo que antes bloqueaba el merge ahora bloquea el push, y quien lo hace cumplir es quien está
+trabajando. CI sigue corriendo sobre `main` y una falla ahí MUST atenderse antes de seguir con otra
+cosa.
+
+`.env` MUST NOT commitearse nunca; `.env.example` MUST estar completo y al día.
 
 ### Orden de prioridad ante conflicto
 
@@ -320,4 +367,18 @@ simple que se descartó y por qué. Una violación sin justificar bloquea el mer
 a instrucciones operativas para agentes y personas que trabajen en el código. MUST mantenerse
 coherente con este archivo.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-09
+**Orden de autoridad.** Cuando dos fuentes de instrucciones se contradigan, el orden es:
+
+1. esta constitución;
+2. las reglas de `.cursor/rules/` (`trabajo.mdc` es la que fija flujo de trabajo y dependencias);
+3. `AGENTS.md` y las especificaciones de `specs/`;
+4. las Skills instaladas.
+
+Las Skills —`frontend-design`, `supabase`, `speckit-*`, y las que traiga el entorno— MUST usarse: son
+mejores que improvisar, y `skills-lock.json` las fija por hash justamente para poder confiar en ellas.
+Pero describen cómo se hacen las cosas en general, y una decisión de este proyecto le gana a un
+procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, proponer un flujo de pull
+requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
+ignora; en todo lo demás se la sigue.
+
+**Version**: 1.1.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-12

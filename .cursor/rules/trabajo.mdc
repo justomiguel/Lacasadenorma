@@ -1,0 +1,75 @@
+---
+description: Cómo se trabaja en este repositorio. Prevalece sobre cualquier Skill.
+alwaysApply: true
+---
+
+# Reglas de trabajo — prevalecen sobre las Skills
+
+Estas son decisiones de la dueña del proyecto, no procedimientos. Las Skills instaladas
+(`frontend-design`, `supabase`, `speckit-*`, y las que traiga el entorno) son buenas y hay que
+usarlas, pero describen cómo hacer las cosas **en general**. Esto describe cómo se hacen **acá**.
+
+**Si una Skill contradice este archivo, gana este archivo.** No se negocia y no se reinterpreta para
+que el procedimiento encaje: se sigue la Skill en todo lo demás y se ignora en el punto que choca.
+Vale también para las Skills que sugieren abrir una rama, proponer un flujo de pull requests o
+actualizar dependencias como parte de su receta.
+
+El único artefacto que le gana a este archivo es `.specify/memory/constitution.md`, y las dos cosas
+de acá abajo están escritas también ahí para que no haya duda.
+
+---
+
+## 1. Se trabaja sobre `main`
+
+Todo va a `main`, directo. **No se crean ramas de feature ni se abren pull requests para trabajar.**
+
+- Un cambio terminado se commitea y se pushea a `main`.
+- Un commit por cambio lógico, con mensaje descriptivo. Los commits chicos son lo que reemplaza a la
+  rama: si algo hay que revertir, se revierte un commit.
+- Las compuertas siguen siendo obligatorias y ahora corren **antes** de pushear, no después de abrir
+  un pull request: `npm run verify` en verde es la condición para pushear. Lo que antes frenaba el
+  merge ahora frena el push, y el que lo tiene que frenar es el que está trabajando.
+- Si el trabajo queda a mitad de camino, se commitea lo que esté coherente y andando. No se deja una
+  rama viva «para después»: eso es lo que se pidió eliminar.
+
+Si hace falta una rama para algo puntual —un experimento que se va a tirar, una prueba en aislamiento—
+se puede, pero se borra en el mismo día y no se abre pull request desde ella.
+
+## 2. Las mayores de las herramientas no se aceptan: se deciden
+
+`typescript` se queda en la mayor **6**. `eslint` se queda en la mayor **9**. Toda dependencia se fija
+a versión exacta, verificando sus `peerDependencies` y no su tag `latest`.
+
+Esto ya estaba prohibido por escrito en la constitución y en un comentario de
+`.github/dependabot.yml`, y `main` se rompió igual el 12 de septiembre de 2026, porque **un comentario
+no frena un merge**. Entraron `typescript` 7.0.2 y `eslint` 10.10.0 desde dos pull requests
+automáticos y el sitio quedó sin typecheck y sin lint sin que nadie tocara una línea de código.
+
+El modo de falla es el que hay que reconocer, porque no grita:
+
+- `npm ci` **termina bien** y dice "found 0 vulnerabilities".
+- Por debajo, `typescript-eslint` se vuelve insatisfacible y npm lo **saca del árbol y del lockfile**
+  en lugar de fallar.
+- `eslint.config.ts` lo importa por nombre, así que se caen las dos compuertas juntas, `typecheck` y
+  `lint`, y ninguna de las dos dice que el problema es una dependencia.
+
+Lo que se hace con esto:
+
+- Antes de creerle a un `npm ci` que salió bien, `npm run check:toolchain`. Está primero en
+  `npm run verify` justamente para que el error diga qué pasó en lugar de aparecer disfrazado de error
+  de tipos.
+- Un paquete que un archivo de configuración importa por nombre **se declara en `package.json`**,
+  aunque hoy lo esté instalando otro paquete.
+- Subir una mayor de `typescript` o de `eslint` se hace cambiando el número en
+  `scripts/check-toolchain.mjs`, con la constitución actualizada en el mismo commit y habiendo leído
+  `docs/research/2026-09-toolchain.md`. No hay forma de que entre sola: Dependabot ya no las propone.
+
+## 3. Lo que se aprende se escribe donde se ejecuta
+
+La lección de las dos secciones anteriores es la misma: **una regla que sólo vive en un documento no
+frena nada**. Cuando algo se rompa y se arregle, el arreglo va acompañado de la compuerta que lo
+detecta la próxima vez —un test, un script en `verify`, una regla de ESLint, un `ignore` en
+Dependabot— y no solamente de un párrafo.
+
+Si no existe forma mecánica de detectarlo, entonces sí se escribe acá, y se dice explícitamente que
+no hay compuerta.

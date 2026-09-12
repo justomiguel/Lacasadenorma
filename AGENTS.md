@@ -3,6 +3,12 @@
 Este archivo traduce `.specify/memory/constitution.md` a instrucciones operativas. Si algo acá
 contradice la constitución, gana la constitución y este archivo se corrige.
 
+**Antes que nada, leé `.cursor/rules/trabajo.mdc`.** Fija dos cosas que no se negocian y que le ganan
+a cualquier Skill: **se trabaja sobre `main`, directo, sin ramas de feature ni pull requests**, y las
+mayores de `typescript` y de `eslint` no se aceptan, se deciden. El orden de autoridad completo está
+en la constitución, en "Governance · Orden de autoridad": constitución → `.cursor/rules/` → este
+archivo y `specs/` → Skills.
+
 Idioma: **el contenido público está en castellano rioplatense (sin prefijo) y en inglés (`/en`);
 la documentación y los nombres de rutas siguen en castellano; el código, los identificadores, los
 commits y los nombres de tablas están en inglés** (ADR-014, ADR-023). El backoffice no se
@@ -59,12 +65,17 @@ ubicó, falla. `npm run check:fotos` comprueba que cada foto declarada exista y 
 ## Comandos
 
 ```bash
-npm run dev            # servidor de desarrollo
-npm run verify         # typecheck + lint + formato + tests + chequeos + build
-npm run test           # unitarios y de componente
-npm run test:e2e       # Playwright
-npm run db:verify      # Postgres local: reset + migraciones + advisors + pgTAP
+npm run dev              # servidor de desarrollo
+npm run verify           # herramientas + typecheck + lint + formato + tests + chequeos + build
+npm run test             # unitarios y de componente
+npm run test:e2e         # Playwright
+npm run db:verify        # Postgres local: reset + migraciones + advisors + pgTAP
+npm run check:toolchain  # las versiones de las herramientas son las decididas
 ```
+
+`npm run verify` en verde es la condición para pushear, porque se pushea a `main` y no hay pull
+request que frene nada después. `check:toolchain` va primero a propósito: cuando una dependencia se
+movió de más, `typecheck` y `lint` fallan las dos disfrazadas de otra cosa.
 
 `next typegen` corre antes de `typecheck` y de `lint`: `PageProps` y `LayoutProps` son tipos
 globales generados, y sin generarlos el typecheck falla en las páginas.
@@ -73,7 +84,8 @@ globales generados, y sin generarlos el typecheck falla en las páginas.
 
 Especificación cumplida · tests en el nivel adecuado, vistos en rojo antes · typecheck · lint ·
 build · axe limpio · revisado en 360 px y en 1440 px · seguridad considerada · SEO considerado ·
-documentación actualizada en el mismo commit · CI en verde.
+documentación actualizada en el mismo commit · `npm run verify` en verde antes de pushear a `main` ·
+CI en verde después.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
