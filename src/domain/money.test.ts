@@ -99,6 +99,10 @@ describe("formatMoney", () => {
     // un dato ambiguo.
     expect(formatMoney(money(1_200_000, "CLP"))).toBe("CLP 1.200.000");
   });
+
+  it("en inglés usa el agrupamiento de en-US", () => {
+    expect(formatMoney(money(124_000_000, "ARS"), "en-US")).toBe("ARS 1,240,000");
+  });
 });
 
 describe("formatAmount", () => {

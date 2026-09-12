@@ -383,7 +383,7 @@ export function CheckboxField({
           id={field.id}
           name={name}
           type="checkbox"
-          className="size-md rounded-sm border-rule accent-brick"
+          className="size-md rounded-sm border-rule accent-aqua"
           aria-describedby={field.describedBy}
           {...(defaultChecked === true ? { defaultChecked: true } : {})}
         />
@@ -424,7 +424,7 @@ export function SubmitButton({
   const { pending } = useFormStatus();
 
   const tones: Record<typeof tone, string> = {
-    primary: "bg-brick text-paper hover:bg-brick-strong",
+    primary: "bg-aqua text-paper hover:bg-aqua-strong",
     quiet: "border border-rule bg-paper text-ink hover:bg-paper-sunk",
     danger: "border border-danger bg-paper text-danger hover:bg-paper-sunk",
   };

@@ -46,7 +46,8 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 
 - **Fundación Norma no existe como organización.** No tiene personería jurídica, ni estatuto, ni
   CUIT, ni cuenta bancaria propia. Es una intención declarada para después de la casa.
-- **Riacho Conecta no tiene fechas, ni cupos, ni inscripción abierta.** No hay a qué anotarse.
+- **Riacho Conecta no tiene fechas, ni cupos, ni inscripción, ni temario.** Es el nombre que se le
+  pondría al primer programa. No hay a qué anotarse y no hay página propia.
 - Los aportes **no son deducibles de impuestos**: no hay entidad que pueda emitir un comprobante
   fiscal.
 - Las fechas de nacimiento y de muerte de Norma **no están publicadas**. Si un dato aparece como
@@ -59,7 +60,8 @@ dice con palabras en lugar de mostrar un cero.
 
 - [Inicio](${siteUrl}/): las nueve preguntas del proyecto respondidas en orden.
 - [La historia de Norma](${siteUrl}/norma): quién fue.
-- [Qué ocurrió](${siteUrl}/que-paso): el accidente, sin detalles gráficos, y qué se necesita ahora.
+- [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada y
+  qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra, presupuesto por rubro, hitos.
 - [Cómo ayudar](${siteUrl}/ayudar): los datos bancarios de los tres países y qué hacer después de
   transferir.
@@ -67,7 +69,6 @@ dice con palabras en lugar de mostrar un cero.
   gasto.
 - [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
-- [Riacho Conecta](${siteUrl}/riacho-conecta): los temas del programa de formación.
 - [Privacidad](${siteUrl}/legales/privacidad) · [Términos](${siteUrl}/legales/terminos)
 
 ## Datos para agentes

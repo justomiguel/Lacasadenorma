@@ -91,7 +91,7 @@ export function AdminHeading({
   return (
     <div className="mb-xl flex flex-wrap items-start justify-between gap-md">
       <div>
-        <h1 className="font-prose text-heading text-ink">{title}</h1>
+        <h1 className="font-display text-heading text-ink">{title}</h1>
         {children === undefined ? null : (
           <div className="mt-2xs max-w-measure font-ui text-small text-ink-muted">
             {children}

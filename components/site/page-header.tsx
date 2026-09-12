@@ -46,7 +46,7 @@ export function PageHeader({
         {label === undefined ? null : (
           <p className="mb-sm font-ui text-small text-ink-muted">{label}</p>
         )}
-        <h1 className="max-w-measure font-prose text-title">{title}</h1>
+        <h1 className="max-w-measure font-display text-title">{title}</h1>
         {lead === undefined ? null : (
           <p className="mt-lg max-w-measure font-prose text-lead text-ink-muted">
             {lead}

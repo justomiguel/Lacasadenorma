@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useUiOptional } from "@/components/i18n/ui-provider";
+
 import { cn } from "./cn";
 
 /**
@@ -64,6 +66,11 @@ export function ShareRow({
 }) {
   const [copied, setCopied] = useState(false);
   const targets = buildShareTargets(url, text);
+  const ui = useUiOptional()?.ui;
+  const shareLabel = ui?.share ?? "Compartir";
+  const copyLinkLabel = ui?.copyLink ?? "Copiar enlace";
+  const linkCopiedLabel = ui?.linkCopied ?? "Enlace copiado";
+  const linkCopiedLive = ui?.linkCopiedLive ?? "Se copió el enlace de la página.";
 
   async function shareNative() {
     try {
@@ -100,7 +107,7 @@ export function ShareRow({
           }}
           className="inline-flex min-h-touch items-center rounded-sm bg-paper-sunk px-md font-ui text-small font-medium text-ink transition-colors duration-fast ease-editorial hover:bg-rule"
         >
-          Compartir
+          {shareLabel}
         </button>
       ) : null}
 
@@ -114,7 +121,7 @@ export function ShareRow({
               onClick={() => {
                 onShared?.(target.channel);
               }}
-              className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+              className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
             >
               {target.label}
             </a>
@@ -126,15 +133,15 @@ export function ShareRow({
             onClick={() => {
               void copyLink();
             }}
-            className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+            className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
           >
-            {copied ? "Enlace copiado" : "Copiar enlace"}
+            {copied ? linkCopiedLabel : copyLinkLabel}
           </button>
         </li>
       </ul>
 
       <p aria-live="polite" className="sr-only">
-        {copied ? "Se copió el enlace de la página." : null}
+        {copied ? linkCopiedLive : null}
       </p>
     </div>
   );

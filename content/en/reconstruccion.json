@@ -1,0 +1,35 @@
+{
+  "title": "The reconstruction",
+  "lead": "What has to be done to the house, what it costs, and how it's going.",
+  "paragraphs": [
+    "The family is surveying the work with people from the town. As each part is quoted, it appears here with its amount, its progress and its photographs.",
+    "While an item has no quote, it is shown without an amount. We would rather have an incomplete list than an invented number."
+  ],
+  "scope": [],
+  "photoEssay": [
+    {
+      "heading": "The first job was to get the rubble out",
+      "note": "Before a wall can go up, the house has to be emptied. That is what is happening now, with people from the town and a borrowed machine.",
+      "photos": [
+        {
+          "url": "/fotos/limpieza-escombros.jpg",
+          "alt": "A man with a shovel piles rubble into a mound of broken brick and ash. Behind him, the bucket of a yellow loader is already full of burned remains.",
+          "caption": "The rubble is cleared by hand and loaded by machine.",
+          "credit": null,
+          "width": 800,
+          "height": 1150,
+          "takenOn": "2026-09-11"
+        },
+        {
+          "url": "/fotos/limpieza-taller.jpg",
+          "alt": "Burned engine parts laid on the floor and on a table, sorted by type: pipes, exhaust manifolds, a blue crate of tools. The legs of several people working around them are visible.",
+          "caption": "What can be salvaged from the workshop is sorted piece by piece.",
+          "credit": null,
+          "width": 1125,
+          "height": 1300,
+          "takenOn": null
+        }
+      ]
+    }
+  ]
+}

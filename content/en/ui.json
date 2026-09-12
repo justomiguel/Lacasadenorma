@@ -1,0 +1,261 @@
+{
+  "skipToContent": "Skip to content",
+  "helpCta": "Help rebuild",
+  "helpShort": "Help",
+  "copy": "Copy",
+  "copied": "Copied",
+  "copiedAnnouncement": "Copied {label}.",
+  "copyFailed": "We couldn't copy {label} automatically. Select it and copy it yourself.",
+  "share": "Share",
+  "copyLink": "Copy link",
+  "linkCopied": "Link copied",
+  "linkCopiedLive": "Copied the page link.",
+  "languageName": "English",
+  "otherLanguageName": "Castellano",
+  "countryTabsLabel": "Choose the country you'll transfer from",
+  "homeLabel": "Home",
+  "legalLabel": "Legal",
+  "publishedOn": "Published",
+  "lastUpdated": "Last updated:",
+  "footerNote": "Legal texts last updated: {date}. This site does not process payments or ask for card details.",
+  "ogCardFooter": "Gifts and a published account of every peso",
+  "nav": {
+    "primary": "Main",
+    "index": "Section index",
+    "footer": "Site sections",
+    "project": "The project and its terms",
+    "campaign": "The campaign",
+    "next": "What follows",
+    "legal": "Legal"
+  },
+  "primaryNav": {
+    "/norma": {
+      "label": "Norma's story",
+      "shortLabel": "Norma",
+      "summary": "Who she was and what she left done."
+    },
+    "/que-paso": {
+      "label": "What happened",
+      "shortLabel": "What happened",
+      "summary": "The night of the fire, and what was left."
+    },
+    "/reconstruccion": {
+      "label": "The reconstruction",
+      "shortLabel": "The work",
+      "summary": "What has to be done, what it costs, and how it's going."
+    },
+    "/ayudar": {
+      "label": "How to help",
+      "shortLabel": "Help",
+      "summary": "The details to transfer from Argentina, Chile or the United States."
+    },
+    "/transparencia": {
+      "label": "Transparency",
+      "shortLabel": "Transparency",
+      "summary": "Where every peso went, with a date and a receipt."
+    },
+    "/novedades": {
+      "label": "Updates",
+      "shortLabel": "Updates",
+      "summary": "What is happening on the site, dated."
+    }
+  },
+  "secondaryNav": {
+    "/legado": {
+      "label": "The legacy"
+    }
+  },
+  "legalNav": {
+    "/legales/privacidad": {
+      "label": "Privacy"
+    },
+    "/legales/terminos": {
+      "label": "Terms of use"
+    }
+  },
+  "countries": {
+    "AR": "Argentina",
+    "CL": "Chile",
+    "US": "United States"
+  },
+  "expenseCategories": {
+    "materiales": "Materials",
+    "mano_de_obra": "Labour",
+    "servicios": "Services",
+    "transporte": "Transport",
+    "herramientas": "Tools",
+    "otros": "Other"
+  },
+  "figures": {
+    "received": "Received",
+    "receivedIn": "Received in {currency}",
+    "spent": "Spent",
+    "balance": "Balance",
+    "executedNote": "{percent} of the goal already spent",
+    "otherCurrency": "Received in another currency ({currency})",
+    "unquoted": "Not yet quoted",
+    "noGoal": "raised. The goal is not published yet, so we do not show a percentage.",
+    "raisedOfGoal": "{raised} raised of a {goal} goal",
+    "ofGoal": "of {goal}",
+    "percentOfGoal": "{percent} of the goal"
+  },
+  "progress": {
+    "noReconciliation": "There has not been a bank reconciliation yet, so this figure is provisional.",
+    "reconciledOn": "Figures reconciled with the bank statement as of {date}.",
+    "otherCurrencies": "Also received: {amounts}. We do not convert them to pesos: there is no dated exchange rate we can publish.",
+    "milestones": "{completed} of {total} work milestones are complete.",
+    "staleTitle": "Out of date",
+    "staleBody": "More than thirty days have passed since the last reconciliation. The figure you see may be behind what is in the account."
+  },
+  "budget": {
+    "emptyTitle": "The budget is still being put together",
+    "emptyBody": "The family is surveying the work with people from the town. Each line appears here with its amount as soon as it is quoted. We would rather show an incomplete list than an invented number.",
+    "noneQuoted": "No line has been quoted yet.",
+    "someQuoted": "{quoted} of {total} lines are quoted. The rest appear without an amount until they are."
+  },
+  "ledger": {
+    "date": "Date",
+    "concept": "Item",
+    "category": "Category",
+    "receipt": "Receipt",
+    "amount": "Amount",
+    "yes": "Yes",
+    "receiptYes": "Has {count} receipt{plural} in the internal archive",
+    "receiptMissing": "Not uploaded",
+    "caption": "{count} published expenses. The sum of this table is the total spent above."
+  },
+  "donations": {
+    "emptyTitle": "No account has been published yet",
+    "emptyBody": "We are checking the bank details before publishing them. We would rather leave this section empty for a few days than show a figure that later has to be corrected: if someone transfers to the wrong account, the error cannot be undone."
+  },
+  "unavailable": {
+    "errorTitle": "We could not read the figures",
+    "emptyTitle": "Figures not yet published",
+    "notConfigured": "This part of the site is not yet connected to the campaign data. As soon as it is, it will appear here.",
+    "error": "We could not read this data right now. Try again in a while: the problem is ours, not yours.",
+    "notPublished": "The campaign is not published yet."
+  },
+  "news": {
+    "title": "Updates",
+    "lead": "Each step, on the day it happened.",
+    "seoDescription": "Each step of the work told on the day it happened, with its date and its photos. What was bought, what was done, and what is still missing.",
+    "fallbackTitle": "Update",
+    "intro": "The site diary is written as it happens: what was bought, the week of work that was done, and also what came out differently than planned. Each entry has its date and, when there are any, its photos.",
+    "introLinks": "The story does not depend on this index and can be read in full:",
+    "whoWas": "who Norma was",
+    "whatToRebuild": "what has to be rebuilt",
+    "howToHelp": "how to help",
+    "unavailableTitle": "Updates are not being published here yet",
+    "emptyTitle": "No updates have been published yet",
+    "emptyBody": "The first one will be the day the work begins.",
+    "shareHeading": "Share this update",
+    "seeAll": "See all updates",
+    "seeTransparency": "See the public accounts",
+    "originalLanguage": "This update is written in Spanish. There is no English version yet.",
+    "introAnd": "and"
+  },
+  "home": {
+    "openingLead": "On 7 September a fire destroyed the family home in Riacho He Hé, Formosa, and Norma died that night.",
+    "openingNeed": "Her husband survived and is under treatment. We are raising what it costs to rebuild the house.",
+    "shareOpening": "How to share it",
+    "portraitReserved": "A portrait of Norma will go here. Her family is choosing the photograph.",
+    "whoWasHeading": "Who Norma was",
+    "readFullStory": "Read the full story",
+    "seePhotosAndNeeds": "See the photos and what is needed now",
+    "workStartedHeading": "The work has already started",
+    "workStartedLead": "Before a wall goes up, the house has to be emptied. The family is doing that with people from the town and a borrowed loader.",
+    "rebuildHeading": "What has to be rebuilt",
+    "rebuildDetail": "See the detail of the work",
+    "howItsGoing": "How the work is going",
+    "howToHelp": "How to help",
+    "seeFullDetails": "See the full details",
+    "seeWhereItWent": "See where it went",
+    "whereItWent": "Where it went",
+    "transparencyBlurb": "Each expense is published with its date, what it was for, and whether it has a receipt. The totals above are the sum of that detail, not a number written by hand.",
+    "seeFullReport": "See the full accounts",
+    "knowFoundation": "Read what the legacy proposes",
+    "faqHeading": "What people usually ask",
+    "shareHeading": "Share the campaign",
+    "shareLead": "Most people will get here because someone passed them the link. If you can, pass it on."
+  },
+  "normaPage": {
+    "title": "Who {name} was",
+    "seoDescription": "Who Norma Edith Bedoya was, what she did in Riacho He Hé, and what she left done. The story of a person, not of a cause.",
+    "contribution": "If you knew her and want something of that to appear in her story, the family will listen. There is no published address for that yet; when there is, it will be here and on the",
+    "privacyLink": "privacy page",
+    "photosNote": "Norma's photos were chosen by her family. The one from the radio is still missing, and that space stays empty until it arrives: we will not put a stock image in the place of a photo of her.",
+    "shareHeading": "Share her story"
+  },
+  "whatHappenedPage": {
+    "seoDescription": "On 7 September, at 4.30 in the morning, a fire destroyed the family home in Riacho He Hé. Norma died. This is the story, the photos, and what is needed now.",
+    "whereLabel": "Where",
+    "whenLabel": "When",
+    "whenValue": "Monday 7 September, 4.30 in the morning",
+    "lostLabel": "What was lost",
+    "lostValue": "Most of the house and everything that was inside",
+    "photosHeading": "Photos of the fire",
+    "seeBefore": "If you want to see first where the money will go, it is all in",
+    "rebuildLink": "the reconstruction",
+    "and": "and in",
+    "transparencyLink": "the public accounts",
+    "end": "."
+  },
+  "reconstructionPage": {
+    "seoDescription": "What has to be rebuilt in the house, the budget by line with quoted amounts, the work milestones and the published progress.",
+    "workHeading": "The work so far",
+    "scopeHeading": "What has to be done",
+    "budgetHeading": "What each line costs",
+    "progressHeading": "How the work is going",
+    "noMilestonesTitle": "No milestones have been published yet",
+    "noMilestonesBody": "Milestones are loaded when the work has a plan with stages. Until then there is no timeline to show, and an empty one would say nothing.",
+    "photosNote": "Photos of the progress are published with each update, so each one is dated and can be shared on its own.",
+    "seeNews": "See the updates from the site",
+    "helpHeading": "Help with the work",
+    "helpLead": "Each gift is recorded and each expense is published. You can see both numbers on the same page."
+  },
+  "helpPage": {
+    "seoDescription": "Details to transfer from Argentina, Chile or the United States. This page does not take money or ask for card details: gifts go by bank transfer.",
+    "beforeTransferTitle": "Before you transfer",
+    "beforeTransfer": "Check that you are on the right domain. If the bank details you see do not match the ones we share on our channels, do not transfer. We will never ask you for a password, a code from your bank, or your card details.",
+    "accountsHeading": "Choose where you will transfer from",
+    "afterHeading": "What happens when you transfer",
+    "afterLinkLead": "Everything that comes in and everything that goes out is in",
+    "reportLink": "the public accounts",
+    "afterLinkTail": ", with the date of the last reconciliation in view.",
+    "shareHeading": "Another way to help",
+    "shareLead": "If you cannot give, sharing the link still helps. Most of the people who got this far did so because someone passed it on."
+  },
+  "transparencyPage": {
+    "seoDescription": "Total received, total spent, balance, and the detail of each expense with its date, what it was for, and whether it has a receipt. How the books are kept, explained.",
+    "totalsHeading": "How much came in and how much went out",
+    "noReconciliation": "There has not been a reconciliation with the bank statement yet, so these figures are provisional.",
+    "reconciledOn": "Reconciled with the bank statement as of {date}.",
+    "currenciesNote": " Currencies are not added together: there is no dated exchange rate we can publish.",
+    "staleTitle": "Out of date",
+    "staleBody": "More than thirty days have passed since the last reconciliation. The figures above may be behind what is in the account.",
+    "byCategoryHeading": "Where it was spent",
+    "ledgerHeading": "Each expense, one by one",
+    "noExpensesTitle": "Nothing has been spent yet",
+    "noExpensesBody": "The gifts are in the account and have not been spent. When the first materials are paid for, they will appear here, with their date and their receipt.",
+    "noReceipts": "None of these expenses has a receipt uploaded yet.",
+    "receiptsNote": "There are {count} receipts on file. The files are not published because they often have third-party details: someone with an audit role can review them.",
+    "methodHeading": "How the books are kept",
+    "helpHeading": "Add to the account",
+    "helpLead": "Everything that comes in through here will appear on this same page, with its date.",
+    "newsLink": "The updates",
+    "helpLeadTail": "tell each step as it happens."
+  },
+  "legacyPage": {
+    "seoDescription": "What Fundación Norma sets out to do once the house is finished and where the project stands today: an intention, still without an organisation.",
+    "statusTitle": "Where things stand",
+    "statusBody": "Fundación Norma is an intention, not an entity. It has no legal personality, no statute, no tax ID, and no account of its own. Today's gifts go to rebuilding the house and are accounted for on",
+    "accountsLink": "the accounts page",
+    "statusTail": ". When the foundation actually exists, this page will say so with the papers in view.",
+    "houseFirst": "First, the house",
+    "houseFirstLead": "None of this starts before the family has a place to live. That is the work now."
+  },
+  "legalPage": {
+    "privacySeo": "This site does not ask for your details, does not use third-party cookies, and does not follow you around other pages. What is measured, what for, and how long it is kept.",
+    "termsSeo": "What this site is, who stands behind it, how gifts are used, and what happens if the campaign does not reach its goal."
+  }
+}

@@ -15,7 +15,7 @@ Dos fuentes, divididas por frecuencia de cambio (ADR-007).
 
 | Fuente | Qué | Cómo se edita | Quién |
 |---|---|---|---|
-| `content/*.json` | Prosa: historia, relato, textos de sección, preguntas, legales | Commit y pull request | Quien escribe, con revisión |
+| `content/{es,en}/*.json` | Prosa: historia, relato, textos de sección, preguntas, legales, chrome | Commit y pull request | Quien escribe, con revisión |
 | Supabase, vía `/admin` | Cifras, aportes, gastos, comprobantes, hitos, novedades, fotos, cuentas, objetivos | Formulario en el backoffice | El equipo de la campaña |
 
 La división responde a una observación simple: la historia de Norma se escribe una vez y se corrige de
@@ -24,18 +24,32 @@ por revisión. Un monto no puede esperar un despliegue.
 
 ### Los archivos
 
+Hay **dos directorios**, uno por idioma (ADR-023): `content/es/` y `content/en/`. El esquema es el
+mismo. Un campo faltante en inglés rompe el build igual que en castellano: no hay un fallback
+silencioso al original.
+
+Las fotografías no se duplican. El archivo vive una vez en `public/fotos/`; lo que cambia por idioma
+es el `alt`, el epígrafe y el título del tramo. `npm run check:fotos` recorre los JSON de los dos
+directorios.
+
 | Archivo | Alimenta | Notas |
 |---|---|---|
 | `site.json` | Nombre, bajada, lugar, descripciones, estado | `shortDescription` es la meta description: máximo 160 caracteres, y el esquema lo exige |
-| `norma.json` | `/norma` y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null` |
+| `ui.json` | Chrome: navegación, botones, cifras, textos de conexión | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
+| `norma.json` | `/norma` y `/en/norma`, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null` |
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
-| `legado.json` | `/legado` | Fundación Norma como intención, no como organización |
-| `riacho-conecta.json` | `/riacho-conecta` | `topics` son intenciones declaradas, no un programa con fechas |
+| `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
 | `preguntas.json` | Las nueve preguntas de la home y el `FAQPage` | Mínimo nueve, y el esquema lo exige |
 | `legales.json` | `/legales/privacidad` y `/legales/terminos` | `updatedOn` se cambia cuando cambia el texto |
+
+Los slugs de las rutas **no** se traducen: `/en/reconstruccion`, nunca `/en/reconstruction`. El inglés
+se lee en la página, no en la barra.
+
+Las novedades se escriben en castellano desde el backoffice y se publican en los dos idiomas tal
+cual, con `lang="es-AR"` en el artículo cuando la página está en inglés.
 
 Son **JSON y no TypeScript** a propósito: los puede editar alguien que no programa sin riesgo de
 romper la compilación, y el esquema de Zod le da el mismo control de errores que daría el compilador.
@@ -63,7 +77,7 @@ faltante o mal escrito no llega a producción: rompe el build con el archivo, el
 esperaba.
 
 ```
-El contenido de content/norma.json no cumple su esquema:
+El contenido de content/es/norma.json no cumple su esquema:
   · summary: Too small: expected string to have >=1 characters
 ```
 
@@ -80,6 +94,14 @@ inventado pierde lo único que tiene. `npm run check:placeholders` recorre todos
 `PENDIENTE`, `PLACEHOLDER`, `lorem ipsum`, secuencias de cuatro `X` o más y secuencias de ceros con
 guión. Corre en `npm run verify` y en CI. Un `TODO` en un comentario es normal; un `TODO` en el texto
 que lee una persona es un fallo de producto.
+
+Y lo que el script no puede ver hay que auditarlo a mano, porque el relleno más peligroso no dice
+`TODO`: dice una oración bien escrita sobre algo que nadie afirmó. La auditoría de
+[ADR-024](./adr/024-tercera-direccion-visual.md) encontró cuatro casos que llevaban meses publicados —un
+currículum de ocho materias para un programa que no existe, una organización descrita en presente, y una
+respuesta frecuente que contradecía a `/que-paso`— y ninguno tenía un marcador que un `grep` pudiera
+encontrar. La prueba que sí funciona es preguntarle a cada oración **quién la dijo**: si la respuesta no
+es la familia, un documento del proyecto o la base de datos, no va.
 
 Cuando el hueco es una **foto**, el sitio no lo esconde: reserva el espacio con su proporción final y
 dice qué va a ir ahí. El espacio reservado tiene dos ventajas sobre no poner nada: cuando llegue la
@@ -117,7 +139,7 @@ vez y en pasado, el trabajo se muestra siempre y en presente.
 | Durante la limpieza | **Los escombros juntados** en un montículo, la pala cargadora al fondo, gente paleando — `limpieza-escombros.jpg`, 800 × 1150 | `/reconstruccion`, «Lo primero fue sacar los escombros» | Es un cuadro de video, **vertical**. Recortada para excluir la única cara identificable. Al ancho del teléfono, al margen en escritorio |
 | Durante la limpieza | **Las piezas del taller rescatadas**, clasificadas en el piso y en la mesa — `limpieza-taller.jpg`, 1125 × 1300 | `/reconstruccion` | Recortada para excluir las caras |
 
-Las fotos editoriales viven en `public/fotos/` y se declaran en `content/*.json` con `width`,
+Las fotos editoriales viven en `public/fotos/` y se declaran en `content/{es,en}/*.json` con `width`,
 `height`, `alt` y, si corresponde, epígrafe y crédito. El esquema de Zod las valida al importar, igual
 que el resto del contenido, y `npm run check:fotos` comprueba lo que Zod no puede: que el archivo
 exista y que **mida lo que dice**. Los números declarados son los que reservan el espacio antes de que
@@ -133,9 +155,9 @@ El `alt` describe lo que se ve para alguien que no puede verlo, y no repite el e
 |---|---|---|
 | **Los originales de las tres fotos del incendio**, sin la etiqueta del collage impresa | El sitio tiene epígrafes reales con su propia tipografía; una etiqueta quemada en el pixel es de otra pieza gráfica, y los recortes que las evitan quedaron en 602 px de ancho | La familia |
 | **Una foto del terreno ya limpio**, después de retirar los escombros | Es la que cierra el par «así quedó / así está hoy» y la que muestra el punto de partida de la obra que se pide financiar. Hoy el sitio puede mostrar la pérdida y el esfuerzo, pero no el punto cero | La familia |
-| **Norma en la radio** | Es lo que vuelve concreto que fue comunicadora, y es la foto que explica `/legado` y Riacho Conecta | La familia, si existe |
+| **Norma en la radio** | Es lo que volvería concreto que fue comunicadora, y la que explica `/legado`. **Ya no se le reserva el espacio**: hasta ADR-024 había un hueco esperándola en `/norma` y otro en `/legado`, y es una foto que esta misma tabla marca como «si existe». Un hueco es honesto como estado transitorio, no como layout | La familia, si existe |
 | **Permiso de las personas identificables** en las fotos de la limpieza | Sin permiso no se publica una cara. Mientras no esté, se usan los encuadres recortados donde nadie es reconocible, y eso deja fuera de cuadro a la gente que fue a ayudar, que es media historia | El equipo pregunta |
-| **El año del incendio** | La familia afirma «lunes 7 de septiembre» y el día no está en duda, pero el 7 de septiembre de 2024 fue sábado. `norma.diedOn` sigue en `null` y el relato se publica sin año: una fecha estimada en el día en que murió una persona no es un dato, es un invento | La familia |
+| **El año del incendio, si la familia quiere publicarlo** | La familia afirma «lunes 7 de septiembre», y eso es consistente: el 7 de septiembre de 2026 **fue lunes**, y este repositorio se creó el 9 de septiembre de 2026, dos días después. Esta fila decía antes que había una contradicción porque «el 7 de septiembre de 2024 fue sábado», y era cierto de 2024 y de ningún año que importe acá ([ADR-024](./adr/024-tercera-direccion-visual.md)). No hay nada que resolver: sólo falta decidir si el año se publica. `norma.diedOn` sigue en `null` hasta que la familia lo diga, porque la fecha en que murió una persona no la completa nadie más | La familia |
 
 Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie más.
 
@@ -143,6 +165,7 @@ Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie m�
 
 | Campo | Estado | Quién lo completa |
 |---|---|---|
+| `norma.fullName` | Publicado como **«Norma Edith Bedoya»**, que es lo que dice el material de la familia y la nota biográfica de junio de 2026. Pero la crónica policial de esos días la nombra **«Bedolla»**, y no hay forma de saber desde acá cuál de las dos grafías es la del documento. Se deja como está —el apellido de una persona lo dice su familia, no un parte de prensa— y queda anotado por una razón concreta: **no se enlaza ni se cita prensa desde el sitio hasta resolverlo**, porque enlazar una nota que la nombra distinto sembraría la duda de si es la misma persona | La familia |
 | `norma.bornOn`, `norma.diedOn` | `null`. **No se estiman ni se sacan de una noticia** | La familia, si decide publicarlas |
 | `reconstruccion.scope` | Lista vacía: el relevamiento de la obra está en curso | La familia con gente del pueblo, a medida que cada parte se cotiza |
 | `transparencia.paragraphs` | Lista vacía. El método sí está escrito; falta la introducción | Quien escribe |

@@ -29,14 +29,14 @@ const MAX_CARACTERES = 68;
  * `ux.md` §3: como máximo tres superficies con relleno de acento por pantalla.
  *
  * Los tokens se nombran, y el color con el que se compara **no** se escribe acá: se
- * resuelve en la página pidiéndole al navegador que compute `var(--color-brick)`. Están
+ * resuelve en la página pidiéndole al navegador que compute `var(--color-aqua)`. Están
  * declarados en `oklch()` y Chromium los serializa como `lab(...)`, así que una
  * constante escrita a mano quedaría atada al formato de serialización de una versión del
  * navegador y fallaría en silencio —contando cero superficies con acento, que es un
  * verde falso— en cuanto cambiara. Se compara el color computado y no la clase de
  * Tailwind por el mismo motivo: la clase dice qué se pidió, el color dice qué se ve.
  */
-const TOKENS_DE_ACENTO = ["--color-brick", "--color-brick-strong"];
+const TOKENS_DE_ACENTO = ["--color-aqua", "--color-aqua-strong"];
 
 const MAX_ACENTOS = 3;
 
@@ -67,11 +67,10 @@ const RADIO_MAXIMO = 2;
  * Las páginas que no están acá no reservan ningún hueco.
  */
 const ESPACIOS_RESERVADOS = new Map<string, number>([
-  // Las dos esperan la **misma** foto: Norma en la radio. Es la que volvería
-  // concreto que fue comunicadora, la que explica de dónde viene Fundación Norma,
-  // y la única del proyecto que puede no existir. Cuando llegue, las dos bajan a 0.
-  ["/norma", 1],
-  ["/legado", 1],
+  // Vacío desde ADR-024, y el mapa se queda: es el lugar donde se anota un hueco
+  // nuevo, y que esté vacío es la afirmación de que no hay ninguno. Los dos que
+  // había esperaban la foto de Norma en la radio, que `content-guide.md` §3 marca
+  // como «si existe»; un hueco es honesto como estado transitorio, no como layout.
 ]);
 
 type Medicion = {
@@ -84,6 +83,50 @@ type Medicion = {
   espaciosReservados: number;
   versales: string[];
 };
+
+/**
+ * Criterio 14: el acento del sistema no es cálido (ADR-024).
+ *
+ * El acento pasó de terracota a verde agua, y el riesgo real no es que alguien escriba
+ * `text-brick` —esa utilidad ya no existe y no pinta nada—, sino que alguien vuelva a
+ * poner un naranja en el token y el sitio entero regrese al default sin que falle una
+ * sola aserción.
+ *
+ * El color se **rasteriza en un canvas** en lugar de leerse del estilo computado, y eso
+ * es lo que hace que la comprobación no dependa del navegador: los tokens están en
+ * `oklch()` y Chromium los serializa como `lab(...)`, así que parsear la cadena ataría
+ * el test a un formato de serialización. Un pixel es un pixel.
+ */
+async function acentoEsCalido(page: Page): Promise<{ r: number; b: number }> {
+  return page.evaluate((token) => {
+    const sonda = document.createElement("span");
+
+    document.body.append(sonda);
+    sonda.style.color = `var(${token})`;
+
+    const computado = getComputedStyle(sonda).color;
+
+    sonda.remove();
+
+    const lienzo = document.createElement("canvas");
+
+    lienzo.width = 1;
+    lienzo.height = 1;
+
+    const contexto = lienzo.getContext("2d");
+
+    if (contexto === null) {
+      throw new Error("sin contexto 2d para rasterizar el acento");
+    }
+
+    contexto.fillStyle = computado;
+    contexto.fillRect(0, 0, 1, 1);
+
+    const [r, , b] = contexto.getImageData(0, 0, 1, 1).data;
+
+    return { r: r ?? 0, b: b ?? 0 };
+  }, TOKENS_DE_ACENTO[0] ?? "--color-aqua");
+}
 
 async function medir(page: Page): Promise<Medicion> {
   const acentos = await page.evaluate((tokens) => {
@@ -334,17 +377,25 @@ async function revisar(page: Page, donde: string) {
       versales,
       `${pagina.path} en ${donde} tiene texto en versales (criterio 13): ${versales.join(" · ")}`,
     ).toEqual([]);
+
+    const { r, b } = await acentoEsCalido(page);
+
+    expect(
+      b,
+      `${pagina.path} en ${donde}: el acento del sistema es cálido, rgb tiene r=${String(r)} y b=${String(b)} (criterio 14). ` +
+        `El acento es el verde agua del frente de la casa; un naranja acá devuelve el sitio al default de ADR-024`,
+    ).toBeGreaterThan(r);
   }
 }
 
 test.describe("revisión visual · ux.md §12", () => {
-  test("las once páginas cumplen los criterios medibles en el viewport del proyecto", async ({
+  test("las diez páginas cumplen los criterios medibles en el viewport del proyecto", async ({
     page,
   }) => {
     await revisar(page, "el viewport del proyecto");
   });
 
-  test("las once páginas cumplen los criterios medibles en 360 px", async ({ page }) => {
+  test("las diez páginas cumplen los criterios medibles en 360 px", async ({ page }) => {
     await page.setViewportSize(VIEWPORT_MINIMO);
     await revisar(page, "360 px");
   });

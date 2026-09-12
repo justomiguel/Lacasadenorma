@@ -147,8 +147,7 @@ app/                          # presentation — rutas, metadata, Server Compone
 │   ├── ayudar/               #     métodos de aporte
 │   ├── transparencia/        #     ingresos, gastos, saldo, comprobantes
 │   ├── novedades/            #     actualizaciones + detalle compartible
-│   ├── legado/               #     Fundación Norma
-│   ├── riacho-conecta/       #     programa futuro
+│   ├── legado/               #     la intención, que todavía no es organización
 │   └── legales/              #     privacidad y términos
 ├── admin/                    #   backoffice protegido
 │   ├── login/

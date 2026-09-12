@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { CopyField } from "@/components/design-system/copy-field";
 import { CountryTabs, type CountryPanel } from "@/components/design-system/country-tabs";
 import { EmptyState } from "@/components/design-system/callout";
+import { useUiOptional } from "@/components/i18n/ui-provider";
 import type { CountryCode, PaymentMethod } from "@/src/domain/entities";
 import { track } from "@/src/infrastructure/analytics/browser";
 
@@ -108,16 +109,17 @@ export function DonationMethods({
     track({ name: "metodo_visto", props: { pais: country } });
   }, []);
 
+  const empty = useUiOptional()?.ui.donations;
+
   if (methods.length === 0) {
     return (
       <EmptyState
-        title="Todavía no hay una cuenta publicada"
+        title={empty?.emptyTitle ?? "Todavía no hay una cuenta publicada"}
         {...(className === undefined ? {} : { className })}
       >
         <p>
-          Estamos verificando los datos bancarios antes de publicarlos. Preferimos que
-          esta sección esté vacía unos días a que aparezca un dato que después haya que
-          corregir: si alguien transfiere a la cuenta equivocada, el error no se deshace.
+          {empty?.emptyBody ??
+            "Estamos verificando los datos bancarios antes de publicarlos. Preferimos que esta sección esté vacía unos días a que aparezca un dato que después haya que corregir: si alguien transfiere a la cuenta equivocada, el error no se deshace."}
         </p>
       </EmptyState>
     );

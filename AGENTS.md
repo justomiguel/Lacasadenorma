@@ -3,8 +3,11 @@
 Este archivo traduce `.specify/memory/constitution.md` a instrucciones operativas. Si algo acá
 contradice la constitución, gana la constitución y este archivo se corrige.
 
-Idioma: **el contenido, la documentación y los nombres de rutas están en castellano; el código, los
-identificadores, los commits y los nombres de tablas están en inglés** (ADR-014).
+Idioma: **el contenido público está en castellano rioplatense (sin prefijo) y en inglés (`/en`);
+la documentación y los nombres de rutas siguen en castellano; el código, los identificadores, los
+commits y los nombres de tablas están en inglés** (ADR-014, ADR-023). El backoffice no se
+traduce. `content/index.ts` es `server-only`: un componente de cliente que lo importe rompe el
+build, a propósito.
 
 ## Antes de escribir código
 

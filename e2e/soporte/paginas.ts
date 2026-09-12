@@ -18,7 +18,6 @@ export const PAGINAS_PUBLICAS = [
   { path: "/transparencia", nombre: "Transparencia" },
   { path: "/novedades", nombre: "Novedades" },
   { path: "/legado", nombre: "El legado" },
-  { path: "/riacho-conecta", nombre: "Riacho Conecta" },
   { path: "/legales/privacidad", nombre: "Privacidad" },
   { path: "/legales/terminos", nombre: "Términos" },
 ] as const;

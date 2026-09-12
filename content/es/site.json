@@ -1,0 +1,12 @@
+{
+  "name": "La Casa de Norma",
+  "tagline": "Reconstruimos una casa. Construimos un legado.",
+  "shortDescription": "Campaña para reconstruir la casa de la familia de Norma en Riacho He Hé, Formosa, con la rendición de cuentas publicada.",
+  "longDescription": "La Casa de Norma es una campaña para reconstruir la casa de la familia de Norma, una de las primeras comunicadoras sociales de Riacho He Hé, en la provincia de Formosa. El 7 de septiembre un incendio destruyó la casa y Norma murió esa madrugada. Los aportes se reciben por transferencia y cada gasto se publica con su fecha y su comprobante indicado.",
+  "place": {
+    "locality": "Riacho He Hé",
+    "province": "Formosa",
+    "country": "Argentina"
+  },
+  "status": "Campaña abierta para reunir los fondos de la reconstrucción."
+}

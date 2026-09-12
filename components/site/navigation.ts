@@ -1,8 +1,8 @@
 /**
  * Las rutas del sitio, en un solo lugar.
  *
- * El orden **es** el recorrido que propone la experiencia: memoria → ayuda →
- * reconstrucción → futuro. No es alfabético y no debería serlo.
+ * El orden **es** el recorrido que propone la experiencia: pérdida → comunidad →
+ * reconstrucción → legado (ADR-024). No es alfabético y no debería serlo.
  *
  * Las URLs están en castellano porque el sitio es en castellano (ADR-014).
  *
@@ -54,10 +54,7 @@ export const PRIMARY_NAV = [
   },
 ] as const;
 
-export const SECONDARY_NAV = [
-  { href: "/legado", label: "El legado" },
-  { href: "/riacho-conecta", label: "Riacho Conecta" },
-] as const;
+export const SECONDARY_NAV = [{ href: "/legado", label: "El legado" }] as const;
 
 export const LEGAL_NAV = [
   { href: "/legales/privacidad", label: "Privacidad" },

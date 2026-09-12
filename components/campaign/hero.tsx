@@ -1,6 +1,8 @@
-import { SecondaryAction } from "@/components/design-system/actions";
+import { InPageAction } from "@/components/design-system/actions";
 import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
-import { norma, site } from "@/content";
+import { getContent } from "@/content";
+import { localizedHref } from "@/src/i18n/href";
+import type { Locale } from "@/src/i18n/locale";
 
 import { HelpCta } from "./help-cta";
 
@@ -25,32 +27,57 @@ import { HelpCta } from "./help-cta";
  *    durante mucho tiempo abrió con un rectángulo gris que decía que la familia
  *    estaba eligiendo la fotografía. El epígrafe lleva su nombre completo porque el
  *    título de la página dice "Norma" y su nombre era Norma Edith Bedoya.
+ * 5. **La apertura dice qué pasó, no qué nos proponemos.** Acá estaba la frase del
+ *    proyecto —«Reconstruimos una casa. Construimos un legado.»—, que sigue siendo
+ *    cierta y sigue en el pie y en la tarjeta social, pero no informa: quien llega
+ *    de un WhatsApp no sabe todavía qué casa ni por qué. Ahora las dos primeras
+ *    frases son el hecho y la necesidad, y con eso la apertura responde las cinco
+ *    preguntas de ADR-024 §5 sin pedirle nada al visitante.
+ * 6. **Compartir está en la apertura.** Era la quinta pregunta y sólo se podía
+ *    contestar bajando catorce pantallas. Es la acción que más veces se ejecuta,
+ *    porque casi todo el mundo llega acá porque alguien le pasó el enlace.
  */
-export function Hero() {
+export function Hero({ locale }: { locale: Locale }) {
+  const { norma, site, ui } = getContent(locale);
+
   return (
     <section className="border-b border-rule" aria-labelledby="apertura">
-      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
+      {/* `pt-xl` en teléfono y `pt-2xl` desde `sm`: en 640 px de alto, 48 px entre un
+          encabezado de 40 px y un título de 52 px es espacio muerto, y son 16 de los
+          píxeles que hacen que las cinco respuestas entren arriba del pliegue. */}
+      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-xl sm:px-xl sm:pt-2xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
         <div className="lg:col-span-6">
-          <h1 id="apertura" className="font-prose text-display">
+          <h1 id="apertura" className="font-display text-display">
             {site.name}
           </h1>
 
           <p className="mt-lg max-w-measure font-prose text-lead text-ink">
-            {site.tagline}
+            {ui.home.openingLead}
           </p>
 
-          <div className="mt-2xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
-            <HelpCta origen="apertura" />
-            <SecondaryAction href="/norma">Conocer la historia de Norma</SecondaryAction>
+          {/* Arriba de las acciones, y eso costó píxeles. Estuvo un rato abajo del
+              botón por miedo al pliegue de SC-001, y ahí la frase que dice a quién
+              estamos ayudando parecía la letra chica de la que pide plata. Arriba, en
+              360 px, empujaba el enlace de compartir 36 px fuera del pliegue. Lo que
+              se ajustó para que entrara: el relleno superior en teléfono, este margen,
+              y la propia frase, que pasó de cuatro líneas a tres. */}
+          <p className="mt-md max-w-measure text-body text-ink-muted">
+            {ui.home.openingNeed}
+          </p>
+
+          <div className="mt-lg flex flex-col items-start gap-lg sm:mt-xl sm:flex-row sm:items-center">
+            <HelpCta
+              origen="apertura"
+              href={localizedHref("/ayudar", locale)}
+              label={ui.helpCta}
+            />
+            <InPageAction fragment="compartir">{ui.home.shareOpening}</InPageAction>
           </div>
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">
           {norma.portrait === null ? (
-            <ReservedSpace
-              ratio="portrait"
-              description="Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
-            />
+            <ReservedSpace ratio="portrait" description={ui.home.portraitReserved} />
           ) : (
             /* Sangra al ancho del teléfono. Es la única foto de la apertura y en
                360 px la diferencia entre una columna de 320 px y el borde de la

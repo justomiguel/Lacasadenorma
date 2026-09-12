@@ -21,4 +21,9 @@ describe("formatLongDate", () => {
     expect(formatLongDate("2026-03-15")).toBe("15 de marzo de 2026");
     expect(formatLongDate("2026-12-31")).toBe("31 de diciembre de 2026");
   });
+
+  it("en inglés escribe el mes en inglés y no corre el día", () => {
+    expect(formatLongDate("2026-09-08", "en-US")).toBe("September 8, 2026");
+    expect(formatLongDate("2026-09-01", "en-US")).toBe("September 1, 2026");
+  });
 });

@@ -1,0 +1,77 @@
+[
+  {
+    "question": "¿Qué es La Casa de Norma?",
+    "answer": [
+      "Es una campaña para reconstruir la casa de la familia de Norma, en Riacho He Hé, provincia de Formosa. Los aportes llegan por transferencia bancaria y cada gasto se publica en esta misma página con su fecha."
+    ],
+    "href": "/transparencia",
+    "linkLabel": "Ver en qué se usó cada peso"
+  },
+  {
+    "question": "¿Quién fue Norma?",
+    "answer": [
+      "Fue una de las primeras comunicadoras sociales de Riacho He Hé. Pasó gran parte de su vida ayudando a que las historias de su pueblo pudieran ser escuchadas."
+    ],
+    "href": "/norma",
+    "linkLabel": "Leer la historia de Norma"
+  },
+  {
+    "question": "¿Qué pasó?",
+    "answer": [
+      "El lunes 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma murió esa madrugada.",
+      "Su marido logró salir, pero inhaló mucho humo y está en tratamiento."
+    ],
+    "href": "/que-paso",
+    "linkLabel": "Leer qué ocurrió"
+  },
+  {
+    "question": "¿Dónde queda Riacho He Hé?",
+    "answer": [
+      "Es una localidad de la provincia de Formosa, en el norte de la Argentina."
+    ],
+    "href": null,
+    "linkLabel": null
+  },
+  {
+    "question": "¿Cómo puedo colaborar?",
+    "answer": [
+      "Por transferencia bancaria desde Argentina, Chile o Estados Unidos. En la página de aportes están los datos de cada país, y cada dato se copia con un toque.",
+      "Esta página no procesa pagos ni pide datos de tarjeta."
+    ],
+    "href": "/ayudar",
+    "linkLabel": "Ver los datos para transferir"
+  },
+  {
+    "question": "¿Para qué se va a usar el dinero?",
+    "answer": [
+      "Para la obra de la casa: materiales, mano de obra, servicios y traslados. El presupuesto está dividido por rubro y cada rubro se publica cuando queda cotizado, con su monto."
+    ],
+    "href": "/reconstruccion",
+    "linkLabel": "Ver el presupuesto de la obra"
+  },
+  {
+    "question": "¿Cómo puedo verificar en qué se usó?",
+    "answer": [
+      "En la página de transparencia está el total recibido, el total gastado, el saldo y el detalle de cada gasto con su fecha, su concepto y si tiene comprobante. Los totales se calculan sumando ese mismo detalle.",
+      "Nada se borra: si un registro se cargó por error, se anula con el motivo y deja de sumar."
+    ],
+    "href": "/transparencia",
+    "linkLabel": "Ver en qué se usó cada peso"
+  },
+  {
+    "question": "¿Qué va a pasar cuando la casa esté reconstruida?",
+    "answer": [
+      "La intención es seguir con formación gratuita en herramientas digitales para gente del pueblo. Es una intención y nada más: no hay fechas ni programa armado."
+    ],
+    "href": "/legado",
+    "linkLabel": "Leer qué se propone el legado"
+  },
+  {
+    "question": "¿Qué es Fundación Norma?",
+    "answer": [
+      "Es el nombre del proyecto que queremos que continúe después de la casa. Todavía no existe como organización: no tiene personería jurídica ni estatuto, y no vamos a decir que los tiene hasta que los tenga."
+    ],
+    "href": "/legado",
+    "linkLabel": "Leer en qué estado está"
+  }
+]

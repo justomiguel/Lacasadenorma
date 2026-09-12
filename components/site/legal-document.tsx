@@ -1,7 +1,9 @@
 import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
-import type { LegalContent } from "@/content";
+import type { LegalContent } from "@/content/schema";
+import { formatLongDate } from "@/components/design-system/dates";
+import { intlLocale, type Locale } from "@/src/i18n/locale";
 
 /**
  * Privacidad y términos comparten forma: un encabezado, una entrada y secciones
@@ -26,22 +28,23 @@ function slugify(text: string): string {
 export function LegalDocument({
   document,
   updatedOn,
+  locale,
+  legalLabel,
+  lastUpdatedLabel,
 }: {
   document: LegalContent["privacy"] | LegalContent["terms"];
   updatedOn: string;
+  locale: Locale;
+  legalLabel: string;
+  lastUpdatedLabel: string;
 }) {
-  const formattedDate = new Intl.DateTimeFormat("es-AR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(updatedOn));
+  const formattedDate = formatLongDate(updatedOn, intlLocale(locale));
 
   return (
     <>
-      <PageHeader label="Legales" title={document.title} lead={document.lead}>
+      <PageHeader label={legalLabel} title={document.title} lead={document.lead}>
         <p className="mt-lg font-ui text-small text-ink-muted">
-          Última actualización: <time dateTime={updatedOn}>{formattedDate}</time>
+          {lastUpdatedLabel} <time dateTime={updatedOn}>{formattedDate}</time>
         </p>
       </PageHeader>
 
@@ -59,7 +62,7 @@ export function LegalDocument({
                   aria-labelledby={id}
                   className="border-t border-rule pt-lg"
                 >
-                  <h2 id={id} className="font-prose text-heading">
+                  <h2 id={id} className="font-display text-heading">
                     {section.heading}
                   </h2>
                   <Paragraphs items={section.paragraphs} className="mt-md" />

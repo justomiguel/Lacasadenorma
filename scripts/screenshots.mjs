@@ -28,7 +28,6 @@ const DEFAULT_ROUTES = [
   "/transparencia",
   "/novedades",
   "/legado",
-  "/riacho-conecta",
   "/legales/privacidad",
   "/legales/terminos",
 ];

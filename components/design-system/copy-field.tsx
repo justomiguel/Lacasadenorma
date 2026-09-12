@@ -2,6 +2,9 @@
 
 import { useId, useRef, useState } from "react";
 
+import { useUiOptional } from "@/components/i18n/ui-provider";
+import { fill } from "@/src/i18n/fill";
+
 import { cn } from "./cn";
 
 /**
@@ -37,6 +40,13 @@ export function CopyField({
   const [state, setState] = useState<CopyState>("idle");
   const valueId = useId();
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ui = useUiOptional()?.ui;
+  const copyLabel = ui?.copy ?? "Copiar";
+  const copiedLabel = ui?.copied ?? "Copiado";
+  const copiedAnnouncement = ui?.copiedAnnouncement ?? "Se copió {label}.";
+  const copyFailed =
+    ui?.copyFailed ??
+    "No pudimos copiar {label} automáticamente. Seleccionalo y copialo a mano.";
 
   async function copy() {
     if (timeout.current !== null) {
@@ -92,19 +102,17 @@ export function CopyField({
             void copy();
           }}
           aria-describedby={valueId}
-          className="inline-flex min-h-touch shrink-0 items-center rounded-sm px-sm font-ui text-small font-medium text-brick underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-brick-strong"
+          className="inline-flex min-h-touch shrink-0 items-center rounded-sm px-sm font-ui text-small font-medium text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-aqua-strong"
         >
-          {state === "copied" ? "Copiado" : "Copiar"}
+          {state === "copied" ? copiedLabel : copyLabel}
         </button>
       </div>
 
       {/* Región viva siempre presente: si apareciera junto con el mensaje, algunos
           lectores de pantalla no lo anunciarían. */}
       <p aria-live="polite" className="mt-3xs font-ui text-small text-ink-muted">
-        {state === "copied" ? `Se copió ${label}.` : null}
-        {state === "failed"
-          ? `No pudimos copiar ${label} automáticamente. Seleccionalo y copialo a mano.`
-          : null}
+        {state === "copied" ? fill(copiedAnnouncement, { label }) : null}
+        {state === "failed" ? fill(copyFailed, { label }) : null}
       </p>
     </div>
   );

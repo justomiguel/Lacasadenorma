@@ -1,0 +1,43 @@
+{
+  "slug": "norma",
+  "fullName": "Norma Edith Bedoya",
+  "knownAs": "Norma de Vargas",
+  "roleLabel": "One of the first social communicators of Riacho He Hé",
+  "summary": "Norma spent much of her life helping the stories of Riacho He Hé be heard.",
+  "paragraphs": [
+    "Norma Edith Bedoya was one of the first social communicators of Riacho He Hé, in the province of Formosa. In the town they knew her as Norma de Vargas.",
+    "We want her story to help others find a voice of their own.",
+    "Her family is writing the full account: how she started, who she worked with, what she left done. It will be published here when it is finished. We would rather it arrive late and be true."
+  ],
+  "bornOn": null,
+  "diedOn": null,
+  "portrait": {
+    "url": "/fotos/norma-cocina.jpg",
+    "alt": "Norma looks at the camera, smiling slightly. She is in her kitchen, wearing a black blouse with white dots. Behind her, a cupboard with glasses and a shelf of framed family photographs.",
+    "caption": null,
+    "credit": null,
+    "width": 1220,
+    "height": 1512,
+    "takenOn": null
+  },
+  "photos": [
+    {
+      "url": "/fotos/norma-retrato.jpg",
+      "alt": "A close portrait of Norma. She wears a light-blue and blue striped shirt and looks at the camera with a contained smile.",
+      "caption": null,
+      "credit": null,
+      "width": 1220,
+      "height": 1529,
+      "takenOn": null
+    },
+    {
+      "url": "/fotos/norma-flores.jpg",
+      "alt": "Norma standing in the kitchen in a fuchsia blouse printed with flowers. Beside her, a vase with an open pink flower.",
+      "caption": null,
+      "credit": null,
+      "width": 603,
+      "height": 406,
+      "takenOn": null
+    }
+  ]
+}

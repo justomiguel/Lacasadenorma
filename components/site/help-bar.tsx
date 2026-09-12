@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { localizedHref } from "@/src/i18n/href";
+import { stripLocalePrefix } from "@/src/i18n/locale";
+
 /**
  * Barra inferior persistente en mobile con la acción de ayudar.
  *
@@ -14,7 +17,8 @@ import { useEffect, useRef, useState } from "react";
  *    puede leer. El espaciador está siempre, incluso cuando la barra se retira:
  *    reservar el alto de forma constante deja el desplazamiento de layout en cero.
  * 2. **Desaparece en la propia página de aportes**, donde sería una acción que
- *    lleva a donde ya estás.
+ *    lleva a donde ya estás. Compara la ruta canónica, así que `/en/ayudar`
+ *    también la oculta.
  * 3. **Se retira mientras la acción primaria está en pantalla.** Sobre el pliegue
  *    de la home el botón *Ayudar a reconstruir* ya está a la vista, y la barra lo
  *    duplicaba: dos llamadas idénticas al mismo destino, cuatro elementos con
@@ -23,8 +27,17 @@ import { useEffect, useRef, useState } from "react";
  *
  * Sólo existe hasta el breakpoint `sm`: en desktop el encabezado ya está a la
  * vista y una barra fija sería ruido.
+ *
+ * `href` y `label` vienen del layout. Los valores por omisión son el castellano,
+ * para que los tests de componente no tengan que armar el `UiProvider`.
  */
-export function HelpBar() {
+export function HelpBar({
+  href = localizedHref("/ayudar", "es"),
+  label = "Ayudar a reconstruir",
+}: {
+  href?: ReturnType<typeof localizedHref>;
+  label?: string;
+}) {
   const pathname = usePathname();
   const barra = useRef<HTMLDivElement>(null);
 
@@ -79,7 +92,7 @@ export function HelpBar() {
     };
   }, [pathname]);
 
-  if (pathname === "/ayudar") {
+  if (stripLocalePrefix(pathname) === "/ayudar") {
     return null;
   }
 
@@ -100,10 +113,10 @@ export function HelpBar() {
           className="fixed inset-x-0 bottom-0 z-10 border-t border-rule bg-paper px-5 py-sm sm:hidden"
         >
           <Link
-            href="/ayudar"
-            className="flex min-h-touch w-full items-center justify-center rounded-sm bg-brick px-lg font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial active:bg-brick-strong"
+            href={href}
+            className="flex min-h-touch w-full items-center justify-center rounded-sm bg-aqua px-lg font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial active:bg-aqua-strong"
           >
-            Ayudar a reconstruir
+            {label}
           </Link>
         </div>
       )}

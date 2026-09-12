@@ -189,7 +189,7 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
   para qué se usa el dinero, cómo verificar su uso, qué pasa después de reconstruir la casa, y qué
   es Fundación Norma.
 - **FR-002**: La home MUST permitir comprender el proyecto completo sin abandonar la página.
-- **FR-003**: El relato de la historia de Norma y del accidente MUST estar escrito en lenguaje
+- **FR-003**: El relato de la historia de Norma y del incendio MUST estar escrito en lenguaje
   humano, concreto y digno, sin sensacionalismo y sin lenguaje de campaña genérico.
 - **FR-004**: Cada página pública MUST tener un único encabezado principal y jerarquía coherente.
 
@@ -328,8 +328,9 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 - Fundación Norma no tiene todavía personería jurídica; el contenido y los datos estructurados
   evitan afirmar lo contrario.
 - Las identidades de quienes aportan no se publican en esta versión.
-- El sitio se publica únicamente en castellano rioplatense; la internacionalización no está en
-  alcance.
+- El sitio se publica en castellano rioplatense (sin prefijo de URL) y en inglés (`/en`). Los
+  slugs no se traducen. El backoffice, las novedades escritas a mano y las herramientas de WebMCP
+  quedan en castellano. Ver ADR-023.
 - La conciliación es semanal y la realiza una persona con rol de propietario.
 - Riacho Conecta, los programas de formación y los medios de pago electrónicos quedan fuera de
   alcance de esta versión: se deja el modelo preparado, no la implementación.

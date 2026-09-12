@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { site } from "@/content";
-
+import { getContent } from "@/content/pack";
 import { PAGINAS_PUBLICAS } from "../soporte/paginas";
+
+const { site } = getContent("es");
 
 /**
  * Flujo crítico 6: compartir la campaña.
