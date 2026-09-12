@@ -92,18 +92,22 @@ export function Band({
   className,
 }: {
   children: ReactNode;
-  tone: "sunk" | "ink";
+  tone: "sunk" | "ink" | "forest";
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        tone === "ink" ? "bg-ink text-paper" : "bg-paper-sunk",
-        "border-y border-rule",
+        tone === "ink"
+          ? "bg-ink text-paper"
+          : tone === "forest"
+            ? "bg-forest text-paper"
+            : "bg-paper-sunk",
+        tone === "sunk" ? "border-y border-rule" : "",
         className,
       )}
     >
-      {tone === "ink" ? <div data-tone="ink">{children}</div> : children}
+      {tone === "sunk" ? children : <div data-tone={tone}>{children}</div>}
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { HelpCta } from "@/components/campaign/help-cta";
-import { InlineLink } from "@/components/design-system/actions";
 import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
 import { PhotoSequence } from "@/components/design-system/photo";
 import {
@@ -122,21 +121,9 @@ export function WhatHappenedScreen({ locale }: { locale: Locale }) {
             <HelpCta
               origen="que-paso"
               href={localizedHref("/ayudar", locale)}
-              label={ui.helpCta}
+              label={`${ui.helpCta} →`}
             />
           </div>
-
-          <p className="mt-xl max-w-measure text-small text-ink-muted">
-            {ui.whatHappenedPage.seeBefore}{" "}
-            <InlineLink href={localizedHref("/reconstruccion", locale)}>
-              {ui.whatHappenedPage.rebuildLink}
-            </InlineLink>{" "}
-            {ui.whatHappenedPage.and}{" "}
-            <InlineLink href={localizedHref("/transparencia", locale)}>
-              {ui.whatHappenedPage.transparencyLink}
-            </InlineLink>
-            {ui.whatHappenedPage.end}
-          </p>
         </Section>
       </Container>
     </>

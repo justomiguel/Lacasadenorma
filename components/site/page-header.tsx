@@ -41,16 +41,14 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <header className="border-b border-rule">
+    <header className="border-b border-rule bg-paper">
       <Container className="pb-2xl pt-2xl lg:pb-3xl">
         {label === undefined ? null : (
-          <p className="mb-sm font-ui text-small text-ink-muted">{label}</p>
+          <p className="mb-sm font-ui text-small text-olive">{label}</p>
         )}
         <h1 className="max-w-measure font-display text-title">{title}</h1>
         {lead === undefined ? null : (
-          <p className="mt-lg max-w-measure font-prose text-lead text-ink-muted">
-            {lead}
-          </p>
+          <p className="mt-lg max-w-measure text-lead text-ink-muted">{lead}</p>
         )}
         {children}
       </Container>

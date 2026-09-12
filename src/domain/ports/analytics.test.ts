@@ -13,9 +13,12 @@ describe("noopAnalytics", () => {
     { name: "metodo_visto", props: { pais: "AR" } },
     { name: "dato_copiado", props: { pais: "AR", campo: "cbu" } },
     { name: "compartir", props: { canal: "whatsapp", ruta: "/" } },
+    { name: "whatsapp_click", props: { origen: "contacto" } },
+    { name: "llamar_click", props: { origen: "contacto" } },
+    { name: "medio_externo_click", props: { medio: "mercadopago" } },
   ];
 
-  it("acepta los cuatro eventos sin fallar y sin devolver nada", () => {
+  it("acepta los eventos declarados sin fallar y sin devolver nada", () => {
     for (const evento of eventos) {
       expect(noopAnalytics.track(evento)).toBeUndefined();
     }

@@ -1,29 +1,15 @@
-import { BudgetList } from "@/components/campaign/budget-list";
-import { DonationMethods } from "@/components/campaign/donation-methods";
+import { ContactActions } from "@/components/campaign/contact-actions";
+import { DonationBoard } from "@/components/campaign/donation-board";
 import { FaqSection } from "@/components/campaign/faq-section";
-import { HelpCta } from "@/components/campaign/help-cta";
 import { Hero } from "@/components/campaign/hero";
-import { CampaignProgress } from "@/components/campaign/progress";
 import { ShareBlock } from "@/components/campaign/share-block";
-import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink, SecondaryAction } from "@/components/design-system/actions";
 import { Band, Container, Section } from "@/components/design-system/layout";
-import { Figure } from "@/components/design-system/photo";
-import { Stat, StatGroup } from "@/components/design-system/figures";
-import {
-  Paragraphs,
-  SectionHeading,
-  Testimony,
-} from "@/components/design-system/typography";
-import { PageIndex } from "@/components/site/page-index";
+import { CoverPhoto, Figure } from "@/components/design-system/photo";
 import { StructuredData } from "@/components/site/structured-data";
 import { getContent } from "@/content";
-import { getCampaignOverview } from "@/src/application/use-cases/get-campaign-overview";
-import { getDonationMethods } from "@/src/application/use-cases/get-donation-methods";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
-import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
-import { logger } from "@/src/infrastructure/logging/logger";
 import {
   donateActionSchema,
   faqSchema,
@@ -33,46 +19,14 @@ import {
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 /**
- * La home.
- *
- * El orden de las secciones **es** el argumento, y desde ADR-024 recorre cuatro
- * movimientos: pérdida → comunidad → reconstrucción → legado. Antes iba pérdida →
- * reconstrucción → legado, y el segundo movimiento faltaba: el sitio mostraba una
- * casa quemada y a continuación una lista de precios, así que quien colaboraba
- * estaba poniendo plata en un presupuesto y no sumándose a algo que ya se estaba
- * haciendo. «El trabajo ya empezó» es ese movimiento, y no hubo que inventarle
- * nada: las dos fotos de la limpieza ya estaban publicadas en `/reconstruccion`.
- *
- * Dos cosas que se ven poco y conviene no deshacer:
- *
- * 1. **El presupuesto y el avance son una sección, no dos.** Eran «Qué hay que
- *    reconstruir» y «Cómo va» al mismo nivel, y con eso la página tenía dos `h2`
- *    hablando de la misma obra y el avance quedaba a una pantalla de la lista que
- *    explica de qué avance se trata. «Cómo va la obra» es un `h3` adentro.
- * 2. **La última sección tiene `id="compartir"` porque la apertura le apunta.** La
- *    quinta pregunta que la apertura tiene que contestar es cómo compartir esto, y
- *    se contestaba catorce pantallas más abajo.
+ * Home del mockup: pérdida → comunidad → acción → donación → legado.
  */
-export async function HomeScreen({ locale }: { locale: Locale }) {
-  const { legacy, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
-  const dataLayer = getPublicDataLayer();
-
-  const [overview, donations] = await Promise.all([
-    getCampaignOverview({ dataLayer, logger }),
-    getDonationMethods({ dataLayer, logger }),
-  ]);
-
+export function HomeScreen({ locale }: { locale: Locale }) {
+  const { help, reconstruction, site, ui, whatHappened } = getContent(locale);
   const siteUrl = getSiteUrl();
-  const help = {
-    origen: "seccion-ayudar",
-    href: localizedHref("/ayudar", locale),
-    label: ui.helpCta,
-  };
-
-  /* La primera foto del primer tramo del ensayo de la obra: la de los escombros
-     saliendo a mano. Se toma de ahí y no de una lista propia para que el día que la
-     familia mande una foto mejor haya un solo lugar donde cambiarla. */
-  const workPhoto = reconstruction.photoEssay[0]?.photos[0] ?? null;
+  const fireMain = whatHappened.photoEssay[1]?.photos[0];
+  const fireSide = whatHappened.photoEssay[1]?.photos.slice(1, 3) ?? [];
+  const community = reconstruction.photoEssay[0]?.photos ?? [];
 
   return (
     <>
@@ -92,223 +46,226 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
 
       <Hero locale={locale} />
 
-      <PageIndex locale={locale} ui={ui} />
-
       <Container>
-        <Section labelledBy="quien-fue">
-          <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg">
-            <div className="lg:col-span-7">
-              <SectionHeading title={ui.home.whoWasHeading} id="quien-fue" />
-              <Paragraphs items={norma.paragraphs} />
+        <Section labelledBy="lo-que-paso">
+          <div className="grid items-start gap-2xl lg:grid-cols-12 lg:gap-xl">
+            <div className="lg:col-span-5" data-reveal="">
+              <p
+                data-kicker=""
+                className="font-ui text-label uppercase tracking-label text-olive"
+              >
+                {ui.home.chapterWhatHappened}
+              </p>
+              <h2 id="lo-que-paso" className="mt-sm font-display text-title">
+                {ui.home.fireTitle}
+              </h2>
+              <p className="mt-lg max-w-measure text-body">{ui.home.fireLead}</p>
               <p className="mt-lg">
-                <InlineLink href={localizedHref("/norma", locale)}>
-                  {ui.home.readFullStory}
-                </InlineLink>
+                <SecondaryAction href={localizedHref("/que-paso", locale)}>
+                  {ui.home.seeStory} →
+                </SecondaryAction>
               </p>
             </div>
 
-            {/* Sin hueco reservado cuando no hay foto: en esta sección la prosa se
-                sostiene sola, y un rectángulo gris al lado de la historia de Norma
-                anuncia una falta que no le importa a nadie más que a nosotros. */}
-            {norma.photos[0] === undefined ? null : (
-              <div className="lg:col-span-4 lg:col-start-9">
+            <div className="lg:col-span-7">
+              {fireMain === undefined ? null : (
                 <Figure
-                  media={norma.photos[0]}
+                  media={fireMain}
                   reservedFor=""
-                  sizes="(min-width: 64rem) 33vw, 100vw"
+                  sizes="(min-width: 64rem) 50vw, 100vw"
                 />
-              </div>
-            )}
+              )}
+              {fireSide.length === 0 ? null : (
+                <div className="mt-md grid grid-cols-2 gap-md">
+                  {fireSide.map((photo) => (
+                    <Figure
+                      key={photo.url}
+                      media={photo}
+                      reservedFor=""
+                      sizes="(min-width: 64rem) 25vw, 50vw"
+                    />
+                  ))}
+                </div>
+              )}
+              <p className="mt-md font-hand text-hand text-olive">{ui.home.houseNote}</p>
+            </div>
           </div>
         </Section>
       </Container>
 
-      <Band tone="ink">
+      <Band tone="forest">
         <Container>
-          <Section labelledBy="que-paso">
-            <h2 id="que-paso" className="font-display text-title">
-              {whatHappened.lead}
-            </h2>
-            <Paragraphs items={whatHappened.paragraphs.slice(0, 2)} className="mt-xl" />
-
-            {whatHappened.testimony === null ? null : (
-              <Testimony
-                quote={whatHappened.testimony.quote}
-                author={whatHappened.testimony.author}
-                relation={whatHappened.testimony.relation}
-                className="mt-3xl"
-              />
-            )}
-
-            <p className="mt-3xl">
-              <InlineLink href={localizedHref("/que-paso", locale)}>
-                {ui.home.seePhotosAndNeeds}
-              </InlineLink>
-            </p>
+          <Section labelledBy="la-comunidad">
+            <div className="grid items-center gap-2xl lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                {community[0] === undefined ? null : (
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-md">
+                    <CoverPhoto
+                      media={community[0]}
+                      sizes="(min-width: 64rem) 55vw, 100vw"
+                      position="center 40%"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="lg:col-span-5" data-reveal="">
+                <p
+                  data-kicker=""
+                  className="font-ui text-label uppercase tracking-label text-sage"
+                >
+                  {ui.home.chapterCommunity}
+                </p>
+                <h2 id="la-comunidad" className="mt-sm font-display text-title">
+                  {ui.home.communityTitle}
+                </h2>
+                <p className="mt-lg max-w-measure text-body">{ui.home.communityLead}</p>
+                <p className="mt-lg font-hand text-hand">{ui.home.communityNote}</p>
+                <p className="mt-lg">
+                  <InlineLink href={localizedHref("/que-paso", locale)}>
+                    {ui.home.seeStory} →
+                  </InlineLink>
+                </p>
+              </div>
+            </div>
           </Section>
         </Container>
       </Band>
 
       <Container>
-        <Section labelledBy="el-trabajo">
-          {/* La foto va a la izquierda en escritorio y el texto a la derecha, al
-              revés que en las otras dos secciones con foto. Se resuelve con
-              colocación explícita en la grilla y no con `order`, así el texto sigue
-              primero en el documento: en el teléfono el título tiene que aparecer
-              antes que la imagen que ilustra. */}
-          <div className="grid gap-2xl lg:grid-cols-12 lg:items-start lg:gap-lg">
-            <div className="lg:col-span-6 lg:col-start-7">
-              <SectionHeading title={ui.home.workStartedHeading} id="el-trabajo" />
-              <p className="max-w-measure text-body">{ui.home.workStartedLead}</p>
-            </div>
+        <Section labelledBy="como-ayudar">
+          <p
+            data-kicker=""
+            className="font-ui text-label uppercase tracking-label text-olive"
+          >
+            {ui.home.chapterHelp}
+          </p>
+          <h2 id="como-ayudar" className="mt-sm font-display text-title">
+            {ui.home.helpTitle}
+          </h2>
+          <p
+            data-kicker=""
+            className="mt-md font-ui text-label uppercase tracking-label text-ink-muted"
+          >
+            {ui.home.helpKicker}
+          </p>
 
-            {workPhoto === null ? null : (
-              <div className="lg:col-span-5 lg:col-start-1 lg:row-start-1">
-                <Figure
-                  media={workPhoto}
-                  reservedFor=""
-                  sizes="(min-width: 64rem) 40vw, 100vw"
+          <div className="mt-2xl grid gap-lg md:grid-cols-3">
+            <article className="rounded-md border border-rule bg-paper p-lg shadow-card">
+              <h3 className="font-display text-heading">{ui.home.debrisTitle}</h3>
+              <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
+              <div className="mt-lg">
+                <ContactActions
+                  name={help.contact.name}
+                  phoneDisplay={help.contact.phoneDisplay}
+                  phoneTel={help.contact.phoneTel}
+                  whatsappLabel={ui.home.whatsapp}
+                  callLabel={ui.home.call}
+                  origen="home-escombros"
                 />
               </div>
-            )}
-          </div>
-        </Section>
-      </Container>
+            </article>
 
-      <Container>
-        <Section labelledBy="reconstruir">
-          <SectionHeading title={ui.home.rebuildHeading} id="reconstruir" />
-          <Paragraphs items={reconstruction.paragraphs} />
+            <article className="rounded-md border border-rule bg-paper p-lg shadow-card">
+              <h3 className="font-display text-heading">{ui.home.materialsTitle}</h3>
+              <p className="mt-md text-body text-ink-muted">{ui.home.materialsBody}</p>
+              <ul className="mt-md flex flex-wrap gap-xs">
+                {help.materials.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-pill bg-sage px-md py-xs font-ui text-small text-forest"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
 
-          {/* Un solo aviso para los dos bloques, porque los dos leen `overview`: si no
-              hay cifras, no las hay para ninguno. Con un aviso por bloque quedaban dos
-              recuadros idénticos y consecutivos, y dos veces la misma frase se lee
-              como un error del sitio y no como un dato que falta. El subtítulo
-              también se va: sin barra de progreso no hay «cómo va» que mostrar. */}
-          {overview.status === "ok" ? (
-            <>
-              <BudgetList
-                items={overview.data.budgetItems}
-                locale={locale}
-                ui={ui}
-                className="mt-xl"
-              />
-
-              <SectionHeading
-                title={ui.home.howItsGoing}
-                level={3}
-                className="mt-4xl"
-                id="como-va"
-              />
-
-              <CampaignProgress
-                fundraising={overview.data.fundraising}
-                milestones={overview.data.milestones}
-                reconciledAt={overview.data.transparency.reconciledAt}
-                reconciliationIsStale={overview.data.transparency.reconciliationIsStale}
-                locale={locale}
-                ui={ui}
-              />
-            </>
-          ) : (
-            <Unavailable
-              reason={overview.reason}
-              copy={ui.unavailable}
-              className="mt-xl"
-            />
-          )}
-
-          <p className="mt-2xl">
-            <InlineLink href={localizedHref("/reconstruccion", locale)}>
-              {ui.home.rebuildDetail}
-            </InlineLink>
-          </p>
-        </Section>
-      </Container>
-
-      <Container>
-        <Section labelledBy="como-ayudar">
-          <SectionHeading title={ui.home.howToHelp} id="como-ayudar" />
-
-          {donations.status === "ok" ? (
-            <DonationMethods
-              methods={donations.data.methods}
-              countries={donations.data.countries}
-            />
-          ) : (
-            <Unavailable reason={donations.reason} copy={ui.unavailable} />
-          )}
-
-          <div className="mt-2xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
-            <HelpCta {...help} label={ui.home.seeFullDetails} />
-            <SecondaryAction href={localizedHref("/transparencia", locale)}>
-              {ui.home.seeWhereItWent}
-            </SecondaryAction>
-          </div>
-        </Section>
-      </Container>
-
-      <Container>
-        <Section labelledBy="en-que-se-uso">
-          <SectionHeading title={ui.home.whereItWent} id="en-que-se-uso" />
-
-          {overview.status === "ok" ? (
-            <>
-              <StatGroup>
-                <Stat
-                  label={ui.figures.received}
-                  amount={overview.data.transparency.primary.received}
-                  locale={locale}
-                />
-                <Stat
-                  label={ui.figures.spent}
-                  amount={overview.data.transparency.primary.spent}
-                  locale={locale}
-                />
-                <Stat
-                  label={ui.figures.balance}
-                  amount={overview.data.transparency.primary.balance}
-                  locale={locale}
-                />
-              </StatGroup>
-              <p className="mt-xl max-w-measure text-body">
-                {ui.home.transparencyBlurb}{" "}
-                <InlineLink href={localizedHref("/transparencia", locale)}>
-                  {ui.home.seeFullReport}
-                </InlineLink>
+            <article className="rounded-md bg-forest p-lg text-paper" data-tone="forest">
+              <h3 className="font-display text-heading">{ui.home.remoteTitle}</h3>
+              <p className="mt-md text-body">{ui.home.remoteBody}</p>
+              <p className="mt-lg">
+                <a
+                  href="#donaciones"
+                  className="inline-flex min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest"
+                >
+                  {ui.helpCta} →
+                </a>
               </p>
-            </>
-          ) : (
-            <Unavailable reason={overview.reason} copy={ui.unavailable} />
-          )}
+            </article>
+          </div>
         </Section>
       </Container>
 
       <Container>
-        <Section labelledBy="que-sigue">
-          <SectionHeading title={legacy.lead} id="que-sigue" />
-          <Paragraphs items={legacy.paragraphs.slice(0, 2)} />
-          <p className="mt-lg">
-            <InlineLink href={localizedHref("/legado", locale)}>
-              {ui.home.knowFoundation}
-            </InlineLink>
+        <Section id="donaciones" labelledBy="donaciones-titulo">
+          <p
+            data-kicker=""
+            className="font-ui text-label uppercase tracking-label text-olive"
+          >
+            {ui.home.chapterDonate}
           </p>
+          <h2 id="donaciones-titulo" className="mt-sm font-display text-title">
+            {ui.home.donateTitle}
+          </h2>
+          <p className="mt-md max-w-measure text-body text-ink-muted">
+            {ui.home.donateLead}
+          </p>
+          <DonationBoard help={help} ui={ui} className="mt-2xl" />
+          <p className="mt-xl font-hand text-hand text-olive">{ui.home.thanksNote}</p>
         </Section>
       </Container>
 
+      <Band tone="forest">
+        <div className="relative overflow-hidden">
+          {community[1] === undefined ? null : (
+            <div className="absolute inset-0">
+              <CoverPhoto
+                media={community[1]}
+                sizes="100vw"
+                position="center"
+                className="opacity-25"
+              />
+            </div>
+          )}
+          <Container>
+            <Section labelledBy="mas-que-una-casa" className="relative">
+              <p
+                data-kicker=""
+                className="font-ui text-label uppercase tracking-label text-sage"
+              >
+                {ui.home.chapterNext}
+              </p>
+              <h2 id="mas-que-una-casa" className="mt-sm font-display text-title">
+                {ui.home.nextTitle}
+              </h2>
+              <p className="mt-lg max-w-measure text-lead">{ui.home.nextLead}</p>
+              <p className="mt-md max-w-measure text-body">{ui.home.nextBody}</p>
+              <p className="mt-lg font-hand text-hand">{ui.home.nextNote}</p>
+              <p className="mt-xl">
+                <SecondaryAction
+                  href={localizedHref("/legado", locale)}
+                  className="border-paper text-paper hover:bg-paper hover:text-forest"
+                >
+                  {ui.primaryNav["/legado"].label}
+                </SecondaryAction>
+              </p>
+            </Section>
+          </Container>
+        </div>
+      </Band>
+
       <Container>
-        <Section labelledBy="preguntas">
-          <SectionHeading title={ui.home.faqHeading} id="preguntas" />
+        <Section labelledBy="preguntas" tight>
+          <h2 id="preguntas" className="font-display text-heading">
+            {ui.home.faqHeading}
+          </h2>
           <FaqSection locale={locale} />
         </Section>
       </Container>
 
       <Container>
         <Section id="compartir" tight className="border-t border-rule">
-          <h2 className="font-display text-heading">{ui.home.shareHeading}</h2>
-          <p className="mt-sm max-w-measure text-body text-ink-muted">
-            {ui.home.shareLead}
-          </p>
+          <h2 className="font-display text-heading">{ui.share}</h2>
           <ShareBlock
             className="mt-lg"
             url={locale === "es" ? siteUrl : `${siteUrl}/en`}

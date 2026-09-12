@@ -39,7 +39,6 @@ export function unavailable<T>(reason: UnavailableReason): DataResult<T> {
 export const UNAVAILABLE_MESSAGES: Record<UnavailableReason, string> = {
   "not-configured":
     "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
-  error:
-    "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+  error: "Esta parte no está disponible ahora. Volvé a intentar en un rato.",
   "not-published": "La campaña todavía no está publicada.",
 };

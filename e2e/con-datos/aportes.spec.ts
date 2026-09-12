@@ -1,98 +1,84 @@
 import { expect, test } from "@playwright/test";
 
+import { getContent } from "@/content/pack";
 import { COUNTRY_NAMES } from "@/src/domain/entities";
 
 /**
- * Flujo crítico 4: elegir desde qué país se transfiere.
+ * Flujo crítico 4: elegir cómo aportar.
  *
- * Es el paso anterior al único momento en que alguien arriesga algo. Lo que puede
- * salir mal acá no es que el selector se vea raro: es que alguien de Chile copie un
- * CBU argentino, o que el JavaScript no llegue y la persona se quede mirando una
- * pestaña vacía sin saber que los datos existen.
- *
- * De ahí las dos afirmaciones que importan y que parecen la misma pero no lo son:
- *
- * 1. **Con JavaScript**: hay un `tablist` de verdad, se navega con las flechas, y el
- *    panel visible es el del país elegido y sólo ese.
- * 2. **Sin JavaScript**: los tres países están completos en el HTML servido, uno
- *    debajo del otro. No es un caso hipotético: es lo que ve alguien con una
- *    conexión que cortó a mitad de carga, que es exactamente el perfil de quien abre
- *    un enlace en el interior de Formosa.
+ * Transferencia, Mercado Pago y PayPal, y dentro de transferencia Argentina y
+ * Chile. Los datos salen del contenido versionado, no de la base.
  */
 
-const PAISES = ["AR", "CL", "US"] as const;
+const { help, ui } = getContent("es");
 
 test.describe("flujo 4 · elegir el método de aporte", () => {
-  test("el selector de país es un tablist con teclado", async ({ page }) => {
+  test("el selector de canal es un tablist con teclado", async ({ page }) => {
     await page.goto("/ayudar");
 
-    const tabs = page.getByRole("tablist");
+    const canales = page.getByRole("tablist", { name: ui.home.donateTitle });
 
-    await expect(tabs).toBeVisible();
+    await expect(canales).toBeVisible();
+    await expect(canales.getByRole("tab")).toHaveCount(3);
 
-    const pestanas = page.getByRole("tab");
-
-    await expect(pestanas).toHaveCount(PAISES.length);
-
-    // Un solo panel visible: dos paneles a la vez es el error que convierte esto en
-    // un acordeón y hace que se copie el dato del país equivocado.
     await expect(page.getByRole("tabpanel")).toHaveCount(1);
 
-    const primera = pestanas.first();
+    const primera = canales.getByRole("tab").first();
 
     await primera.click();
     await expect(primera).toHaveAttribute("aria-selected", "true");
-
-    // Sólo la pestaña activa está en el orden de tabulación: es lo que permite salir
-    // del grupo con un Tab en lugar de recorrer las tres.
     await expect(primera).toHaveAttribute("tabindex", "0");
 
     await primera.press("ArrowRight");
 
-    const segunda = pestanas.nth(1);
+    const segunda = canales.getByRole("tab").nth(1);
 
     await expect(segunda).toHaveAttribute("aria-selected", "true");
     await expect(segunda).toBeFocused();
 
-    // Y vuelve en círculo desde la primera hacia atrás, que es lo que dice el patrón.
     await segunda.press("ArrowLeft");
     await expect(primera).toBeFocused();
     await primera.press("ArrowLeft");
-    await expect(pestanas.last()).toBeFocused();
+    await expect(canales.getByRole("tab").last()).toBeFocused();
   });
 
-  test("cada país muestra su moneda y sus propios datos", async ({ page }) => {
+  test("Argentina y Chile muestran sus propios datos", async ({ page }) => {
     await page.goto("/ayudar");
 
-    const pestanas = page.getByRole("tab");
-    const vistos = new Set<string>();
+    const paises = page.getByRole("tablist", { name: ui.countryTabsLabel });
 
-    for (let indice = 0; indice < PAISES.length; indice += 1) {
-      const pestana = pestanas.nth(indice);
+    await expect(paises.getByRole("tab")).toHaveCount(2);
 
-      await pestana.click();
+    await paises.getByRole("tab", { name: ui.countries.AR }).click();
 
-      const panel = page.getByRole("tabpanel");
-      const texto = await panel.innerText();
+    const panel = page.getByRole("tabpanel");
 
-      expect(texto.length, "un panel de país no puede quedar vacío").toBeGreaterThan(40);
+    await expect(panel.getByText(help.accounts.AR.alias, { exact: true })).toBeVisible();
+    await expect(panel.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
 
-      // La moneda tiene que estar escrita: "transferir $ 50.000" significa cosas
-      // distintas en Buenos Aires y en Santiago.
-      expect(texto, "el panel tiene que decir en qué moneda es").toMatch(
-        /\b(ARS|CLP|USD)\b/,
-      );
+    await paises.getByRole("tab", { name: ui.countries.CL }).click();
 
-      const moneda = /\b(ARS|CLP|USD)\b/.exec(texto)?.[1] ?? "";
-
-      expect(vistos.has(moneda), `dos países comparten el panel de ${moneda}`).toBe(
-        false,
-      );
-      vistos.add(moneda);
-    }
+    await expect(panel.getByText(help.accounts.CL.rut, { exact: true })).toBeVisible();
+    await expect(
+      panel.getByText(help.accounts.CL.accountNumber, { exact: true }),
+    ).toBeVisible();
   });
 
-  test("sin JavaScript los tres países vienen completos en el HTML", async ({
+  test("Mercado Pago y PayPal se ven y no tienen un botón sin URL", async ({ page }) => {
+    await page.goto("/ayudar");
+
+    const canales = page.getByRole("tablist", { name: ui.home.donateTitle });
+
+    await canales.getByRole("tab", { name: ui.home.mercadoPago }).click();
+    await expect(page.getByText(ui.home.mercadoPagoLead)).toBeVisible();
+    await expect(page.getByRole("link", { name: /mercado pago/i })).toHaveCount(0);
+
+    await canales.getByRole("tab", { name: ui.home.paypal }).click();
+    await expect(page.getByText(ui.home.paypalLead)).toBeVisible();
+    await expect(page.getByRole("link", { name: /paypal/i })).toHaveCount(0);
+  });
+
+  test("sin JavaScript Argentina y Chile vienen completos en el HTML", async ({
     browser,
   }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
@@ -100,36 +86,29 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
 
     await page.goto("/ayudar");
 
-    for (const pais of PAISES) {
+    for (const pais of ["AR", "CL"] as const) {
       await expect(
         page.getByRole("heading", { name: COUNTRY_NAMES[pais] }),
         `sin JavaScript tiene que estar la sección de ${COUNTRY_NAMES[pais]}`,
       ).toBeVisible();
     }
 
-    // Y los datos, no sólo los títulos: al menos un valor copiable por país.
     const valores = await page.locator("[data-figure]").count();
 
     expect(
       valores,
-      "los datos bancarios tienen que venir servidos",
-    ).toBeGreaterThanOrEqual(PAISES.length);
+      "los datos bancarios copiables tienen que venir servidos",
+    ).toBeGreaterThanOrEqual(4);
 
     await context.close();
   });
 
-  /**
-   * SC-002: como máximo tres toques desde que se abre el sitio hasta tener el dato a
-   * la vista. La home trae los métodos, así que el camino corto es: abrir, elegir país,
-   * copiar. Se verifica que la home los traiga, porque mover esa sección a otra página
-   * rompería el criterio sin romper ningún otro test.
-   */
   test("desde la home se llega a los datos sin cambiar de página", async ({ page }) => {
     await page.goto("/");
 
     const seccion = page.locator("section", { has: page.getByRole("tablist") }).first();
 
-    await expect(seccion.getByRole("tablist")).toBeVisible();
+    await expect(seccion.getByRole("tablist").first()).toBeVisible();
     await expect(
       seccion.getByRole("button", { name: /^copiar$/i }).first(),
     ).toBeVisible();
@@ -139,8 +118,6 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
     await page.goto("/ayudar");
 
     const advertencia = page.getByText(/verificá que estés en el dominio correcto/i);
-    // Del panel visible: el país que se muestra depende del idioma del navegador, y los
-    // datos de los otros dos están en paneles ocultos, que no tienen caja que medir.
     const primerDato = page.getByRole("tabpanel").locator("[data-figure]").first();
 
     await expect(advertencia).toBeVisible();

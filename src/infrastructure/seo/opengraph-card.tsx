@@ -17,18 +17,13 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /*
- * Los tokens, a mano y en hexadecimal.
- *
- * `next/og` no evalúa CSS del proyecto: esta imagen se compone con estilos en
- * línea, así que la paleta se copia. Son los mismos valores de `globals.css`
- * convertidos de oklch a sRGB, y hay que actualizarlos acá cuando cambien allá.
- * `revision-visual.spec.ts` mira el sitio, no esta imagen.
+ * Los tokens, a mano y en hexadecimal. `next/og` no evalúa CSS del proyecto.
  */
-const PAPER = "#f7fbfb";
-const INK = "#0c1b1e";
-const INK_MUTED = "#4e5e62";
-const AQUA = "#176b6b";
-const RULE = "#ccd6d7";
+const PAPER = "#f6f1e8";
+const INK = "#1c1c1c";
+const INK_MUTED = "#5c5f56";
+const FOREST = "#153a2e";
+const RULE = "#d4cfc0";
 
 async function loadFont(fileName: string): Promise<ArrayBuffer> {
   const buffer = await readFile(join(process.cwd(), "assets", "fonts", fileName));
@@ -52,15 +47,17 @@ export function openGraphAlt(locale: Locale): string {
 }
 
 export async function renderOpenGraphImage(locale: Locale): Promise<ImageResponse> {
-  const { norma, site, ui } = getContent(locale);
+  const { site, ui, whatHappened } = getContent(locale);
+  const fire =
+    whatHappened.photoEssay[1]?.photos[0] ?? whatHappened.photoEssay[0]?.photos[0];
 
-  const [newsreader, archivo, portrait] = await Promise.all([
-    loadFont("Newsreader-Regular.ttf"),
-    loadFont("Archivo-Medium.ttf"),
-    norma.portrait === null ? Promise.resolve(null) : loadPhoto(norma.portrait.url),
+  const [playfair, inter, portrait] = await Promise.all([
+    loadFont("PlayfairDisplay-Regular.woff"),
+    loadFont("Inter-Medium.woff"),
+    fire === undefined ? Promise.resolve(null) : loadPhoto(fire.url),
   ]);
 
-  const photo = norma.portrait === null ? 0 : photoWidth(norma.portrait);
+  const photo = fire === undefined ? 0 : photoWidth(fire);
 
   return new ImageResponse(
     <div
@@ -85,7 +82,7 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontFamily: "Archivo",
+              fontFamily: "Inter",
               fontSize: 26,
               color: INK_MUTED,
             }}
@@ -96,20 +93,17 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
             style={{
               width: 96,
               height: 4,
-              backgroundColor: AQUA,
+              backgroundColor: FOREST,
               marginTop: 24,
             }}
           />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {/* Archivo y no Newsreader: el nombre del proyecto es la voz del sitio, y
-              desde ADR-024 esa voz es la grotesca. La bajada se queda en serif,
-              porque es la voz de quien cuenta. */}
           <div
             style={{
-              fontFamily: "Archivo",
-              fontSize: 88,
+              fontFamily: "Playfair",
+              fontSize: 80,
               lineHeight: 1.02,
               letterSpacing: "-0.03em",
               color: INK,
@@ -119,8 +113,8 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
           </div>
           <div
             style={{
-              fontFamily: "Newsreader",
-              fontSize: 38,
+              fontFamily: "Inter",
+              fontSize: 32,
               lineHeight: 1.25,
               color: INK_MUTED,
               marginTop: 24,
@@ -135,7 +129,7 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
             display: "flex",
             borderTop: `1px solid ${RULE}`,
             paddingTop: 24,
-            fontFamily: "Archivo",
+            fontFamily: "Inter",
             fontSize: 24,
             color: INK_MUTED,
           }}
@@ -164,8 +158,8 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
     {
       ...size,
       fonts: [
-        { name: "Newsreader", data: newsreader, weight: 400, style: "normal" },
-        { name: "Archivo", data: archivo, weight: 500, style: "normal" },
+        { name: "Playfair", data: playfair, weight: 400, style: "normal" },
+        { name: "Inter", data: inter, weight: 500, style: "normal" },
       ],
     },
   );

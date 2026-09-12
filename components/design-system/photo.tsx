@@ -75,7 +75,7 @@ export function Figure({
         height={media.height}
         sizes={sizes}
         priority={priority}
-        className="w-full"
+        className="h-auto w-full object-cover"
       />
       {media.caption === null && media.credit === null ? null : (
         <figcaption className="mt-sm max-w-measure font-ui text-small text-ink-muted">
@@ -165,7 +165,7 @@ export function BleedOnMobile({
           height={media.height}
           sizes={sizes}
           priority={priority}
-          className="w-full"
+          className="h-auto w-full object-cover"
         />
       </div>
       {media.caption === null && media.credit === null ? null : (
@@ -275,5 +275,36 @@ export function PhotoEssay({
         />
       ))}
     </div>
+  );
+}
+
+/**
+ * Foto de fondo: llena el contenedor sin deformarse.
+ * `position` cambia el recorte entre teléfono y escritorio.
+ */
+export function CoverPhoto({
+  media,
+  priority = false,
+  sizes = "100vw",
+  position = "center",
+  className,
+}: {
+  media: Photograph;
+  priority?: boolean;
+  sizes?: string;
+  position?: string;
+  className?: string;
+}) {
+  return (
+    <Image
+      src={media.url}
+      alt={media.alt}
+      width={media.width}
+      height={media.height}
+      sizes={sizes}
+      priority={priority}
+      className={cn("h-full w-full object-cover", className)}
+      style={{ objectPosition: position }}
+    />
   );
 }

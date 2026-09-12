@@ -15,6 +15,7 @@ export const PAGINAS_PUBLICAS = [
   { path: "/que-paso", nombre: "Qué ocurrió" },
   { path: "/reconstruccion", nombre: "La reconstrucción" },
   { path: "/ayudar", nombre: "Cómo ayudar" },
+  { path: "/contacto", nombre: "Contacto" },
   { path: "/transparencia", nombre: "Transparencia" },
   { path: "/novedades", nombre: "Novedades" },
   { path: "/legado", nombre: "El legado" },

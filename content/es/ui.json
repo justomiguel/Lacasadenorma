@@ -3,7 +3,7 @@
   "helpCta": "Ayudar a reconstruir",
   "helpShort": "Ayudar",
   "copy": "Copiar",
-  "copied": "Copiado",
+  "copied": "✓ Copiado",
   "copiedAnnouncement": "Se copió {label}.",
   "copyFailed": "No pudimos copiar {label} automáticamente. Seleccionalo y copialo a mano.",
   "share": "Compartir",
@@ -18,51 +18,49 @@
   "publishedOn": "Publicado el",
   "lastUpdated": "Última actualización:",
   "footerNote": "Última actualización de los textos legales: {date}. Este sitio no procesa pagos ni pide datos de tarjeta.",
-  "ogCardFooter": "Aportes y rendición de cuentas publicada",
+  "ogCardFooter": "Riacho He Hé, Formosa. Ayudanos a reconstruir.",
   "nav": {
     "primary": "Principal",
     "index": "Índice de secciones",
     "footer": "Secciones del sitio",
     "project": "El proyecto y sus términos",
     "campaign": "La campaña",
-    "next": "Lo que sigue",
+    "next": "También en el sitio",
     "legal": "Legales"
   },
   "primaryNav": {
-    "/norma": {
-      "label": "La historia de Norma",
-      "shortLabel": "Norma",
-      "summary": "Quién fue y qué dejó hecho."
-    },
     "/que-paso": {
-      "label": "Qué ocurrió",
-      "shortLabel": "Qué ocurrió",
-      "summary": "La noche del incendio y lo que quedó."
-    },
-    "/reconstruccion": {
-      "label": "La reconstrucción",
-      "shortLabel": "La obra",
-      "summary": "Qué hay que hacer, cuánto sale y cómo va."
+      "label": "Historia",
+      "shortLabel": "Historia",
+      "summary": "El fuego se llevó nuestra casa."
     },
     "/ayudar": {
       "label": "Cómo ayudar",
-      "shortLabel": "Ayudar",
-      "summary": "Los datos para transferir desde Argentina, Chile o Estados Unidos."
+      "shortLabel": "Cómo ayudar",
+      "summary": "Tres formas de hacer la diferencia."
     },
-    "/transparencia": {
-      "label": "Transparencia",
-      "shortLabel": "Transparencia",
-      "summary": "En qué se usó cada peso, con fecha y comprobante."
+    "/norma": {
+      "label": "Norma",
+      "shortLabel": "Norma",
+      "summary": "Quién fue y qué dejó hecho."
     },
-    "/novedades": {
-      "label": "Novedades",
-      "shortLabel": "Novedades",
-      "summary": "Lo que va pasando en la obra, fechado."
+    "/legado": {
+      "label": "Lo que viene después",
+      "shortLabel": "Lo que viene después",
+      "summary": "La intención futura, todavía sin organización."
+    },
+    "/contacto": {
+      "label": "Contacto",
+      "shortLabel": "Contacto",
+      "summary": "WhatsApp de Saúl y el teléfono publicado."
     }
   },
   "secondaryNav": {
-    "/legado": {
-      "label": "El legado"
+    "/novedades": {
+      "label": "Novedades"
+    },
+    "/reconstruccion": {
+      "label": "La obra"
     }
   },
   "legalNav": {
@@ -129,10 +127,10 @@
     "emptyBody": "Estamos verificando los datos bancarios antes de publicarlos. Preferimos que esta sección esté vacía unos días a que aparezca un dato que después haya que corregir: si alguien transfiere a la cuenta equivocada, el error no se deshace."
   },
   "unavailable": {
-    "errorTitle": "No pudimos leer las cifras",
-    "emptyTitle": "Cifras todavía no publicadas",
+    "errorTitle": "No pudimos cargar esta parte",
+    "emptyTitle": "Todavía no hay datos publicados",
     "notConfigured": "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
-    "error": "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+    "error": "Esta parte no está disponible ahora. Volvé a intentar en un rato.",
     "notPublished": "La campaña todavía no está publicada."
   },
   "news": {
@@ -155,28 +153,58 @@
     "introAnd": "y"
   },
   "home": {
-    "openingLead": "El 7 de septiembre un incendio destruyó la casa de la familia en Riacho He Hé, Formosa, y Norma murió esa madrugada.",
-    "openingNeed": "Su marido se salvó y está en tratamiento. Estamos reuniendo lo que cuesta reconstruir la casa.",
-    "shareOpening": "Cómo compartirla",
-    "portraitReserved": "Acá va un retrato de Norma. Su familia está eligiendo la fotografía.",
-    "whoWasHeading": "Quién fue Norma",
-    "readFullStory": "Leer la historia completa",
-    "seePhotosAndNeeds": "Ver las fotos y qué se necesita ahora",
-    "workStartedHeading": "El trabajo ya empezó",
-    "workStartedLead": "Antes de levantar una pared hay que vaciar la casa. Eso lo está haciendo la familia con gente del pueblo y una máquina prestada.",
-    "rebuildHeading": "Qué hay que reconstruir",
-    "rebuildDetail": "Ver el detalle de la obra",
-    "howItsGoing": "Cómo va la obra",
-    "howToHelp": "Cómo ayudar",
-    "seeFullDetails": "Ver los datos completos",
-    "seeWhereItWent": "Ver en qué se usó",
-    "whereItWent": "En qué se usó",
-    "transparencyBlurb": "Cada gasto está publicado con su fecha, su concepto y la indicación de si tiene comprobante. Los totales de arriba son la suma de ese detalle, no un número escrito a mano.",
-    "seeFullReport": "Ver la rendición completa",
-    "knowFoundation": "Leer qué se propone el legado",
-    "faqHeading": "Lo que suelen preguntarnos",
-    "shareHeading": "Compartir la campaña",
-    "shareLead": "La mayoría de la gente va a llegar acá porque alguien le pasó el enlace. Si podés, pasalo vos."
+    "locationLine": "Riacho He Hé, Formosa",
+    "openingLead": "Un incendio nos quitó mucho, pero no lo más importante: la fuerza de una comunidad que acompaña.",
+    "openingNeed": "Estamos reuniendo lo que cuesta reconstruir la casa.",
+    "quoteOverlay": "Las casas se reconstruyen. Las personas y los vínculos también.",
+    "knowStory": "Conocer la historia",
+    "scrollHint": "Deslizá para conocer la historia",
+    "chapterWhatHappened": "01. Lo que pasó",
+    "fireTitle": "El fuego se llevó nuestra casa",
+    "fireLead": "El lunes 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma falleció. Su marido se salvó y está en tratamiento.",
+    "houseNote": "Así quedó nuestra casa.",
+    "chapterCommunity": "02. La comunidad",
+    "communityTitle": "La gente apareció",
+    "communityLead": "Familia, vecinos y amigos. En los mismos días del incendio, la comunidad se organizó para limpiar y retirar escombros.",
+    "communityNote": "Entre todos, todo es posible.",
+    "seeStory": "Ver la historia",
+    "chapterHelp": "03. Cómo ayudar",
+    "helpTitle": "Tu ayuda también suma",
+    "helpKicker": "Tres formas de hacer la diferencia",
+    "debrisTitle": "Retirar escombros",
+    "debrisBody": "Si querés dar una mano presencialmente, estamos organizando una cuadrilla para limpiar y retirar escombros.",
+    "materialsTitle": "Donaciones de materiales",
+    "materialsBody": "Cemento, cal, arena, chapa. Cualquier otro material útil para la futura casa también suma.",
+    "remoteTitle": "Si estás lejos, también podés ayudar",
+    "remoteBody": "Un aporte por transferencia llega igual. Elegí el país y copiá los datos.",
+    "whatsapp": "WhatsApp",
+    "call": "Llamar",
+    "chapterDonate": "04. Donaciones",
+    "donateTitle": "Elegí cómo ayudar",
+    "donateLead": "Cualquier aporte, por el canal que te quede más cerca, suma.",
+    "transfer": "Transferencia bancaria",
+    "mercadoPago": "Mercado Pago",
+    "mercadoPagoLead": "Colaborá con un link de pago seguro.",
+    "mercadoPagoCta": "Ir a Mercado Pago",
+    "paypal": "PayPal",
+    "paypalLead": "Doná tu aporte de forma segura desde cualquier país.",
+    "paypalCta": "Ir a PayPal",
+    "thanksNote": "Gracias por ser parte de esto.",
+    "chapterNext": "05. Lo que viene después",
+    "nextTitle": "Más que una casa",
+    "nextLead": "Primero reconstruimos una casa. Después queremos ayudar a construir oportunidades.",
+    "nextBody": "La intención es que, cuando la familia tenga dónde vivir, esto siga: formación en comunicación y herramientas digitales para Riacho He Hé. Todavía no es una organización. El sitio lo dice así.",
+    "nextNote": "La misma comunidad que hoy ayuda puede crear más oportunidades.",
+    "menu": "Abrir el menú",
+    "closeMenu": "Cerrar el menú",
+    "faqHeading": "Lo que suelen preguntarnos"
+  },
+  "contactPage": {
+    "title": "Contacto",
+    "seoDescription": "WhatsApp y teléfono de Saúl para coordinar el retiro de escombros y las donaciones de materiales en Riacho He Hé, Formosa.",
+    "lead": "Para dar una mano en el terreno, el contacto publicado es Saúl.",
+    "whatsapp": "Escribir por WhatsApp",
+    "call": "Llamar"
   },
   "normaPage": {
     "title": "Quién fue {name}",
@@ -201,7 +229,7 @@
     "end": "."
   },
   "reconstructionPage": {
-    "seoDescription": "Qué hay que reconstruir en la casa, el presupuesto por rubro con los montos ya cotizados, los hitos de la obra y el avance publicado.",
+    "seoDescription": "Qué hay que reconstruir en la casa y el trabajo que ya empezó, con las fotos reales de la limpieza.",
     "workHeading": "El trabajo hasta ahora",
     "scopeHeading": "Qué hay que hacer",
     "budgetHeading": "Cuánto sale cada rubro",
@@ -211,10 +239,10 @@
     "photosNote": "Las fotos del avance se publican junto con cada novedad, así que cada una queda fechada y se puede compartir por separado.",
     "seeNews": "Ver las novedades de la obra",
     "helpHeading": "Ayudar con la obra",
-    "helpLead": "Cada aporte se registra y cada gasto se publica. Podés ver los dos números en la misma página."
+    "helpLead": "Cada aporte suma a reconstruir la casa. Los datos para transferir están en la página de cómo ayudar."
   },
   "helpPage": {
-    "seoDescription": "Datos para transferir desde Argentina, Chile o Estados Unidos. Esta página no cobra ni pide datos de tarjeta: los aportes van por transferencia bancaria.",
+    "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Saúl y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
     "beforeTransferTitle": "Antes de transferir",
     "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",
@@ -226,7 +254,7 @@
     "shareLead": "Si no podés aportar, compartir el enlace ayuda igual. La mayoría de la gente que llegó hasta acá lo hizo porque alguien se lo pasó."
   },
   "transparencyPage": {
-    "seoDescription": "Total recibido, total gastado, saldo y el detalle de cada gasto con su fecha, su concepto y si tiene comprobante. Cómo se lleva la cuenta, explicado.",
+    "seoDescription": "Cómo se lleva la cuenta de la campaña. La rendición pública de cifras todavía no está publicada en el sitio.",
     "totalsHeading": "Cuánto entró y cuánto salió",
     "noReconciliation": "Todavía no hubo una conciliación con el resumen del banco, así que estas cifras son provisorias.",
     "reconciledOn": "Conciliado con el resumen del banco al {date}.",
@@ -248,9 +276,9 @@
   "legacyPage": {
     "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada y en qué estado está hoy el proyecto: una intención, todavía sin organización.",
     "statusTitle": "En qué estado está",
-    "statusBody": "Fundación Norma es una intención, no una entidad. No tiene personería jurídica, ni estatuto, ni CUIT, ni cuenta propia. Los aportes de hoy van a la reconstrucción de la casa y se rinden en",
+    "statusBody": "Fundación Norma es una intención, no una entidad. No tiene personería jurídica, ni estatuto, ni CUIT, ni cuenta propia. Los aportes de hoy van a la reconstrucción de la casa.",
     "accountsLink": "la página de cuentas",
-    "statusTail": ". Cuando la fundación exista de verdad, esta página va a decirlo con los papeles a la vista.",
+    "statusTail": "Cuando la fundación exista de verdad, esta página va a decirlo con los papeles a la vista.",
     "houseFirst": "Primero, la casa",
     "houseFirstLead": "Nada de esto empieza antes de que la familia tenga dónde vivir. Ese es el trabajo de ahora."
   },

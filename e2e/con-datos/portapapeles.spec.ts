@@ -47,7 +47,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
     // Por posición y no por nombre accesible: el nombre es justamente lo que va a
     // cambiar, y un localizador por nombre dejaría de encontrar el botón que acaba de
     // apretarse.
-    const boton = panel.locator("button").first();
+    const boton = panel.getByRole("button", { name: /^copiar$/i }).first();
 
     await boton.click();
 
@@ -79,7 +79,10 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   test("el botón de copiar es alcanzable y accionable con teclado", async ({ page }) => {
     await page.goto("/ayudar");
 
-    const boton = page.getByRole("tabpanel").locator("button").first();
+    const boton = page
+      .getByRole("tabpanel")
+      .getByRole("button", { name: /^copiar$/i })
+      .first();
 
     await boton.focus();
     await page.keyboard.press("Enter");

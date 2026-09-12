@@ -61,14 +61,14 @@ function ponerAccionPrimaria(): HTMLElement {
  * todo esto— y una búsqueda global encontraría las dos.
  */
 const barra = (container: HTMLElement) =>
-  within(container).queryByRole("link", { name: "Ayudar a reconstruir" });
+  within(container).queryByRole("link", { name: /ayudar a reconstruir/i });
 
 describe("HelpBar sin JavaScript", () => {
   it("el HTML servido ya trae la acción: si la hidratación no llega, no se pierde", () => {
     const html = renderToStaticMarkup(<HelpBar />);
 
     expect(html).toContain("Ayudar a reconstruir");
-    expect(html).toContain('href="/ayudar"');
+    expect(html).toContain('href="/ayudar#donaciones"');
   });
 });
 
@@ -88,7 +88,7 @@ describe("HelpBar", () => {
       <HelpBar href={localizedHref("/ayudar", "en")} label="Help rebuild" />,
     );
 
-    expect(within(container).queryByRole("link", { name: "Help rebuild" })).toBeNull();
+    expect(within(container).queryByRole("link", { name: /help rebuild/i })).toBeNull();
   });
 
   it("se retira mientras la acción primaria está en pantalla", () => {

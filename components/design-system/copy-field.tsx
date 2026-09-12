@@ -28,6 +28,7 @@ export function CopyField({
   value,
   hint,
   onCopied,
+  copyable = true,
   className,
 }: {
   label: string;
@@ -35,6 +36,7 @@ export function CopyField({
   hint?: string | null;
   /** Para registrar el evento de analítica. No recibe el valor copiado. */
   onCopied?: () => void;
+  copyable?: boolean;
   className?: string;
 }) {
   const [state, setState] = useState<CopyState>("idle");
@@ -87,7 +89,7 @@ export function CopyField({
           <p
             id={valueId}
             className="mt-3xs break-words font-ui text-subheading font-medium tabular-nums"
-            data-figure
+            {...(copyable ? { "data-figure": true } : {})}
           >
             {value}
           </p>
@@ -96,16 +98,18 @@ export function CopyField({
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            void copy();
-          }}
-          aria-describedby={valueId}
-          className="inline-flex min-h-touch shrink-0 items-center rounded-sm px-sm font-ui text-small font-medium text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-aqua-strong"
-        >
-          {state === "copied" ? copiedLabel : copyLabel}
-        </button>
+        {copyable ? (
+          <button
+            type="button"
+            onClick={() => {
+              void copy();
+            }}
+            aria-describedby={valueId}
+            className="inline-flex min-h-touch shrink-0 items-center rounded-pill px-sm font-ui text-small font-medium text-forest underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-forest-strong"
+          >
+            {state === "copied" ? copiedLabel : copyLabel}
+          </button>
+        ) : null}
       </div>
 
       {/* Región viva siempre presente: si apareciera junto con el mensaje, algunos

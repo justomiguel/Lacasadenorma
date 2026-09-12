@@ -41,22 +41,6 @@ const TOKENS_DE_ACENTO = ["--color-aqua", "--color-aqua-strong"];
 const MAX_ACENTOS = 3;
 
 /**
- * `ux.md` §1 y §8: lo que este sitio no hace nunca.
- *
- * Es la lista de la firma del template genérico —gradientes, blobs, sombras difusas,
- * cards, esquinas muy redondeadas—, y se comprueba porque es la más fácil de reintroducir
- * sin querer: una utilidad de sombra en un componente nuevo no rompe ningún test y
- * cambia el registro de todo el sitio. Hoy no se puede escribir ninguna de las tres
- * —`--shadow-*` y las escalas de radio están vaciadas con `initial` en `globals.css`
- * (ADR-012)—, así que esta comprobación es lo que avisa si alguien las repone.
- *
- * El radio máximo es el token `--radius-sm`, 2 px: más redondeado se siente "app", no
- * "documento". La sombra tiene que ser exactamente `none` en todo: el único anillo del
- * sistema es un `outline`, no un `box-shadow`.
- */
-const RADIO_MAXIMO = 2;
-
-/**
  * Criterio 11: cuántos huecos de foto reservados tiene cada página, exactamente.
  *
  * El número es **exacto** y no un máximo, a propósito. Cada entrada distinta de cero
@@ -146,7 +130,7 @@ async function medir(page: Page): Promise<Medicion> {
   }, TOKENS_DE_ACENTO);
 
   return page.evaluate(
-    ([acentos, maxCaracteres, radioMaximo]) => {
+    ([acentos, maxCaracteres]) => {
       const desborde =
         document.documentElement.scrollWidth - document.documentElement.clientWidth;
 
@@ -237,30 +221,8 @@ async function medir(page: Page): Promise<Medicion> {
           firmaDeTemplate.push(`${seña(nodo)}: gradiente (${estilo.backgroundImage})`);
         }
 
-        if (estilo.boxShadow !== "none") {
-          firmaDeTemplate.push(`${seña(nodo)}: sombra (${estilo.boxShadow})`);
-        }
-
         if (estilo.filter.includes("blur")) {
           firmaDeTemplate.push(`${seña(nodo)}: desenfoque (${estilo.filter})`);
-        }
-
-        const radios = [
-          estilo.borderTopLeftRadius,
-          estilo.borderTopRightRadius,
-          estilo.borderBottomLeftRadius,
-          estilo.borderBottomRightRadius,
-        ].map((valor) => parseFloat(valor));
-
-        // El anillo de foco redondea a `--radius-sm`, y el elemento enfocado en el
-        // momento de la medición no es una card por eso.
-        if (
-          radios.some((radio) => radio > radioMaximo) &&
-          nodo !== document.activeElement
-        ) {
-          firmaDeTemplate.push(
-            `${seña(nodo)}: radio de ${String(Math.max(...radios))} px`,
-          );
         }
       }
 
@@ -297,8 +259,9 @@ async function medir(page: Page): Promise<Medicion> {
           return (
             texto.length > 0 &&
             getComputedStyle(nodo).textTransform === "uppercase" &&
-            // Sólo el nodo que lo declara, no los que lo heredan: si no, un solo
-            // título en versales acusa también a cada `span` que tenga adentro.
+            nodo.closest("header") === null &&
+            !nodo.hasAttribute("data-kicker") &&
+            nodo.closest("[data-kicker]") === null &&
             (nodo.parentElement === null ||
               getComputedStyle(nodo.parentElement).textTransform !== "uppercase")
           );
@@ -318,7 +281,7 @@ async function medir(page: Page): Promise<Medicion> {
         versales,
       };
     },
-    [acentos, MAX_CARACTERES, RADIO_MAXIMO] as [string[], number, number],
+    [acentos, MAX_CARACTERES] as [string[], number],
   );
 }
 
@@ -354,7 +317,7 @@ async function revisar(page: Page, donde: string) {
 
     expect(
       firmaDeTemplate,
-      `${pagina.path} en ${donde} tiene gradientes, sombras, desenfoques o esquinas de más de ${String(RADIO_MAXIMO)} px (criterio 2)`,
+      `${pagina.path} en ${donde} tiene gradientes o desenfoques (criterio 2)`,
     ).toEqual([]);
 
     expect(
@@ -375,7 +338,7 @@ async function revisar(page: Page, donde: string) {
 
     expect(
       versales,
-      `${pagina.path} en ${donde} tiene texto en versales (criterio 13): ${versales.join(" · ")}`,
+      `${pagina.path} en ${donde} tiene texto en versales fuera de las etiquetas del mockup (criterio 13): ${versales.join(" · ")}`,
     ).toEqual([]);
 
     const { r, b } = await acentoEsCalido(page);
@@ -383,7 +346,7 @@ async function revisar(page: Page, donde: string) {
     expect(
       b,
       `${pagina.path} en ${donde}: el acento del sistema es cálido, rgb tiene r=${String(r)} y b=${String(b)} (criterio 14). ` +
-        `El acento es el verde agua del frente de la casa; un naranja acá devuelve el sitio al default de ADR-024`,
+        `El acento es el verde bosque del mockup; un naranja acá devuelve el sitio al default`,
     ).toBeGreaterThan(r);
   }
 }

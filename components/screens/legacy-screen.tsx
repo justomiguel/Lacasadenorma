@@ -1,5 +1,4 @@
 import { HelpCta } from "@/components/campaign/help-cta";
-import { InlineLink } from "@/components/design-system/actions";
 import { Callout } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
@@ -53,13 +52,8 @@ export function LegacyScreen({ locale }: { locale: Locale }) {
           <Paragraphs items={legacy.paragraphs} />
 
           <Callout tone="neutral" title={ui.legacyPage.statusTitle} className="mt-2xl">
-            <p>
-              {ui.legacyPage.statusBody}{" "}
-              <InlineLink href={localizedHref("/transparencia", locale)}>
-                {ui.legacyPage.accountsLink}
-              </InlineLink>
-              {ui.legacyPage.statusTail}
-            </p>
+            <p>{ui.legacyPage.statusBody}</p>
+            <p className="mt-md">{ui.legacyPage.statusTail}</p>
           </Callout>
         </Section>
       </Container>

@@ -71,7 +71,11 @@ export function NormaScreen({ locale }: { locale: Locale }) {
         ])}
       />
 
-      <PageHeader label={norma.roleLabel} title={title} lead={norma.summary} />
+      <PageHeader label={norma.roleLabel} title={title} lead={norma.summary}>
+        <p className="mt-xl max-w-quote font-hand text-hand text-olive">
+          {ui.home.quoteOverlay}
+        </p>
+      </PageHeader>
 
       <Container>
         <Section>

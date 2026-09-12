@@ -1,12 +1,36 @@
 {
   "title": "How to help",
-  "lead": "You can transfer from Argentina, Chile or the United States.",
+  "lead": "Three ways to help: on the ground, with materials, or with a gift.",
   "paragraphs": [
-    "Gifts arrive by bank transfer. This page does not take money: it does not ask for card details, it does not process payments and it does not charge a fee.",
-    "Choose your country, copy the details and make the transfer from your bank or wallet, as you would with any other."
+    "The priority now is to rebuild the house. You can help by clearing debris, bringing materials, or transferring from Argentina or Chile.",
+    "This page does not take money: it does not ask for card details, it does not process payments and it does not charge a fee. If the bank details you see do not match the ones we share, do not transfer."
   ],
   "afterTransfer": [
-    "You don't need to do anything else. Each gift is reconciled against the bank statement before it is added to the published total, so the number on this page may take a few days to move.",
-    "If you would rather your gift stay anonymous, it already is: we do not publish names or individual amounts."
-  ]
+    "You do not need to let us know. If you would rather your gift stay anonymous, it already is: we do not publish names or individual amounts."
+  ],
+  "materials": ["Cement", "Lime", "Sand", "Roof sheets"],
+  "contact": {
+    "name": "Saúl",
+    "phoneDisplay": "+54 9 3718 58-0131",
+    "phoneTel": "+5493718580131"
+  },
+  "accounts": {
+    "AR": {
+      "holder": "Justo Miguel Vargas",
+      "taxId": "20 - 33184377 - 7",
+      "alias": "justomiguelvargas",
+      "cbu": "1430001713005033120017",
+      "accountNumber": "1300503312001"
+    },
+    "CL": {
+      "holder": "JUSTO MIGUEL VARGAS",
+      "rut": "25540188-2",
+      "bank": "Scotiabank",
+      "accountType": "Cuenta Corriente",
+      "accountNumber": "980578127",
+      "email": "justomiguelvargas@gmail.com"
+    }
+  },
+  "mercadoPagoUrl": null,
+  "paypalUrl": null
 }

@@ -15,16 +15,9 @@ import {
 } from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
-import { archivo, newsreader, newsreaderItalic } from "@/app/fonts";
+import { caveat, inter, playfair, playfairItalic } from "@/app/fonts";
 import "@/app/globals.css";
 
-/**
- * El documento público: un root layout por idioma (ADR-023).
- *
- * `html lang` sale de acá, no de un `headers()` ni de un efecto. Las páginas
- * siguen siendo estáticas. El `UiProvider` recibe **un** paquete de interfaz, el
- * de este idioma: es lo que pueden leer CopyField y ShareRow sin importar JSON.
- */
 export function PublicDocument({
   locale,
   children,
@@ -38,7 +31,7 @@ export function PublicDocument({
   return (
     <html
       lang={htmlLang(locale)}
-      className={`${newsreader.variable} ${archivo.variable} ${newsreaderItalic.variable}`}
+      className={`${playfair.variable} ${playfairItalic.variable} ${inter.variable} ${caveat.variable}`}
     >
       <head>
         <link rel="describedby" href="/llms.txt" type="text/plain" />
@@ -54,7 +47,7 @@ export function PublicDocument({
         <UiProvider locale={locale} ui={ui}>
           <a
             href="#contenido"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-md focus:top-md focus:z-20 focus:rounded-sm focus:bg-ink focus:px-md focus:py-xs focus:font-ui focus:text-small focus:text-paper"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-md focus:top-md focus:z-40 focus:rounded-sm focus:bg-forest focus:px-md focus:py-xs focus:font-ui focus:text-small focus:text-paper"
           >
             {ui.skipToContent}
           </a>

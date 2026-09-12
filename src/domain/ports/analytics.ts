@@ -25,7 +25,10 @@ export type AnalyticsEvent =
   | { name: "ayudar_click"; props: { origen: string } }
   | { name: "metodo_visto"; props: { pais: string } }
   | { name: "dato_copiado"; props: { pais: string; campo: string } }
-  | { name: "compartir"; props: { canal: string; ruta: string } };
+  | { name: "compartir"; props: { canal: string; ruta: string } }
+  | { name: "whatsapp_click"; props: { origen: string } }
+  | { name: "llamar_click"; props: { origen: string } }
+  | { name: "medio_externo_click"; props: { medio: "mercadopago" | "paypal" } };
 
 export interface Analytics {
   track(event: AnalyticsEvent): void;

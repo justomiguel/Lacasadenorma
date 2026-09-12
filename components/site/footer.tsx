@@ -10,11 +10,7 @@ import { formatLongDate } from "@/components/design-system/dates";
 import { LEGAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
 /**
- * Pie: la navegación completa del sitio.
- *
- * Está acá y no en un menú del encabezado porque es donde alguien la busca
- * cuando terminó de leer una página, y porque así el encabezado puede quedarse
- * con dos cosas.
+ * Pie del mockup: banda bosque, nombre, navegación y legales.
  */
 export function SiteFooter({
   locale,
@@ -30,27 +26,26 @@ export function SiteFooter({
   const updated = formatLongDate(legalUpdatedOn, intlLocale(locale));
 
   return (
-    <footer className="border-t border-rule">
+    <footer className="bg-forest text-paper" data-tone="forest">
       <Container className="py-3xl">
         <div className="grid gap-2xl lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="font-display text-heading">{site.name}</p>
-            <p className="mt-sm max-w-measure text-small text-ink-muted">
-              {site.tagline}
-            </p>
-            <p className="mt-md max-w-measure text-small text-ink-muted">
-              {site.place.locality}, {site.place.province}, {site.place.country}.
+            <p className="mt-sm max-w-measure text-small text-paper-muted">
+              {site.place.locality}, {site.place.province}.
             </p>
           </div>
 
           <nav aria-label={ui.nav.campaign} className="lg:col-span-4">
-            <p className="mb-md font-ui text-label text-ink-muted">{ui.nav.campaign}</p>
+            <p className="mb-md font-ui text-label uppercase tracking-label text-paper-muted">
+              {ui.nav.campaign}
+            </p>
             <ul className="space-y-xs">
               {PRIMARY_NAV.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
+                    className="inline-flex min-h-touch items-center text-body underline decoration-paper/30 decoration-1 underline-offset-4 hover:decoration-paper"
                   >
                     {ui.primaryNav[item.href].label}
                   </Link>
@@ -60,13 +55,15 @@ export function SiteFooter({
           </nav>
 
           <nav aria-label={ui.nav.project} className="lg:col-span-4">
-            <p className="mb-md font-ui text-label text-ink-muted">{ui.nav.next}</p>
+            <p className="mb-md font-ui text-label uppercase tracking-label text-paper-muted">
+              {ui.nav.next}
+            </p>
             <ul className="space-y-xs">
               {SECONDARY_NAV.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-body text-ink underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
+                    className="inline-flex min-h-touch items-center text-body underline decoration-paper/30 decoration-1 underline-offset-4 hover:decoration-paper"
                   >
                     {ui.secondaryNav[item.href].label}
                   </Link>
@@ -74,7 +71,7 @@ export function SiteFooter({
               ))}
             </ul>
 
-            <p className="mb-md mt-xl font-ui text-label text-ink-muted">
+            <p className="mb-md mt-xl font-ui text-label uppercase tracking-label text-paper-muted">
               {ui.nav.legal}
             </p>
             <ul className="space-y-xs">
@@ -82,7 +79,7 @@ export function SiteFooter({
                 <li key={item.href}>
                   <Link
                     href={localizedHref(item.href, locale)}
-                    className="inline-flex min-h-touch items-center text-small text-ink-muted underline decoration-rule decoration-1 underline-offset-4 transition-colors duration-fast hover:decoration-aqua"
+                    className="inline-flex min-h-touch items-center text-small text-paper-muted underline decoration-paper/30 decoration-1 underline-offset-4 hover:decoration-paper"
                   >
                     {ui.legalNav[item.href].label}
                   </Link>
@@ -92,7 +89,7 @@ export function SiteFooter({
           </nav>
         </div>
 
-        <p className="mt-2xl max-w-measure text-small text-ink-faint">
+        <p className="mt-2xl max-w-measure text-small text-paper-muted">
           {fill(ui.footerNote, { date: updated })}
         </p>
       </Container>

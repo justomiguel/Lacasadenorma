@@ -3,7 +3,7 @@
   "helpCta": "Help rebuild",
   "helpShort": "Help",
   "copy": "Copy",
-  "copied": "Copied",
+  "copied": "✓ Copied",
   "copiedAnnouncement": "Copied {label}.",
   "copyFailed": "We couldn't copy {label} automatically. Select it and copy it yourself.",
   "share": "Share",
@@ -18,51 +18,49 @@
   "publishedOn": "Published",
   "lastUpdated": "Last updated:",
   "footerNote": "Legal texts last updated: {date}. This site does not process payments or ask for card details.",
-  "ogCardFooter": "Gifts and a published account of every peso",
+  "ogCardFooter": "Riacho He Hé, Formosa. Help us rebuild.",
   "nav": {
     "primary": "Main",
     "index": "Section index",
     "footer": "Site sections",
     "project": "The project and its terms",
     "campaign": "The campaign",
-    "next": "What follows",
+    "next": "Also on this site",
     "legal": "Legal"
   },
   "primaryNav": {
-    "/norma": {
-      "label": "Norma's story",
-      "shortLabel": "Norma",
-      "summary": "Who she was and what she left done."
-    },
     "/que-paso": {
-      "label": "What happened",
-      "shortLabel": "What happened",
-      "summary": "The night of the fire, and what was left."
-    },
-    "/reconstruccion": {
-      "label": "The reconstruction",
-      "shortLabel": "The work",
-      "summary": "What has to be done, what it costs, and how it's going."
+      "label": "Story",
+      "shortLabel": "Story",
+      "summary": "The fire took our house."
     },
     "/ayudar": {
       "label": "How to help",
-      "shortLabel": "Help",
-      "summary": "The details to transfer from Argentina, Chile or the United States."
+      "shortLabel": "How to help",
+      "summary": "Three ways to make a difference."
     },
-    "/transparencia": {
-      "label": "Transparency",
-      "shortLabel": "Transparency",
-      "summary": "Where every peso went, with a date and a receipt."
+    "/norma": {
+      "label": "Norma",
+      "shortLabel": "Norma",
+      "summary": "Who she was and what she left done."
     },
-    "/novedades": {
-      "label": "Updates",
-      "shortLabel": "Updates",
-      "summary": "What is happening on the site, dated."
+    "/legado": {
+      "label": "What comes next",
+      "shortLabel": "What comes next",
+      "summary": "The future intention, not yet an organisation."
+    },
+    "/contacto": {
+      "label": "Contact",
+      "shortLabel": "Contact",
+      "summary": "Saúl's WhatsApp and the published phone number."
     }
   },
   "secondaryNav": {
-    "/legado": {
-      "label": "The legacy"
+    "/novedades": {
+      "label": "Updates"
+    },
+    "/reconstruccion": {
+      "label": "The work"
     }
   },
   "legalNav": {
@@ -129,10 +127,10 @@
     "emptyBody": "We are checking the bank details before publishing them. We would rather leave this section empty for a few days than show a figure that later has to be corrected: if someone transfers to the wrong account, the error cannot be undone."
   },
   "unavailable": {
-    "errorTitle": "We could not read the figures",
-    "emptyTitle": "Figures not yet published",
+    "errorTitle": "We could not load this part",
+    "emptyTitle": "No data has been published yet",
     "notConfigured": "This part of the site is not yet connected to the campaign data. As soon as it is, it will appear here.",
-    "error": "We could not read this data right now. Try again in a while: the problem is ours, not yours.",
+    "error": "This part is not available right now. Try again in a while.",
     "notPublished": "The campaign is not published yet."
   },
   "news": {
@@ -155,28 +153,58 @@
     "introAnd": "and"
   },
   "home": {
-    "openingLead": "On 7 September a fire destroyed the family home in Riacho He Hé, Formosa, and Norma died that night.",
-    "openingNeed": "Her husband survived and is under treatment. We are raising what it costs to rebuild the house.",
-    "shareOpening": "How to share it",
-    "portraitReserved": "A portrait of Norma will go here. Her family is choosing the photograph.",
-    "whoWasHeading": "Who Norma was",
-    "readFullStory": "Read the full story",
-    "seePhotosAndNeeds": "See the photos and what is needed now",
-    "workStartedHeading": "The work has already started",
-    "workStartedLead": "Before a wall goes up, the house has to be emptied. The family is doing that with people from the town and a borrowed loader.",
-    "rebuildHeading": "What has to be rebuilt",
-    "rebuildDetail": "See the detail of the work",
-    "howItsGoing": "How the work is going",
-    "howToHelp": "How to help",
-    "seeFullDetails": "See the full details",
-    "seeWhereItWent": "See where it went",
-    "whereItWent": "Where it went",
-    "transparencyBlurb": "Each expense is published with its date, what it was for, and whether it has a receipt. The totals above are the sum of that detail, not a number written by hand.",
-    "seeFullReport": "See the full accounts",
-    "knowFoundation": "Read what the legacy proposes",
-    "faqHeading": "What people usually ask",
-    "shareHeading": "Share the campaign",
-    "shareLead": "Most people will get here because someone passed them the link. If you can, pass it on."
+    "locationLine": "Riacho He Hé, Formosa",
+    "openingLead": "A fire took a great deal from us, but not the most important thing: the strength of a community that stays.",
+    "openingNeed": "We are raising what it costs to rebuild the house.",
+    "quoteOverlay": "Houses can be rebuilt. People and the bonds between them can too.",
+    "knowStory": "Read the story",
+    "scrollHint": "Scroll to read the story",
+    "chapterWhatHappened": "01. What happened",
+    "fireTitle": "The fire took our house",
+    "fireLead": "On Monday 7 September, at 4.30 in the morning, a fire destroyed the family home in Riacho He Hé. Norma died. Her husband survived and is in treatment.",
+    "houseNote": "This is what was left of our house.",
+    "chapterCommunity": "02. The community",
+    "communityTitle": "People showed up",
+    "communityLead": "Family, neighbours and friends. In the same days as the fire, the community organised to clear and haul debris.",
+    "communityNote": "Together, everything is possible.",
+    "seeStory": "See the story",
+    "chapterHelp": "03. How to help",
+    "helpTitle": "Your help counts too",
+    "helpKicker": "Three ways to make a difference",
+    "debrisTitle": "Clear debris",
+    "debrisBody": "If you can give a hand in person, we are organising a crew to clear and haul debris.",
+    "materialsTitle": "Material donations",
+    "materialsBody": "Cement, lime, sand, roof sheets. Any other material useful for the future house helps too.",
+    "remoteTitle": "If you are far away, you can still help",
+    "remoteBody": "A bank transfer arrives just the same. Choose the country and copy the details.",
+    "whatsapp": "WhatsApp",
+    "call": "Call",
+    "chapterDonate": "04. Donations",
+    "donateTitle": "Choose how to help",
+    "donateLead": "Any gift, by whichever channel is closest to you, counts.",
+    "transfer": "Bank transfer",
+    "mercadoPago": "Mercado Pago",
+    "mercadoPagoLead": "Give through a secure payment link.",
+    "mercadoPagoCta": "Go to Mercado Pago",
+    "paypal": "PayPal",
+    "paypalLead": "Give securely from any country.",
+    "paypalCta": "Go to PayPal",
+    "thanksNote": "Thank you for being part of this.",
+    "chapterNext": "05. What comes next",
+    "nextTitle": "More than a house",
+    "nextLead": "First we rebuild a house. Then we want to help build opportunities.",
+    "nextBody": "The intention is that, once the family has a place to live, this continues: training in communication and digital tools for Riacho He Hé. It is not an organisation yet. The site says so.",
+    "nextNote": "The same community that is helping today can create more opportunities.",
+    "menu": "Open the menu",
+    "closeMenu": "Close the menu",
+    "faqHeading": "What people usually ask"
+  },
+  "contactPage": {
+    "title": "Contact",
+    "seoDescription": "Saúl's WhatsApp and phone to coordinate debris removal and material donations in Riacho He Hé, Formosa.",
+    "lead": "To help on the ground, the published contact is Saúl.",
+    "whatsapp": "Write on WhatsApp",
+    "call": "Call"
   },
   "normaPage": {
     "title": "Who {name} was",
@@ -201,7 +229,7 @@
     "end": "."
   },
   "reconstructionPage": {
-    "seoDescription": "What has to be rebuilt in the house, the budget by line with quoted amounts, the work milestones and the published progress.",
+    "seoDescription": "What has to be rebuilt in the house and the work that already started, with the real photos of the cleanup.",
     "workHeading": "The work so far",
     "scopeHeading": "What has to be done",
     "budgetHeading": "What each line costs",
@@ -211,10 +239,10 @@
     "photosNote": "Photos of the progress are published with each update, so each one is dated and can be shared on its own.",
     "seeNews": "See the updates from the site",
     "helpHeading": "Help with the work",
-    "helpLead": "Each gift is recorded and each expense is published. You can see both numbers on the same page."
+    "helpLead": "Each gift helps rebuild the house. The transfer details are on the how to help page."
   },
   "helpPage": {
-    "seoDescription": "Details to transfer from Argentina, Chile or the United States. This page does not take money or ask for card details: gifts go by bank transfer.",
+    "seoDescription": "Details to transfer from Argentina or Chile, Saúl's WhatsApp, and material donations. This page does not take money or ask for card details.",
     "beforeTransferTitle": "Before you transfer",
     "beforeTransfer": "Check that you are on the right domain. If the bank details you see do not match the ones we share on our channels, do not transfer. We will never ask you for a password, a code from your bank, or your card details.",
     "accountsHeading": "Choose where you will transfer from",
@@ -226,7 +254,7 @@
     "shareLead": "If you cannot give, sharing the link still helps. Most of the people who got this far did so because someone passed it on."
   },
   "transparencyPage": {
-    "seoDescription": "Total received, total spent, balance, and the detail of each expense with its date, what it was for, and whether it has a receipt. How the books are kept, explained.",
+    "seoDescription": "How the campaign books are kept. A public ledger of figures is not published on the site yet.",
     "totalsHeading": "How much came in and how much went out",
     "noReconciliation": "There has not been a reconciliation with the bank statement yet, so these figures are provisional.",
     "reconciledOn": "Reconciled with the bank statement as of {date}.",
@@ -248,9 +276,9 @@
   "legacyPage": {
     "seoDescription": "What Fundación Norma sets out to do once the house is finished and where the project stands today: an intention, still without an organisation.",
     "statusTitle": "Where things stand",
-    "statusBody": "Fundación Norma is an intention, not an entity. It has no legal personality, no statute, no tax ID, and no account of its own. Today's gifts go to rebuilding the house and are accounted for on",
+    "statusBody": "Fundación Norma is an intention, not an entity. It has no legal personality, no statute, no tax ID, and no account of its own. Today's gifts go to rebuilding the house.",
     "accountsLink": "the accounts page",
-    "statusTail": ". When the foundation actually exists, this page will say so with the papers in view.",
+    "statusTail": "When the foundation actually exists, this page will say so with the papers in view.",
     "houseFirst": "First, the house",
     "houseFirstLead": "None of this starts before the family has a place to live. That is the work now."
   },

@@ -1,17 +1,12 @@
-import { DonationMethods } from "@/components/campaign/donation-methods";
+import { ContactActions } from "@/components/campaign/contact-actions";
+import { DonationBoard } from "@/components/campaign/donation-board";
 import { ShareBlock } from "@/components/campaign/share-block";
-import { Unavailable } from "@/components/campaign/unavailable";
 import { Callout } from "@/components/design-system/callout";
-import { InlineLink } from "@/components/design-system/actions";
 import { Container, Editorial, Section } from "@/components/design-system/layout";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
-import { getDonationMethods } from "@/src/application/use-cases/get-donation-methods";
-import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
-import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
-import { logger } from "@/src/infrastructure/logging/logger";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
@@ -28,33 +23,8 @@ export function helpMetadata(locale: Locale) {
   });
 }
 
-/**
- * Cómo ayudar.
- *
- * Es el final del recorrido y el único lugar del sitio donde un error se paga
- * caro: si alguien transfiere a la cuenta equivocada, no se deshace. De ahí las
- * tres cosas que esta página hace y que parecen de más:
- *
- * 1. **Dice qué no hace.** No cobra, no pide datos de tarjeta, no procesa pagos.
- *    Quien llega desde un WhatsApp reenviado necesita descartar la estafa antes
- *    de mirar un CBU.
- * 2. **Advierte sobre los sitios falsos**, con la instrucción concreta de
- *    verificar el dominio. Una campaña que circula por mensajes es exactamente el
- *    caso que se clona.
- * 3. **Explica qué pasa después de transferir**, porque si el total publicado no
- *    se mueve al día siguiente, la duda razonable es si el aporte llegó.
- */
-/**
- * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
- * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
- * al instante; esto es el piso para lo que se cambie fuera del backoffice.
- */
-export async function HelpScreen({ locale }: { locale: Locale }) {
+export function HelpScreen({ locale }: { locale: Locale }) {
   const { help, site, ui } = getContent(locale);
-  const donations = await getDonationMethods({
-    dataLayer: getPublicDataLayer(),
-    logger,
-  });
 
   return (
     <>
@@ -62,10 +32,6 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
 
       <Container>
         <Section>
-          {/* La advertencia va al margen y no debajo del texto. Es el lugar donde una
-              publicación pone la nota que hay que leer sin interrumpir la lectura, y en
-              escritorio la columna de la derecha estaba vacía en la única página del
-              sitio donde alguien está a punto de mover plata (ADR-021). */}
           <Editorial
             aside={
               <Callout tone="warning" title={ui.helpPage.beforeTransferTitle}>
@@ -79,17 +45,49 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
       </Container>
 
       <Container>
-        <Section className="border-t border-rule" labelledBy="cuentas">
-          <SectionHeading title={ui.helpPage.accountsHeading} id="cuentas" />
+        <Section className="border-t border-rule" labelledBy="formas">
+          <SectionHeading title={ui.home.helpKicker} id="formas" />
+          <div className="grid gap-lg md:grid-cols-3">
+            <article className="rounded-md border border-rule p-lg">
+              <h3 className="font-display text-heading">{ui.home.debrisTitle}</h3>
+              <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
+              <div className="mt-lg">
+                <ContactActions
+                  name={help.contact.name}
+                  phoneDisplay={help.contact.phoneDisplay}
+                  phoneTel={help.contact.phoneTel}
+                  whatsappLabel={ui.home.whatsapp}
+                  callLabel={ui.home.call}
+                  origen="ayudar-escombros"
+                />
+              </div>
+            </article>
+            <article className="rounded-md border border-rule p-lg">
+              <h3 className="font-display text-heading">{ui.home.materialsTitle}</h3>
+              <p className="mt-md text-body text-ink-muted">{ui.home.materialsBody}</p>
+              <ul className="mt-md flex flex-wrap gap-xs">
+                {help.materials.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-pill bg-sage px-md py-xs font-ui text-small text-forest"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+            <article className="rounded-md border border-rule p-lg">
+              <h3 className="font-display text-heading">{ui.home.remoteTitle}</h3>
+              <p className="mt-md text-body text-ink-muted">{ui.home.remoteBody}</p>
+            </article>
+          </div>
+        </Section>
+      </Container>
 
-          {donations.status === "ok" ? (
-            <DonationMethods
-              methods={donations.data.methods}
-              countries={donations.data.countries}
-            />
-          ) : (
-            <Unavailable reason={donations.reason} copy={ui.unavailable} />
-          )}
+      <Container>
+        <Section className="border-t border-rule" labelledBy="donaciones" id="donaciones">
+          <SectionHeading title={ui.home.donateTitle} id="cuentas" />
+          <DonationBoard help={help} ui={ui} />
         </Section>
       </Container>
 
@@ -97,14 +95,6 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
         <Section className="border-t border-rule" labelledBy="despues">
           <SectionHeading title={ui.helpPage.afterHeading} id="despues" />
           <Paragraphs items={help.afterTransfer} />
-
-          <p className="mt-lg max-w-measure text-body">
-            {ui.helpPage.afterLinkLead}{" "}
-            <InlineLink href={localizedHref("/transparencia", locale)}>
-              {ui.helpPage.reportLink}
-            </InlineLink>
-            {ui.helpPage.afterLinkTail}
-          </p>
         </Section>
       </Container>
 
@@ -116,9 +106,9 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
           </p>
           <ShareBlock
             className="mt-lg"
-            url={`${getSiteUrl()}${localizedHref("/ayudar", locale)}`}
-            route={localizedHref("/ayudar", locale)}
-            title={`${site.name} — ${site.tagline}`}
+            url={`${getSiteUrl()}${locale === "es" ? "/ayudar" : "/en/ayudar"}`}
+            route="/ayudar"
+            title={`${site.name} — ${help.title}`}
             text={site.shortDescription}
           />
         </Section>

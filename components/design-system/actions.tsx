@@ -14,10 +14,10 @@ import { cn } from "./cn";
  */
 
 const PRIMARY =
-  "inline-flex min-h-touch items-center justify-center rounded-sm bg-aqua px-lg py-sm font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial hover:bg-aqua-strong active:translate-y-3xs";
+  "inline-flex min-h-touch items-center justify-center rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial hover:bg-forest-strong";
 
 const SECONDARY =
-  "inline-flex min-h-touch items-center font-ui text-subheading text-ink underline decoration-aqua decoration-2 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-aqua-strong";
+  "inline-flex min-h-touch items-center justify-center rounded-pill border border-forest px-lg py-sm font-ui text-subheading text-forest transition-colors duration-fast ease-editorial hover:bg-forest hover:text-paper";
 
 export function PrimaryAction({
   href,
@@ -96,7 +96,7 @@ export function InlineLink({
     <Link
       href={href}
       className={cn(
-        "text-aqua underline decoration-1 underline-offset-2 transition-colors duration-fast hover:text-aqua-strong",
+        "text-forest underline decoration-1 underline-offset-2 transition-colors duration-fast hover:text-forest-strong",
         className,
       )}
       {...rest}

@@ -27,9 +27,12 @@ navegaciones del cliente. Emitirla también desde el sitio la contaría dos vece
 | Evento | Propiedades | Dónde se emite |
 |---|---|---|
 | `ayudar_click` | ubicación en la página | `components/campaign/help-cta.tsx` |
-| `metodo_visto` | país del método | `components/campaign/donation-methods.tsx` |
-| `dato_copiado` | país, tipo de campo (**nunca** el valor) | `components/campaign/donation-methods.tsx` |
+| `metodo_visto` | país del método | `components/campaign/donation-board.tsx` |
+| `dato_copiado` | país, tipo de campo (**nunca** el valor) | `components/campaign/donation-board.tsx` |
 | `compartir` | canal de destino, ruta | `components/campaign/share-block.tsx` |
+| `whatsapp_click` | origen | `components/campaign/contact-actions.tsx` |
+| `llamar_click` | origen | `components/campaign/contact-actions.tsx` |
+| `medio_externo_click` | medio externo, sólo con URL real | `components/campaign/donation-board.tsx` |
 
 La lista es exactamente esa, y la columna de la derecha existe para que se pueda verificar. Una
 versión anterior de este ADR declaraba también `transparencia_vista` y `novedad_vista`: se quitaron

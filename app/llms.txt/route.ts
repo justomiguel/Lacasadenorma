@@ -26,7 +26,7 @@ export function GET(): Response {
 
 > Campaña para reconstruir la casa de la familia de Norma, en Riacho He Hé, provincia de Formosa,
 > Argentina. Norma fue una de las primeras comunicadoras sociales del pueblo. Los aportes llegan por
-> transferencia bancaria y cada gasto se publica con su fecha.
+> transferencia bancaria. Fundación Norma todavía no existe como organización.
 
 El sitio está íntegramente en castellano rioplatense. Todo el contenido es público y servido desde el
 servidor: no hay nada importante detrás de un click ni de una carga en el cliente.
@@ -34,12 +34,11 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 ## Lo que es verdad hoy
 
 - La campaña reúne fondos para reconstruir **una casa concreta**, la de la familia de Norma.
-- Los aportes se reciben **sólo por transferencia bancaria**, desde Argentina, Chile o Estados
-  Unidos. El sitio **no procesa pagos** y **no pide datos de tarjeta** en ningún momento.
-- Cada gasto ejecutado se publica con fecha, concepto, categoría y si tiene comprobante. Los totales
-  publicados son la suma de ese detalle.
-- Los aportes individuales y las identidades de quienes aportan **no se publican**. Se publican
-  sumados.
+- Los aportes se reciben **por transferencia bancaria**, desde Argentina o Chile. Mercado Pago y
+  PayPal están contemplados; el botón no se publica hasta que haya una URL real. El sitio **no
+  procesa pagos** y **no pide datos de tarjeta** en ningún momento.
+- Las cuentas publicadas (titular, alias, CBU, cuenta chilena) viven en el contenido versionado.
+- Los aportes individuales y las identidades de quienes aportan **no se publican**.
 - Los archivos de los comprobantes **no son públicos**: suelen tener datos de terceros.
 
 ## Lo que todavía no es verdad, y no hay que afirmar
@@ -52,21 +51,21 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   fiscal.
 - Las fechas de nacimiento y de muerte de Norma **no están publicadas**. Si un dato aparece como
   nulo, es porque no está verificado, no porque falte cargarlo en la página.
-
-Un cero en una cifra de este sitio significa cero. Cuando un dato no está disponible, el sitio lo
-dice con palabras en lugar de mostrar un cero.
+- **No hay una rendición pública de cifras en el sitio.** No hay totales, libro de gastos, presupuesto
+  cotizado ni avance de obra con porcentajes. El método de cómo se lleva la cuenta está en
+  /transparencia. El detalle operativo vive en el backoffice.
 
 ## Páginas
 
-- [Inicio](${siteUrl}/): las nueve preguntas del proyecto respondidas en orden.
+- [Inicio](${siteUrl}/): el relato: el fuego, la comunidad, cómo ayudar, las donaciones, lo que viene.
 - [La historia de Norma](${siteUrl}/norma): quién fue.
 - [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada y
   qué se necesita ahora.
-- [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra, presupuesto por rubro, hitos.
-- [Cómo ayudar](${siteUrl}/ayudar): los datos bancarios de los tres países y qué hacer después de
-  transferir.
-- [Transparencia](${siteUrl}/transparencia): total recibido, total gastado, saldo y el detalle de cada
-  gasto.
+- [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.
+- [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
+  Chile.
+- [Contacto](${siteUrl}/contacto): WhatsApp y teléfono de Saúl.
+- [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta, sin cifras públicas.
 - [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
 - [Privacidad](${siteUrl}/legales/privacidad) · [Términos](${siteUrl}/legales/terminos)

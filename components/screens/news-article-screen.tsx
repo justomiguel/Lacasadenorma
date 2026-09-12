@@ -186,9 +186,7 @@ export async function NewsArticleScreen({
           </InlineLink>
         </p>
         <p className="mt-sm font-ui text-small text-ink-muted">
-          <InlineLink href={localizedHref("/transparencia", locale)}>
-            {ui.news.seeTransparency}
-          </InlineLink>
+          <InlineLink href={localizedHref("/ayudar", locale)}>{ui.helpCta}</InlineLink>
         </p>
       </Section>
     </Container>

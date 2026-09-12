@@ -1,12 +1,36 @@
 {
   "title": "Cómo ayudar",
-  "lead": "Se puede transferir desde Argentina, Chile o Estados Unidos.",
+  "lead": "Tres formas de ayudar: en el terreno, con materiales, o con un aporte.",
   "paragraphs": [
-    "Los aportes llegan por transferencia bancaria. Esta página no cobra: no pide datos de tarjeta, no procesa pagos y no cobra comisión.",
-    "Elegí tu país, copiá los datos y hacé la transferencia desde tu banco o tu billetera, como harías con cualquier otra."
+    "La prioridad de ahora es reconstruir la casa. Se puede dar una mano retirando escombros, acercando materiales, o transfiriendo desde Argentina o Chile.",
+    "Esta página no cobra: no pide datos de tarjeta, no procesa pagos y no cobra comisión. Si los datos bancarios que ves no coinciden con los que difundimos, no transfieras."
   ],
   "afterTransfer": [
-    "No hace falta hacer nada más. Cada aporte se concilia con el resumen del banco antes de sumarse al total publicado, así que el número de esta página puede tardar unos días en moverse.",
-    "Si preferís que tu aporte quede anónimo, ya lo está: no publicamos nombres ni montos individuales."
-  ]
+    "No hace falta avisar. Si preferís que tu aporte quede anónimo, ya lo está: no publicamos nombres ni montos individuales."
+  ],
+  "materials": ["Cemento", "Cal", "Arena", "Chapa"],
+  "contact": {
+    "name": "Saúl",
+    "phoneDisplay": "+54 9 3718 58-0131",
+    "phoneTel": "+5493718580131"
+  },
+  "accounts": {
+    "AR": {
+      "holder": "Justo Miguel Vargas",
+      "taxId": "20 - 33184377 - 7",
+      "alias": "justomiguelvargas",
+      "cbu": "1430001713005033120017",
+      "accountNumber": "1300503312001"
+    },
+    "CL": {
+      "holder": "JUSTO MIGUEL VARGAS",
+      "rut": "25540188-2",
+      "bank": "Scotiabank",
+      "accountType": "Cuenta Corriente",
+      "accountNumber": "980578127",
+      "email": "justomiguelvargas@gmail.com"
+    }
+  },
+  "mercadoPagoUrl": null,
+  "paypalUrl": null
 }

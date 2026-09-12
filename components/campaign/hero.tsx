@@ -1,97 +1,93 @@
-import { InPageAction } from "@/components/design-system/actions";
-import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
+import { HelpCta } from "@/components/campaign/help-cta";
+import { SecondaryAction } from "@/components/design-system/actions";
+import { CoverPhoto } from "@/components/design-system/photo";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
-import { HelpCta } from "./help-cta";
-
 /**
- * La apertura.
- *
- * Cuatro decisiones que vale la pena que queden escritas, porque las cuatro se
- * podrían "arreglar" mal más adelante:
- *
- * 1. **El texto va antes de la foto en el orden del documento.** En 360 px —el
- *    ancho de quien llega de un WhatsApp— un retrato en proporción 4:5 ocupa la
- *    pantalla entera y empujaría el nombre y la acción abajo del pliegue, que es
- *    exactamente lo que SC-001 prohíbe. En desktop la composición se vuelve
- *    asimétrica y la foto recupera su peso.
- * 2. **Hay una sola acción con forma de botón.** La segunda es un enlace de
- *    texto con regla: dos botones compitiendo diluyen la decisión.
- * 3. **El lugar no es una sobrelínea en versales.** Estaba arriba del título, en
- *    versales espaciadas, y era el primero de los 39 casos del patrón que hacía que
- *    el sitio se leyera como una plantilla (ADR-021). Ahora el lugar viaja con el
- *    nombre de Norma, en el epígrafe de su foto, que es donde informa.
- * 4. **La foto es ella, y se dice quién es.** El sitio se llama La Casa de Norma y
- *    durante mucho tiempo abrió con un rectángulo gris que decía que la familia
- *    estaba eligiendo la fotografía. El epígrafe lleva su nombre completo porque el
- *    título de la página dice "Norma" y su nombre era Norma Edith Bedoya.
- * 5. **La apertura dice qué pasó, no qué nos proponemos.** Acá estaba la frase del
- *    proyecto —«Reconstruimos una casa. Construimos un legado.»—, que sigue siendo
- *    cierta y sigue en el pie y en la tarjeta social, pero no informa: quien llega
- *    de un WhatsApp no sabe todavía qué casa ni por qué. Ahora las dos primeras
- *    frases son el hecho y la necesidad, y con eso la apertura responde las cinco
- *    preguntas de ADR-024 §5 sin pedirle nada al visitante.
- * 6. **Compartir está en la apertura.** Era la quinta pregunta y sólo se podía
- *    contestar bajando catorce pantallas. Es la acción que más veces se ejecuta,
- *    porque casi todo el mundo llega acá porque alguien le pasó el enlace.
+ * Apertura del mockup: foto real del incendio a sangrado, título, dos CTA.
+ * El header se superpone. No es min-height: 100vh: el ritmo lo marca el contenido.
  */
 export function Hero({ locale }: { locale: Locale }) {
-  const { norma, site, ui } = getContent(locale);
+  const { site, ui, whatHappened } = getContent(locale);
+  const hero =
+    whatHappened.photoEssay[1]?.photos[1] ?? whatHappened.photoEssay[0]?.photos[0];
+  const quotePhoto =
+    whatHappened.photoEssay[1]?.photos[0] ?? whatHappened.photoEssay[0]?.photos[1];
 
   return (
-    <section className="border-b border-rule" aria-labelledby="apertura">
-      {/* `pt-xl` en teléfono y `pt-2xl` desde `sm`: en 640 px de alto, 48 px entre un
-          encabezado de 40 px y un título de 52 px es espacio muerto, y son 16 de los
-          píxeles que hacen que las cinco respuestas entren arriba del pliegue. */}
-      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-xl sm:px-xl sm:pt-2xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
-        <div className="lg:col-span-6">
-          <h1 id="apertura" className="font-display text-display">
-            {site.name}
-          </h1>
+    <section
+      aria-labelledby="apertura"
+      className="relative isolate overflow-hidden bg-forest text-paper"
+      data-tone="forest"
+    >
+      {hero === undefined ? null : (
+        <div className="absolute inset-0 -z-10">
+          <CoverPhoto
+            media={hero}
+            priority
+            sizes="100vw"
+            position="center 30%"
+            className="opacity-50 lg:opacity-40"
+          />
+          <div className="absolute inset-0 bg-forest/55" />
+        </div>
+      )}
 
-          <p className="mt-lg max-w-measure font-prose text-lead text-ink">
+      <div className="mx-auto grid w-full max-w-page items-end gap-2xl px-5 pb-2xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-4xl lg:pt-32">
+        <div className="lg:col-span-6" data-reveal="">
+          <p
+            data-kicker=""
+            className="font-ui text-label uppercase tracking-label text-sage"
+          >
+            {ui.home.locationLine}
+          </p>
+          <h1 id="apertura" className="mt-md font-display text-display text-paper">
+            <span className="sr-only">{site.name}</span>
+            <span aria-hidden="true">
+              <span className="block">La Casa</span>
+              <span className="block">de Norma</span>
+            </span>
+          </h1>
+          <p className="mt-lg max-w-measure text-lead text-paper">
             {ui.home.openingLead}
           </p>
 
-          {/* Arriba de las acciones, y eso costó píxeles. Estuvo un rato abajo del
-              botón por miedo al pliegue de SC-001, y ahí la frase que dice a quién
-              estamos ayudando parecía la letra chica de la que pide plata. Arriba, en
-              360 px, empujaba el enlace de compartir 36 px fuera del pliegue. Lo que
-              se ajustó para que entrara: el relleno superior en teléfono, este margen,
-              y la propia frase, que pasó de cuatro líneas a tres. */}
-          <p className="mt-md max-w-measure text-body text-ink-muted">
-            {ui.home.openingNeed}
-          </p>
-
-          <div className="mt-lg flex flex-col items-start gap-lg sm:mt-xl sm:flex-row sm:items-center">
+          <div className="mt-xl flex flex-col items-start gap-md sm:flex-row sm:items-center">
             <HelpCta
               origen="apertura"
               href={localizedHref("/ayudar", locale)}
-              label={ui.helpCta}
+              label={`${ui.helpCta} →`}
             />
-            <InPageAction fragment="compartir">{ui.home.shareOpening}</InPageAction>
+            <SecondaryAction
+              href={localizedHref("/que-paso", locale)}
+              className="border-paper text-paper hover:bg-paper hover:text-forest"
+            >
+              {ui.home.knowStory}
+            </SecondaryAction>
           </div>
+          <p className="mt-xl hidden font-ui text-small text-paper/80 sm:block">
+            {ui.home.scrollHint}
+          </p>
         </div>
 
-        <div className="lg:col-span-5 lg:col-start-8">
-          {norma.portrait === null ? (
-            <ReservedSpace ratio="portrait" description={ui.home.portraitReserved} />
-          ) : (
-            /* Sangra al ancho del teléfono. Es la única foto de la apertura y en
-               360 px la diferencia entre una columna de 320 px y el borde de la
-               pantalla es la diferencia entre ilustrar el título y abrir con ella. */
-            <BleedOnMobile
-              media={{
-                ...norma.portrait,
-                caption: `${norma.fullName}. ${site.place.locality}, ${site.place.province}.`,
-              }}
-              priority
-              sizes="(min-width: 64rem) 40vw, 100vw"
-            />
-          )}
-        </div>
+        {quotePhoto === undefined ? null : (
+          <div className="relative lg:col-span-5 lg:col-start-8">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-md sm:aspect-[5/4] lg:aspect-[4/5]">
+              <CoverPhoto
+                media={quotePhoto}
+                priority
+                sizes="(min-width: 64rem) 40vw, 100vw"
+                position="center"
+              />
+              <div className="absolute inset-0 bg-forest/45" />
+              <p className="absolute inset-x-md bottom-lg font-display text-heading italic text-paper">
+                {ui.home.quoteOverlay}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

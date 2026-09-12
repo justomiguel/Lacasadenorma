@@ -32,25 +32,27 @@ es peor que no tenerlo: entrena a la gente a aceptar sin leer.
 
 ### Qué se emite
 
-Cuatro eventos, y están enumerados en el tipo `AnalyticsEvent`
+Los eventos están enumerados en el tipo `AnalyticsEvent`
 (`src/domain/ports/analytics.ts`). El tipo es la lista completa: agregar un evento obliga a editar
 el dominio, que es donde se nota.
 
 | Evento | Propiedades | Dónde se emite |
 |---|---|---|
 | `ayudar_click` | `origen` (la sección desde la que se hizo clic) | `components/campaign/help-cta.tsx` |
-| `metodo_visto` | `pais` (`AR`, `CL`, `US`) | `components/campaign/donation-methods.tsx`, al cambiar de pestaña |
-| `dato_copiado` | `pais`, `campo` (`CBU`, `Alias`, …) | `components/campaign/donation-methods.tsx`, al copiar |
+| `metodo_visto` | `pais` (`AR`, `CL`) | `components/campaign/donation-board.tsx`, al cambiar de país |
+| `dato_copiado` | `pais`, `campo` (`alias`, `cbu`, `cuenta_argentina`, `rut`, `cuenta_chile`, `email`) | `components/campaign/donation-board.tsx`, al copiar. Nunca el valor |
 | `compartir` | `canal` (`whatsapp`, `enlace`, …), `ruta` | `components/campaign/share-block.tsx` |
+| `whatsapp_click` | `origen` | `components/campaign/contact-actions.tsx` |
+| `llamar_click` | `origen` | `components/campaign/contact-actions.tsx` |
+| `medio_externo_click` | `medio` (`mercadopago` o `paypal`) | `components/campaign/donation-board.tsx`, sólo si hay URL real |
 
 Ninguna propiedad lleva un valor escrito por una persona. `campo` es la **etiqueta** del dato
-bancario, no el dato: se emite `{ pais: "AR", campo: "CBU" }`, nunca el CBU. Hay un test de
+bancario, no el dato: se emite `{ pais: "AR", campo: "cbu" }`, nunca el CBU. Hay un test de
 `CopyField` que verifica que lo que va al portapapeles sea el dato exacto, y la etiqueta es lo único
 que viaja al evento.
 
 No existe un evento de "vio la transparencia" ni de "leyó una novedad": eso es una vista de página
-con otro nombre, y el proveedor ya las cuenta. Dos eventos que sí estaban declarados y nunca se
-emitían fueron eliminados del tipo, porque un evento declarado y no emitido es una afirmación falsa
+con otro nombre, y el proveedor ya las cuenta. Un evento declarado y no emitido es una afirmación falsa
 sobre lo que el sitio mide.
 
 ### Qué se envía hoy: nada
@@ -61,7 +63,7 @@ No hay proveedor configurado. Con las variables de entorno vacías:
 - `AnalyticsScript` no renderiza nada (`components/site/analytics.tsx`),
 - `track()` no encuentra la global del proveedor y **sale sin hacer nada**.
 
-Es decir: los cuatro eventos se disparan en el navegador, no encuentran a dónde ir y se descartan
+Es decir: los eventos se disparan en el navegador, no encuentran a dónde ir y se descartan
 en el acto. No se acumulan, no se reintentan, no se guardan en `localStorage`. El sitio funciona
 completo en ese estado y es el estado por defecto.
 

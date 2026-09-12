@@ -9,16 +9,16 @@ las sirve autoalojadas, pero no expone el buffer: no hay forma de pedirle el arc
 
 Las dos alternativas eran descargar la fuente desde `fonts.gstatic.com` en cada generación de la
 imagen —una llamada de red en el camino crítico de una vista previa de WhatsApp, que falla en
-silencio y deja el enlace sin imagen— o versionar el archivo. Se versiona: son 220 kB que no viajan
-nunca al navegador, porque sólo los lee el servidor al componer la imagen.
+silencio y deja el enlace sin imagen— o versionar el archivo. Se versiona: son archivos que no
+viajan nunca al navegador, porque sólo los lee el servidor al componer la imagen.
 
 | Archivo | Familia | Peso | Uso |
 |---|---|---|---|
-| `Newsreader-Regular.ttf` | [Newsreader](https://fonts.google.com/specimen/Newsreader) | 400 | El título de la imagen |
-| `Archivo-Medium.ttf` | [Archivo](https://fonts.google.com/specimen/Archivo) | 500 | La sobrelínea y el pie |
+| `PlayfairDisplay-Regular.woff` | [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) | 400 | El título de la imagen |
+| `Inter-Medium.woff` | [Inter](https://fonts.google.com/specimen/Inter) | 500 | La sobrelínea y el pie |
 
-Son las instancias estáticas de las mismas familias que usa el sitio, así que la vista previa y la
-página se ven de la misma familia. Ambas están bajo
+Son las instancias estáticas de las mismas familias que usa el sitio (ADR-025), así que la vista
+previa y la página se ven de la misma familia. Ambas están bajo
 [SIL Open Font License 1.1](https://openfontlicense.org/), que permite redistribuirlas dentro de un
 proyecto.
 

@@ -5,12 +5,11 @@ import type { UiContent } from "@/content/schema";
 import { UNAVAILABLE_MESSAGES, type UnavailableReason } from "@/src/application/result";
 
 const DEFAULT_UNAVAILABLE: UiContent["unavailable"] = {
-  errorTitle: "No pudimos leer las cifras",
-  emptyTitle: "Cifras todavía no publicadas",
+  errorTitle: "No pudimos cargar esta parte",
+  emptyTitle: "Todavía no hay datos publicados",
   notConfigured:
     "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
-  error:
-    "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+  error: "Esta parte no está disponible ahora. Volvé a intentar en un rato.",
   notPublished: "La campaña todavía no está publicada.",
 };
 

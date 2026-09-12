@@ -34,4 +34,5 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [021](./021-segunda-direccion-visual.md) | La fotografía como estructura: segunda dirección visual | Aceptada |
 | [022](./022-medicion-de-performance.md) | Estrangular la red de verdad en lugar de simularla | Aceptada |
 | [023](./023-i18n-estructural.md) | i18n estructural: castellano sin prefijo, inglés en `/en` | Aceptada |
-| [024](./024-tercera-direccion-visual.md) | El color sale de la casa: tercera dirección visual y limpieza de contenido | Aceptada |
+| [024](./024-tercera-direccion-visual.md) | El color sale de la casa: tercera dirección visual y limpieza de contenido | Reemplazada por ADR-025 para la dirección de arte |
+| [025](./025-mockup-aprobado.md) | El mockup aprobado es la fuente de verdad visual | Aceptada |
