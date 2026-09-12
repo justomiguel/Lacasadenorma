@@ -180,39 +180,42 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
           <SectionHeading title={ui.home.rebuildHeading} id="reconstruir" />
           <Paragraphs items={reconstruction.paragraphs} />
 
+          {/* Un solo aviso para los dos bloques, porque los dos leen `overview`: si no
+              hay cifras, no las hay para ninguno. Con un aviso por bloque quedaban dos
+              recuadros idénticos y consecutivos, y dos veces la misma frase se lee
+              como un error del sitio y no como un dato que falta. El subtítulo
+              también se va: sin barra de progreso no hay «cómo va» que mostrar. */}
           {overview.status === "ok" ? (
-            <BudgetList
-              items={overview.data.budgetItems}
-              locale={locale}
-              ui={ui}
-              className="mt-xl"
-            />
+            <>
+              <BudgetList
+                items={overview.data.budgetItems}
+                locale={locale}
+                ui={ui}
+                className="mt-xl"
+              />
+
+              <SectionHeading
+                title={ui.home.howItsGoing}
+                level={3}
+                className="mt-4xl"
+                id="como-va"
+              />
+
+              <CampaignProgress
+                fundraising={overview.data.fundraising}
+                milestones={overview.data.milestones}
+                reconciledAt={overview.data.transparency.reconciledAt}
+                reconciliationIsStale={overview.data.transparency.reconciliationIsStale}
+                locale={locale}
+                ui={ui}
+              />
+            </>
           ) : (
             <Unavailable
               reason={overview.reason}
               copy={ui.unavailable}
               className="mt-xl"
             />
-          )}
-
-          <SectionHeading
-            title={ui.home.howItsGoing}
-            level={3}
-            className="mt-4xl"
-            id="como-va"
-          />
-
-          {overview.status === "ok" ? (
-            <CampaignProgress
-              fundraising={overview.data.fundraising}
-              milestones={overview.data.milestones}
-              reconciledAt={overview.data.transparency.reconciledAt}
-              reconciliationIsStale={overview.data.transparency.reconciliationIsStale}
-              locale={locale}
-              ui={ui}
-            />
-          ) : (
-            <Unavailable reason={overview.reason} copy={ui.unavailable} />
           )}
 
           <p className="mt-2xl">

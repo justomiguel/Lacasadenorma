@@ -76,6 +76,13 @@ export function Paragraphs({
  * La etiqueta **no** es un encabezado: es una sobrelínea. Si fuera un `h3`
  * dentro de un `h2` rompería la jerarquía, que es una de las cosas que axe
  * detecta y que un lector de pantalla sufre.
+ *
+ * **La regla es sólo del `h2`.** La regla de un pixel es el recurso con el que este
+ * sitio reemplaza a las cards, y lo que significa es «acá empieza una sección». Un
+ * `h3` es una parte de la sección que ya empezó: dibujarle la misma regla convierte
+ * el separador en decoración, y en la única sección que tiene subtítulo dejaba tres
+ * filetes en ciento veinte píxeles —el último rubro del presupuesto, el subtítulo y
+ * la barra de progreso—.
  */
 export function SectionHeading({
   label,
@@ -93,7 +100,7 @@ export function SectionHeading({
   const Heading = level === 2 ? "h2" : "h3";
 
   return (
-    <div className={cn("mb-xl", className)}>
+    <div className={cn(level === 2 ? "mb-xl" : "mb-lg", className)}>
       {label === undefined ? null : (
         <p className="mb-sm font-ui text-small text-ink-muted">{label}</p>
       )}
@@ -106,7 +113,7 @@ export function SectionHeading({
       >
         {title}
       </Heading>
-      <hr className="mt-md border-t border-rule" />
+      {level === 2 ? <hr className="mt-md border-t border-rule" /> : null}
     </div>
   );
 }

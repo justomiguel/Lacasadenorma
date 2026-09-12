@@ -78,7 +78,7 @@ jobs:
       # entero diagnosticando a ciegas una falla de la que sólo se veía el resumen.
       # Los informes de una corrida que pasó también sirven: son la línea de base
       # contra la que se compara la próxima.
-      - name: Medir las nueve páginas públicas contra los presupuestos
+      - name: Medir las ocho páginas públicas contra los presupuestos
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: ./lighthouserc.json
