@@ -31,3 +31,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [018](./018-presupuestos-de-performance.md) | Los presupuestos de Lighthouse se fijan sobre lo medido, no sobre lo deseado | Aceptada |
 | [019](./019-auditoria-por-funcion.md) | El rastro de auditoría se escribe por una función `security definer`, no por privilegio de tabla | Aceptada |
 | [020](./020-rastro-obligatorio.md) | El rastro de auditoría es obligatorio en el tipo, no una convención | Aceptada |
+| [021](./021-segunda-direccion-visual.md) | La fotografía como estructura: segunda dirección visual | Aceptada |
