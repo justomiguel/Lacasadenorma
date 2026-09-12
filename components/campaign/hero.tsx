@@ -42,7 +42,10 @@ export function Hero({ locale }: { locale: Locale }) {
 
   return (
     <section className="border-b border-rule" aria-labelledby="apertura">
-      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
+      {/* `pt-xl` en teléfono y `pt-2xl` desde `sm`: en 640 px de alto, 48 px entre un
+          encabezado de 40 px y un título de 52 px es espacio muerto, y son 16 de los
+          píxeles que hacen que las cinco respuestas entren arriba del pliegue. */}
+      <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-xl sm:px-xl sm:pt-2xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
         <div className="lg:col-span-6">
           <h1 id="apertura" className="font-display text-display">
             {site.name}
@@ -52,15 +55,17 @@ export function Hero({ locale }: { locale: Locale }) {
             {ui.home.openingLead}
           </p>
 
-          {/* Arriba de las acciones, medido: en 360 px la apertura completa cierra a
-              583 px y el pliegue de SC-001 está en 640. Estuvo un rato abajo del
-              botón por miedo a ese pliegue, y ahí la frase que dice a quién estamos
-              ayudando parecía la letra chica de la que pide plata. */}
+          {/* Arriba de las acciones, y eso costó píxeles. Estuvo un rato abajo del
+              botón por miedo al pliegue de SC-001, y ahí la frase que dice a quién
+              estamos ayudando parecía la letra chica de la que pide plata. Arriba, en
+              360 px, empujaba el enlace de compartir 36 px fuera del pliegue. Lo que
+              se ajustó para que entrara: el relleno superior en teléfono, este margen,
+              y la propia frase, que pasó de cuatro líneas a tres. */}
           <p className="mt-md max-w-measure text-body text-ink-muted">
             {ui.home.openingNeed}
           </p>
 
-          <div className="mt-xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
+          <div className="mt-lg flex flex-col items-start gap-lg sm:mt-xl sm:flex-row sm:items-center">
             <HelpCta
               origen="apertura"
               href={localizedHref("/ayudar", locale)}

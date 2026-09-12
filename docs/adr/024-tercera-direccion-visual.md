@@ -183,10 +183,22 @@ teléfono. Un enlace en la apertura no agrega una superficie con acento —los e
 misma página, así que es un ancla y no una ruta: con `typedRoutes`, un `href` que es sólo un fragmento no
 es una ruta del sitio, y la primitiva nueva `InPageAction` existe para no mentirle al compilador.
 
-Las cinco respuestas entran arriba del pliegue de 360×640, y el orden se decidió midiendo. La frase que
-dice a quién estamos ayudando estuvo un rato **abajo** del botón, por miedo a empujarlo fuera del
-pliegue; ahí parecía la letra chica de la que pide plata. Arriba del botón, la apertura completa cierra a
-606 px y el pliegue está en 640.
+Las cinco respuestas entran arriba del pliegue de 360×640, y ahí no sobra nada. La frase que dice a
+quién estamos ayudando estuvo un rato **abajo** del botón, por miedo a empujarlo fuera del pliegue; ahí
+parecía la letra chica de la que pide plata. Puesta arriba, empujaba el enlace de compartir 36 px
+**afuera** —y eso no lo dijo ningún test, lo dijo una captura—.
+
+Los 36 px se recuperaron en tres lugares, y ninguno de los tres es apretar el diseño hasta que entre:
+
+| Qué | Cuánto | Por qué se sostiene solo |
+|---|---|---|
+| El relleno superior de la apertura, `pt-2xl` → `pt-xl` en teléfono | 16 px | En 640 px de alto, 48 px entre un encabezado de 40 y un título de 52 es espacio muerto |
+| El margen sobre las acciones, `mt-xl` → `mt-lg` en teléfono | 8 px | Sigue siendo el salto más grande de la apertura |
+| `home.openingNeed`, de cuatro líneas a tres | 29 px | «Su marido logró salir, pero inhaló mucho humo y está en tratamiento» decía en la apertura lo que `/que-paso` cuenta con la cifra al lado. Queda «se salvó y está en tratamiento», que es cierto y alcanza |
+
+Medido sobre el sitio construido: la apertura cierra a **623 px**. Y las cinco entradas pasan a ser las
+cinco aserciones del test del pliegue, que antes eran tres y una de ellas era el eslogan. Si eso falla, la
+pregunta no es cómo apretar más el margen: es qué frase sobra.
 
 El enlace a la historia de Norma se va de la apertura. Eran dos enlaces y una acción para cinco
 preguntas, y ese enlace no contestaba ninguna: la sección inmediatamente siguiente es la historia de

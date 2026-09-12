@@ -20,7 +20,21 @@ const { faq, site, ui } = getContent("es");
  */
 
 test.describe("flujo 1 · abrir la home", () => {
-  test("el nombre, qué pasó y la acción se ven sin desplazarse en 360 px", async ({
+  /**
+   * Las cinco respuestas de la apertura, arriba del pliegue del teléfono más chico.
+   *
+   * Eran tres —nombre, propuesta y acción— y la propuesta era el eslogan del
+   * proyecto, que no dice qué casa ni por qué. ADR-024 §5 fija las cinco: qué
+   * ocurrió, a quién estamos ayudando, qué hay que reconstruir, cómo ayudar y cómo
+   * compartir.
+   *
+   * El test es exigente a propósito, porque el presupuesto es de verdad: las cinco
+   * cierran a 623 px y el pliegue está en 640. Con la frase del medio en cuatro
+   * líneas en lugar de tres, el enlace de compartir se iba 36 px afuera y nada lo
+   * notaba. Si esto falla, la pregunta no es cómo apretar más el margen: es qué
+   * frase sobra.
+   */
+  test("las cinco respuestas de la apertura se ven sin desplazarse en 360 px", async ({
     page,
   }) => {
     await page.setViewportSize(VIEWPORT_MINIMO);
@@ -31,16 +45,17 @@ test.describe("flujo 1 · abrir la home", () => {
     const apertura = page.getByRole("region", { name: site.name });
 
     const nombre = apertura.getByRole("heading", { level: 1, name: site.name });
-    // El hecho, no la frase del proyecto. Acá estaba `site.tagline`
-    // —«Reconstruimos una casa. Construimos un legado.»—, que no dice qué casa ni
-    // por qué, y en el primer pliegue eso es todo lo que hay (ADR-024).
     const quePaso = apertura.getByText(ui.home.openingLead, { exact: true });
+    const aQuien = apertura.getByText(ui.home.openingNeed, { exact: true });
     const accion = apertura.getByRole("link", { name: /ayudar a reconstruir/i }).first();
+    const compartir = apertura.getByRole("link", { name: ui.home.shareOpening });
 
     for (const [que, locator] of [
       ["el nombre", nombre],
       ["qué pasó", quePaso],
+      ["a quién estamos ayudando", aQuien],
       ["la acción principal", accion],
+      ["cómo compartir", compartir],
     ] as const) {
       await expect(locator, `${que} tiene que ser visible`).toBeVisible();
 

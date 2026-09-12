@@ -364,8 +364,8 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
    *Ayudar a reconstruir* (acción primaria) y *Cómo compartirla* (enlace de texto, no botón: dos botones
    compitiendo diluyen la decisión). El enlace de compartir es un ancla a la última sección de esta
    misma página. Tiene que responder las cinco preguntas de
-   [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) sin desplazarse en 360 px: cierra a 606 px
-   con el pliegue en 640.
+   [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) sin desplazarse en 360 px: cierra a 623 px
+   con el pliegue en 640, y las cinco son aserciones del test del pliegue.
 2. **Quién fue Norma.** Tres párrafos, con foto lateral. Termina en enlace a la historia completa.
 3. **Qué pasó.** Banda sobre tinta. Dos párrafos sobrios y la frase de la familia, atribuida. Enlace a
    la página completa. Es el único lugar de la home donde se habla de la pérdida.
@@ -492,12 +492,14 @@ número sin fecha no es un dato, es una afirmación.
 
 ## 12. Criterios de aceptación visual
 
-El loop de revisión visual cierra sólo cuando, en 360 px y en el ancho de escritorio, las once
-páginas cumplen los diez criterios. Cada uno dice con qué se comprueba, y eso es la mitad del
-criterio: seis se miden en cada corrida de CI, y sólo cuatro dependen de que alguien mire.
+El loop de revisión visual cierra sólo cuando, en 360 px y en el ancho de escritorio, las diez
+páginas cumplen los criterios. Cada uno dice con qué se comprueba, y eso es la mitad del
+criterio: la mayoría se miden en cada corrida de CI, y sólo unos pocos dependen de que alguien mire.
 
-- [x] La primera pantalla en mobile comunica qué es esto y qué se puede hacer, sin desplazarse.
-      → `e2e/comun/home.spec.ts` (SC-001) y la captura `home--mobile-fold`.
+- [x] La primera pantalla en mobile responde las **cinco** preguntas de
+      [ADR-024](../../docs/adr/024-tercera-direccion-visual.md) §5 —qué ocurrió, a quién ayudamos, qué
+      hay que reconstruir, cómo ayudar y cómo compartir—, sin desplazarse.
+      → `e2e/comun/home.spec.ts` (SC-001), una aserción por respuesta. Eran tres y una era el eslogan.
 - [x] No hay ningún gradiente, blob, sombra difusa ni card decorativa.
       → medido: `e2e/comun/revision-visual.spec.ts`, criterio 2.
 - [x] Hay como máximo tres superficies con relleno de acento por pantalla (sección 3: los enlaces no
