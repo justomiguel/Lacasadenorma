@@ -14,7 +14,7 @@ accesibilidad o la velocidad. Cuando hubo conflicto, ganó el otro lado, y está
 ## 1. El primer requisito no es técnico
 
 Para que un buscador cite una respuesta, la respuesta tiene que estar escrita. Nueve preguntas
-concretas están en `content/preguntas.json`, y el sitio las responde **en el HTML del servidor**:
+concretas están en `content/es/preguntas.json` (y su par en `content/en/`), y el sitio las responde **en el HTML del servidor**:
 
 1. ¿Qué es La Casa de Norma?
 2. ¿Quién fue Norma?
@@ -51,14 +51,17 @@ propio objeto `Metadata` es una garantía de que a alguna le va a faltar la can�
 
 | Elemento | Dónde se define | Valor |
 |---|---|---|
-| `metadataBase` | `app/layout.tsx` | `new URL(getSiteUrl())` — todas las URLs relativas se resuelven contra él |
-| Plantilla de título | `app/layout.tsx` | `"%s — La Casa de Norma"` |
-| `alternates.canonical` | `pageMetadata()`, por página | La ruta propia, nunca la de otra |
+| `metadataBase` | `app/(es)/layout.tsx` y `app/(en)/layout.tsx` vía `rootMetadata()` | `new URL(getSiteUrl())` — todas las URLs relativas se resuelven contra él |
+| Plantilla de título | `rootMetadata(locale)` | `"%s — La Casa de Norma"` |
+| `alternates.canonical` | `pageMetadata()`, por página | La URL de **este** idioma (`/norma` o `/en/norma`) |
+| `alternates.languages` | `pageMetadata()` | `es-AR`, `en`, `x-default` (el castellano) |
 | `openGraph.type` | `pageMetadata()` | `website`, o `article` cuando hay `publishedTime` |
-| `openGraph.locale` | `pageMetadata()` | `es_AR` |
+| `openGraph.locale` | `pageMetadata()` | `es_AR` o `en_US` |
+| `openGraph.alternateLocale` | `pageMetadata()` | El otro idioma |
+| `html lang` | El root layout de cada grupo de rutas | `es-AR` o `en` |
 | `twitter.card` | `pageMetadata()` | `summary_large_image` |
-| `robots` | `app/layout.tsx` / `app/admin/layout.tsx` | `index, follow` en público; `noindex, nofollow, nocache` en todo `/admin` |
-| `formatDetection.telephone` | `app/layout.tsx` | `false`, para que iOS no convierta un CBU en un teléfono |
+| `robots` | Layouts públicos / `app/(es)/admin/layout.tsx` | `index, follow` en público; `noindex, nofollow, nocache` en todo `/admin` |
+| `formatDetection.telephone` | `rootMetadata()` | `false`, para que iOS no convierta un CBU en un teléfono |
 
 Ese último es un detalle que parece cosmético y no lo es: Safari en iOS detecta secuencias de dígitos
 y las vuelve enlaces `tel:`. Un CBU de 22 dígitos convertido en enlace telefónico es un dato bancario
@@ -84,8 +87,9 @@ un refactor no es algo que se vea mirando la pantalla.
 ## 3. `sitemap.xml` y `robots.txt`
 
 El sitemap sale de la **misma lista de rutas que la navegación del pie** (`PUBLIC_ROUTES` en
-`components/site/navigation.ts`). Una página nueva que se agregue al menú entra al sitemap sin que
-nadie se acuerde; una que no esté en el menú no existe para nadie, y eso también está bien.
+`components/site/navigation.ts`). Lista las dos versiones de cada página (`/` y `/en`, `/norma` y
+`/en/norma`) con `alternates.languages`: `es-AR`, `en` y `x-default` al castellano. Las novedades
+aparecen en los dos idiomas con el mismo slug; el cuerpo sigue en castellano (ADR-023).
 
 Las novedades publicadas se enumeran en tiempo de ejecución con `listUpdates()`. La ruta revalida
 cada 300 segundos, y publicar una novedad invalida `/sitemap.xml` explícitamente (ADR-017).
@@ -109,11 +113,7 @@ pero no tiene nada que valga indexar.
 La mayoría de la gente va a llegar desde WhatsApp. Esa es la vista previa que más importa, y la que
 tiene las reglas más rígidas.
 
-`app/opengraph-image.tsx` genera una imagen de 1200×630 con `ImageResponse`: la localidad y la
-provincia arriba, una barra del color de ladrillo, el nombre, la bajada, y una línea al pie que dice
-que los aportes se rinden. Es **tipográfica**, con las mismas dos tipografías del sitio: el
-generador de imágenes no puede usar las variables que sirve `next/font`, así que lee las copias
-estáticas de `assets/fonts/`.
+`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse`:
 
 Es tipográfica por una razón concreta y no por estilo: la única foto disponible sería una de Norma o
 de la casa, y una foto recortada a 1200×630 por un algoritmo, superpuesta con texto, en la tarjeta
@@ -136,12 +136,12 @@ Marcado que promete lo que la página no cumple es engaño, y además se penaliz
 
 | Tipo | Dónde | De dónde salen los datos |
 |---|---|---|
-| `Organization` | Todas las páginas | `content/site.json` |
-| `WebSite` | Todas las páginas | `content/site.json` |
+| `Organization` | Todas las páginas | `content/{locale}/site.json` |
+| `WebSite` | Todas las páginas | `content/{locale}/site.json` |
 | `WebPage` | Home, `/norma`, novedades | Argumentos de la página |
 | `FAQPage` | Home | Las mismas nueve preguntas que se ven en pantalla |
 | `DonateAction` | Home | Apunta a `/ayudar` |
-| `Person` | `/norma` | `content/norma.json` |
+| `Person` | `/norma` | `content/{locale}/norma.json` |
 | `Article` | `/novedades/[slug]` | La novedad publicada |
 | `BreadcrumbList` | `/norma`, `/novedades/[slug]` | Sólo cuando hay dos niveles o más |
 

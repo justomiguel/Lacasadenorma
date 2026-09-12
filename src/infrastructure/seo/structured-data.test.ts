@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { faq, norma, site } from "@/content";
-
+import { getContent } from "@/content/pack";
 import {
   articleSchema,
   breadcrumbSchema,
@@ -13,6 +12,8 @@ import {
   webPageSchema,
   webSiteSchema,
 } from "./structured-data";
+
+const { faq, norma, site } = getContent("es");
 
 /**
  * Un dato estructurado es una afirmación que se le hace a una máquina en un lugar
@@ -296,6 +297,13 @@ describe("donateActionSchema", () => {
 
     expect(isJsonObject(target) && target.urlTemplate).toBe(`${SITE}/ayudar`);
   });
+
+  it("en inglés el DonateAction apunta a /en/ayudar", () => {
+    const node = emitOne(donateActionSchema(SITE, "en"));
+    const target = node.target;
+
+    expect(isJsonObject(target) && target.urlTemplate).toBe(`${SITE}/en/ayudar`);
+  });
 });
 
 describe("garantías que valen para todo el grafo", () => {
@@ -346,6 +354,22 @@ describe("garantías que valen para todo el grafo", () => {
 
     expect(sinFecha).not.toHaveProperty("datePublished");
   });
+
+  it("la URL de una novedad en inglés lleva el prefijo y el idioma del cuerpo sigue siendo castellano", () => {
+    const node = emitOne(
+      articleSchema({
+        siteUrl: SITE,
+        slug: "primera-semana",
+        title: "La primera semana de obra",
+        description: "Qué se compró y qué falta.",
+        publishedAt: "2026-09-08T00:00:00.000Z",
+        locale: "en",
+      }),
+    );
+
+    expect(node.url).toBe(`${SITE}/en/novedades/primera-semana`);
+    expect(node.inLanguage).toBe("es-AR");
+  });
 });
 
 describe("breadcrumbSchema", () => {
@@ -382,6 +406,23 @@ describe("breadcrumbSchema", () => {
       expect(String(item.item)).toMatch(/^https:\/\//);
       expect(String(item.item).replace(/^https:\/\//, "")).not.toContain("//");
     }
+  });
+
+  it("el inglés antepone /en y la raíz no termina en una doble barra", () => {
+    const items = objectList(
+      emitOne(
+        breadcrumbSchema(
+          SITE,
+          [
+            { name: "Home", path: "/" },
+            { name: "Who Norma was", path: "/norma" },
+          ],
+          "en",
+        ),
+      ).itemListElement,
+    );
+
+    expect(items.map((item) => item.item)).toEqual([`${SITE}/en`, `${SITE}/en/norma`]);
   });
 });
 

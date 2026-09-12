@@ -328,8 +328,9 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 - Fundación Norma no tiene todavía personería jurídica; el contenido y los datos estructurados
   evitan afirmar lo contrario.
 - Las identidades de quienes aportan no se publican en esta versión.
-- El sitio se publica únicamente en castellano rioplatense; la internacionalización no está en
-  alcance.
+- El sitio se publica en castellano rioplatense (sin prefijo de URL) y en inglés (`/en`). Los
+  slugs no se traducen. El backoffice, las novedades escritas a mano y las herramientas de WebMCP
+  quedan en castellano. Ver ADR-023.
 - La conciliación es semanal y la realiza una persona con rol de propietario.
 - Riacho Conecta, los programas de formación y los medios de pago electrónicos quedan fuera de
   alcance de esta versión: se deja el modelo preparado, no la implementación.

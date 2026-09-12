@@ -1,6 +1,7 @@
 "use client";
 
 import { PrimaryAction } from "@/components/design-system/actions";
+import { localizedHref } from "@/src/i18n/href";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 /**
@@ -16,19 +17,25 @@ import { track } from "@/src/infrastructure/analytics/browser";
  *
  * `data-help-primary` es lo que mira `HelpBar` para retirarse mientras esta
  * acción está en pantalla, en lugar de duplicarla (ux.md §9).
+ *
+ * `href` y `label` los pone la página, que es de servidor y conoce el idioma.
+ * Por omisión siguen siendo el castellano, para no romper los tests que no
+ * pasan locale.
  */
 export function HelpCta({
   origen,
   label = "Ayudar a reconstruir",
+  href = localizedHref("/ayudar", "es"),
   className,
 }: {
   origen: string;
   label?: string;
+  href?: ReturnType<typeof localizedHref>;
   className?: string;
 }) {
   return (
     <PrimaryAction
-      href="/ayudar"
+      href={href}
       data-help-primary=""
       onClick={() => {
         track({ name: "ayudar_click", props: { origen } });

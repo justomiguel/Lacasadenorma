@@ -1,4 +1,6 @@
-import { faq, norma, site } from "@/content";
+import { getContent } from "@/content";
+import type { Locale } from "@/src/i18n/locale";
+import { htmlLang, localizeHref } from "@/src/i18n/locale";
 
 /**
  * Datos estructurados.
@@ -33,7 +35,8 @@ function ids(siteUrl: string) {
   };
 }
 
-export function organizationSchema(siteUrl: string): object {
+export function organizationSchema(siteUrl: string, locale: Locale = "es"): object {
+  const { site } = getContent(locale);
   const id = ids(siteUrl);
 
   return {
@@ -57,7 +60,8 @@ export function organizationSchema(siteUrl: string): object {
   };
 }
 
-export function webSiteSchema(siteUrl: string): object {
+export function webSiteSchema(siteUrl: string, locale: Locale = "es"): object {
+  const { site } = getContent(locale);
   const id = ids(siteUrl);
 
   return {
@@ -66,12 +70,13 @@ export function webSiteSchema(siteUrl: string): object {
     url: siteUrl,
     name: site.name,
     description: site.shortDescription,
-    inLanguage: "es-AR",
+    inLanguage: htmlLang(locale),
     publisher: { "@id": id.organization },
   };
 }
 
-export function personSchema(siteUrl: string): object {
+export function personSchema(siteUrl: string, locale: Locale = "es"): object {
+  const { site, norma } = getContent(locale);
   const id = ids(siteUrl);
 
   return {
@@ -84,7 +89,7 @@ export function personSchema(siteUrl: string): object {
       "@type": "Place",
       name: `${site.place.locality}, ${site.place.province}, ${site.place.country}`,
     },
-    mainEntityOfPage: `${siteUrl}/norma`,
+    mainEntityOfPage: `${siteUrl}${localizeHref("/norma", locale)}`,
   };
 }
 
@@ -95,7 +100,8 @@ export function personSchema(siteUrl: string): object {
  * reescribe para el buscador: dos versiones distintas de la misma respuesta es
  * justamente lo que la política de contenido oculto prohíbe.
  */
-export function faqSchema(): object {
+export function faqSchema(locale: Locale = "es"): object {
+  const { faq } = getContent(locale);
   return {
     "@type": "FAQPage",
     mainEntity: faq.map((entry) => ({
@@ -109,18 +115,18 @@ export function faqSchema(): object {
   };
 }
 
-export function donateActionSchema(siteUrl: string): object {
+export function donateActionSchema(siteUrl: string, locale: Locale = "es"): object {
+  const { ui } = getContent(locale);
   const id = ids(siteUrl);
 
   return {
     "@type": "DonateAction",
-    name: "Ayudar a reconstruir la casa",
-    description:
-      "Aporte por transferencia bancaria desde Argentina, Chile o Estados Unidos. El sitio no procesa pagos: la transferencia se hace desde el banco de quien aporta.",
+    name: ui.helpCta,
+    description: getContent(locale).help.lead,
     recipient: { "@id": id.organization },
     target: {
       "@type": "EntryPoint",
-      urlTemplate: `${siteUrl}/ayudar`,
+      urlTemplate: `${siteUrl}${localizeHref("/ayudar", locale)}`,
       actionPlatform: "https://schema.org/DesktopWebPlatform",
     },
   };
@@ -131,16 +137,19 @@ export function webPageSchema(input: {
   path: string;
   name: string;
   description: string;
+  locale?: Locale;
 }): object {
+  const locale = input.locale ?? "es";
   const id = ids(input.siteUrl);
+  const url = `${input.siteUrl}${localizeHref(input.path, locale)}`;
 
   return {
     "@type": "WebPage",
-    "@id": `${input.siteUrl}${input.path}#pagina`,
-    url: `${input.siteUrl}${input.path}`,
+    "@id": `${url}#pagina`,
+    url,
     name: input.name,
     description: input.description,
-    inLanguage: "es-AR",
+    inLanguage: htmlLang(locale),
     isPartOf: { "@id": id.website },
   };
 }
@@ -151,9 +160,11 @@ export function articleSchema(input: {
   title: string;
   description: string;
   publishedAt: string | null;
+  locale?: Locale;
 }): object {
+  const locale = input.locale ?? "es";
   const id = ids(input.siteUrl);
-  const url = `${input.siteUrl}/novedades/${input.slug}`;
+  const url = `${input.siteUrl}${localizeHref(`/novedades/${input.slug}`, locale)}`;
 
   return {
     "@type": "Article",
@@ -161,7 +172,8 @@ export function articleSchema(input: {
     headline: input.title,
     description: input.description,
     url,
-    inLanguage: "es-AR",
+    // El cuerpo del CMS se publica en castellano en los dos idiomas (ADR-023).
+    inLanguage: htmlLang("es"),
     isPartOf: { "@id": id.website },
     publisher: { "@id": id.organization },
     ...(input.publishedAt === null ? {} : { datePublished: input.publishedAt }),
@@ -177,15 +189,23 @@ export interface Crumb {
  * Migas de pan. Se emite sólo cuando la página tiene una jerarquía real; una miga
  * de un solo nivel no describe nada.
  */
-export function breadcrumbSchema(siteUrl: string, crumbs: readonly Crumb[]): object {
+export function breadcrumbSchema(
+  siteUrl: string,
+  crumbs: readonly Crumb[],
+  locale: Locale = "es",
+): object {
   return {
     "@type": "BreadcrumbList",
-    itemListElement: crumbs.map((crumb, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: crumb.name,
-      item: `${siteUrl}${crumb.path === "/" ? "" : crumb.path}`,
-    })),
+    itemListElement: crumbs.map((crumb, index) => {
+      const path = localizeHref(crumb.path, locale);
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        name: crumb.name,
+        item: `${siteUrl}${path === "/" ? "" : path}`,
+      };
+    }),
   };
 }
 

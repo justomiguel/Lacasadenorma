@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "./cn";
 import { formatLongDate } from "./dates";
+import { intlLocale, type Locale } from "@/src/i18n/locale";
 
 /**
  * Tipografía del sistema. Los tamaños vienen de los tokens de `ux.md`; ningún
@@ -152,13 +153,15 @@ export function Testimony({
 export function Byline({
   isoDate,
   label,
+  locale = "es",
   className,
 }: {
   isoDate: string;
   label?: string;
+  locale?: Locale;
   className?: string;
 }) {
-  const formatted = formatLongDate(isoDate);
+  const formatted = formatLongDate(isoDate, intlLocale(locale));
 
   return (
     <p className={cn("font-ui text-small text-ink-muted", className)}>

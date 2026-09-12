@@ -1,47 +1,54 @@
+import { getContent } from "@/content";
+import type { Locale } from "@/src/i18n/locale";
+import {
+  languageAlternates,
+  localizeHref,
+  ogLocale,
+  otherLocale,
+} from "@/src/i18n/locale";
+import { getSiteUrl } from "@/src/infrastructure/site-url";
+
 import type { Metadata } from "next";
 
-import { site } from "@/content";
-
 /**
- * Metadata de una página.
+ * Metadata de una página, **en el idioma de la página**.
  *
- * Existe como una función y no como un objeto copiado en cada archivo porque la
- * canónica y la vista previa de OpenGraph son las dos cosas que se olvidan
- * primero, y cuando se olvidan no se rompe nada visible: la página funciona y el
- * enlace compartido queda sin título. Un solo lugar que las emita siempre es más
- * barato que revisarlo página por página.
- *
- * `url` y `canonical` se declaran relativas a propósito. Next las resuelve contra
- * el `metadataBase` del layout raíz, que en un preview de Vercel es el dominio del
- * preview y en producción el dominio real: una canónica escrita a mano apuntaría
- * al dominio equivocado en la mitad de los despliegues.
+ * La canónica apunta a *esta* URL (`/norma` o `/en/norma`), no a las dos. Los
+ * `hreflang` sí listan las dos, más `x-default` al castellano: es el idioma de
+ * origen (ADR-023).
  */
 export interface PageMetadataInput {
-  /** Sin el nombre del sitio: lo agrega la plantilla del layout raíz. */
+  readonly locale: Locale;
+  /** Sin el nombre del sitio: lo agrega la plantilla del layout. */
   readonly title: string;
   readonly description: string;
-  /** Ruta absoluta del sitio, con barra inicial. */
+  /** Ruta canónica en castellano, con barra inicial. */
   readonly path: string;
-  /** Para novedades: fecha de publicación, que las convierte en artículo. */
   readonly publishedTime?: string;
-  /** Una página que no debe indexarse lo declara, en lugar de confiar en robots.txt. */
   readonly noIndex?: boolean;
 }
 
 export function pageMetadata(input: PageMetadataInput): Metadata {
+  const { site } = getContent(input.locale);
+  const url = localizeHref(input.path, input.locale);
   const fullTitle = `${input.title} — ${site.name}`;
+  const alternate = ogLocale(otherLocale(input.locale));
 
   return {
     title: input.title,
     description: input.description,
-    alternates: { canonical: input.path },
+    alternates: {
+      canonical: url,
+      languages: languageAlternates(input.path),
+    },
     openGraph: {
       type: input.publishedTime === undefined ? "website" : "article",
-      locale: "es_AR",
+      locale: ogLocale(input.locale),
+      alternateLocale: [alternate],
       siteName: site.name,
       title: fullTitle,
       description: input.description,
-      url: input.path,
+      url,
       ...(input.publishedTime === undefined
         ? {}
         : { publishedTime: input.publishedTime }),
@@ -52,5 +59,40 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       description: input.description,
     },
     ...(input.noIndex === true ? { robots: { index: false, follow: false } } : {}),
+  };
+}
+
+export function rootMetadata(locale: Locale): Metadata {
+  const { site } = getContent(locale);
+  const url = localizeHref("/", locale);
+
+  return {
+    metadataBase: new URL(getSiteUrl()),
+    title: {
+      default: `${site.name} — ${site.tagline}`,
+      template: `%s — ${site.name}`,
+    },
+    description: site.shortDescription,
+    applicationName: site.name,
+    alternates: {
+      canonical: url,
+      languages: languageAlternates("/"),
+    },
+    openGraph: {
+      type: "website",
+      locale: ogLocale(locale),
+      alternateLocale: [ogLocale(otherLocale(locale))],
+      siteName: site.name,
+      title: `${site.name} — ${site.tagline}`,
+      description: site.shortDescription,
+      url,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${site.name} — ${site.tagline}`,
+      description: site.shortDescription,
+    },
+    robots: { index: true, follow: true },
+    formatDetection: { telephone: false },
   };
 }

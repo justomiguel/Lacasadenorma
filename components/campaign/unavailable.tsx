@@ -1,7 +1,18 @@
 import type { ReactNode } from "react";
 
 import { Callout } from "@/components/design-system/callout";
+import type { UiContent } from "@/content/schema";
 import { UNAVAILABLE_MESSAGES, type UnavailableReason } from "@/src/application/result";
+
+const DEFAULT_UNAVAILABLE: UiContent["unavailable"] = {
+  errorTitle: "No pudimos leer las cifras",
+  emptyTitle: "Cifras todavía no publicadas",
+  notConfigured:
+    "Esta parte del sitio todavía no está conectada a los datos de la campaña. En cuanto lo esté, aparece acá.",
+  error:
+    "No pudimos leer estos datos en este momento. Volvé a intentar en un rato: el problema es nuestro, no tuyo.",
+  notPublished: "La campaña todavía no está publicada.",
+};
 
 /**
  * Lo que se muestra cuando un dato no está disponible.
@@ -22,26 +33,33 @@ export function Unavailable({
   reason,
   title,
   children,
+  copy = DEFAULT_UNAVAILABLE,
   className,
 }: {
   reason: UnavailableReason;
   title?: string;
   children?: ReactNode;
+  copy?: UiContent["unavailable"];
   className?: string;
 }) {
+  const message =
+    reason === "error"
+      ? copy.error
+      : reason === "not-published"
+        ? copy.notPublished
+        : copy.notConfigured;
+
   return (
     <Callout
       tone={reason === "error" ? "warning" : "neutral"}
-      title={
-        title ??
-        (reason === "error"
-          ? "No pudimos leer las cifras"
-          : "Cifras todavía no publicadas")
-      }
+      title={title ?? (reason === "error" ? copy.errorTitle : copy.emptyTitle)}
       {...(className === undefined ? {} : { className })}
     >
-      <p>{UNAVAILABLE_MESSAGES[reason]}</p>
+      <p>{message}</p>
       {children}
     </Callout>
   );
 }
+
+/** Reexportado para quien todavía lee el mensaje del dominio (WebMCP, admin). */
+export { UNAVAILABLE_MESSAGES };

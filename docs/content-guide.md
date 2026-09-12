@@ -15,7 +15,7 @@ Dos fuentes, divididas por frecuencia de cambio (ADR-007).
 
 | Fuente | Qué | Cómo se edita | Quién |
 |---|---|---|---|
-| `content/*.json` | Prosa: historia, relato, textos de sección, preguntas, legales | Commit y pull request | Quien escribe, con revisión |
+| `content/{es,en}/*.json` | Prosa: historia, relato, textos de sección, preguntas, legales, chrome | Commit y pull request | Quien escribe, con revisión |
 | Supabase, vía `/admin` | Cifras, aportes, gastos, comprobantes, hitos, novedades, fotos, cuentas, objetivos | Formulario en el backoffice | El equipo de la campaña |
 
 La división responde a una observación simple: la historia de Norma se escribe una vez y se corrige de
@@ -24,10 +24,19 @@ por revisión. Un monto no puede esperar un despliegue.
 
 ### Los archivos
 
+Hay **dos directorios**, uno por idioma (ADR-023): `content/es/` y `content/en/`. El esquema es el
+mismo. Un campo faltante en inglés rompe el build igual que en castellano: no hay un fallback
+silencioso al original.
+
+Las fotografías no se duplican. El archivo vive una vez en `public/fotos/`; lo que cambia por idioma
+es el `alt`, el epígrafe y el título del tramo. `npm run check:fotos` recorre los JSON de los dos
+directorios.
+
 | Archivo | Alimenta | Notas |
 |---|---|---|
 | `site.json` | Nombre, bajada, lugar, descripciones, estado | `shortDescription` es la meta description: máximo 160 caracteres, y el esquema lo exige |
-| `norma.json` | `/norma` y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null` |
+| `ui.json` | Chrome: navegación, botones, cifras, textos de conexión | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
+| `norma.json` | `/norma` y `/en/norma`, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null` |
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
@@ -36,6 +45,12 @@ por revisión. Un monto no puede esperar un despliegue.
 | `riacho-conecta.json` | `/riacho-conecta` | `topics` son intenciones declaradas, no un programa con fechas |
 | `preguntas.json` | Las nueve preguntas de la home y el `FAQPage` | Mínimo nueve, y el esquema lo exige |
 | `legales.json` | `/legales/privacidad` y `/legales/terminos` | `updatedOn` se cambia cuando cambia el texto |
+
+Los slugs de las rutas **no** se traducen: `/en/reconstruccion`, nunca `/en/reconstruction`. El inglés
+se lee en la página, no en la barra.
+
+Las novedades se escriben en castellano desde el backoffice y se publican en los dos idiomas tal
+cual, con `lang="es-AR"` en el artículo cuando la página está en inglés.
 
 Son **JSON y no TypeScript** a propósito: los puede editar alguien que no programa sin riesgo de
 romper la compilación, y el esquema de Zod le da el mismo control de errores que daría el compilador.
@@ -63,7 +78,7 @@ faltante o mal escrito no llega a producción: rompe el build con el archivo, el
 esperaba.
 
 ```
-El contenido de content/norma.json no cumple su esquema:
+El contenido de content/es/norma.json no cumple su esquema:
   · summary: Too small: expected string to have >=1 characters
 ```
 
@@ -117,7 +132,7 @@ vez y en pasado, el trabajo se muestra siempre y en presente.
 | Durante la limpieza | **Los escombros juntados** en un montículo, la pala cargadora al fondo, gente paleando — `limpieza-escombros.jpg`, 800 × 1150 | `/reconstruccion`, «Lo primero fue sacar los escombros» | Es un cuadro de video, **vertical**. Recortada para excluir la única cara identificable. Al ancho del teléfono, al margen en escritorio |
 | Durante la limpieza | **Las piezas del taller rescatadas**, clasificadas en el piso y en la mesa — `limpieza-taller.jpg`, 1125 × 1300 | `/reconstruccion` | Recortada para excluir las caras |
 
-Las fotos editoriales viven en `public/fotos/` y se declaran en `content/*.json` con `width`,
+Las fotos editoriales viven en `public/fotos/` y se declaran en `content/{es,en}/*.json` con `width`,
 `height`, `alt` y, si corresponde, epígrafe y crédito. El esquema de Zod las valida al importar, igual
 que el resto del contenido, y `npm run check:fotos` comprueba lo que Zod no puede: que el archivo
 exista y que **mida lo que dice**. Los números declarados son los que reservan el espacio antes de que

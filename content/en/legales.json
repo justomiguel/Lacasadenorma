@@ -1,0 +1,93 @@
+{
+  "updatedOn": "2026-09-09",
+  "privacy": {
+    "title": "Privacy",
+    "lead": "What this site collects, what for, and how long it is kept.",
+    "paragraphs": [
+      "The short version: this site does not ask you for any data, does not use third-party cookies and does not follow you across other pages."
+    ],
+    "sections": [
+      {
+        "heading": "What we do not do",
+        "paragraphs": [
+          "There are no contact forms, no sign-up and no newsletter. The site does not ask for your name, your email, your phone or your payment details.",
+          "Payments are not processed on the site: you make the transfer from your bank, and that operation is between your bank and ours.",
+          "We do not use advertising cookies, social-media pixels or services that build a profile of you."
+        ]
+      },
+      {
+        "heading": "What is measured",
+        "paragraphs": [
+          "We count visits and a few use events: how many people come, from what kind of link they arrive, how many times a bank detail is copied, how many times the page is shared and from which country it is opened.",
+          "Those measurements are aggregated and cannot be tied to a person. We do not keep your full IP address, or an identifier that follows you between visits.",
+          "They serve one thing: to know whether the page is understood and whether the path to help works."
+        ]
+      },
+      {
+        "heading": "Gifts",
+        "paragraphs": [
+          "If you give by transfer, your bank tells ours the details of the operation. That information stays in the internal accounting record and is used to reconcile the totals.",
+          "The name of the person who gave and the individual amount are not published. All gifts are published added together.",
+          "The internal record is kept while the campaign is open and for as long as the accounting requires."
+        ]
+      },
+      {
+        "heading": "Expense receipts",
+        "paragraphs": [
+          "Invoices and receipts for the work are stored in private storage. They are not public because they often hold third-party data, such as a supplier's name and address.",
+          "The site publishes that the receipt exists. The file can be reviewed by a person with an auditor role, with a temporary access."
+        ]
+      },
+      {
+        "heading": "Changes and contact",
+        "paragraphs": [
+          "If this policy changes, the date in the heading changes and the change is recorded in the public history of the site's code.",
+          "There is no published contact address yet. When there is one, it will be on this page."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of use",
+    "lead": "What this site is, what it is not, and what you can expect from it.",
+    "paragraphs": [
+      "This site belongs to Norma's family and exists to raise the funds to rebuild their house and to account for how they are used."
+    ],
+    "sections": [
+      {
+        "heading": "What a gift is",
+        "paragraphs": [
+          "A gift is a voluntary donation to a family. It is not a purchase, it does not entitle you to anything in return, and it is not tax-deductible: the project is not an entity with legal personality.",
+          "Gifts are not returned, except for a transfer error that can be shown with the bank receipt."
+        ]
+      },
+      {
+        "heading": "What the money is used for",
+        "paragraphs": [
+          "On the work on the house: materials, labour, services, tools and transport. Each expense is published on the transparency page with its date, its description and its category.",
+          "If money is ever left over from the work, the destination will be published before it is used."
+        ]
+      },
+      {
+        "heading": "Accuracy of the information",
+        "paragraphs": [
+          "The published figures are updated after reconciliation with the bank, so they may be a few days behind reality. The date of the last reconciliation is always visible.",
+          "When a fact has not yet been verified, the section is omitted. This site does not show sample amounts, dates or bank details."
+        ]
+      },
+      {
+        "heading": "Beware of fake sites",
+        "paragraphs": [
+          "Always check the address of the site before you transfer. If the bank details you see do not match the ones we share on our channels, do not transfer.",
+          "We will never ask you for a password, a code from your bank or your card details."
+        ]
+      },
+      {
+        "heading": "Content",
+        "paragraphs": [
+          "The texts and photographs on the site belong to the family. They may be shared to spread the campaign; they may not be used for commercial purposes."
+        ]
+      }
+    ]
+  }
+}

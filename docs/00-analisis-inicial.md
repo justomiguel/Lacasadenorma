@@ -514,7 +514,7 @@ Están todas listadas campo por campo en `docs/content-guide.md`.
 | D8 | ¿Existe personería jurídica de Fundación Norma? | No todavía. Se evita `NGO` y `nonprofitStatus` en el JSON-LD hasta que exista: afirmarlo sin registro sería markup engañoso |
 | D9 | ¿Quién concilia y con qué frecuencia? | Semanal, una persona con rol `owner`. Queda en el runbook |
 | D10 | ¿Se publican los comprobantes completos o sólo su existencia? | Metadatos públicos, archivo bajo URL firmada para `auditor`+. Un comprobante puede tener datos de terceros |
-| D11 | Idioma del sitio | Sólo castellano rioplatense en el primer release. La arquitectura no bloquea i18n, pero no se paga su costo hoy |
+| D11 | Idioma del sitio | Castellano rioplatense sin prefijo; inglés en `/en`. Decisión original: un solo idioma. Enmendada por ADR-023 cuando el corredor de EE.UU. lo justificó |
 
 ---
 

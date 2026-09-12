@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import { COUNTRY_NAMES, type CountryCode } from "@/src/domain/entities";
+import { useUiOptional } from "@/components/i18n/ui-provider";
 
 import { cn } from "./cn";
 
@@ -60,6 +61,10 @@ export function CountryTabs({
   onCountryShown?: (country: CountryCode) => void;
   className?: string;
 }) {
+  const ui = useUiOptional()?.ui;
+  const countryName = (country: CountryCode) =>
+    ui?.countries[country] ?? COUNTRY_NAMES[country];
+  const tabsLabel = ui?.countryTabsLabel ?? "Elegí desde qué país vas a transferir";
   const enhanced = useHydrated();
   const [selected, setSelected] = useState<CountryCode>(
     initialCountry ?? panels[0]?.country ?? "AR",
@@ -86,7 +91,7 @@ export function CountryTabs({
               id={`${baseId}-${panel.country}`}
               className="mb-md font-ui text-subheading font-medium"
             >
-              {COUNTRY_NAMES[panel.country]}
+              {countryName(panel.country)}
             </h3>
             {panel.content}
           </section>
@@ -139,7 +144,7 @@ export function CountryTabs({
     <div className={className}>
       <div
         role="tablist"
-        aria-label="Elegí desde qué país vas a transferir"
+        aria-label={tabsLabel}
         onKeyDown={onKeyDown}
         /*
           Una grilla de tres columnas, no un `flex-wrap`. Con `flex-wrap`, en 360 px
@@ -185,7 +190,7 @@ export function CountryTabs({
                   : "border-b-2 border-transparent text-ink-muted hover:text-ink",
               )}
             >
-              {COUNTRY_NAMES[panel.country]}
+              {countryName(panel.country)}
             </button>
           );
         })}

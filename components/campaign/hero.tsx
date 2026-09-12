@@ -1,6 +1,8 @@
 import { SecondaryAction } from "@/components/design-system/actions";
 import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
-import { norma, site } from "@/content";
+import { getContent } from "@/content";
+import { localizedHref } from "@/src/i18n/href";
+import type { Locale } from "@/src/i18n/locale";
 
 import { HelpCta } from "./help-cta";
 
@@ -26,7 +28,9 @@ import { HelpCta } from "./help-cta";
  *    estaba eligiendo la fotografía. El epígrafe lleva su nombre completo porque el
  *    título de la página dice "Norma" y su nombre era Norma Edith Bedoya.
  */
-export function Hero() {
+export function Hero({ locale }: { locale: Locale }) {
+  const { norma, site, ui } = getContent(locale);
+
   return (
     <section className="border-b border-rule" aria-labelledby="apertura">
       <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
@@ -40,17 +44,20 @@ export function Hero() {
           </p>
 
           <div className="mt-2xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
-            <HelpCta origen="apertura" />
-            <SecondaryAction href="/norma">Conocer la historia de Norma</SecondaryAction>
+            <HelpCta
+              origen="apertura"
+              href={localizedHref("/ayudar", locale)}
+              label={ui.helpCta}
+            />
+            <SecondaryAction href={localizedHref("/norma", locale)}>
+              {ui.home.knowNormaStory}
+            </SecondaryAction>
           </div>
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">
           {norma.portrait === null ? (
-            <ReservedSpace
-              ratio="portrait"
-              description="Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
-            />
+            <ReservedSpace ratio="portrait" description={ui.home.portraitReserved} />
           ) : (
             /* Sangra al ancho del teléfono. Es la única foto de la apertura y en
                360 px la diferencia entre una columna de 320 px y el borde de la

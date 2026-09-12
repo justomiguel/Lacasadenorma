@@ -5,7 +5,14 @@ export default defineConfig({
   plugins: [react()],
   // Vite 8 resuelve los `paths` de tsconfig de forma nativa;
   // vite-tsconfig-paths es obsoleto.
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    tsconfigPaths: true,
+    alias: {
+      // El paquete real lanza si no lo reemplaza el bundler de Next. En tests
+      // el cargador se importa desde `content/pack.ts`, que no lo usa.
+      "server-only": new URL("./test/server-only-stub.ts", import.meta.url).pathname,
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",

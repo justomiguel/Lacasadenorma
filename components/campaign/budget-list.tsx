@@ -1,5 +1,8 @@
 import { formatMoney } from "@/src/domain/money";
 import type { BudgetItem } from "@/src/domain/entities";
+import type { UiContent } from "@/content/schema";
+import { fill } from "@/src/i18n/fill";
+import { intlLocale, type Locale } from "@/src/i18n/locale";
 
 import { EmptyState } from "@/components/design-system/callout";
 
@@ -15,22 +18,24 @@ import { EmptyState } from "@/components/design-system/callout";
  */
 export function BudgetList({
   items,
+  locale = "es",
+  ui,
   className,
 }: {
   items: readonly BudgetItem[];
+  locale?: Locale;
+  ui: UiContent;
   className?: string;
 }) {
+  const intl = intlLocale(locale);
+
   if (items.length === 0) {
     return (
       <EmptyState
-        title="El presupuesto se está armando"
+        title={ui.budget.emptyTitle}
         {...(className === undefined ? {} : { className })}
       >
-        <p>
-          La familia está relevando la obra con gente del pueblo. Cada rubro aparece acá
-          con su monto en cuanto queda cotizado. Preferimos una lista incompleta a un
-          número inventado.
-        </p>
+        <p>{ui.budget.emptyBody}</p>
       </EmptyState>
     );
   }
@@ -56,9 +61,9 @@ export function BudgetList({
             <dt className="text-body font-medium">{item.title}</dt>
             <dd className="font-ui text-subheading font-medium sm:text-right" data-figure>
               {item.estimatedAmount === null ? (
-                <span className="font-normal text-ink-muted">Sin cotizar</span>
+                <span className="font-normal text-ink-muted">{ui.figures.unquoted}</span>
               ) : (
-                formatMoney(item.estimatedAmount)
+                formatMoney(item.estimatedAmount, intl)
               )}
             </dd>
             {item.description === null ? null : (
@@ -73,8 +78,11 @@ export function BudgetList({
       {quoted.length === items.length ? null : (
         <p className="mt-md max-w-measure font-ui text-small text-ink-muted">
           {quoted.length === 0
-            ? "Ningún rubro está cotizado todavía."
-            : `${String(quoted.length)} de ${String(items.length)} rubros están cotizados. El resto aparece sin monto hasta que lo esté.`}
+            ? ui.budget.noneQuoted
+            : fill(ui.budget.someQuoted, {
+                quoted: String(quoted.length),
+                total: String(items.length),
+              })}
         </p>
       )}
     </div>

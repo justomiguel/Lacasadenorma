@@ -1,0 +1,74 @@
+[
+  {
+    "question": "What is La Casa de Norma?",
+    "answer": [
+      "It is a campaign to rebuild the family home of Norma, in Riacho He Hé, province of Formosa. Gifts arrive by bank transfer and every expense is published on this same page with its date."
+    ],
+    "href": "/transparencia",
+    "linkLabel": "See where every peso went"
+  },
+  {
+    "question": "Who was Norma?",
+    "answer": [
+      "She was one of the first social communicators of Riacho He Hé. She spent much of her life helping the stories of her town be heard."
+    ],
+    "href": "/norma",
+    "linkLabel": "Read Norma's story"
+  },
+  {
+    "question": "What happened?",
+    "answer": [
+      "Norma died in an accident. We do not give more detail than is needed: her family would rather she be remembered for how she lived."
+    ],
+    "href": "/que-paso",
+    "linkLabel": "Read what happened"
+  },
+  {
+    "question": "Where is Riacho He Hé?",
+    "answer": ["It is a town in the province of Formosa, in the north of Argentina."],
+    "href": null,
+    "linkLabel": null
+  },
+  {
+    "question": "How can I help?",
+    "answer": [
+      "By bank transfer from Argentina, Chile or the United States. The giving page has the details for each country, and each field copies with one tap.",
+      "This page does not process payments or ask for card details."
+    ],
+    "href": "/ayudar",
+    "linkLabel": "See the details to transfer"
+  },
+  {
+    "question": "What will the money be used for?",
+    "answer": [
+      "For the work on the house: materials, labour, services and transport. The budget is split by item and each item is published when it is quoted, with its amount."
+    ],
+    "href": "/reconstruccion",
+    "linkLabel": "See the budget for the work"
+  },
+  {
+    "question": "How can I check where it was used?",
+    "answer": [
+      "The transparency page has the total received, the total spent, the balance and the detail of each expense with its date, its description and whether it has a receipt. The totals are calculated by adding that same detail.",
+      "Nothing is deleted: if a record was entered in error, it is voided with the reason and it stops adding."
+    ],
+    "href": "/transparencia",
+    "linkLabel": "See where every peso went"
+  },
+  {
+    "question": "What happens when the house is rebuilt?",
+    "answer": [
+      "The project continues with free training in digital tools for people from the town. The first programme is called Riacho Conecta."
+    ],
+    "href": "/legado",
+    "linkLabel": "Learn about Fundación Norma"
+  },
+  {
+    "question": "What is Fundación Norma?",
+    "answer": [
+      "It is the name of the project we want to continue after the house. It does not exist as an organisation yet: it has no legal personality and no statute, and we will not say it has them until it does."
+    ],
+    "href": "/legado",
+    "linkLabel": "Learn about Fundación Norma"
+  }
+]
