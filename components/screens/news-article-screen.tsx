@@ -145,7 +145,7 @@ export async function NewsArticleScreen({
               [
                 { name: ui.homeLabel, path: "/" },
                 { name: ui.news.title, path: "/novedades" },
-                { name: update.title, path: path },
+                { name: update.title, path },
               ],
               locale,
             ),
