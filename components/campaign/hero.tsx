@@ -35,7 +35,7 @@ export function Hero({ locale }: { locale: Locale }) {
         </div>
       )}
 
-      <div className="mx-auto grid w-full max-w-page items-end gap-2xl px-5 pb-2xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-4xl lg:pt-32">
+      <div className="mx-auto grid w-full max-w-page items-end gap-2xl px-5 pb-3xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-4xl lg:pt-32">
         <div className="lg:col-span-6" data-reveal="">
           <p
             data-kicker=""
@@ -74,8 +74,8 @@ export function Hero({ locale }: { locale: Locale }) {
         </div>
 
         {quotePhoto === undefined ? null : (
-          <div className="relative lg:col-span-5 lg:col-start-8">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-md sm:aspect-[5/4] lg:aspect-[4/5]">
+          <div className="relative hidden lg:col-span-5 lg:col-start-8 lg:block">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-md">
               <CoverPhoto
                 media={quotePhoto}
                 priority

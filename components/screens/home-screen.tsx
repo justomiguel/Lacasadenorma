@@ -63,11 +63,6 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 {ui.home.fireTitle}
               </h2>
               <p className="mt-lg max-w-measure text-body">{ui.home.fireLead}</p>
-              <p className="mt-lg">
-                <SecondaryAction href={localizedHref("/que-paso", locale)}>
-                  {ui.home.seeStory} →
-                </SecondaryAction>
-              </p>
             </div>
 
             <div className="lg:col-span-7">
@@ -75,6 +70,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 <Figure
                   media={fireMain}
                   reservedFor=""
+                  showCaption={false}
                   sizes="(min-width: 64rem) 50vw, 100vw"
                 />
               )}
@@ -85,6 +81,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                       key={photo.url}
                       media={photo}
                       reservedFor=""
+                      showCaption={false}
                       sizes="(min-width: 64rem) 25vw, 50vw"
                     />
                   ))}

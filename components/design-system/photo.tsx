@@ -49,6 +49,7 @@ export function Figure({
   priority = false,
   sizes = "100vw",
   reservedFor,
+  showCaption = true,
   className,
 }: {
   media: Photograph | null;
@@ -57,6 +58,7 @@ export function Figure({
   sizes?: string;
   /** Qué foto va acá, para cuando todavía no existe. */
   reservedFor: string;
+  showCaption?: boolean;
   className?: string;
 }) {
   if (media === null) {
@@ -78,14 +80,14 @@ export function Figure({
         priority={priority}
         className="h-auto w-full rounded-md object-cover"
       />
-      {media.caption === null && media.credit === null ? null : (
+      {showCaption && (media.caption !== null || media.credit !== null) ? (
         <figcaption className="mt-sm max-w-measure font-ui text-small text-ink-muted">
           {media.caption}
           {media.credit === null ? null : (
             <span className="block text-ink-faint">Foto: {media.credit}</span>
           )}
         </figcaption>
-      )}
+      ) : null}
     </figure>
   );
 }
