@@ -104,6 +104,10 @@ export function ReservedSpace({
 }) {
   return (
     <div
+      /* La marca la cuenta `revision-visual.spec.ts`: un hueco reservado en una
+         página donde ya hay material es material que se entregó y nadie ubicó, y
+         ése fue exactamente el estado del sitio durante once páginas (ADR-021). */
+      data-espacio-reservado
       className={cn(
         "relative flex w-full items-end border border-rule bg-paper-sunk p-md",
         className,
@@ -141,10 +145,12 @@ export function ReservedSpace({
 export function BleedOnMobile({
   media,
   priority = false,
+  sizes = "(min-width: 64rem) 50vw, 100vw",
   className,
 }: {
   media: Photograph;
   priority?: boolean;
+  sizes?: string;
   className?: string;
 }) {
   return (
@@ -157,7 +163,7 @@ export function BleedOnMobile({
           alt={media.alt}
           width={media.width}
           height={media.height}
-          sizes="(min-width: 64rem) 50vw, 100vw"
+          sizes={sizes}
           priority={priority}
           className="w-full"
         />

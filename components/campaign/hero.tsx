@@ -1,5 +1,5 @@
 import { SecondaryAction } from "@/components/design-system/actions";
-import { Figure, ReservedSpace } from "@/components/design-system/photo";
+import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
 import { norma, site } from "@/content";
 
 import { HelpCta } from "./help-cta";
@@ -52,12 +52,14 @@ export function Hero() {
               description="Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
             />
           ) : (
-            <Figure
+            /* Sangra al ancho del teléfono. Es la única foto de la apertura y en
+               360 px la diferencia entre una columna de 320 px y el borde de la
+               pantalla es la diferencia entre ilustrar el título y abrir con ella. */
+            <BleedOnMobile
               media={{
                 ...norma.portrait,
                 caption: `${norma.fullName}. ${site.place.locality}, ${site.place.province}.`,
               }}
-              reservedFor=""
               priority
               sizes="(min-width: 64rem) 40vw, 100vw"
             />
