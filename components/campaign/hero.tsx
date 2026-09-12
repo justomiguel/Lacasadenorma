@@ -1,42 +1,37 @@
 import { SecondaryAction } from "@/components/design-system/actions";
-import { ReservedSpace } from "@/components/design-system/photo";
-import { site } from "@/content";
+import { Figure, ReservedSpace } from "@/components/design-system/photo";
+import { norma, site } from "@/content";
 
 import { HelpCta } from "./help-cta";
 
 /**
  * La apertura.
  *
- * Tres decisiones que vale la pena que queden escritas, porque las tres se
+ * Cuatro decisiones que vale la pena que queden escritas, porque las cuatro se
  * podrían "arreglar" mal más adelante:
  *
  * 1. **El texto va antes de la foto en el orden del documento.** En 360 px —el
- *    ancho de quien llega de un WhatsApp— un retrato en proporción 3:4 ocupa la
+ *    ancho de quien llega de un WhatsApp— un retrato en proporción 4:5 ocupa la
  *    pantalla entera y empujaría el nombre y la acción abajo del pliegue, que es
  *    exactamente lo que SC-001 prohíbe. En desktop la composición se vuelve
  *    asimétrica y la foto recupera su peso.
  * 2. **Hay una sola acción con forma de botón.** La segunda es un enlace de
  *    texto con regla: dos botones compitiendo diluyen la decisión.
- * 3. **No hay foto todavía, y se dice.** El hueco mantiene la proporción del
- *    retrato que va a ir ahí, así que cuando llegue no hay salto de layout, y
- *    mientras tanto no hay ilustración ni imagen de archivo ocupando su lugar.
- *
- * El texto se centra contra el retrato en lugar de apoyarse en su base. Alinear
- * al pie es un recurso editorial legítimo, pero con un retrato 3:4 de media
- * pantalla empujaba el título al 60% del alto: en la revisión visual, la primera
- * pantalla en 1440 px era mitad vacío arriba y el nombre bien abajo, y todavía va
- * a ser así un tiempo, porque la foto no llegó.
+ * 3. **El lugar no es una sobrelínea en versales.** Estaba arriba del título, en
+ *    versales espaciadas, y era el primero de los 39 casos del patrón que hacía que
+ *    el sitio se leyera como una plantilla (ADR-021). Ahora el lugar viaja con el
+ *    nombre de Norma, en el epígrafe de su foto, que es donde informa.
+ * 4. **La foto es ella, y se dice quién es.** El sitio se llama La Casa de Norma y
+ *    durante mucho tiempo abrió con un rectángulo gris que decía que la familia
+ *    estaba eligiendo la fotografía. El epígrafe lleva su nombre completo porque el
+ *    título de la página dice "Norma" y su nombre era Norma Edith Bedoya.
  */
 export function Hero() {
   return (
     <section className="border-b border-rule" aria-labelledby="apertura">
       <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
         <div className="lg:col-span-6">
-          <p className="font-ui text-label uppercase tracking-label text-ink-muted">
-            {site.place.locality}, {site.place.province}
-          </p>
-
-          <h1 id="apertura" className="mt-md font-prose text-display">
+          <h1 id="apertura" className="font-prose text-display">
             {site.name}
           </h1>
 
@@ -51,10 +46,22 @@ export function Hero() {
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">
-          <ReservedSpace
-            ratio="portrait"
-            description="Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
-          />
+          {norma.portrait === null ? (
+            <ReservedSpace
+              ratio="portrait"
+              description="Acá va un retrato de Norma. Su familia está eligiendo la fotografía."
+            />
+          ) : (
+            <Figure
+              media={{
+                ...norma.portrait,
+                caption: `${norma.fullName}. ${site.place.locality}, ${site.place.province}.`,
+              }}
+              reservedFor=""
+              priority
+              sizes="(min-width: 64rem) 40vw, 100vw"
+            />
+          )}
         </div>
       </div>
     </section>

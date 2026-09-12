@@ -7,10 +7,15 @@ import { CampaignProgress } from "@/components/campaign/progress";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink, SecondaryAction } from "@/components/design-system/actions";
-import { Container, Section } from "@/components/design-system/layout";
-import { ReservedSpace } from "@/components/design-system/photo";
+import { Band, Container, Section } from "@/components/design-system/layout";
+import { Figure, ReservedSpace } from "@/components/design-system/photo";
 import { Stat, StatGroup } from "@/components/design-system/figures";
-import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
+import {
+  Paragraphs,
+  SectionHeading,
+  Testimony,
+} from "@/components/design-system/typography";
+import { PageIndex } from "@/components/site/page-index";
 import { StructuredData } from "@/components/site/structured-data";
 import { legacy, norma, reconstruction, site, whatHappened } from "@/content";
 import { getCampaignOverview } from "@/src/application/use-cases/get-campaign-overview";
@@ -71,12 +76,16 @@ export default async function HomePage() {
 
       <Hero />
 
+      {/* El sumario: en teléfono es el único lugar desde donde se ve que el sitio
+          tiene otras seis páginas. Se retira en `lg`, donde están en el encabezado. */}
+      <PageIndex />
+
       {/* 2. Quién fue Norma */}
       <Container>
         <Section labelledBy="quien-fue">
           <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg">
             <div className="lg:col-span-7">
-              <SectionHeading label="Quién fue" title="Norma" id="quien-fue" />
+              <SectionHeading title="Quién fue Norma" id="quien-fue" />
               <Paragraphs items={norma.paragraphs} />
               <p className="mt-lg">
                 <InlineLink href="/norma">Leer la historia completa</InlineLink>
@@ -84,34 +93,60 @@ export default async function HomePage() {
             </div>
 
             <div className="lg:col-span-4 lg:col-start-9">
-              <ReservedSpace
-                ratio="landscape"
-                description="Acá va una foto de Norma trabajando en la radio."
-              />
+              {norma.photos[0] === undefined ? (
+                <ReservedSpace
+                  ratio="landscape"
+                  description="Acá va una foto de Norma trabajando en la radio."
+                />
+              ) : (
+                <Figure
+                  media={norma.photos[0]}
+                  reservedFor=""
+                  sizes="(min-width: 64rem) 33vw, 100vw"
+                />
+              )}
             </div>
           </div>
         </Section>
       </Container>
 
-      {/* 3. Qué pasó */}
-      <Container>
-        <Section labelledBy="que-paso">
-          <SectionHeading label="Qué ocurrió" title={whatHappened.lead} id="que-paso" />
-          <Paragraphs items={whatHappened.paragraphs} />
-          <p className="mt-lg">
-            <InlineLink href="/que-paso">Leer qué ocurrió</InlineLink>
-          </p>
-        </Section>
-      </Container>
+      {/* 3. Qué pasó.
+          Es la **única** sección del sitio sobre tinta (ADR-021). No es un efecto:
+          es lo único que la separa del resto del documento, y usar el recurso dos
+          veces lo convierte en decoración. Acá está también el único momento que
+          sube a escala de display, que es la frase de la familia. */}
+      <Band tone="ink">
+        <Container>
+          <Section labelledBy="que-paso">
+            <h2 id="que-paso" className="font-prose text-title">
+              {whatHappened.lead}
+            </h2>
+            {/* Los dos primeros párrafos: el tercero habla de las fotos del ensayo,
+                que están en su página y no acá. */}
+            <Paragraphs items={whatHappened.paragraphs.slice(0, 2)} className="mt-xl" />
+
+            {whatHappened.testimony === null ? null : (
+              <Testimony
+                quote={whatHappened.testimony.quote}
+                author={whatHappened.testimony.author}
+                relation={whatHappened.testimony.relation}
+                className="mt-3xl"
+              />
+            )}
+
+            <p className="mt-3xl">
+              <InlineLink href="/que-paso">
+                Ver las fotos y qué se necesita ahora
+              </InlineLink>
+            </p>
+          </Section>
+        </Container>
+      </Band>
 
       {/* 4. Qué hay que reconstruir */}
       <Container>
         <Section labelledBy="reconstruir">
-          <SectionHeading
-            label="La obra"
-            title="Qué hay que reconstruir"
-            id="reconstruir"
-          />
+          <SectionHeading title="Qué hay que reconstruir" id="reconstruir" />
           <Paragraphs items={reconstruction.paragraphs} />
 
           {overview.status === "ok" ? (
@@ -129,7 +164,7 @@ export default async function HomePage() {
       {/* 5. Cómo va */}
       <Container>
         <Section labelledBy="como-va">
-          <SectionHeading label="El avance" title="Cómo va" id="como-va" />
+          <SectionHeading title="Cómo va" id="como-va" />
 
           {overview.status === "ok" ? (
             <CampaignProgress
@@ -148,7 +183,7 @@ export default async function HomePage() {
           como máximo desde que se abre la página. */}
       <Container>
         <Section labelledBy="como-ayudar">
-          <SectionHeading label="Colaborar" title="Cómo ayudar" id="como-ayudar" />
+          <SectionHeading title="Cómo ayudar" id="como-ayudar" />
 
           {donations.status === "ok" ? (
             <DonationMethods
@@ -169,7 +204,7 @@ export default async function HomePage() {
       {/* 7. En qué se usó */}
       <Container>
         <Section labelledBy="en-que-se-uso">
-          <SectionHeading label="Rendición" title="En qué se usó" id="en-que-se-uso" />
+          <SectionHeading title="En qué se usó" id="en-que-se-uso" />
 
           {overview.status === "ok" ? (
             <>
@@ -197,11 +232,12 @@ export default async function HomePage() {
       {/* 8. Qué sigue */}
       <Container>
         <Section labelledBy="que-sigue">
-          <SectionHeading label="Lo que sigue" title={legacy.lead} id="que-sigue" />
+          <SectionHeading title={legacy.lead} id="que-sigue" />
           <Paragraphs items={legacy.paragraphs.slice(0, 2)} />
           <p className="mt-lg">
             <InlineLink href="/legado">Conocer Fundación Norma</InlineLink>
-            {" · "}
+          </p>
+          <p className="mt-sm">
             <InlineLink href="/riacho-conecta">Ver Riacho Conecta</InlineLink>
           </p>
         </Section>
@@ -210,11 +246,7 @@ export default async function HomePage() {
       {/* 9. Preguntas */}
       <Container>
         <Section labelledBy="preguntas">
-          <SectionHeading
-            label="Preguntas"
-            title="Lo que suelen preguntarnos"
-            id="preguntas"
-          />
+          <SectionHeading title="Lo que suelen preguntarnos" id="preguntas" />
           <FaqSection />
         </Section>
       </Container>

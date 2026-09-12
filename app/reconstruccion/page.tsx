@@ -3,8 +3,8 @@ import { HelpCta } from "@/components/campaign/help-cta";
 import { CampaignProgress } from "@/components/campaign/progress";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { EmptyState } from "@/components/design-system/callout";
-import { Container, Section } from "@/components/design-system/layout";
-import { ReservedSpace } from "@/components/design-system/photo";
+import { Band, Container, Section } from "@/components/design-system/layout";
+import { PhotoSequence, ReservedSpace } from "@/components/design-system/photo";
 import { Timeline } from "@/components/design-system/timeline";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
@@ -45,11 +45,7 @@ export default async function ReconstruccionPage() {
 
   return (
     <>
-      <PageHeader
-        label="La obra"
-        title={reconstruction.title}
-        lead={reconstruction.lead}
-      />
+      <PageHeader title={reconstruction.title} lead={reconstruction.lead} />
 
       <Container>
         <Section>
@@ -57,10 +53,25 @@ export default async function ReconstruccionPage() {
         </Section>
       </Container>
 
+      {/* El trabajo hecho hasta ahora. Va antes del presupuesto a propósito: quien
+          está decidiendo si transferir quiere ver que la obra existe antes de leer
+          cuánto sale. Y es el lado «así está hoy» del par que empieza en
+          `/que-paso` (ADR-021). */}
+      {reconstruction.photoEssay.length === 0 ? null : (
+        <Band tone="sunk">
+          <Container>
+            <Section labelledBy="el-trabajo">
+              <SectionHeading title="El trabajo hasta ahora" id="el-trabajo" />
+              <PhotoSequence groups={reconstruction.photoEssay} />
+            </Section>
+          </Container>
+        </Band>
+      )}
+
       {reconstruction.scope.length === 0 ? null : (
         <Container>
           <Section className="border-t border-rule" labelledBy="alcance">
-            <SectionHeading label="Alcance" title="Qué hay que hacer" id="alcance" />
+            <SectionHeading title="Qué hay que hacer" id="alcance" />
             <dl className="border-t border-rule">
               {reconstruction.scope.map((item) => (
                 <div key={item.title} className="border-b border-rule py-md">
@@ -77,11 +88,7 @@ export default async function ReconstruccionPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="presupuesto">
-          <SectionHeading
-            label="Presupuesto"
-            title="Cuánto sale cada rubro"
-            id="presupuesto"
-          />
+          <SectionHeading title="Cuánto sale cada rubro" id="presupuesto" />
           {overview.status === "ok" ? (
             <BudgetList items={overview.data.budgetItems} />
           ) : (
@@ -92,7 +99,7 @@ export default async function ReconstruccionPage() {
 
       <Container>
         <Section className="border-t border-rule" labelledBy="avance">
-          <SectionHeading label="Avance" title="Cómo va la obra" id="avance" />
+          <SectionHeading title="Cómo va la obra" id="avance" />
 
           {overview.status === "ok" ? (
             <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg">
