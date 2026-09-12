@@ -38,7 +38,7 @@ Es decir: la dependencia que faltaba no era una que el código usara en tiempo d
 sostiene el linter, y el síntoma no apareció hasta correr las tareas. CI lo marcó —`CI`, `Calidad` y
 `E2E` en rojo en `main`—, pero recién después del merge.
 
-Dos cosas cambiaron por esto:
+Tres cosas cambiaron por esto:
 
 - **`typescript-eslint` pasa a estar declarado en `package.json`.** La línea de más abajo dice «no
   duplicar» lo que ya trae `eslint-config-next`, y sigue valiendo para los *plugins* y las *configs*:
@@ -49,6 +49,14 @@ Dos cosas cambiaron por esto:
 - **Dependabot deja de proponer las mayores de `typescript` y de `eslint`**, con la razón escrita en
   `.github/dependabot.yml`. El acuerdo de ese archivo ya decía que una mayor de ESLint «es una
   decisión», pero estaba en un comentario, y un comentario no frena un merge.
+- **Hay una compuerta que sí frena: `scripts/check-toolchain.mjs`**, primera en `npm run verify` y en
+  CI antes del typecheck. Comprueba las mayores decididas, que toda dependencia esté fijada a versión
+  exacta, y que todo paquete importado por nombre desde un archivo de configuración esté declarado, en
+  el lockfile y en el árbol. Se probó contra el estado exacto del 12 de septiembre y lo detiene con las
+  cuatro cosas nombradas. El día que la mayor se decida de verdad, el número se cambia ahí, que es
+  donde está escrito el motivo. Esto último es lo importante y vale más allá de las dependencias: la
+  constitución ya prohibía estas dos mayores en su "Regla de versiones verificadas" y no alcanzó, así
+  que a partir de ahora una regla de este tipo va con la compuerta que la ejecuta o no está puesta.
 
 ## 2. Versiones elegidas
 

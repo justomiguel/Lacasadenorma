@@ -45,6 +45,12 @@ jobs:
       - name: Instalar las dependencias fijadas en el lockfile
         run: npm ci
 
+      # Va antes de las dos compuertas siguientes porque cuando las herramientas
+      # no son las decididas, `typecheck` y `lint` fallan las dos por el mismo
+      # motivo y ninguna de las dos lo dice. Ya pasó: ver el encabezado del script.
+      - name: Comprobar que las herramientas son las decididas
+        run: npm run check:toolchain
+
       # `next typegen` corre dentro de estos dos scripts, y no es opcional:
       # `PageProps` y `LayoutProps` son tipos globales generados en `.next/types`,
       # que está gitignorado. Sin generarlos, el typecheck falla en las páginas.

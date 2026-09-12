@@ -36,7 +36,9 @@ updates:
         update-types: [minor, patch]
     ignore:
       # Node 22 es la versión que corre en Vercel y en CI; el salto a la 24 se
-      # decide, no se acepta desde un pull request automático.
+      # decide, no se acepta desde un pull request automático. Igual que las dos
+      # de abajo, con la diferencia de que esta no tiene compuerta: si entra, no
+      # hay script que la detenga, sólo CI corriendo sobre otra versión de Node.
       - dependency-name: "@types/node"
         update-types: [version-update:semver-major]
       # Estas dos ya rompieron `main` una vez, el 12 de septiembre de 2026: se
@@ -46,9 +48,10 @@ updates:
       # `eslint.config.ts` lo importa. El comentario de arriba ya decía que una
       # mayor de ESLint «no es una actualización de dependencia: es una
       # decisión», pero un comentario no frena un merge. Ahora Dependabot no las
-      # propone y el salto hay que venir a buscarlo acá, que es el lugar donde
-      # está escrito por qué no se puede dar todavía
-      # (`docs/research/2026-09-toolchain.md`).
+      # propone, y si alguna entra igual por otra vía la frena
+      # `scripts/check-toolchain.mjs`, que corre primero en `npm run verify` y en
+      # CI antes del typecheck. El motivo por el que el salto no se puede dar
+      # todavía está en `docs/research/2026-09-toolchain.md`.
       - dependency-name: "typescript"
         update-types: [version-update:semver-major]
       - dependency-name: "eslint"
