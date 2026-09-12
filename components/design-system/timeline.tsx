@@ -18,7 +18,7 @@ import { formatLongDate } from "./dates";
 
 const STATUS_MARKER: Record<MilestoneStatus, string> = {
   completado: "bg-success",
-  en_curso: "border-2 border-brick bg-paper",
+  en_curso: "border-2 border-aqua bg-paper",
   pendiente: "border border-rule bg-paper",
 };
 

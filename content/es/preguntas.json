@@ -18,7 +18,8 @@
   {
     "question": "¿Qué pasó?",
     "answer": [
-      "Norma murió en un accidente. No damos más detalles que los necesarios: su familia prefiere que se la recuerde por cómo vivió."
+      "El lunes 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma murió esa madrugada.",
+      "Su marido logró salir, pero inhaló mucho humo y está en tratamiento."
     ],
     "href": "/que-paso",
     "linkLabel": "Leer qué ocurrió"
@@ -60,10 +61,10 @@
   {
     "question": "¿Qué va a pasar cuando la casa esté reconstruida?",
     "answer": [
-      "El proyecto sigue con formación gratuita en herramientas digitales para gente del pueblo. El primer programa se llama Riacho Conecta."
+      "La intención es seguir con formación gratuita en herramientas digitales para gente del pueblo. Es una intención y nada más: no hay fechas ni programa armado."
     ],
     "href": "/legado",
-    "linkLabel": "Conocer Fundación Norma"
+    "linkLabel": "Leer qué se propone el legado"
   },
   {
     "question": "¿Qué es Fundación Norma?",
@@ -71,6 +72,6 @@
       "Es el nombre del proyecto que queremos que continúe después de la casa. Todavía no existe como organización: no tiene personería jurídica ni estatuto, y no vamos a decir que los tiene hasta que los tenga."
     ],
     "href": "/legado",
-    "linkLabel": "Conocer Fundación Norma"
+    "linkLabel": "Leer en qué estado está"
   }
 ]

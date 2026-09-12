@@ -172,14 +172,6 @@ export const transparencySchema = pageSchema.extend({
   method: paragraphs,
 });
 
-export const programSchema = pageSchema.extend({
-  /**
-   * Temas de formación de Riacho Conecta. Son intenciones declaradas, no un
-   * programa con fechas: el contenido no promete lo que no está decidido.
-   */
-  topics: z.array(z.string().min(1)).min(1),
-});
-
 export const faqSchema = z
   .array(
     z
@@ -272,7 +264,6 @@ export const uiSchema = z.object({
   }),
   secondaryNav: z.object({
     "/legado": namedLinkSchema,
-    "/riacho-conecta": namedLinkSchema,
   }),
   legalNav: z.object({
     "/legales/privacidad": namedLinkSchema,
@@ -359,11 +350,18 @@ export const uiSchema = z.object({
     originalLanguage: phrase,
     introAnd: phrase,
   }),
+  /* En el orden en que aparecen en la página, que desde ADR-024 es pérdida →
+     comunidad → reconstrucción → legado. */
   home: z.object({
+    openingLead: phrase,
+    openingNeed: phrase,
+    shareOpening: phrase,
+    portraitReserved: phrase,
     whoWasHeading: phrase,
     readFullStory: phrase,
-    radioPhotoReserved: phrase,
     seePhotosAndNeeds: phrase,
+    workStartedHeading: phrase,
+    workStartedLead: phrase,
     rebuildHeading: phrase,
     rebuildDetail: phrase,
     howItsGoing: phrase,
@@ -374,19 +372,15 @@ export const uiSchema = z.object({
     transparencyBlurb: phrase,
     seeFullReport: phrase,
     knowFoundation: phrase,
-    seeRiacho: phrase,
     faqHeading: phrase,
     shareHeading: phrase,
     shareLead: phrase,
-    knowNormaStory: phrase,
-    portraitReserved: phrase,
   }),
   normaPage: z.object({
     title: phrase,
     seoDescription: phrase,
     contribution: phrase,
     privacyLink: phrase,
-    radioReserved: phrase,
     photosNote: phrase,
     shareHeading: phrase,
   }),
@@ -455,21 +449,8 @@ export const uiSchema = z.object({
     statusBody: phrase,
     accountsLink: phrase,
     statusTail: phrase,
-    radioReserved: phrase,
-    seeTopics: phrase,
     houseFirst: phrase,
     houseFirstLead: phrase,
-  }),
-  riachoPage: z.object({
-    seoDescription: phrase,
-    topicsHeading: phrase,
-    noSignupTitle: phrase,
-    noSignup: phrase,
-    newsLink: phrase,
-    noSignupTail: phrase,
-    whereHeading: phrase,
-    whereLead: phrase,
-    legacyLink: phrase,
   }),
   legalPage: z.object({
     privacySeo: phrase,
@@ -487,7 +468,6 @@ export type WhatHappenedContent = z.infer<typeof whatHappenedSchema>;
 export type ReconstructionContent = z.infer<typeof reconstructionSchema>;
 export type HelpContent = z.infer<typeof helpSchema>;
 export type TransparencyContent = z.infer<typeof transparencySchema>;
-export type ProgramContent = z.infer<typeof programSchema>;
 export type FaqContent = z.infer<typeof faqSchema>;
 export type LegalContent = z.infer<typeof legalSchema>;
 export type SectionContent = z.infer<typeof sectionSchema>;

@@ -7,7 +7,6 @@ import normaEn from "./en/norma.json";
 import preguntasEn from "./en/preguntas.json";
 import quePasoEn from "./en/que-paso.json";
 import reconstruccionEn from "./en/reconstruccion.json";
-import riachoConectaEn from "./en/riacho-conecta.json";
 import siteEn from "./en/site.json";
 import transparenciaEn from "./en/transparencia.json";
 import uiEn from "./en/ui.json";
@@ -18,7 +17,6 @@ import normaEs from "./es/norma.json";
 import preguntasEs from "./es/preguntas.json";
 import quePasoEs from "./es/que-paso.json";
 import reconstruccionEs from "./es/reconstruccion.json";
-import riachoConectaEs from "./es/riacho-conecta.json";
 import siteEs from "./es/site.json";
 import transparenciaEs from "./es/transparencia.json";
 import uiEs from "./es/ui.json";
@@ -29,7 +27,6 @@ import {
   pageSchema,
   parseContent,
   personSchema,
-  programSchema,
   reconstructionSchema,
   siteSchema,
   transparencySchema,
@@ -62,7 +59,6 @@ function pack(
     ayudar: unknown;
     transparencia: unknown;
     legado: unknown;
-    riachoConecta: unknown;
     preguntas: unknown;
     legales: unknown;
   },
@@ -90,11 +86,6 @@ function pack(
       `${prefix}transparencia.json`,
     ),
     legacy: parseContent(pageSchema, files.legado, `${prefix}legado.json`),
-    riachoConecta: parseContent(
-      programSchema,
-      files.riachoConecta,
-      `${prefix}riacho-conecta.json`,
-    ),
     faq: parseContent(faqSchema, files.preguntas, `${prefix}preguntas.json`),
     legal: parseContent(legalSchema, files.legales, `${prefix}legales.json`),
   };
@@ -110,7 +101,6 @@ const packs = {
     ayudar: ayudarEs,
     transparencia: transparenciaEs,
     legado: legadoEs,
-    riachoConecta: riachoConectaEs,
     preguntas: preguntasEs,
     legales: legalesEs,
   }),
@@ -123,7 +113,6 @@ const packs = {
     ayudar: ayudarEn,
     transparencia: transparenciaEn,
     legado: legadoEn,
-    riachoConecta: riachoConectaEn,
     preguntas: preguntasEn,
     legales: legalesEn,
   }),

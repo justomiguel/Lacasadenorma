@@ -8,7 +8,7 @@ import { ShareBlock } from "@/components/campaign/share-block";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink, SecondaryAction } from "@/components/design-system/actions";
 import { Band, Container, Section } from "@/components/design-system/layout";
-import { Figure, ReservedSpace } from "@/components/design-system/photo";
+import { Figure } from "@/components/design-system/photo";
 import { Stat, StatGroup } from "@/components/design-system/figures";
 import {
   Paragraphs,
@@ -32,6 +32,27 @@ import {
 } from "@/src/infrastructure/seo/structured-data";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
+/**
+ * La home.
+ *
+ * El orden de las secciones **es** el argumento, y desde ADR-024 recorre cuatro
+ * movimientos: pérdida → comunidad → reconstrucción → legado. Antes iba pérdida →
+ * reconstrucción → legado, y el segundo movimiento faltaba: el sitio mostraba una
+ * casa quemada y a continuación una lista de precios, así que quien colaboraba
+ * estaba poniendo plata en un presupuesto y no sumándose a algo que ya se estaba
+ * haciendo. «El trabajo ya empezó» es ese movimiento, y no hubo que inventarle
+ * nada: las dos fotos de la limpieza ya estaban publicadas en `/reconstruccion`.
+ *
+ * Dos cosas que se ven poco y conviene no deshacer:
+ *
+ * 1. **El presupuesto y el avance son una sección, no dos.** Eran «Qué hay que
+ *    reconstruir» y «Cómo va» al mismo nivel, y con eso la página tenía dos `h2`
+ *    hablando de la misma obra y el avance quedaba a una pantalla de la lista que
+ *    explica de qué avance se trata. «Cómo va la obra» es un `h3` adentro.
+ * 2. **La última sección tiene `id="compartir"` porque la apertura le apunta.** La
+ *    quinta pregunta que la apertura tiene que contestar es cómo compartir esto, y
+ *    se contestaba catorce pantallas más abajo.
+ */
 export async function HomeScreen({ locale }: { locale: Locale }) {
   const { legacy, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
   const dataLayer = getPublicDataLayer();
@@ -47,6 +68,11 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
     href: localizedHref("/ayudar", locale),
     label: ui.helpCta,
   };
+
+  /* La primera foto del primer tramo del ensayo de la obra: la de los escombros
+     saliendo a mano. Se toma de ahí y no de una lista propia para que el día que la
+     familia mande una foto mejor haya un solo lugar donde cambiarla. */
+  const workPhoto = reconstruction.photoEssay[0]?.photos[0] ?? null;
 
   return (
     <>
@@ -81,20 +107,18 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
               </p>
             </div>
 
-            <div className="lg:col-span-4 lg:col-start-9">
-              {norma.photos[0] === undefined ? (
-                <ReservedSpace
-                  ratio="landscape"
-                  description={ui.home.radioPhotoReserved}
-                />
-              ) : (
+            {/* Sin hueco reservado cuando no hay foto: en esta sección la prosa se
+                sostiene sola, y un rectángulo gris al lado de la historia de Norma
+                anuncia una falta que no le importa a nadie más que a nosotros. */}
+            {norma.photos[0] === undefined ? null : (
+              <div className="lg:col-span-4 lg:col-start-9">
                 <Figure
                   media={norma.photos[0]}
                   reservedFor=""
                   sizes="(min-width: 64rem) 33vw, 100vw"
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </Section>
       </Container>
@@ -102,7 +126,7 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
       <Band tone="ink">
         <Container>
           <Section labelledBy="que-paso">
-            <h2 id="que-paso" className="font-prose text-title">
+            <h2 id="que-paso" className="font-display text-title">
               {whatHappened.lead}
             </h2>
             <Paragraphs items={whatHappened.paragraphs.slice(0, 2)} className="mt-xl" />
@@ -126,6 +150,32 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
       </Band>
 
       <Container>
+        <Section labelledBy="el-trabajo">
+          {/* La foto va a la izquierda en escritorio y el texto a la derecha, al
+              revés que en las otras dos secciones con foto. Se resuelve con
+              colocación explícita en la grilla y no con `order`, así el texto sigue
+              primero en el documento: en el teléfono el título tiene que aparecer
+              antes que la imagen que ilustra. */}
+          <div className="grid gap-2xl lg:grid-cols-12 lg:gap-lg lg:items-end">
+            <div className="lg:col-span-5 lg:col-start-8">
+              <SectionHeading title={ui.home.workStartedHeading} id="el-trabajo" />
+              <p className="max-w-measure text-body">{ui.home.workStartedLead}</p>
+            </div>
+
+            {workPhoto === null ? null : (
+              <div className="lg:col-span-6 lg:col-start-1 lg:row-start-1">
+                <Figure
+                  media={workPhoto}
+                  reservedFor=""
+                  sizes="(min-width: 64rem) 50vw, 100vw"
+                />
+              </div>
+            )}
+          </div>
+        </Section>
+      </Container>
+
+      <Container>
         <Section labelledBy="reconstruir">
           <SectionHeading title={ui.home.rebuildHeading} id="reconstruir" />
           <Paragraphs items={reconstruction.paragraphs} />
@@ -145,17 +195,12 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
             />
           )}
 
-          <p className="mt-lg">
-            <InlineLink href={localizedHref("/reconstruccion", locale)}>
-              {ui.home.rebuildDetail}
-            </InlineLink>
-          </p>
-        </Section>
-      </Container>
-
-      <Container>
-        <Section labelledBy="como-va">
-          <SectionHeading title={ui.home.howItsGoing} id="como-va" />
+          <SectionHeading
+            title={ui.home.howItsGoing}
+            level={3}
+            className="mt-4xl"
+            id="como-va"
+          />
 
           {overview.status === "ok" ? (
             <CampaignProgress
@@ -169,6 +214,12 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
           ) : (
             <Unavailable reason={overview.reason} copy={ui.unavailable} />
           )}
+
+          <p className="mt-2xl">
+            <InlineLink href={localizedHref("/reconstruccion", locale)}>
+              {ui.home.rebuildDetail}
+            </InlineLink>
+          </p>
         </Section>
       </Container>
 
@@ -239,11 +290,6 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
               {ui.home.knowFoundation}
             </InlineLink>
           </p>
-          <p className="mt-sm">
-            <InlineLink href={localizedHref("/riacho-conecta", locale)}>
-              {ui.home.seeRiacho}
-            </InlineLink>
-          </p>
         </Section>
       </Container>
 
@@ -255,8 +301,8 @@ export async function HomeScreen({ locale }: { locale: Locale }) {
       </Container>
 
       <Container>
-        <Section tight className="border-t border-rule">
-          <h2 className="font-prose text-heading">{ui.home.shareHeading}</h2>
+        <Section id="compartir" tight className="border-t border-rule">
+          <h2 className="font-display text-heading">{ui.home.shareHeading}</h2>
           <p className="mt-sm max-w-measure text-body text-ink-muted">
             {ui.home.shareLead}
           </p>

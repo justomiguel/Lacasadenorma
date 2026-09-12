@@ -1,4 +1,4 @@
-import { SecondaryAction } from "@/components/design-system/actions";
+import { InPageAction } from "@/components/design-system/actions";
 import { BleedOnMobile, ReservedSpace } from "@/components/design-system/photo";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
@@ -27,6 +27,15 @@ import { HelpCta } from "./help-cta";
  *    durante mucho tiempo abrió con un rectángulo gris que decía que la familia
  *    estaba eligiendo la fotografía. El epígrafe lleva su nombre completo porque el
  *    título de la página dice "Norma" y su nombre era Norma Edith Bedoya.
+ * 5. **La apertura dice qué pasó, no qué nos proponemos.** Acá estaba la frase del
+ *    proyecto —«Reconstruimos una casa. Construimos un legado.»—, que sigue siendo
+ *    cierta y sigue en el pie y en la tarjeta social, pero no informa: quien llega
+ *    de un WhatsApp no sabe todavía qué casa ni por qué. Ahora las dos primeras
+ *    frases son el hecho y la necesidad, y con eso la apertura responde las cinco
+ *    preguntas de ADR-024 §5 sin pedirle nada al visitante.
+ * 6. **Compartir está en la apertura.** Era la quinta pregunta y sólo se podía
+ *    contestar bajando catorce pantallas. Es la acción que más veces se ejecuta,
+ *    porque casi todo el mundo llega acá porque alguien le pasó el enlace.
  */
 export function Hero({ locale }: { locale: Locale }) {
   const { norma, site, ui } = getContent(locale);
@@ -35,24 +44,29 @@ export function Hero({ locale }: { locale: Locale }) {
     <section className="border-b border-rule" aria-labelledby="apertura">
       <div className="mx-auto grid w-full max-w-page items-center gap-2xl px-5 pb-3xl pt-2xl sm:px-xl lg:grid-cols-12 lg:gap-lg lg:px-4xl lg:pb-4xl">
         <div className="lg:col-span-6">
-          <h1 id="apertura" className="font-prose text-display">
+          <h1 id="apertura" className="font-display text-display">
             {site.name}
           </h1>
 
           <p className="mt-lg max-w-measure font-prose text-lead text-ink">
-            {site.tagline}
+            {ui.home.openingLead}
           </p>
 
-          <div className="mt-2xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
+          <div className="mt-xl flex flex-col items-start gap-lg sm:flex-row sm:items-center">
             <HelpCta
               origen="apertura"
               href={localizedHref("/ayudar", locale)}
               label={ui.helpCta}
             />
-            <SecondaryAction href={localizedHref("/norma", locale)}>
-              {ui.home.knowNormaStory}
-            </SecondaryAction>
+            <InPageAction fragment="compartir">{ui.home.shareOpening}</InPageAction>
           </div>
+
+          {/* Debajo de las acciones, y no arriba: en 360 px cada línea que se mete
+              antes del botón lo empuja hacia el pliegue, y SC-001 mide justamente
+              eso. Quien lee dos frases sigue leyendo la tercera. */}
+          <p className="mt-xl max-w-measure text-body text-ink-muted">
+            {ui.home.openingNeed}
+          </p>
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">

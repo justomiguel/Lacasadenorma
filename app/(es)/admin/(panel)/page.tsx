@@ -99,7 +99,7 @@ export default async function AdminPanelPage() {
                 {can(viewer.role, "finanzas.escribir") ? (
                   <Link
                     href="/admin/aportes"
-                    className="text-brick underline underline-offset-2"
+                    className="text-aqua underline underline-offset-2"
                   >
                     Marcala cuando revises el resumen del banco
                   </Link>

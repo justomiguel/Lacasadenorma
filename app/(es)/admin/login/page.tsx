@@ -24,11 +24,11 @@ export default async function LoginPage({
       <p className="font-ui text-label uppercase tracking-label text-ink-muted">
         Casa de Norma
       </p>
-      <h1 className="mt-xs font-prose text-title text-ink">Entrar al backoffice</h1>
+      <h1 className="mt-xs font-display text-title text-ink">Entrar al backoffice</h1>
       <p className="mt-sm font-ui text-small text-ink-muted">
         Esta parte del sitio es para quienes mantienen la campaña al día. Si buscabas cómo
         colaborar, está en{" "}
-        <Link href="/ayudar" className="text-brick underline underline-offset-2">
+        <Link href="/ayudar" className="text-aqua underline underline-offset-2">
           ayudar a reconstruir
         </Link>
         .

@@ -211,7 +211,7 @@ export function PhotoSequence({
     <div className={cn("space-y-3xl", className)}>
       {groups.map((group) => (
         <section key={group.heading}>
-          <h3 className="font-prose text-subheading font-medium">{group.heading}</h3>
+          <h3 className="font-display text-subheading font-medium">{group.heading}</h3>
           {group.note === null ? null : (
             <p className="mt-sm max-w-measure text-body text-ink-muted">{group.note}</p>
           )}

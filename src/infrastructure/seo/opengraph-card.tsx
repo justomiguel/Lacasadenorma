@@ -16,11 +16,19 @@ import type { Locale } from "@/src/i18n/locale";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const PAPER = "#fbf9f5";
-const INK = "#231c17";
-const INK_MUTED = "#75695f";
-const BRICK = "#a4522f";
-const RULE = "#dfd8d0";
+/*
+ * Los tokens, a mano y en hexadecimal.
+ *
+ * `next/og` no evalúa CSS del proyecto: esta imagen se compone con estilos en
+ * línea, así que la paleta se copia. Son los mismos valores de `globals.css`
+ * convertidos de oklch a sRGB, y hay que actualizarlos acá cuando cambien allá.
+ * `revision-visual.spec.ts` mira el sitio, no esta imagen.
+ */
+const PAPER = "#f7fbfb";
+const INK = "#0c1b1e";
+const INK_MUTED = "#4e5e62";
+const AQUA = "#176b6b";
+const RULE = "#ccd6d7";
 
 async function loadFont(fileName: string): Promise<ArrayBuffer> {
   const buffer = await readFile(join(process.cwd(), "assets", "fonts", fileName));
@@ -88,16 +96,19 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
             style={{
               width: 96,
               height: 4,
-              backgroundColor: BRICK,
+              backgroundColor: AQUA,
               marginTop: 24,
             }}
           />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* Archivo y no Newsreader: el nombre del proyecto es la voz del sitio, y
+              desde ADR-024 esa voz es la grotesca. La bajada se queda en serif,
+              porque es la voz de quien cuenta. */}
           <div
             style={{
-              fontFamily: "Newsreader",
+              fontFamily: "Archivo",
               fontSize: 88,
               lineHeight: 1.02,
               letterSpacing: "-0.03em",

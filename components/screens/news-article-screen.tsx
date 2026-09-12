@@ -110,7 +110,7 @@ export async function NewsArticleScreen({
 
   const cmsBody = (
     <>
-      <h1 className="mt-md max-w-measure font-prose text-title">{update.title}</h1>
+      <h1 className="mt-md max-w-measure font-display text-title">{update.title}</h1>
 
       {update.publishedAt === null ? null : (
         <Byline
@@ -170,7 +170,7 @@ export async function NewsArticleScreen({
         {locale === "en" ? <div lang="es-AR">{cmsBody}</div> : cmsBody}
 
         <div className="mt-3xl border-t border-rule pt-xl">
-          <h2 className="font-prose text-heading">{ui.news.shareHeading}</h2>
+          <h2 className="font-display text-heading">{ui.news.shareHeading}</h2>
           <ShareBlock
             className="mt-lg"
             url={`${siteUrl}${href}`}

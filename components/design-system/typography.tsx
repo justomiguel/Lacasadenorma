@@ -7,6 +7,13 @@ import { intlLocale, type Locale } from "@/src/i18n/locale";
 /**
  * Tipografía del sistema. Los tamaños vienen de los tokens de `ux.md`; ningún
  * componente escribe un tamaño arbitrario.
+ *
+ * Desde ADR-024 el reparto de familias tiene un criterio y no una costumbre: la
+ * grotesca (`font-display`, `font-ui`) es la voz **del sitio** —títulos, etiquetas,
+ * cifras, navegación—, y la serif (`font-prose`) es la voz **de quien habla**: la
+ * prosa, las bajadas y la cita de la familia. Por eso `Testimony` es el único
+ * componente de este archivo que se queda en serif a escala de título: es la única
+ * frase del sitio que no la escribimos nosotros.
  */
 
 /** Prosa larga con medida y ritmo vertical. */
@@ -93,7 +100,7 @@ export function SectionHeading({
       <Heading
         {...(id === undefined ? {} : { id })}
         className={cn(
-          "font-prose",
+          "font-display",
           level === 2 ? "text-heading" : "text-subheading font-medium",
         )}
       >
@@ -135,7 +142,7 @@ export function Testimony({
           el tamaño de la cita, y `em` resuelve contra el `font-size` del **propio**
           elemento. Puesto en el `figure`, que hereda el cuerpo de 17 px, 20em daban
           340 px y la cita salía en seis líneas de tres palabras. */}
-      <blockquote className="max-w-quote border-l-2 border-brick pl-lg font-prose text-title">
+      <blockquote className="max-w-quote border-l-2 border-aqua pl-lg font-prose text-title">
         {quote}
       </blockquote>
       {/* La atribución no se atenúa con color: la jerarquía la hace el tamaño, y así

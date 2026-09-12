@@ -200,7 +200,7 @@ export default async function AdminGastosPage() {
                         <p key={receipt.id}>
                           <Link
                             href={`/admin/comprobantes/${receipt.id}`}
-                            className="font-ui text-small text-brick underline decoration-1 underline-offset-4"
+                            className="font-ui text-small text-aqua underline decoration-1 underline-offset-4"
                           >
                             Ver {receipt.fileName}
                           </Link>

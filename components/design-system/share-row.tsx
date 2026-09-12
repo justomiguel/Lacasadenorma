@@ -121,7 +121,7 @@ export function ShareRow({
               onClick={() => {
                 onShared?.(target.channel);
               }}
-              className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+              className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
             >
               {target.label}
             </a>
@@ -133,7 +133,7 @@ export function ShareRow({
             onClick={() => {
               void copyLink();
             }}
-            className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-brick-strong"
+            className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
           >
             {copied ? linkCopiedLabel : copyLinkLabel}
           </button>

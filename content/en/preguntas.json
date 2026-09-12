@@ -18,7 +18,8 @@
   {
     "question": "What happened?",
     "answer": [
-      "Norma died in an accident. We do not give more detail than is needed: her family would rather she be remembered for how she lived."
+      "On Monday 7 September, at 4.30 in the morning, a fire destroyed the family home in Riacho He Hé. Norma died that night.",
+      "Her husband got out, but he inhaled a lot of smoke and is under treatment."
     ],
     "href": "/que-paso",
     "linkLabel": "Read what happened"
@@ -58,10 +59,10 @@
   {
     "question": "What happens when the house is rebuilt?",
     "answer": [
-      "The project continues with free training in digital tools for people from the town. The first programme is called Riacho Conecta."
+      "The intention is to continue with free training in digital tools for people from the town. It is an intention and nothing more: there are no dates and no programme put together."
     ],
     "href": "/legado",
-    "linkLabel": "Learn about Fundación Norma"
+    "linkLabel": "Read what the legacy sets out to do"
   },
   {
     "question": "What is Fundación Norma?",
@@ -69,6 +70,6 @@
       "It is the name of the project we want to continue after the house. It does not exist as an organisation yet: it has no legal personality and no statute, and we will not say it has them until it does."
     ],
     "href": "/legado",
-    "linkLabel": "Learn about Fundación Norma"
+    "linkLabel": "Read what state it is in"
   }
 ]

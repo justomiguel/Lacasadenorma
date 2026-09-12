@@ -62,7 +62,7 @@ export function LegalDocument({
                   aria-labelledby={id}
                   className="border-t border-rule pt-lg"
                 >
-                  <h2 id={id} className="font-prose text-heading">
+                  <h2 id={id} className="font-display text-heading">
                     {section.heading}
                   </h2>
                   <Paragraphs items={section.paragraphs} className="mt-md" />

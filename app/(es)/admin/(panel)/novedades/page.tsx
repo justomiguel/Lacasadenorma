@@ -98,7 +98,7 @@ export default async function AdminNovedadesPage() {
                 title={
                   <Link
                     href={`/admin/novedades/${update.id}`}
-                    className="underline decoration-rule decoration-1 underline-offset-4 hover:decoration-brick"
+                    className="underline decoration-rule decoration-1 underline-offset-4 hover:decoration-aqua"
                   >
                     {update.title}
                   </Link>

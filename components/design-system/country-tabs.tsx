@@ -186,7 +186,7 @@ export function CountryTabs({
               className={cn(
                 "min-h-touch px-xs font-ui text-body transition-colors duration-fast ease-editorial sm:px-md sm:text-subheading",
                 isSelected
-                  ? "border-b-2 border-brick font-medium text-ink"
+                  ? "border-b-2 border-aqua font-medium text-ink"
                   : "border-b-2 border-transparent text-ink-muted hover:text-ink",
               )}
             >
