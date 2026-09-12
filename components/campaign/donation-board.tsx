@@ -241,11 +241,15 @@ export function DonationBoard({
           </div>
         ) : null}
 
-        <div className="grid gap-3xl lg:grid-cols-2 lg:gap-2xl">
-          <div className={enhanced && country !== "AR" ? "max-lg:hidden" : ""}>
+        <div className="grid min-w-0 gap-3xl lg:grid-cols-2 lg:gap-2xl">
+          <div
+            className={enhanced && country !== "AR" ? "min-w-0 max-lg:hidden" : "min-w-0"}
+          >
             <ArgentinaFields account={help.accounts.AR} onCopied={onCopied} />
           </div>
-          <div className={enhanced && country !== "CL" ? "max-lg:hidden" : ""}>
+          <div
+            className={enhanced && country !== "CL" ? "min-w-0 max-lg:hidden" : "min-w-0"}
+          >
             <ChileFields account={help.accounts.CL} onCopied={onCopied} />
           </div>
         </div>

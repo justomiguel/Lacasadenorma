@@ -70,7 +70,7 @@ export function Figure({
   }
 
   return (
-    <figure className={className}>
+    <figure className={cn("min-w-0 max-w-full", className)}>
       <Image
         src={media.url}
         alt={media.alt}
@@ -78,7 +78,7 @@ export function Figure({
         height={media.height}
         sizes={sizes}
         priority={priority}
-        className="h-auto w-full rounded-md object-cover"
+        className="h-auto w-full max-w-full rounded-md object-cover"
       />
       {showCaption && (media.caption !== null || media.credit !== null) ? (
         <figcaption className="mt-sm max-w-measure font-ui text-small text-ink-muted">

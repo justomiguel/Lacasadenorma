@@ -75,7 +75,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 />
               )}
               {fireSide.length === 0 ? null : (
-                <div className="mt-md grid grid-cols-2 gap-md">
+                <div className="mt-md grid min-w-0 grid-cols-2 gap-md">
                   {fireSide.map((photo) => (
                     <Figure
                       key={photo.url}

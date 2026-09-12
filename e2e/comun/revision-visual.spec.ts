@@ -292,6 +292,9 @@ async function medir(page: Page): Promise<Medicion> {
 async function revisar(page: Page, donde: string) {
   for (const pagina of PAGINAS_PUBLICAS) {
     await page.goto(pagina.path);
+    // Playfair e Inter cambian el ancho respecto de la fallback. Medir antes de
+    // que carguen reportaba 10 px de desborde que el usuario no llega a ver.
+    await page.evaluate(() => document.fonts.ready);
 
     const {
       desborde,
