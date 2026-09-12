@@ -341,7 +341,7 @@ privilegiado que se pueda quedar desactualizado. El detalle está en [`docs/webm
 
 | Ruta | Estrategia | Por qué |
 | --- | --- | --- |
-| `/norma`, `/que-paso`, `/legado`, `/riacho-conecta`, `/legales/*` | Estática | No dependen de la base |
+| `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estática | No dependen de la base |
 | `/`, `/reconstruccion`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
 | `/llms.txt` | `force-static` | Es un resumen del sitio, no un dato |
 | `/api/public/*` | `public, max-age=60, stale-while-revalidate=300` | Respuestas chicas y cacheables en el borde |

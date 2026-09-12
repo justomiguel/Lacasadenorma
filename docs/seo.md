@@ -168,7 +168,7 @@ lea con la conexión de Riacho He Hé y con JavaScript desactivado.
 
 | Ruta | Modo |
 |---|---|
-| `/norma`, `/que-paso`, `/legado`, `/riacho-conecta`, `/legales/*` | Estáticas en build: su contenido vive en el repositorio |
+| `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estáticas en build: su contenido vive en el repositorio |
 | `/`, `/ayudar`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
 | `/llms.txt` | `force-static` |
 | `/api/health` | `force-dynamic`, `no-store` |

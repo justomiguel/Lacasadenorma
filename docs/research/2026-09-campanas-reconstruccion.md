@@ -115,6 +115,19 @@ Y acá está la decisión que este proyecto debería mirar de frente: **Milagros
 aporta la personería, la convocatoria de voluntarios y las jornadas de reconstrucción. La campaña tiene
 nombre propio y respaldo institucional prestado.
 
+Pero lo mejor de este caso es una frase suya, que es la mejor línea de toda la investigación porque
+hace algo que casi ninguna campaña hace: **le pone techo honesto a lo que el dinero puede reparar.**
+
+> «Reconstruir la casa no me devuelve a mi mamá, pero a mí y a mi hermano nos devuelve la posibilidad
+> de estar juntos como ella quería.»
+
+No pide en nombre de la muerta: pide en nombre de una necesidad presente y concreta. Y separa las dos
+cosas en la misma oración, lo que desactiva de raíz la sensación de que se está cobrando por un duelo.
+El equivalente para este sitio existe y no está escrito: reconstruir la casa no devuelve a Norma, le
+devuelve a su marido el lugar donde vivió. **No se agrega**, porque una frase así la escribe la
+familia en primera persona o no se escribe — inventarla sería exactamente el tipo de cosa que el
+`PASO 2` prohíbe. Queda anotada como la línea que vale pedirle a Justo Miguel.
+
 ---
 
 ## 2. Cuánto tarda de verdad un legado en existir
@@ -124,8 +137,11 @@ fechas de los legados reales que sí llegaron a constituirse respaldan eso mejor
 
 | Legado | Muerte | Constitución | Distancia |
 |---|---|---|---|
+| [Fundación Nínawa Daher](https://ninawadaher.org/) | 9 de enero de 2011 | 2012 | ~1 año |
+| [Fundación Antonia](https://www.fundacionantonia.org/fundacion-antonia/) | 7 de febrero de 2017 | mediados de 2017 | ~5 meses |
 | [Fundación Sergio Villar](https://www.entrenosdigital.com/agra-orzan/xentes-da-agra/fundacion-sergio-villar-legado-joven-mucha-luz/20250619120351019255.html) | 1 de abril de 2023 | marzo de 2024 | ~11 meses |
 | [Fundación Marcelino Oliver](https://www.fundacionmarcelinooliver.org/el-perdon/) | 20 de noviembre de 2013 | 2017 | ~4 años |
+| [Asociación Alhelí](https://asociacionalheli.org/asi-nacio-alheli/) | — | papeles octubre 2015, constituida enero 2016 | 3 meses de trámite |
 | [Salud y Justicia Sobrevivientes ABC](https://semmexico.mx/sobrevivientes-de-la-guarderia-abc-de-la-tragedia-a-la-labor-como-promotores-de-conciencia/) | 5 de junio de 2009 | reuniones primero, movimiento después | años |
 | [Casa Newenche](https://www.latribuna.cl/cronica-ciudadana/2026/01/22/espacio-comunitario-en-honor-a-maria-jesus-se-une-a-red-de-apoyo-solidario-en-los-angeles.html) | 19 de octubre de 2023 | espacio comunitario, no fundación | — |
 
@@ -136,6 +152,52 @@ mantenerse unidas», que es un nombre honesto para lo que hay hoy acá.
 Casa Newenche merece una nota aparte: en honor a María Jesús Troncoso no se creó una fundación sino
 **un espacio comunitario**, que después terminó siendo centro de acopio para damnificados de otros
 incendios. Un legado no está obligado a tomar la forma de una persona jurídica para ser real.
+
+Y el patrón que atraviesa los cuatro casos memoriales que se pudieron leer completos es más importante
+que las fechas: **la institución llegó cuando la práctica ya existía.** Teresa Salas de Mellano pintó
+una estrella amarilla en el asfalto donde murió su hijo y recorrió el país con esa idea años antes de
+que hubiera fundación, y la estrella terminó siendo señalización oficial de Vialidad Nacional y parte
+del examen teórico de la licencia de conducir
+([cronología oficial](https://www.argentina.gob.ar/seguridadvial/cronologia-de-estrellas-amarillas)).
+Yolanda Verdugo se hizo autodidacta del duelo dos años antes de presentar los papeles de Alhelí. El
+orden fue gesto, después práctica, después norma, después persona jurídica.
+
+Traducido a este proyecto: si el legado va a ser formación en herramientas digitales, lo que le daría
+credibilidad no es constituir nada. Es que alguien enseñe algo a alguien una vez, y que eso quede
+fechado en el sitio. Eso convertiría `/legado` de una intención declarada en un «ya empezamos, en
+chiquito» — que es lo que hizo cada uno de estos casos.
+
+### 2.1 Nínawa Daher: el paralelo más exacto, y cómo estructura su página
+
+[`ninawadaher.org`](https://ninawadaher.org/) es el caso que más se parece a lo que este proyecto dice
+querer ser: una familia argentina que convirtió la memoria de **una comunicadora** en una organización
+dedicada a comunicación, becas de periodismo y accesibilidad. Nínawa Daher era periodista y abogada;
+murió en un accidente de tránsito el 9 de enero de 2011, y la fundación se constituyó en 2012.
+
+Cuatro decisiones de esa página, todas contrarias a lo que haría una landing de campaña:
+
+| Decisión | Cómo |
+|---|---|
+| **La obra va antes que la persona** | El orden de navegación es Inicio → Fundación → **Actividades** → **Nínawa** → Homenajes → Contacto. La biografía es la sección 4, no el anzuelo |
+| **La muerta habla en primera persona** | El home abre con un poema que ella escribió: «Voy a repartir mis alas para todos. / Quiero que el mundo vuele con mi energía». Debajo, sólo dos fechas: «3/10/1979 - 9/1/2011» |
+| **La muerte se comunica con una fecha, no con una escena** | El home **no menciona el accidente**. Ni una palabra sobre cómo murió. La familia decidió que la tragedia no es la propuesta de valor |
+| **No hay «Donar» en ninguna parte** | Una fundación memorial de catorce años cuyo CTA terminal es «Contacto». El sitio existe para mostrar la obra y difundir el legado, no para recaudar |
+
+Y hace algo baratísimo de implementar que casi nadie hace: **publica las autoridades con nombre,
+cargo y oficio**, y son la madre, el padre y la hermana — Alicia Daher, presidenta, psicóloga y
+empresaria; Ghandour Daher, tesorero, licenciado en ciencias políticas; Sumaia Daher, secretaria,
+psicóloga y profesora de canto. Eso es transparencia de gobernanza sin un solo número.
+
+La continuidad con la persona muerta es **vocacional, no emocional**: Nínawa era comunicadora y la
+fundación trabaja en comunicación. Es exactamente el argumento que `/legado` necesita poder sostener,
+y hoy lo sostiene: el nombre viene de lo que ella hacía.
+
+La misma lógica aparece en la [Fundación Antonia](https://www.fundacionantonia.org/fundacion-antonia/),
+de Concepción, Chile, con una decisión de orden que vale copiar: **«Nuestra historia» va después de la
+misión**, y los datos bancarios están al final, en el bloque de contacto, sin botón, sin barra y sin
+monto sugerido. La página no monetiza el relato de la muerte: el relato justifica que la organización
+exista, y el dinero se resuelve como un trámite al pie. Es la relación correcta entre `/norma` y
+`/ayudar`.
 
 ---
 
@@ -153,6 +215,37 @@ Y la guía de <https://grassrootsdigital.org/you-dont-need-an-ngo-to-start-fundr
 operativa: **«No finjas ser una ONG. No uses lenguaje de sonido oficial que genere confusión.»** La
 fórmula que propone es «somos una iniciativa comunitaria, todavía no una ONG registrada», seguida
 inmediatamente de cómo se maneja la plata.
+
+La cita más precisa sobre el hueco entre decidir y existir es de Alhelí, y sirve porque separa las dos
+fechas sin solemnidad, como un trámite entre otros:
+
+> «En ese instante me planteé dos opciones: compadecerme o crear Alhelí e intentar ayudar a personas
+> que pudiesen estar viviendo lo que yo había vivido. **En octubre de 2015 eché los papeles y la
+> asociación se constituyó en enero de 2016.**»
+
+Y la del padre de Kim Gómez, en La Plata, muestra que decir en qué paso del trámite estás convierte la
+falta de personería de debilidad en prueba de seriedad: **«No tenemos una cuenta bancaria, por eso aún
+no hemos podido recibir grandes donaciones»**, más el detalle de que «sólo resta completar la firma
+ante escribano»
+([0221](https://www.0221.com.ar/la-plata/el-papa-kim-gomez-explico-como-funcionara-la-fundacion-que-llevara-el-nombre-su-hija-n133273)).
+
+### 3.1 Cómo se recibe plata sin ser persona jurídica
+
+Tres mecanismos reales, de menor a mayor formalidad. Ninguno requiere inventar una organización:
+
+| Mecanismo | Quién lo hace | Cómo lo dice |
+|---|---|---|
+| **Administrar y decirlo** | Puerto Patriada | «El dinero de todos ustedes, lo único que nosotros hacemos es **administrarlo**» |
+| **Ser puente, no receptor** | [Apadrina a una familia en la Comarca Andina](https://apadrinaaunafamilia.com.ar/) | «Somos referentes: **el puente** entre un padrino, una madrina, y el damnificado». Y para montos grandes: «existe la posibilidad de donar a una fundación» |
+| **Patrocinio fiscal** | [Eaton Fire Collaborative](https://www.eatonfirecollaborative.org/) | En el pie: «is **fiscally sponsored by** Community Partners». Una organización ya constituida recibe y administra los fondos en nombre de una iniciativa que todavía no es persona jurídica |
+| **Campaña con nombre propio dentro de una ONG que ya existe** | Construir Milagros | La campaña tiene nombre e identidad; la personería es prestada de la Fundación Impulso y Encuentro |
+
+Los dos últimos son la respuesta institucional al problema del Paso 4, y el argentino más barato es el
+de Apadrina: chico y directo a la familia, grande a través de una entidad ya inscripta. No requiere
+ningún trámite y se dice en una oración.
+
+**El patrón común a todos: nadie nombra una entidad futura en la misma superficie donde recibe dinero.**
+Que no haya dónde donar al proyecto futuro *es* la decisión de diseño, no una omisión.
 
 ## 4. Contar la historia sin explotar la tragedia
 
@@ -185,7 +278,51 @@ sensibles **fuera** de la página pública.
 
 ---
 
-## 5. Qué se hace con todo esto
+## 5. Los dos antiejemplos que importan
+
+Estos no son campañas mal escritas: son casos donde la rendición de cuentas **existía** y no alcanzó.
+Sirven porque este proyecto ya hace lo que ellos hacían y conviene saber por dónde falla igual.
+
+### El Fondo Revita, Pedrógão Grande, Portugal: publicar totales no es rendir cuentas
+
+Tras los incendios de junio de 2017 el Estado portugués creó el Fondo Revita para administrar las
+donaciones y reconstruir viviendas: 5.446.296,31 € donados más 2.500.000 € de refuerzo estatal, 99
+viviendas a cargo. El Tribunal de Cuentas dictaminó que las donaciones se asignaron «com falta de
+critérios», con «irregularidades na sua distribuição», y que **«faltou transparência em todo o
+processo»**
+([Observador](https://observador.pt/especiais/pouca-transparencia-e-irregularidades-tribunal-de-contas-arrasa-gestao-dos-donativos-a-pedrogao-grande/)).
+
+El matiz es el que importa, y es incómodo: el Tribunal **reconoce** que el fondo publicaba la lista de
+donantes y informes trimestrales de ejecución. Lo que faltaba no era el número, eran **los criterios con
+los que se decidió** — las actas, los apoyos concretos, y cómo se repartieron las viviendas.
+
+Traducido a `/transparencia`: este sitio publica total recibido, total gastado, saldo y cada gasto con
+fecha, concepto y si tiene comprobante. Eso es más de lo que publica cualquier colecta familiar que se
+encontró. Pero un libro de gastos contesta *en qué se gastó* y no contesta *por qué eso primero*. La
+lección, anotada y no implementada: si algún día hay que elegir entre dos rubros, la línea que explica
+la elección vale más que el monto. Ocho años después, además, seguía habiendo obras suspendidas por
+falta de pago
+([ECO](https://eco.sapo.pt/2025/08/26/reconstrucao-de-casas-ardidas-ha-oito-anos-esteve-suspensa-por-falta-de-pagamento/)):
+prometer un plazo y no cumplirlo destruye más confianza que no prometer ninguno.
+
+### Comarca Andina, Chubut 2021: el dinero anunciado no es la casa entregada
+
+Se firmaron convenios por 273,9 millones de pesos, de los cuales 237,5 millones para 250 viviendas de
+emergencia en Lago Puelo. Meses después, un proyecto de resolución parlamentaria describía las
+viviendas comprometidas en El Hoyo así: «aún no se han concluido, carecen de conexión a servicios, no
+cuentan con aberturas; en suma, **son inhabitables**», con familias pasando el invierno «sin siquiera
+energía eléctrica», cuando se había anticipado que estarían habitables en 45 días
+([TN](https://tn.com.ar/politica/2021/08/16/incendios-en-chubut-denuncian-que-la-ayuda-millonaria-que-envio-el-gobierno-nunca-llego-a-lago-puelo/),
+[proyecto 3210-D-2021](https://www4.hcdn.gob.ar/dependencias/dsecretaria/Periodo2021/PDF2021/TP2021/3210-D-2021.pdf)).
+
+La unidad de medida de la confianza es la casa terminada y habitada, no el monto recaudado. Es un
+argumento a favor de algo que el sitio ya hace —mostrar la obra en fotos fechadas— y en contra de algo
+que el sitio ya evita: la barra de progreso como titular. Una cifra de dinero necesita al lado una
+cifra física.
+
+---
+
+## 6. Qué se hace con todo esto
 
 ### Confirmó decisiones que ya estaban tomadas
 
@@ -210,16 +347,30 @@ lo primero que alguien lee. Buen resultado, mal método: llegó por el pliegue y
 
 ### Queda abierto, y no lo decide este repositorio
 
-Dos cosas que las referencias hacen y que **no** se implementan, porque implementarlas sería inventar:
+Cinco cosas que las referencias hacen y que **no** se implementan, porque implementarlas sería inventar
+o porque no las decide este repositorio:
 
 1. **Retirar una necesidad cuando está cubierta**, como hizo la campaña de Angélica con la ropa. Hoy
    este sitio no publica lista de necesidades en especie, así que no aplica. Si algún día se publica,
    la lección está acá: la lista tiene que poder decir «esto ya no hace falta».
 2. **Apoyarse en una organización que ya exista**, como hizo Milagros con la Fundación Impulso y
-   Encuentro, en lugar de esperar a constituir una. Es la alternativa más sólida que encontró esta
-   investigación para el legado, y es una decisión **de la familia**, no de diseño. Se anota como
-   opción documentada; no se anuncia, no se insinúa en la página, y `/legado` sigue diciendo lo que
-   dice hoy.
+   Encuentro, o recibir por **patrocinio fiscal**, como el Eaton Fire Collaborative. Es la alternativa
+   más sólida que encontró esta investigación para el legado, y es una decisión **de la familia**, no
+   de diseño. Se anota como opción documentada; no se anuncia, no se insinúa en la página, y `/legado`
+   sigue diciendo lo que dice hoy.
+3. **Derivar los montos grandes a una entidad ya inscripta**, en una oración, como hace Apadrina. Misma
+   condición: lo decide la familia, y hoy no hay entidad que nombrar.
+4. **La frase que separa lo que la casa devuelve de lo que no.** La tiene que escribir la familia.
+5. **Enseñar algo una vez y fecharlo**, que es lo que convertiría `/legado` en «ya empezamos». Es la
+   diferencia entre un legado y una recaudación, y no la produce el código.
+
+### Un riesgo que la investigación deja señalado
+
+Altadena Girls pasó de «mis amigas perdieron su ropa» a una organización con centro comunitario, y en
+el camino su sitio dejó de mencionar a una sola chica concreta y a Altadena como lugar. Ganó misión y
+perdió cara. Es el precio de la transición de urgencia a institución, y conviene verlo antes de
+pagarlo sin querer: si algún día `/legado` crece, la prueba de que no se perdió el rumbo es que Norma
+siga teniendo nombre, cocina y camisa a rayas en el sitio.
 
 ## Documentos relacionados
 

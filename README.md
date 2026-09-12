@@ -3,13 +3,14 @@
 Reconstruimos una casa. Construimos un legado.
 
 Norma fue una de las primeras comunicadoras sociales de Riacho He Hé, en Formosa. Pasó gran parte de
-su vida ayudando a que las historias de su pueblo pudieran ser escuchadas. Murió en un accidente, y
-la casa de su familia quedó en un estado que no se puede habitar.
+su vida ayudando a que las historias de su pueblo pudieran ser escuchadas. El 7 de septiembre un
+incendio destruyó la casa de la familia y Norma murió esa madrugada.
 
 Este repositorio es el sitio de la campaña para reconstruirla: explica quién fue Norma, qué pasó, qué
-hay que reconstruir, cómo colaborar, y publica en qué se gastó cada peso que entró. Cuando la casa
-esté terminada, el mismo proyecto continúa como **Fundación Norma**, con formación gratuita en
-herramientas digitales.
+hay que reconstruir, cómo colaborar, y publica en qué se gastó cada peso que entró. La intención es
+que cuando la casa esté terminada el proyecto siga, con el nombre de **Fundación Norma** y formación
+gratuita en herramientas digitales. No existe todavía como organización, y el sitio lo dice así
+(ADR-024).
 
 El sitio no cobra. Los aportes van por transferencia bancaria y se registran a mano en un backoffice.
 Eso no es una limitación técnica pendiente de resolver: es una decisión, y está explicada en

@@ -189,7 +189,7 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
   para qué se usa el dinero, cómo verificar su uso, qué pasa después de reconstruir la casa, y qué
   es Fundación Norma.
 - **FR-002**: La home MUST permitir comprender el proyecto completo sin abandonar la página.
-- **FR-003**: El relato de la historia de Norma y del accidente MUST estar escrito en lenguaje
+- **FR-003**: El relato de la historia de Norma y del incendio MUST estar escrito en lenguaje
   humano, concreto y digno, sin sensacionalismo y sin lenguaje de campaña genérico.
 - **FR-004**: Cada página pública MUST tener un único encabezado principal y jerarquía coherente.
 
