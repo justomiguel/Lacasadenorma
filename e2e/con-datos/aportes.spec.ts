@@ -6,24 +6,26 @@ import { COUNTRY_NAMES } from "@/src/domain/entities";
 /**
  * Flujo crítico 4: elegir cómo aportar.
  *
- * Transferencia, Mercado Pago y PayPal, y dentro de transferencia Argentina y
- * Chile. Los datos salen del contenido versionado, no de la base.
+ * Una sola decisión —Argentina, Chile o cualquier otro país— y debajo sólo lo que
+ * sirve para esa respuesta (ADR-032): la transferencia con sus datos para copiar y
+ * el medio de pago del país, o PayPal para el resto del mundo. Los datos salen del
+ * contenido versionado, no de la base.
  */
 
 const { help, ui } = getContent("es");
 
-test.describe("flujo 4 · elegir el método de aporte", () => {
-  test("el selector de canal es un tablist con teclado", async ({ page }) => {
+test.describe("flujo 4 · elegir desde dónde aportar", () => {
+  test("el selector de país es un tablist con teclado", async ({ page }) => {
     await page.goto("/ayudar");
 
-    const canales = page.getByRole("tablist", { name: ui.home.donateTitle });
+    const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
 
-    await expect(canales).toBeVisible();
-    await expect(canales.getByRole("tab")).toHaveCount(3);
+    await expect(paises).toBeVisible();
+    await expect(paises.getByRole("tab")).toHaveCount(3);
 
     await expect(page.getByRole("tabpanel")).toHaveCount(1);
 
-    const primera = canales.getByRole("tab").first();
+    const primera = paises.getByRole("tab").first();
 
     await primera.click();
     await expect(primera).toHaveAttribute("aria-selected", "true");
@@ -31,7 +33,7 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
 
     await primera.press("ArrowRight");
 
-    const segunda = canales.getByRole("tab").nth(1);
+    const segunda = paises.getByRole("tab").nth(1);
 
     await expect(segunda).toHaveAttribute("aria-selected", "true");
     await expect(segunda).toBeFocused();
@@ -39,32 +41,22 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
     await segunda.press("ArrowLeft");
     await expect(primera).toBeFocused();
     await primera.press("ArrowLeft");
-    await expect(canales.getByRole("tab").last()).toBeFocused();
+    await expect(paises.getByRole("tab").last()).toBeFocused();
   });
 
-  test("Argentina y Chile muestran sus propios datos", async ({ page }) => {
+  test("Argentina y Chile muestran sus propios datos, y nada del otro", async ({
+    page,
+  }) => {
     await page.goto("/ayudar");
 
-    const ancho = page.viewportSize()?.width ?? 0;
-
-    if (ancho >= 1024) {
-      await expect(page.getByRole("heading", { name: /argentina/i })).toBeVisible();
-      await expect(page.getByRole("heading", { name: /chile/i })).toBeVisible();
-      await expect(page.getByText(help.accounts.AR.alias, { exact: true })).toBeVisible();
-      await expect(page.getByText(help.accounts.CL.rut, { exact: true })).toBeVisible();
-      return;
-    }
-
-    const paises = page.getByRole("tablist", { name: ui.countryTabsLabel });
-
-    await expect(paises.getByRole("tab")).toHaveCount(2);
+    const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
+    const panel = page.getByRole("tabpanel");
 
     await paises.getByRole("tab", { name: ui.countries.AR }).click();
 
-    const panel = page.getByRole("tabpanel");
-
     await expect(panel.getByText(help.accounts.AR.alias, { exact: true })).toBeVisible();
     await expect(panel.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
+    await expect(panel.getByText(help.accounts.CL.rut, { exact: true })).toHaveCount(0);
 
     await paises.getByRole("tab", { name: ui.countries.CL }).click();
 
@@ -72,6 +64,20 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
     await expect(
       panel.getByText(help.accounts.CL.accountNumber, { exact: true }),
     ).toBeVisible();
+    await expect(panel.getByText(help.accounts.AR.cbu, { exact: true })).toHaveCount(0);
+  });
+
+  test("los datos que se copian llevan su acción, y los que se leen no", async ({
+    page,
+  }) => {
+    await page.goto("/ayudar");
+
+    const panel = page.getByRole("tabpanel");
+
+    // Alias, CBU y número de cuenta se copian; titular y CUIT se leen para verificar.
+    await expect(panel.locator("[data-figure]")).toHaveCount(3);
+    await expect(panel.getByRole("button", { name: /^copiar$/i })).toHaveCount(3);
+    await expect(panel.getByText(help.accounts.AR.holder, { exact: true })).toBeVisible();
   });
 
   test("Mercado Pago distingue Argentina y Chile, y PayPal tiene su enlace", async ({
@@ -79,13 +85,8 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
   }) => {
     await page.goto("/ayudar");
 
-    const canales = page.getByRole("tablist", { name: ui.home.donateTitle });
-
-    await canales.getByRole("tab", { name: ui.home.mercadoPago }).click();
-    await expect(page.getByText(ui.home.mercadoPagoLead).first()).toBeVisible();
-    await expect(
-      canales.getByRole("tab", { name: ui.home.mercadoPago }).locator("img"),
-    ).toHaveAttribute("src", /mercadopago/);
+    const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
+    const panel = page.getByRole("tabpanel");
 
     const arHref = help.mercadoPagoUrl.AR;
     const clHref = help.mercadoPagoUrl.CL;
@@ -95,42 +96,39 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
     expect(clHref).not.toBeNull();
     expect(paypalHref).not.toBeNull();
 
-    const ar = page.locator(`a[href="${arHref ?? ""}"]`);
-    const cl = page.locator(`a[href="${clHref ?? ""}"]`);
+    const ar = panel.locator(`a[href="${arHref ?? ""}"]`);
+    const cl = panel.locator(`a[href="${clHref ?? ""}"]`);
 
-    const ancho = page.viewportSize()?.width ?? 0;
-
-    if (ancho >= 1024) {
-      await expect(ar).toBeVisible();
-      await expect(cl).toBeVisible();
-    } else {
-      const paises = page.getByRole("tablist", { name: ui.countryTabsLabel });
-
-      await paises.getByRole("tab", { name: ui.countries.AR }).click();
-      await expect(ar).toBeVisible();
-      await expect(cl).toBeHidden();
-
-      await paises.getByRole("tab", { name: ui.countries.CL }).click();
-      await expect(cl).toBeVisible();
-    }
-
-    await expect(ar).toHaveAttribute("href", arHref ?? "");
-    await expect(cl).toHaveAttribute("href", clHref ?? "");
-    await expect(ar.getByText(ui.countries.AR)).toHaveCount(1);
-    await expect(cl.getByText(ui.countries.CL)).toHaveCount(1);
-
-    await canales.getByRole("tab", { name: ui.home.paypal }).click();
+    await paises.getByRole("tab", { name: ui.countries.AR }).click();
+    await expect(ar).toBeVisible();
+    await expect(cl).toHaveCount(0);
+    await expect(panel.getByText(ui.home.mercadoPagoLead)).toBeVisible();
     await expect(
-      canales.getByRole("tab", { name: ui.home.paypal }).locator("img"),
-    ).toHaveAttribute("src", /paypal/);
+      panel
+        .getByText(ui.home.mercadoPago, { exact: true })
+        .locator("xpath=..")
+        .locator("img"),
+      "Mercado Pago lleva su logo al lado del nombre",
+    ).toHaveAttribute("src", /mercadopago/);
 
-    const paypal = page.getByRole("link", { name: ui.home.paypalCta });
+    await paises.getByRole("tab", { name: ui.countries.CL }).click();
+    await expect(cl).toBeVisible();
+    await expect(ar).toHaveCount(0);
+
+    await paises.getByRole("tab", { name: ui.home.international }).click();
+
+    const paypal = panel.getByRole("link", { name: ui.home.paypalCta });
 
     await expect(paypal).toBeVisible();
     await expect(paypal).toHaveAttribute("href", paypalHref ?? "");
+    await expect(
+      panel.getByText(ui.home.paypal, { exact: true }).locator("xpath=..").locator("img"),
+      "PayPal lleva su logo al lado del nombre",
+    ).toHaveAttribute("src", /paypal/);
+    await expect(panel.getByText(help.accounts.AR.cbu, { exact: true })).toHaveCount(0);
   });
 
-  test("sin JavaScript Argentina y Chile vienen completos en el HTML", async ({
+  test("sin JavaScript los tres países vienen completos en el HTML", async ({
     browser,
   }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
@@ -145,6 +143,10 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
       ).toBeVisible();
     }
 
+    await expect(
+      page.getByRole("heading", { name: ui.home.international }),
+    ).toBeVisible();
+
     const valores = await page.locator("[data-figure]").count();
 
     expect(
@@ -158,9 +160,11 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
   test("desde la home se llega a los datos sin cambiar de página", async ({ page }) => {
     await page.goto("/");
 
-    const seccion = page.locator("section", { has: page.getByRole("tablist") }).first();
+    const seccion = page.locator("#donaciones");
 
-    await expect(seccion.getByRole("tablist").first()).toBeVisible();
+    await expect(
+      seccion.getByRole("tablist", { name: ui.home.donateTitle }),
+    ).toBeVisible();
     await expect(
       seccion.getByRole("button", { name: /^copiar$/i }).first(),
     ).toBeVisible();

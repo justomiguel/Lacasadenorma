@@ -65,10 +65,10 @@ export function Section({
       {...(id === undefined ? {} : { id })}
       {...(labelledBy === undefined ? {} : { "aria-labelledby": labelledBy })}
       {...(chapter === undefined ? {} : { "data-chapter": chapter })}
-      /* El ritmo bajó un escalón (ADR-026): con bandas y reglas marcando dónde
-         empieza cada sección, 88 px de aire arriba y abajo ya no separaban, sólo
-         alejaban. */
-      className={cn(tight ? "py-xl lg:py-2xl" : "py-2xl lg:py-3xl", className)}
+      /* 64 px de aire en teléfono y 80 en escritorio entre secciones de una página
+         interior (ADR-032). Los grandes momentos de la home usan `StorySection`,
+         que separa más. */
+      className={cn(tight ? "py-xl lg:py-2xl" : "py-3xl lg:py-4xl", className)}
     >
       {children}
     </section>
@@ -109,7 +109,6 @@ export function Band({
           : tone === "forest"
             ? "bg-forest text-paper"
             : "bg-paper-sunk",
-        tone === "sunk" ? "border-y border-rule" : "",
         className,
       )}
     >

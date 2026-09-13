@@ -1,15 +1,14 @@
-import { previewPhotoFor } from "@/components/campaign/preview-photo";
-import { PreviewCard } from "@/components/design-system/card";
+import { SecondaryAction } from "@/components/design-system/actions";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 /**
- * Las preguntas de la home, como previas con foto.
+ * Las preguntas de la home, comprimidas (ADR-032).
  *
- * Cada una es una puerta a la página que responde completo: pregunta, la
- * primera respuesta, la foto de ese tramo y el enlace con su propio texto. Sin
- * acordeón: el contenido queda en el HTML. En escritorio van de a tres.
+ * Tres preguntas, cada una con su primera respuesta y el enlace a la página que
+ * responde completo. Sin tarjetas ni acordeón: el contenido queda en el HTML y
+ * la lista se lee de un vistazo. En escritorio van de a tres.
  */
 export function FaqSection({
   locale,
@@ -21,52 +20,32 @@ export function FaqSection({
   const { faq } = getContent(locale);
 
   return (
-    <div className={className}>
-      <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
-        {faq.map((item) => {
-          const href = item.href;
-          const action = item.linkLabel;
-
-          if (href === null || action === null) {
-            return (
-              <li key={item.question} className="border-t border-rule py-lg">
-                <h3 className="font-display text-card">{item.question}</h3>
-                {item.answer.map((paragraph) => (
-                  <p
-                    key={paragraph.slice(0, 48)}
-                    className="mt-sm max-w-measure text-body"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </li>
-            );
-          }
-
-          return (
-            <li key={item.question} className="flex min-w-0">
-              <PreviewCard
-                className="w-full"
-                href={localizedHref(href, locale)}
-                title={item.question}
-                action={action}
-                media={previewPhotoFor(href, locale)}
-                sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 50vw, 100vw"
-                {...(item.answer[0] === undefined ? {} : { summary: item.answer[0] })}
+    <ul className={className}>
+      {faq.map((item) => (
+        <li
+          key={item.question}
+          className="border-t border-rule py-lg lg:grid lg:grid-cols-12 lg:gap-lg lg:py-xl"
+        >
+          <h3 className="font-display text-section-title lg:col-span-4">
+            {item.question}
+          </h3>
+          <div className="mt-sm lg:col-span-7 lg:col-start-6 lg:mt-0">
+            {item.answer.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-xs max-w-measure text-body text-ink-muted first:mt-0"
               >
-                {item.answer.slice(1).map((paragraph) => (
-                  <p
-                    key={paragraph.slice(0, 48)}
-                    className="mt-sm max-w-measure text-small text-ink-muted"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </PreviewCard>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+                {paragraph}
+              </p>
+            ))}
+            {item.href === null || item.linkLabel === null ? null : (
+              <SecondaryAction href={localizedHref(item.href, locale)} className="mt-sm">
+                {item.linkLabel}
+              </SecondaryAction>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }

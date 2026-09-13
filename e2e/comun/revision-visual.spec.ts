@@ -221,7 +221,13 @@ async function medir(page: Page): Promise<Medicion> {
       for (const nodo of document.querySelectorAll("body *")) {
         const estilo = getComputedStyle(nodo);
 
-        if (estilo.backgroundImage.includes("gradient")) {
+        // El velo de legibilidad al pie de la apertura es el único gradiente con
+        // función: que el título se lea sobre la foto (ADR-032). Se declara con
+        // `data-scrim`; cualquier otro gradiente sigue siendo firma de plantilla.
+        if (
+          estilo.backgroundImage.includes("gradient") &&
+          !nodo.hasAttribute("data-scrim")
+        ) {
           firmaDeTemplate.push(`${seña(nodo)}: gradiente (${estilo.backgroundImage})`);
         }
 

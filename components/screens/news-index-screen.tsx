@@ -49,6 +49,7 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
       <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
         <li className="flex min-w-0">
           <PreviewCard
+            as="h2"
             className="w-full"
             href={localizedHref("/norma", locale)}
             title={norma.knownAs ?? norma.fullName}
@@ -58,6 +59,7 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
         </li>
         <li className="flex min-w-0">
           <PreviewCard
+            as="h2"
             className="w-full"
             href={localizedHref("/reconstruccion", locale)}
             title={reconstruction.title}
@@ -67,6 +69,7 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
         </li>
         <li className="flex min-w-0">
           <PreviewCard
+            as="h2"
             className="w-full"
             href={localizedHref("/ayudar", locale)}
             title={help.title}

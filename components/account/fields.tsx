@@ -199,7 +199,7 @@ export function SubmitButton({
       type="submit"
       disabled={pending}
       className={cn(
-        "inline-flex min-h-touch items-center justify-center rounded-pill px-lg py-sm font-ui text-subheading font-medium",
+        "inline-flex min-h-cta w-full items-center justify-center rounded-md px-lg font-ui text-body font-medium sm:min-h-12 sm:w-auto",
         "transition-colors duration-fast ease-editorial disabled:opacity-60",
         tone === "primary"
           ? "bg-forest text-paper hover:bg-forest-strong"

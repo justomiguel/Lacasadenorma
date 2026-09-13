@@ -43,7 +43,8 @@ describe("ContactActions", () => {
     const retrato = screen.getByRole("img", { name: help.contact.photo.alt });
 
     expect(retrato).toHaveAttribute("src", "/fotos/justo-miguel.jpg");
-    expect(retrato.className).toMatch(/rounded-full/);
+    expect(retrato.className, "un retrato chico, no un avatar").toMatch(/rounded-sm/);
+    expect(retrato.className).not.toMatch(/rounded-full/);
     expect(retrato.className).toMatch(/object-cover/);
   });
 });

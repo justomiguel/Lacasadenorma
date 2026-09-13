@@ -74,6 +74,9 @@ export function SectionTabs({
 }) {
   const enhanced = useHydrated();
   const [selected, setSelected] = useState<string>(initial ?? items[0]?.id ?? "");
+  /* La entrada animada del panel es para el cambio de pestaña, no para la
+     hidratación: el primer panel aparece quieto, como venía en el HTML servido. */
+  const [changed, setChanged] = useState(false);
   const baseId = useId();
   const refs = useRef(new Map<string, HTMLButtonElement>());
 
@@ -95,7 +98,7 @@ export function SectionTabs({
             {item.heading === undefined ? null : (
               <h3
                 id={`${baseId}-heading-${item.id}`}
-                className="mb-lg font-display text-card"
+                className="mb-lg font-display text-section-title"
               >
                 {item.heading}
               </h3>
@@ -115,6 +118,7 @@ export function SectionTabs({
 
   function select(id: string) {
     setSelected(id);
+    setChanged(true);
     onChange?.(id);
   }
 
@@ -182,7 +186,7 @@ export function SectionTabs({
         role="tabpanel"
         id={`${baseId}-panel`}
         aria-labelledby={`${baseId}-tab-${active.id}`}
-        data-tab-panel=""
+        {...(changed ? { "data-tab-panel": "" } : {})}
         className="pt-xl"
       >
         {active.content}

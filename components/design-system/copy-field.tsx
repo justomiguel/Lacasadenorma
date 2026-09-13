@@ -5,10 +5,12 @@ import { useId, useRef, useState } from "react";
 import { useUiOptional } from "@/components/i18n/ui-provider";
 import { fill } from "@/src/i18n/fill";
 
+import { ICON_ACTION } from "./actions";
 import { cn } from "./cn";
+import { CheckIcon, CopyIcon } from "./icons";
 
 /**
- * Dato bancario con botón de copiar.
+ * Dato bancario con su acción de copiar.
  *
  * Es el componente más importante del sitio: es el último paso antes de que
  * alguien transfiera. Por eso:
@@ -19,44 +21,13 @@ import { cn } from "./cn";
  * - Si el navegador niega el portapapeles, **el fallo se ve** y se explica qué
  *   hacer. Un botón que no hace nada es peor que no tener botón (principio XII).
  * - Es un `<button>` de verdad, así que funciona con teclado sin código extra.
+ *
+ * La acción es un icono de 44 px (ADR-032): el nombre accesible sigue siendo
+ * «Copiar», y al copiar el icono pasa a un tilde y aparece «Copiado» durante un
+ * segundo y medio.
  */
 
 type CopyState = "idle" | "copied" | "failed";
-
-function CopyIcon() {
-  return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect
-        x="5.2"
-        y="5.2"
-        width="7.6"
-        height="8.4"
-        rx="1.2"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-      <path
-        d="M3.4 10.5V3.7A1.3 1.3 0 0 1 4.7 2.4h6.2"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path
-        d="M3.2 8.2 6.3 11.5 12.8 4.4"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 export function CopyField({
   label,
@@ -113,23 +84,22 @@ export function CopyField({
     <div className={cn("min-w-0 border-b border-rule py-sm", className)}>
       <div className="flex items-center justify-between gap-md">
         <div className="min-w-0">
-          <p className="font-ui text-label text-ink-muted">{label}</p>
+          <p className="font-ui text-caption text-ink-muted">{label}</p>
           {/*
             `break-words` y no `break-all`: los dos parten un CBU de 22 dígitos que
-            no entra en 360 px, pero `break-all` parte también donde no hace falta,
-            y una etiqueta como "CUENTA DE PRUEBA — NO TRANSFERIR" quedaba cortada
-            entre la N y la O. En el campo donde alguien lee el dato que va a
-            copiar, un corte arbitrario siembra la duda de si el dato está entero.
+            no entra en 360 px, pero `break-all` parte también donde no hace falta.
+            En el campo donde alguien lee el dato que va a copiar, un corte
+            arbitrario siembra la duda de si el dato está entero.
           */}
           <p
             id={valueId}
-            className="mt-3xs break-words font-ui text-subheading font-medium tabular-nums"
+            className="mt-3xs break-words font-ui text-body-large font-medium tabular-nums"
             {...(copyable ? { "data-figure": true } : {})}
           >
             {value}
           </p>
           {hint === null || hint === undefined ? null : (
-            <p className="mt-3xs font-ui text-small text-ink-muted">{hint}</p>
+            <p className="mt-3xs font-ui text-caption text-ink-muted">{hint}</p>
           )}
         </div>
 
@@ -140,10 +110,25 @@ export function CopyField({
               void copy();
             }}
             aria-describedby={valueId}
-            className="lift-hover inline-flex min-h-touch shrink-0 items-center gap-xs rounded-pill px-sm font-ui text-small font-medium text-forest underline decoration-1 underline-offset-4 hover:text-forest-strong"
+            className={cn(
+              ICON_ACTION,
+              "-mr-sm w-auto gap-xs px-sm text-forest",
+              state === "copied" ? "text-success" : "",
+            )}
           >
-            {state === "copied" ? <CheckIcon /> : <CopyIcon />}
-            {state === "copied" ? copiedLabel : copyLabel}
+            {state === "copied" ? (
+              <>
+                <span className="font-ui text-caption font-medium">{copiedLabel}</span>
+                <span data-check-in="" className="inline-flex">
+                  <CheckIcon />
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="sr-only">{copyLabel}</span>
+                <CopyIcon />
+              </>
+            )}
           </button>
         ) : null}
       </div>
@@ -153,7 +138,14 @@ export function CopyField({
         // junto con el mensaje, algunos lectores de pantalla no lo anunciarían.
         // Los campos no copiables no la montan: si no, el primer `aria-live` del
         // panel queda vacío y quien busca el anuncio no lo encuentra.
-        <p aria-live="polite" className="mt-3xs font-ui text-small text-ink-muted">
+        // El anuncio del éxito ya se ve en el botón, así que la región queda para el
+        // lector de pantalla; el fallo sí se muestra, porque hay algo que hacer.
+        <p
+          aria-live="polite"
+          className={
+            state === "failed" ? "mt-3xs font-ui text-caption text-danger" : "sr-only"
+          }
+        >
           {state === "copied" ? fill(copiedAnnouncement, { label }) : null}
           {state === "failed" ? fill(copyFailed, { label }) : null}
         </p>

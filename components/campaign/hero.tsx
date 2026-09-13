@@ -1,63 +1,70 @@
+import { getImageProps } from "next/image";
+import { preload } from "react-dom";
+
 import { HelpCta } from "@/components/campaign/help-cta";
 import { SecondaryAction } from "@/components/design-system/actions";
-import { CoverPhoto } from "@/components/design-system/photo";
+import type { Photograph } from "@/components/design-system/photo";
 import { ScrollDepth } from "@/components/motion/scroll-depth";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
+const DESKTOP = "(min-width: 64rem)";
+const PHONE = "(max-width: 63.99rem)";
+
 /**
- * Apertura: foto real a sangrado, título, dos acciones.
+ * Apertura: la fotografía de esa noche a sangrado, y encima lo justo (ADR-032).
  *
- * El archivo que sacó la familia esa noche mide **1220 px de ancho**. El héroe
- * ocupa todo el viewport: en un escritorio 1440 a 2x eso pide ~2880 px. Estirar
- * el JPEG original era la pixelación. `whatHappened.hero` es el mismo fotograma,
- * recortado a 16:9 (la proporción del sangrado) y agrandado a 2880×1620. No es
- * otra foto ni una imagen generada: una toma inventada de esa madrugada sería
- * una afirmación falsa sobre lo que pasó.
+ * Dirección de arte con `<picture>`: en teléfono va el fotograma vertical original
+ * (1220 × 1568), que llena una pantalla de 390 × 690 sin recortar casi nada; en
+ * escritorio va el recorte 16:9 del **mismo archivo** agrandado a 2880 px, porque
+ * el original estirado a 1440 × 2x pixelaba. No es otra foto ni una imagen
+ * generada. Las dos se precargan con su `media`, así que el navegador pide sólo la
+ * que va a dibujar.
  *
- * El recorte a 16:9 también evita que un retrato se estire a apaisado con
- * `object-cover` y se vea aún más grande —y más borroso— de lo que el archivo
- * permite. La foto original, entera, sigue en `/que-paso`.
- *
- * El header se superpone. 88–96 svh según el viewport, como el mockup.
+ * El velo al pie es el único gradiente del sitio y tiene una función: que el
+ * título y la acción se lean sobre la foto. Lleva `data-scrim` para que la
+ * revisión visual lo distinga de un gradiente decorativo.
  */
 export function Hero({ locale }: { locale: Locale }) {
   const { site, ui, whatHappened } = getContent(locale);
   const night = whatHappened.photoEssay[0]?.photos ?? [];
-  const hero = whatHappened.hero ?? night[0];
-  const quotePhoto = night[1] ?? night[0];
+  const tall = night[0] ?? null;
+  const wide = whatHappened.hero ?? tall;
 
   return (
     <ScrollDepth>
       <section
         aria-labelledby="apertura"
-        className="relative isolate flex min-h-[88svh] overflow-hidden bg-forest text-paper lg:min-h-[92svh]"
+        className="relative isolate flex overflow-hidden bg-forest text-paper hero-height"
         data-tone="forest"
       >
-        {hero === undefined || hero === null ? null : (
+        {wide === null || tall === null ? null : (
           <div className="absolute inset-0 -z-10 overflow-hidden">
             <div data-hero-depth="" className="absolute inset-0">
               <div data-hero-photo="" className="absolute inset-0">
-                <CoverPhoto
-                  media={hero}
-                  priority
-                  quality={80}
-                  sizes="100vw"
-                  position="center 40%"
-                />
+                <HeroPicture tall={tall} wide={wide} />
               </div>
             </div>
-            <div className="absolute inset-0 bg-forest/40 lg:bg-forest/35" />
+            <div
+              data-scrim=""
+              aria-hidden="true"
+              className="absolute inset-0 scrim-bottom"
+            />
+            <div
+              data-scrim=""
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-header scrim-top"
+            />
           </div>
         )}
 
-        <div className="mx-auto grid w-full max-w-page flex-1 items-end gap-2xl px-5 pb-2xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-3xl lg:pt-32">
-          <div className="lg:col-span-6" data-hero-copy="">
+        <div className="mx-auto flex w-full max-w-page flex-1 items-end px-5 pb-2xl pt-6xl sm:px-xl lg:px-4xl lg:pb-3xl">
+          <div className="w-full max-w-hero" data-hero-copy="">
             <p
               data-kicker=""
               data-hero-enter="kicker"
-              className="font-ui text-small font-medium text-sage"
+              className="font-ui text-eyebrow font-medium uppercase text-sage"
             >
               {ui.home.locationLine}
             </p>
@@ -74,54 +81,73 @@ export function Hero({ locale }: { locale: Locale }) {
             </h1>
             <p
               data-hero-enter="copy"
-              className="mt-lg max-w-measure text-lead text-paper"
+              className="mt-lg max-w-measure text-body-large text-paper"
             >
               {ui.home.openingLead}
             </p>
 
             <div
               data-hero-enter="actions"
-              className="mt-xl flex flex-wrap items-center gap-md"
+              className="mt-xl flex flex-col items-start gap-md sm:flex-row sm:items-center sm:gap-xl"
             >
               <HelpCta
                 origen="apertura"
                 fragment="donaciones"
-                tone="sage"
-                label={`${ui.helpCta} →`}
+                tone="paper"
+                label={ui.helpCta}
               />
-              <span data-hero-enter="secondary">
-                <SecondaryAction
-                  href={localizedHref("/que-paso", locale)}
-                  tone="paper"
-                  className="lift-hover"
-                >
-                  {ui.home.knowStory}
-                </SecondaryAction>
-              </span>
+              <SecondaryAction href={localizedHref("/que-paso", locale)} tone="paper">
+                {ui.home.knowStory}
+              </SecondaryAction>
             </div>
           </div>
-
-          {quotePhoto === undefined ? null : (
-            <div
-              data-hero-enter="quote"
-              className="relative hidden lg:col-span-4 lg:col-start-9 lg:block"
-            >
-              <div className="relative aspect-portrait overflow-hidden rounded-md">
-                <CoverPhoto
-                  media={quotePhoto}
-                  quality={80}
-                  sizes="(min-width: 64rem) 32vw, 100vw"
-                  position="center 40%"
-                />
-                <div className="absolute inset-0 bg-forest/45" />
-                <p className="absolute inset-x-md bottom-lg font-display text-heading italic text-paper">
-                  {ui.home.quoteOverlay}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </section>
     </ScrollDepth>
+  );
+}
+
+function HeroPicture({ tall, wide }: { tall: Photograph; wide: Photograph }) {
+  const common = { alt: tall.alt, sizes: "100vw", quality: 80, priority: true };
+
+  const {
+    props: { srcSet: desktopSet },
+  } = getImageProps({ ...common, src: wide.url, width: wide.width, height: wide.height });
+
+  const {
+    props: { srcSet: phoneSet, style, ...img },
+  } = getImageProps({ ...common, src: tall.url, width: tall.width, height: tall.height });
+
+  if (phoneSet !== undefined) {
+    preload(img.src, {
+      as: "image",
+      imageSrcSet: phoneSet,
+      imageSizes: "100vw",
+      media: PHONE,
+      fetchPriority: "high",
+    });
+  }
+
+  if (desktopSet !== undefined) {
+    preload(wide.url, {
+      as: "image",
+      imageSrcSet: desktopSet,
+      imageSizes: "100vw",
+      media: DESKTOP,
+      fetchPriority: "high",
+    });
+  }
+
+  return (
+    <picture>
+      <source media={DESKTOP} srcSet={desktopSet} />
+      <img
+        {...img}
+        alt={tall.alt}
+        srcSet={phoneSet}
+        className="h-full w-full object-cover"
+        style={{ ...style, objectPosition: "center 35%" }}
+      />
+    </picture>
   );
 }

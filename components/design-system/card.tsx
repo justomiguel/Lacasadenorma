@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "./cn";
+import { ArrowIcon } from "./icons";
 import type { Photograph, PhotoRatio } from "./photo";
 
 const CROP_CLASS: Record<PhotoRatio, string> = {
@@ -14,17 +15,16 @@ const CROP_CLASS: Record<PhotoRatio, string> = {
 };
 
 /**
- * Vista previa de otra página, como tarjeta.
+ * Vista previa de otra página (ADR-032).
  *
- * Una vista previa es una puerta: se ve dónde empieza y dónde termina, y toda
- * ella lleva a un solo lugar. El título es un encabezado real porque una lista
- * de tarjetas es una lista de entradas.
+ * Ya no es una tarjeta: es la foto, el título y una flecha, y toda ella lleva a
+ * un solo lugar. Sin borde, sin fondo propio, sin radio: lo que la delimita es la
+ * foto arriba y el aire alrededor. El título es un encabezado real porque una
+ * lista de previas es una lista de entradas.
  *
  * Si hay foto, va recortada a una proporción fija para que una fila quede
- * pareja. Si no hay —una novedad sin imagen, una página que todavía no eligió
- * retrato— el hueco se reserva: no se pone stock ni una ilustración. Sin sombra:
- * el borde y el cambio de superficie alcanzan. `data-tone="paper"` aísla la
- * tinta: sobre una banda bosque, sin eso `text-ink` se volvía beige sobre beige.
+ * pareja. Si no hay —una novedad sin imagen— el hueco se reserva en papel hundido:
+ * no se pone stock ni una ilustración.
  */
 export function PreviewCard({
   href,
@@ -48,7 +48,7 @@ export function PreviewCard({
   action: string;
   media?: Photograph | null;
   crop?: PhotoRatio;
-  /** `split` pone la foto al lado del texto en escritorio: la previa de Norma. */
+  /** `split` pone la foto al lado del texto en escritorio. */
   layout?: "stack" | "split";
   sizes?: string;
   as?: "h2" | "h3";
@@ -62,32 +62,22 @@ export function PreviewCard({
   return (
     <Link
       href={href}
-      data-tone="paper"
       className={cn(
-        "lift-hover group flex min-w-0 overflow-hidden rounded-md border border-rule bg-paper text-ink transition-colors duration-fast hover:border-forest",
-        split ? "flex-col lg:flex-row" : "flex-col",
+        "arrow-link group flex min-w-0 gap-md text-ink no-underline",
+        split ? "flex-col lg:flex-row lg:gap-xl" : "flex-col",
         className,
       )}
     >
-      {photo === null ? (
-        <div
-          className={cn(
-            "w-full bg-paper-sunk",
-            split
-              ? "aspect-landscape lg:aspect-portrait lg:w-5/12 lg:shrink-0"
-              : CROP_CLASS[crop],
-          )}
-          aria-hidden="true"
-        />
-      ) : (
-        <div
-          className={cn(
-            "relative overflow-hidden bg-paper-sunk",
-            split
-              ? "aspect-landscape w-full lg:aspect-portrait lg:w-5/12 lg:shrink-0"
-              : cn("w-full border-b border-rule", CROP_CLASS[crop]),
-          )}
-        >
+      <div
+        className={cn(
+          "relative overflow-hidden bg-paper-sunk",
+          split
+            ? "aspect-landscape w-full lg:aspect-portrait lg:w-5/12 lg:shrink-0"
+            : cn("w-full", CROP_CLASS[crop]),
+        )}
+        {...(photo === null ? { "aria-hidden": true } : {})}
+      >
+        {photo === null ? null : (
           <Image
             src={photo.url}
             alt={photo.alt}
@@ -97,26 +87,28 @@ export function PreviewCard({
             quality={80}
             className="h-full w-full object-cover"
           />
-        </div>
-      )}
-      <div
-        className="flex flex-1 flex-col p-lg lg:p-xl"
-        {...(lang === undefined ? {} : { lang })}
-      >
+        )}
+      </div>
+      <div className="flex flex-1 flex-col" {...(lang === undefined ? {} : { lang })}>
         {eyebrow === undefined ? null : (
-          <div className="font-ui text-small text-ink-muted">{eyebrow}</div>
+          <div className="font-ui text-caption text-ink-muted">{eyebrow}</div>
         )}
         <Heading
-          className={cn("font-display text-card", eyebrow === undefined ? "" : "mt-xs")}
+          className={cn(
+            "font-display text-section-title",
+            eyebrow === undefined ? "" : "mt-2xs",
+          )}
         >
           {title}
         </Heading>
         {summary === undefined ? null : (
-          <p className="mt-sm max-w-measure text-small text-ink-muted">{summary}</p>
+          <p className="mt-xs max-w-measure text-small text-ink-muted">{summary}</p>
         )}
         {children}
-        <p className="mt-auto pt-lg font-ui text-small font-medium text-forest">
-          {action} →
+        {/* `aqua` es el verde sobre papel y sage sobre una banda oscura. */}
+        <p className="mt-auto inline-flex items-center gap-xs pt-md font-ui text-small font-medium text-aqua">
+          <span>{action}</span>
+          <ArrowIcon />
         </p>
       </div>
     </Link>
