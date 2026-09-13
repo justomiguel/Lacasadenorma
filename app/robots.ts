@@ -12,11 +12,16 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * las listas por agente envejecen mal y se convierten en reglas que nadie recuerda
  * por qué están.
  *
- * `/admin` y `/api` se excluyen del rastreo, y eso **no** es una medida de
- * seguridad: `robots.txt` es una sugerencia pública y además le indica a cualquiera
- * dónde mirar. La frontera real de `/admin` son las policies RLS y la
- * revalidación de permisos en cada carga. Se excluyen porque indexar una pantalla
- * de login o una respuesta JSON no le sirve a nadie.
+ * `/admin`, `/cuenta` y `/api` se excluyen del rastreo, y eso **no** es una medida
+ * de seguridad: `robots.txt` es una sugerencia pública y además le indica a
+ * cualquiera dónde mirar. La frontera real de `/admin` y `/cuenta` son las policies
+ * RLS y la revalidación de permisos en cada carga. Se excluyen porque indexar una
+ * pantalla de acceso o una respuesta JSON no le sirve a nadie, y porque compiten en
+ * los resultados con las páginas que sí contestan qué pasó y cómo ayudar.
+ *
+ * Las páginas de `/cuenta` además llevan `noindex` en su metadata. No es
+ * redundancia: `robots.txt` es una sugerencia que se lee antes de entrar, y la
+ * metaetiqueta es la que respeta un rastreador que ya llegó por un enlace.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
@@ -25,7 +30,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/api/"],
+      disallow: ["/admin", "/cuenta", "/en/cuenta", "/api/"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,
