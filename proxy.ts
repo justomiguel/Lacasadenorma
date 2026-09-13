@@ -95,12 +95,45 @@ export default async function proxy(request: NextRequest): Promise<NextResponse>
     return NextResponse.redirect(target);
   }
 
+  // `/cuenta` y `/en/cuenta` son la única página de la sección que necesita sesión.
+  // Las cinco de identidad —crear, ingresar, recuperar, clave, confirmar— existen
+  // justamente para quien no la tiene, así que la comparación es por igualdad y no
+  // por prefijo. Escrita con `startsWith` dejaría a `/cuenta/ingresar` redirigiendo
+  // a sí misma en un lazo.
+  const cuenta = SIGNED_IN_ONLY[pathname];
+
+  if (!isSignedIn && cuenta !== undefined) {
+    const target = request.nextUrl.clone();
+    target.pathname = cuenta;
+    target.search = "";
+
+    return NextResponse.redirect(target);
+  }
+
   return response;
 }
 
+/** La página de cuenta de cada idioma, y a qué pantalla de acceso manda. */
+const SIGNED_IN_ONLY: Record<string, string | undefined> = {
+  "/cuenta": "/cuenta/ingresar",
+  "/en/cuenta": "/en/cuenta/ingresar",
+};
+
 export const config = {
-  // Sólo `/admin`. El sitio público es estático y cacheado; hacerlo pasar por acá
-  // agregaría una función serverless por visita sin ninguna ganancia, y rompería el
-  // caché de las páginas que sí conviene que sea compartido.
-  matcher: ["/admin", "/admin/:path*"],
+  // `/admin` y `/cuenta`. El resto del sitio público es estático y cacheado;
+  // hacerlo pasar por acá agregaría una función serverless por visita sin ninguna
+  // ganancia, y rompería el caché de las páginas que sí conviene que sea
+  // compartido.
+  //
+  // `/cuenta` entra por la misma razón que `/admin`: un Server Component no puede
+  // escribir cookies, así que sin este paso el token de una sesión del público no
+  // se renovaría nunca y la persona quedaría afuera a mitad de una reserva.
+  matcher: [
+    "/admin",
+    "/admin/:path*",
+    "/cuenta",
+    "/cuenta/:path*",
+    "/en/cuenta",
+    "/en/cuenta/:path*",
+  ],
 };
