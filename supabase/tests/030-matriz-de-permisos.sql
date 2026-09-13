@@ -7,8 +7,8 @@
 --
 -- ── Cómo se ejecuta ─────────────────────────────────────────────────────────
 --
--- En lugar de escribir 260 aserciones a mano, se **ejecuta de verdad** cada una
--- de las 4 operaciones sobre cada una de las 13 tablas con cada uno de los 5
+-- En lugar de escribir 336 aserciones a mano, se **ejecuta de verdad** cada una
+-- de las 4 operaciones sobre cada una de las 14 tablas con cada uno de los 6
 -- roles, y recién después se compara el resultado completo contra la matriz
 -- esperada. La diferencia con una lista de `throws_ok` no es de estilo: acá una
 -- tabla nueva o una policy nueva aparecen solas en el resultado observado y la
@@ -17,7 +17,7 @@
 -- `pg_temp.intentar()` cambia de rol, fija el JWT, ejecuta la sentencia dentro de
 -- una subtransacción y **la revierte siempre**, gane o pierda. Por eso una celda
 -- no puede contaminar a la siguiente, y por eso el fixture sigue intacto cuando
--- terminan las 260 ejecuciones.
+-- terminan las 336 ejecuciones.
 --
 -- ── Los tres veredictos de una negación, que no son lo mismo ────────────────
 --
@@ -50,13 +50,23 @@
 -- convención se cumple antes de interpretar ningún resultado.
 
 begin;
-select plan(33);
+select plan(39);
 
 -- ── Filas de prueba ─────────────────────────────────────────────────────────
 
+-- Las tres últimas cuentas son del público: ninguna tiene fila en `user_roles`, y
+-- esa ausencia es lo único que las distingue de las dos primeras.
+--
+-- Las dos primeras **no tienen perfil de donante**, y eso es deliberado: los cuatro
+-- roles internos de la matriz usan su `sub`, así que si alguno tuviera perfil, su
+-- veredicto de lectura sobre `donor_profiles` mediría la propiedad en lugar del rol
+-- y la celda diría algo que no es.
 insert into auth.users (id, email) values
   ('10000000-0000-4000-8000-000000000001', 'quien.administra@ejemplo.invalid'),
-  ('10000000-0000-4000-8000-000000000002', 'quien.audita@ejemplo.invalid');
+  ('10000000-0000-4000-8000-000000000002', 'quien.audita@ejemplo.invalid'),
+  ('10000000-0000-4000-8000-000000000003', 'quien.dona@ejemplo.invalid'),
+  ('10000000-0000-4000-8000-000000000004', 'quien.tambien.dona@ejemplo.invalid'),
+  ('10000000-0000-4000-8000-000000000005', 'quien.todavia.no.dona@ejemplo.invalid');
 
 insert into public.campaigns (id, slug, title, summary, status, published_at) values
   ('c0000000-0000-4000-8000-000000000001', 'obra-publicada', 'Obra publicada', 'Resumen', 'active', now()),
@@ -115,6 +125,14 @@ insert into public.user_roles (id, user_id, role) values
   ('50000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'admin'),
   ('50000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000002', 'auditor');
 
+-- `donor_profiles` no tiene `published_at`: ningún perfil es público. Las dos filas
+-- son de cuentas del público, una de ellas la de la persona `donante` de la matriz,
+-- así que el veredicto de lectura sigue significando lo que la convención dice
+-- —0 = nada, 1 = una sola, 2 = las dos— y además distingue rol de propiedad.
+insert into public.donor_profiles (id, display_name, locale, default_anonymous) values
+  ('10000000-0000-4000-8000-000000000003', null, 'es', true),
+  ('10000000-0000-4000-8000-000000000004', null, 'es', true);
+
 insert into public.audit_log (action, entity_table, entity_id) values
   ('prueba.publica', 'expenses', 'e0000000-0000-4000-8000-000000000001'),
   ('prueba.reservada', 'expenses', 'e0000000-0000-4000-8000-000000000002');
@@ -125,11 +143,17 @@ insert into public.audit_log (action, entity_table, entity_id) values
 -- reversión: obliga a la subtransacción a deshacerse incluso cuando la operación
 -- salió bien, y de paso transporta la cantidad de filas afectadas.
 
+-- `etiqueta_una` es lo que significa ver **una** fila en la tabla que se está
+-- midiendo. En casi todas es "sólo lo publicado", porque la fila reservada es un
+-- borrador. En `donor_profiles` no hay borradores y una fila significa "sólo la
+-- propia", que es una regla distinta; con una sola etiqueta para todas, el
+-- veredicto de esa tabla diría algo falso.
 create function pg_temp.intentar(
   db_role text,
   claims jsonb,
   operacion text,
-  sentencia text
+  sentencia text,
+  etiqueta_una text default 'sólo lo publicado'
 )
 returns text
 language plpgsql
@@ -151,7 +175,7 @@ begin
       if operacion = 'lectura' then
         veredicto := case filas
                        when 0 then 'nada'
-                       when 1 then 'sólo lo publicado'
+                       when 1 then etiqueta_una
                        when 2 then 'todo'
                        else 'inesperado: ' || filas
                      end;
@@ -181,11 +205,19 @@ begin
 end;
 $fn$;
 
--- ── Los cinco roles ─────────────────────────────────────────────────────────
--- `anon` no lleva JWT. Los cuatro roles internos son el mismo rol de base de datos
+-- ── Los seis roles ──────────────────────────────────────────────────────────
+-- `anon` no lleva JWT. Los cinco restantes son el mismo rol de base de datos
 -- —`authenticated`— y se distinguen sólo por el claim `app_metadata.user_role`,
 -- que es exactamente cómo funciona en producción: el rol de Postgres lo fija
 -- PostgREST según el token, y el rol de aplicación lo pone el hook de auth.
+--
+-- **`donante` es la persona nueva de ADR-027 y es la que hay que leer con
+-- atención.** Su token es válido, su correo está confirmado, y su `app_metadata`
+-- viene **vacío** porque no tiene ninguna fila en `user_roles`: es exactamente lo
+-- que emite el hook para cualquiera que se registre en el sitio. Antes de abrir el
+-- registro, este rol no existía y tener sesión implicaba ser una de las cinco
+-- personas que administran la campaña. Las columnas de `donante` de la matriz de
+-- abajo son, literalmente, lo que puede hacer un desconocido con un correo.
 
 create temporary table rol (
   nombre text primary key,
@@ -195,12 +227,13 @@ create temporary table rol (
 
 insert into rol (nombre, db_role, claims) values
   ('anon', 'anon', null),
+  ('donante', 'authenticated', '{"sub": "10000000-0000-4000-8000-000000000003", "app_metadata": {}}'),
   ('auditor', 'authenticated', '{"sub": "10000000-0000-4000-8000-000000000002", "app_metadata": {"user_role": "auditor"}}'),
   ('editor',  'authenticated', '{"sub": "10000000-0000-4000-8000-000000000001", "app_metadata": {"user_role": "editor"}}'),
   ('admin',   'authenticated', '{"sub": "10000000-0000-4000-8000-000000000001", "app_metadata": {"user_role": "admin"}}'),
   ('owner',   'authenticated', '{"sub": "10000000-0000-4000-8000-000000000001", "app_metadata": {"user_role": "owner"}}');
 
--- ── Las 52 operaciones ──────────────────────────────────────────────────────
+-- ── Las 56 operaciones ──────────────────────────────────────────────────────
 -- Una lectura, una inserción, una modificación y un borrado por tabla.
 --
 -- La lectura se escribe como `select 1 from ...` y no como `select count(*)`: hay
@@ -216,6 +249,9 @@ create temporary table caso (
   tabla text not null,
   operacion text not null,
   sentencia text not null,
+  -- Qué significa ver una sola fila en esta tabla. Ver el comentario de
+  -- `pg_temp.intentar`.
+  etiqueta_una text not null default 'sólo lo publicado',
   primary key (tabla, operacion)
 ) on commit drop;
 
@@ -285,6 +321,22 @@ insert into caso (tabla, operacion, sentencia) values
   ('audit_log', 'modificación', $s$update public.audit_log set action = 'prueba.alterada' where action = 'prueba.publica'$s$),
   ('audit_log', 'borrado', $s$delete from public.audit_log where action = 'prueba.reservada'$s$);
 
+-- `donor_profiles` va aparte porque sus tres escrituras apuntan a filas elegidas y
+-- no a la convención de las demás tablas:
+--
+--   · la inserción crea el perfil de `...005`, que es una cuenta **ajena** a toda
+--     persona de la matriz. Ningún rol puede: un perfil lo crea su dueña.
+--   · la modificación toca el perfil de `...004`, ajeno a `donante`.
+--   · el borrado toca el perfil de `...003`, que es **el propio** de `donante`.
+--
+-- Las tres juntas dicen la regla completa: sobre un perfil, ser dueña es lo único
+-- que habilita algo, y el rol interno no sustituye a la propiedad.
+insert into caso (tabla, operacion, sentencia, etiqueta_una) values
+  ('donor_profiles', 'lectura', $s$select 1 from public.donor_profiles$s$, 'sólo la propia'),
+  ('donor_profiles', 'inserción', $s$insert into public.donor_profiles (id) values ('10000000-0000-4000-8000-000000000005')$s$, 'sólo la propia'),
+  ('donor_profiles', 'modificación', $s$update public.donor_profiles set display_name = 'Nombre cambiado' where id = '10000000-0000-4000-8000-000000000004'$s$, 'sólo la propia'),
+  ('donor_profiles', 'borrado', $s$delete from public.donor_profiles where id = '10000000-0000-4000-8000-000000000003'$s$, 'sólo la propia');
+
 -- ── La matriz esperada ──────────────────────────────────────────────────────
 -- Se lee igual que la tabla de data-model.md §4, con una fila por rol y tabla.
 --
@@ -321,7 +373,49 @@ insert into esperado values
   ('anon', 'people',           'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'payment_methods',  'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'user_roles',       'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
-  ('anon', 'audit_log',        'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('anon', 'audit_log',        'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Un perfil de donante es un dato personal y no tiene nada de público: `anon` no
+  -- recibe ni el GRANT de lectura, igual que en `contributions` (I2).
+  ('anon', 'donor_profiles',   'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
+
+-- `donante` es la columna que ADR-027 agregó, y la que decide si abrir el registro
+-- fue seguro. Su token es válido y su `app_metadata` está vacío.
+--
+-- Lo que hay que notar es que **no es "nada"**: es exactamente lo mismo que ve
+-- alguien sin cuenta, y esa es la frase correcta. Las policies internas están
+-- escritas como `published_at is not null or private.has_min_role('auditor')`, así
+-- que a `donante` le dan lo publicado —que ya es público— y nada más. Decir "nada"
+-- sería más lindo y sería falso, y la aserción de abajo lo compara contra `anon`
+-- fila por fila en lugar de repetir a mano una lista que puede envejecer.
+--
+-- Las tres celdas donde `donante` difiere de `anon` y hay que mirar dos veces:
+--   · `contributions`, `expense_receipts`, `user_roles` y `audit_log` dan 'nada' y
+--     no 'sin privilegio'. El GRANT existe —lo necesita `admin`, que es el mismo
+--     rol de base de datos— y lo que filtra es la policy. Es **una sola barrera**
+--     donde `anon` tiene dos, y por eso está escrito acá en lugar de pasar
+--     desapercibido.
+--   · `donor_profiles` da 'sólo la propia': es la única fila de todo el esquema que
+--     una cuenta del público puede leer y borrar.
+--   · toda escritura da 'denegado (RLS)' y no 'sin privilegio', porque el GRANT es
+--     del rol `authenticated` y no se puede separar. La policy es lo único que la
+--     frena, y es por eso que `npm run check:rls` existe.
+insert into esperado values
+  ('donante', 'campaigns',        'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'budget_items',     'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'contributions',    'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'expenses',         'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'expense_receipts', 'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'milestones',       'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'media',            'todo',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'updates',          'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'update_media',     'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'people',           'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'payment_methods',  'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'user_roles',       'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Lo único suyo. El borrado es el propio perfil: irse tiene que poder hacerse sin
+  -- pedirle permiso a nadie (FR-208).
+  ('donante', 'donor_profiles',   'sólo la propia',    'denegado (RLS)', 'denegado (RLS)', 'permitido');
 
 -- `auditor` es el rol que permite que alguien externo a la familia verifique sin
 -- poder alterar nada: lee todo, incluidos aportes y comprobantes, y **no escribe
@@ -347,7 +441,11 @@ insert into esperado values
   -- de escritura es `public.record_audit()` (ADR-019). La negación es por privilegio y
   -- no por policy, que es la forma más fuerte. Es la garantía de T2, y el agregado por
   -- función se verifica más abajo, en su propia sección.
-  ('auditor', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('auditor', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- `auditor` lee los perfiles por `private.can_read_donors()` y no escribe ninguno:
+  -- verificar quién donó qué es parte de verificar la campaña, y sigue siendo
+  -- lectura sin escritura (E2).
+  ('auditor', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
 
 -- `editor` es el privilegio mínimo hecho rol: publica contenido y **no ve plata**.
 --
@@ -379,7 +477,15 @@ insert into esperado values
   -- Un `editor` puede agregar al registro con `record_audit()` y no puede leerlo: la
   -- policy de select pide `can_read_ledger()`. Escritura sin lectura es la forma
   -- correcta para un rol que no toca plata (ADR-019).
-  ('editor', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('editor', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- **La celda de esta feature que más importa.** `editor` administra el catálogo
+  -- —qué falta, cuánto, con qué foto— y no ve un solo nombre de quien se comprometió
+  -- a traerlo. Da 'nada' y no 'sin privilegio' por el mismo motivo que
+  -- `contributions`: el GRANT existe y lo que filtra es `private.can_read_donors()`.
+  -- Con `has_min_role('auditor')` esta celda diría 'todo', porque `editor` es de
+  -- rango mayor que `auditor`. Es la amenaza E1 aplicada a datos personales, y es la
+  -- razón por la que hay una función nueva en lugar de un chequeo por rango.
+  ('editor', 'donor_profiles',   'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
 
 -- `admin` registra aportes y gastos, y no toca dos cosas: las cuentas de aporte
 -- (amenaza T1) y los roles de las personas. Tampoco borra una campaña entera.
@@ -399,7 +505,11 @@ insert into esperado values
   ('admin', 'people',           'todo', 'permitido',      'permitido',      'permitido'),
   ('admin', 'payment_methods',  'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('admin', 'user_roles',       'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  ('admin', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('admin', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Ni `admin` ni `owner` escriben un perfil ajeno. Un nombre público lo elige su
+  -- dueña, y que el equipo pueda leerlo para coordinar una entrega no implica que
+  -- pueda cambiarlo: el rol interno no sustituye a la propiedad (FR-230).
+  ('admin', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
 
 -- `owner` es el único que escribe cuentas de aporte y el único que otorga roles.
 -- Aun así hay tres cosas que tampoco puede hacer, y las tres son a propósito:
@@ -417,7 +527,8 @@ insert into esperado values
   ('owner', 'people',           'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'payment_methods',  'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'user_roles',       'todo', 'permitido', 'permitido',      'permitido'),
-  ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  ('owner', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
 
 -- ── Antes de medir: que lo medido sea lo que se cree ────────────────────────
 
@@ -467,7 +578,7 @@ select results_eq(
   'la matriz esperada nombra exactamente las tablas que existen en public: una tabla nueva rompe esta prueba hasta que se le asigne una fila'
 );
 
--- ── Se ejecutan las 260 celdas ──────────────────────────────────────────────
+-- ── Se ejecutan las 336 celdas ──────────────────────────────────────────────
 
 create temporary table observado (
   rol text not null,
@@ -483,7 +594,7 @@ declare
   resultado text;
 begin
   for celda in
-    select r.nombre, r.db_role, r.claims, c.tabla, c.operacion, c.sentencia
+    select r.nombre, r.db_role, r.claims, c.tabla, c.operacion, c.sentencia, c.etiqueta_una
       from rol r
      cross join caso c
      order by r.nombre, c.tabla, c.operacion
@@ -491,7 +602,9 @@ begin
     -- El veredicto se resuelve primero y se guarda después, con el rol ya
     -- restituido: `anon` no tiene privilegio para escribir en una tabla temporal
     -- de esta sesión, y el registro de la prueba no puede depender de eso.
-    resultado := pg_temp.intentar(celda.db_role, celda.claims, celda.operacion, celda.sentencia);
+    resultado := pg_temp.intentar(
+      celda.db_role, celda.claims, celda.operacion, celda.sentencia, celda.etiqueta_una
+    );
 
     insert into observado (rol, tabla, operacion, veredicto)
     values (celda.nombre, celda.tabla, celda.operacion, resultado);
@@ -526,6 +639,30 @@ select results_eq(
   $q$ select tabla, veredicto from observado where rol = 'anon' and operacion = 'borrado' order by tabla $q$,
   $q$ select tabla, borrado from esperado where rol = 'anon' order by tabla $q$,
   'anon no puede borrar de ninguna tabla de public'
+);
+
+select results_eq(
+  $q$ select tabla, veredicto from observado where rol = 'donante' and operacion = 'lectura' order by tabla $q$,
+  $q$ select tabla, lectura from esperado where rol = 'donante' order by tabla $q$,
+  'una cuenta del público no lee un aporte, un comprobante, un rol, una línea de auditoría ni un perfil ajeno (FR-203)'
+);
+
+select results_eq(
+  $q$ select tabla, veredicto from observado where rol = 'donante' and operacion = 'inserción' order by tabla $q$,
+  $q$ select tabla, insercion from esperado where rol = 'donante' order by tabla $q$,
+  'una cuenta del público no inserta en ninguna tabla, ni siquiera un perfil ajeno (FR-204)'
+);
+
+select results_eq(
+  $q$ select tabla, veredicto from observado where rol = 'donante' and operacion = 'modificación' order by tabla $q$,
+  $q$ select tabla, modificacion from esperado where rol = 'donante' order by tabla $q$,
+  'una cuenta del público no modifica ninguna fila de la campaña ni el perfil de otra persona (FR-204)'
+);
+
+select results_eq(
+  $q$ select tabla, veredicto from observado where rol = 'donante' and operacion = 'borrado' order by tabla $q$,
+  $q$ select tabla, borrado from esperado where rol = 'donante' order by tabla $q$,
+  'una cuenta del público sólo puede borrar su propio perfil, y ninguna otra fila de ninguna tabla (FR-204, FR-208)'
 );
 
 select results_eq(
@@ -666,6 +803,55 @@ select is_empty(
   'ningún rol puede borrar un aporte ni un gasto: lo financiero se anula con motivo, no se borra (FR-015)'
 );
 
+-- ── Las dos garantías que ADR-027 promete ───────────────────────────────────
+-- Se deducen de las cuatro comparaciones de `donante`. Existen igual porque son las
+-- dos frases que justifican haber abierto el registro, y una prueba cuyo nombre
+-- repite la promesa es la que explica qué se rompió cuando falla.
+
+select is_empty(
+  $q$
+    select rol || ' ' || operacion || ' ' || tabla
+      from observado
+     where rol = 'donante'
+       and operacion <> 'lectura'
+       and tabla <> 'donor_profiles'
+       and veredicto = 'permitido'
+     order by 1
+  $q$,
+  'una cuenta del público no logra una sola escritura fuera de su propio perfil (FR-204, SC-203)'
+);
+
+-- La comparación que impide que esta prueba envejezca. Los veredictos de lectura de
+-- `donante` y de `anon` **no** son iguales como texto —'nada' y 'sin privilegio'
+-- significan lo mismo por mecanismos distintos—, así que se comparan por la cantidad
+-- de filas que cada uno alcanza a ver. Una policy nueva que le dé a `authenticated`
+-- algo que `anon` no tiene aparece acá sola, sin que nadie tenga que acordarse de
+-- agregar una aserción.
+select is_empty(
+  $q$
+    with visible as (
+      select rol, tabla,
+             case veredicto
+               when 'sin privilegio' then 0
+               when 'nada' then 0
+               when 'sólo lo publicado' then 1
+               when 'todo' then 2
+             end as filas
+        from observado
+       where operacion = 'lectura'
+         and rol in ('anon', 'donante')
+         and tabla <> 'donor_profiles'
+    )
+    select d.tabla || ': donante ve ' || d.filas || ' y anon ve ' || a.filas
+      from visible d
+      join visible a on a.tabla = d.tabla and a.rol = 'anon'
+     where d.rol = 'donante'
+       and d.filas <> a.filas
+     order by 1
+  $q$,
+  'sobre todo lo de la feature 001, una cuenta del público ve exactamente lo mismo que alguien sin cuenta: registrarse no otorga ninguna lectura (ADR-027)'
+);
+
 -- ── Dos lugares donde el esquema es más estricto que data-model.md §4 ───────
 -- Los dos se asertan por separado, con el nombre diciendo que son una divergencia,
 -- para que no se los pueda cambiar en ninguna de las dos direcciones sin que una
@@ -692,7 +878,7 @@ select is_empty(
 -- ── La vista pública agregada ───────────────────────────────────────────────
 -- Es la única lectura de aportes que existe para todo el mundo, y la razón por la
 -- que `contributions` puede estar cerrada sin que la página de transparencia
--- quede vacía (amenaza I2). Se comprueba con los cinco roles de una sola vez.
+-- quede vacía (amenaza I2). Se comprueba con los seis roles de una sola vez.
 
 create temporary table totales_por_rol (rol text primary key, filas integer not null) on commit drop;
 
@@ -718,7 +904,7 @@ $$;
 
 select is_empty(
   $q$ select rol || ': ' || filas from totales_por_rol where filas <> 1 order by 1 $q$,
-  'los cinco roles leen la vista campaign_totals y ven la misma única fila de la campaña publicada (I2)'
+  'los seis roles leen la vista campaign_totals y ven la misma única fila de la campaña publicada (I2)'
 );
 
 -- ── T082 · Las cuentas de aporte, dicho con el dato que importa ─────────────
@@ -828,10 +1014,16 @@ select results_eq(
     values ('admin', 'permitido'),
            ('anon', 'sin privilegio'),
            ('auditor', 'permitido'),
+           -- `donante` **sí** tiene el EXECUTE, porque se otorga a `authenticated` y
+           -- ese GRANT no distingue audiencias. Lo que la frena es la comprobación
+           -- de rol de adentro de la función, que lanza 42501 con su propio mensaje.
+           -- El veredicto se ve igual que el de `anon` y llega por otro camino; el
+           -- mensaje exacto se afirma abajo, en la sección siguiente.
+           ('donante', 'sin privilegio'),
            ('editor', 'permitido'),
            ('owner', 'permitido')
   $q$,
-  'los cuatro roles internos pueden dejar rastro con record_audit(); anon no tiene ni el EXECUTE (ADR-019)'
+  'los cuatro roles internos pueden dejar rastro con record_audit(); ni anon ni una cuenta del público pueden (ADR-019, ADR-027)'
 );
 
 -- Una sesión con token válido y todavía sin ningún rol otorgado. `anon` falla antes,

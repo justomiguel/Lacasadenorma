@@ -237,10 +237,11 @@ select results_eq(
   $q$,
   $q$
     values ('private.campaign_totals_for(uuid)'),
+           ('private.can_read_donors()'),
            ('private.can_read_ledger()'),
            ('private.has_min_role(app_role)')
   $q$,
-  'authenticated puede invocar exactamente tres funciones security definer de private (E3)'
+  'authenticated puede invocar exactamente cuatro funciones security definer de private (E3)'
 );
 
 -- El hook del token corre con los privilegios que le da el servidor de auth y
@@ -352,6 +353,11 @@ select results_eq(
   $q$
     values ('public.budget_items.published_at'),
            ('public.campaigns.published_at'),
+           -- La primera columna de la lista que no es `published_at`: las policies de
+           -- `donor_profiles` filtran por propiedad y no por publicación. Tiene
+           -- índice porque es la clave primaria, que es otra ventaja de reusar la
+           -- clave de la cuenta en lugar de inventar un identificador.
+           ('public.donor_profiles.id'),
            ('public.expenses.published_at'),
            ('public.expenses.voided_at'),
            ('public.milestones.published_at'),
@@ -361,7 +367,7 @@ select results_eq(
            ('public.updates.published_at'),
            ('storage.objects.bucket_id')
   $q$,
-  'las policies filtran exactamente por estas diez columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
+  'las policies filtran exactamente por estas once columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
 
 -- Y los índices que data-model.md §4 nombra uno por uno, con su nombre real. La
@@ -437,14 +443,22 @@ select is_empty(
 -- `auth.uid()` suelto en una policy se evalúa una vez por fila; `(select auth.uid())`
 -- una vez por consulta. Es el aviso `auth_rls_initplan` de los advisors.
 --
--- En este esquema ninguna policy llama a `auth.*()` directamente: todas pasan por
--- `private.has_min_role()` o `private.can_read_ledger()`, que son `stable`. Así que
--- la comprobación se hace en los dos lugares donde puede aparecer: el texto de las
--- policies (hoy vacío de `auth.`, y la aserción existe para que siga estándolo) y
--- el cuerpo de las funciones del proyecto, que es donde las llamadas viven.
+-- La comprobación se hace en los dos lugares donde puede aparecer: el texto de las
+-- policies y el cuerpo de las funciones del proyecto.
 --
 -- La técnica: borrar del texto todo `(select auth.loquesea())` y después buscar si
 -- quedó algún `auth.` suelto. Lo que sobrevive es una llamada sin envolver.
+--
+-- **El alias no es opcional en el patrón.** Hasta las policies de `donor_profiles`
+-- ninguna llamaba a `auth.*()` directamente —todas pasaban por
+-- `private.has_min_role()` o `private.can_read_ledger()`—, así que esta aserción
+-- nunca había visto un caso legítimo y el patrón estaba incompleto sin que nada lo
+-- dijera. `pg_policies` no devuelve el texto que se escribió: devuelve el árbol
+-- deparseado, y Postgres le agrega la etiqueta de la columna del subselect. Una
+-- policy escrita `(select auth.uid())` se lee de vuelta como
+-- `( SELECT auth.uid() AS uid)`, y sin `(\s+as\s+[a-z_]+)?` esta prueba la reportaba
+-- como si la llamada estuviera suelta. La primera vez que una compuerta se ejerce de
+-- verdad es cuando se descubre qué estaba midiendo.
 
 select is_empty(
   $q$
@@ -453,7 +467,7 @@ select is_empty(
      where schemaname in ('public', 'storage')
        and regexp_replace(
              coalesce(qual, '') || ' ' || coalesce(with_check, ''),
-             '\(\s*select\s+auth\.[a-z_]+\(\s*\)\s*\)', ' ', 'gi'
+             '\(\s*select\s+auth\.[a-z_]+\(\s*\)(\s+as\s+[a-z_]+)?\s*\)', ' ', 'gi'
            ) ~* '\mauth\.'
   $q$,
   'ninguna policy llama a auth.*() fuera de un subselect (T049)'

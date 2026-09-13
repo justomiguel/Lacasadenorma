@@ -214,6 +214,33 @@ export type Database = {
           },
         ];
       };
+      donor_profiles: {
+        Row: {
+          created_at: string;
+          default_anonymous: boolean;
+          display_name: string | null;
+          id: string;
+          locale: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          default_anonymous?: boolean;
+          display_name?: string | null;
+          id: string;
+          locale?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          default_anonymous?: boolean;
+          display_name?: string | null;
+          id?: string;
+          locale?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       expense_receipts: {
         Row: {
           created_at: string;
