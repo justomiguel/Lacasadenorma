@@ -215,12 +215,16 @@
     "home": "Back to the home page"
   },
   "normaPage": {
-    "title": "Who {name} was",
-    "seoDescription": "Who Norma Edith Bedoya was: journalist, correspondent for Diario La Mañana, and part of the Founding Committee of the Public Library of Riacho He Hé.",
+    "title": "{name}",
+    "seoDescription": "Norma Edith Bedoya, known as Norma de Vargas: journalist, correspondent for Diario La Mañana, and part of the Founding Committee of the Public Library of Riacho He Hé.",
     "contribution": "If you knew her and want something of that to appear in her story, the family will listen. There is no published address for that yet; when there is, it will be here and on the",
     "privacyLink": "privacy page",
-    "photosNote": "Norma's photos were chosen by her family. The one from the radio is still missing, and that space stays empty until it arrives: we will not put a stock image in the place of a photo of her.",
-    "shareHeading": "Share her story"
+    "photosNote": "The photographs on this page come from the family archive and from the 2026 commemorative work.",
+    "shareHeading": "Share her story",
+    "bookKicker": "The book",
+    "bookRead": "Read the book",
+    "bookDownload": "Download PDF",
+    "quotesHeading": "Voices that remember her"
   },
   "whatHappenedPage": {
     "seoDescription": "On 7 September, at 4.30 in the morning, a fire destroyed the family home in Riacho He Hé. Norma died. This is the story, the photos, and what is needed now.",
@@ -255,9 +259,9 @@
     "beforeTransfer": "Check that you are on the right domain. If the bank details you see do not match the ones we share on our channels, do not transfer. We will never ask you for a password, a code from your bank, or your card details.",
     "accountsHeading": "Choose where you will transfer from",
     "afterHeading": "What happens when you transfer",
-    "afterLinkLead": "Everything that comes in and everything that goes out is in",
-    "reportLink": "the public accounts",
-    "afterLinkTail": ", with the date of the last reconciliation in view.",
+    "afterLinkLead": "How the books are kept is explained on",
+    "reportLink": "the transparency page",
+    "afterLinkTail": ".",
     "shareHeading": "Another way to help",
     "shareLead": "If you cannot give, sharing the link still helps. Most of the people who got this far did so because someone passed it on."
   },
@@ -277,7 +281,7 @@
     "receiptsNote": "There are {count} receipts on file. The files are not published because they often have third-party details: someone with an audit role can review them.",
     "methodHeading": "How the books are kept",
     "helpHeading": "Add to the account",
-    "helpLead": "Everything that comes in through here will appear on this same page, with its date.",
+    "helpLead": "Gifts given today go to rebuilding the house.",
     "newsLink": "The updates",
     "helpLeadTail": "tell each step as it happens."
   },

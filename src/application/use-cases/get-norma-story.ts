@@ -17,7 +17,7 @@ export interface NormaStory {
   readonly place: string;
   readonly summary: string;
   readonly paragraphs: readonly string[];
-  /** Nulas mientras la familia no las publique. No se estiman (data-model). */
+  /** Nula mientras la familia no la publique. No se estima (data-model). */
   readonly bornOn: string | null;
   readonly diedOn: string | null;
 }
@@ -31,6 +31,9 @@ export function getNormaStory(): NormaStory {
     paragraphs: [
       ...norma.paragraphs,
       ...norma.chapters.flatMap((chapter) => chapter.paragraphs),
+      ...norma.quotes.map(
+        (entry) => `${entry.quote} (${entry.author}, ${entry.relation})`,
+      ),
       ...norma.bridge.paragraphs,
     ],
     bornOn: norma.bornOn,

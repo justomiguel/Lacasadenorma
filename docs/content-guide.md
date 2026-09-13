@@ -36,13 +36,13 @@ directorios.
 |---|---|---|
 | `site.json` | Nombre, bajada, lugar, descripciones, estado | `shortDescription` es la meta description: máximo 160 caracteres, y el esquema lo exige |
 | `ui.json` | Chrome: navegación, botones, cifras, textos de conexión | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
-| `norma.json` | `/norma` y `/en/norma`, el capítulo de Norma en la home, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null`. Los capítulos salen del documento familiar *Norma Edith Bedoya — Pionera de la Comunicación en Riacho He Hé*. No hay testimonios publicados: el PDF no está en el repositorio y no se inventan citas |
+| `norma.json` | `/norma` y `/en/norma`, el capítulo de Norma en la home, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null`. Los capítulos y hasta tres testimonios salen de la obra conmemorativa. El PDF vive en `public/documentos/` y no se modifica |
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
 | `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
-| `preguntas.json` | Las nueve preguntas de la home y el `FAQPage` | Mínimo nueve, y el esquema lo exige |
+| `preguntas.json` | Las preguntas de la home y el `FAQPage` | Como máximo tres |
 | `legales.json` | `/legales/privacidad` y `/legales/terminos` | `updatedOn` se cambia cuando cambia el texto |
 
 Los slugs de las rutas **no** se traducen: `/en/reconstruccion`, nunca `/en/reconstruction`. El inglés
@@ -243,20 +243,23 @@ diseño, así que un párrafo largo se ve como un bloque y, en un teléfono, com
 
 Las bajadas (`lead`) son **una sola oración**. Si necesita dos, la segunda va al primer párrafo.
 
-### Las nueve preguntas
+### Las preguntas de la home
 
 Se responden en corto, en la home, con un enlace a la página que las desarrolla. La respuesta corta
 tiene que servir sola: alguien que sólo lee eso tiene que quedarse con la respuesta, no con la
-sensación de que hay que entrar a otra página.
+sensación de que hay que entrar a otra página. El relato ya cubre quién fue Norma y qué es la
+campaña: la lista no vuelve a preguntar lo que la página acaba de contar.
 
 Cada pregunta termina en signo de interrogación y hay un test que lo verifica. Parece trivial y no lo
 es: los datos estructurados de `FAQPage` reproducen ese texto exactamente.
 
 El enlace de cada pregunta lleva su propio texto, en `linkLabel`, escrito para esa pregunta: "Ver los
-datos para transferir", "Leer qué ocurrió". **Nunca "ver más".** Un lector de pantalla puede pedir la
-lista de enlaces de la página y leerla fuera de contexto; nueve enlaces que dicen "ver más" son nueve
+datos para transferir", "Leer qué ocurrió". **Nunca "ver más."** Un lector de pantalla puede pedir la
+lista de enlaces de la página y leerla fuera de contexto; varios enlaces que dicen "ver más" son
 enlaces entre los que no se puede elegir. Si una pregunta no tiene página propia, van en `null` los
 dos campos —el esquema los exige juntos— y la pregunta se responde y ahí termina.
+
+Las respuestas no prometen una rendición de cifras que el sitio todavía no muestra.
 
 ---
 

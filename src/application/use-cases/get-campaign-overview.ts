@@ -12,7 +12,7 @@ import { ok, unavailable, type DataResult } from "../result";
  * Todo lo que la home necesita, en una sola lectura.
  *
  * Es un único caso de uso y no cinco porque la home tiene que responder las
- * nueve preguntas del proyecto sin que la persona abandone la página (FR-002), y
+ * preguntas de la campaña sin que la persona abandone la página (FR-002), y
  * cinco lecturas independientes darían cinco oportunidades de mostrar una parte
  * y omitir otra sin motivo visible.
  */

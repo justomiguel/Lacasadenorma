@@ -215,12 +215,16 @@
     "home": "Volver al inicio"
   },
   "normaPage": {
-    "title": "Quién fue {name}",
-    "seoDescription": "Quién fue Norma Edith Bedoya, pionera de la comunicación en Riacho He Hé: periodista, corresponsal de Diario La Mañana y parte de la Comisión Fundadora de la Biblioteca Pública.",
+    "title": "{name}",
+    "seoDescription": "Norma Edith Bedoya, conocida como Norma de Vargas: periodista, corresponsal de Diario La Mañana y parte de la Comisión Fundadora de la Biblioteca Pública de Riacho He Hé.",
     "contribution": "Si la conociste y querés que algo de esto figure en su historia, la familia lo va a escuchar. Todavía no hay una dirección publicada para eso; cuando la haya, va a estar acá y en la",
     "privacyLink": "página de privacidad",
-    "photosNote": "Las fotos de Norma las eligió su familia. Falta la de la radio, y ese espacio queda vacío hasta que aparezca: no vamos a poner una imagen de archivo en el lugar de una foto de ella.",
-    "shareHeading": "Compartir su historia"
+    "photosNote": "Las fotos de esta página salen del archivo familiar y de la obra conmemorativa de 2026.",
+    "shareHeading": "Compartir su historia",
+    "bookKicker": "El libro",
+    "bookRead": "Leer el libro",
+    "bookDownload": "Descargar PDF",
+    "quotesHeading": "Voces que la recuerdan"
   },
   "whatHappenedPage": {
     "seoDescription": "El 7 de septiembre, a las 4.30 de la mañana, un incendio destruyó la casa de la familia en Riacho He Hé. Norma falleció. Ésta es la historia, las fotos y qué se necesita ahora.",
@@ -255,9 +259,9 @@
     "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",
     "afterHeading": "Qué pasa cuando transferís",
-    "afterLinkLead": "Todo lo que entra y todo lo que sale está en",
-    "reportLink": "la rendición de cuentas",
-    "afterLinkTail": ", con la fecha de la última conciliación a la vista.",
+    "afterLinkLead": "Cómo se lleva la cuenta está explicado en",
+    "reportLink": "la página de transparencia",
+    "afterLinkTail": ".",
     "shareHeading": "Otra forma de ayudar",
     "shareLead": "Si no podés aportar, compartir el enlace ayuda igual. La mayoría de la gente que llegó hasta acá lo hizo porque alguien se lo pasó."
   },
@@ -277,7 +281,7 @@
     "receiptsNote": "Hay {count} comprobantes archivados. Los archivos no se publican porque suelen tener datos de terceros: los puede revisar una persona con rol de auditoría.",
     "methodHeading": "Cómo se lleva la cuenta",
     "helpHeading": "Sumar a la cuenta",
-    "helpLead": "Todo lo que entre por acá va a aparecer en esta misma página, con su fecha.",
+    "helpLead": "Los aportes de hoy van a la reconstrucción de la casa.",
     "newsLink": "Las novedades",
     "helpLeadTail": "cuentan cada avance a medida que pasa."
   },

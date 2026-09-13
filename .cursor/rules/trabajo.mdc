@@ -71,5 +71,8 @@ frena nada**. Cuando algo se rompa y se arregle, el arreglo va acompañado de la
 detecta la próxima vez —un test, un script en `verify`, una regla de ESLint, un `ignore` en
 Dependabot— y no solamente de un párrafo.
 
+Un archivo de código de más de 300 líneas (sin blancos ni comentarios) lo frena `max-lines` en
+`eslint.config.ts`. Si se acerca, se parte; no se sube el número.
+
 Si no existe forma mecánica de detectarlo, entonces sí se escribe acá, y se dice explícitamente que
 no hay compuerta.

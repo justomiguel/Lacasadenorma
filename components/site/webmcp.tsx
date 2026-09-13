@@ -144,7 +144,7 @@ export const TOOLS: readonly ToolSpec[] = [
     name: "get_norma_story",
     path: "norma-story",
     description:
-      "Devuelve la información pública sobre Norma: su nombre, su rol, el lugar donde vivió y el relato publicado sobre su vida. Las fechas de nacimiento y de muerte son nulas mientras la familia no las publique.",
+      "Devuelve la información pública sobre Norma: su nombre, su rol, el lugar donde vivió y el relato publicado sobre su vida. La fecha de nacimiento se publica cuando consta en el documento familiar. La de fallecimiento no se estima.",
     inputSchema: EMPTY_SCHEMA,
   },
   {

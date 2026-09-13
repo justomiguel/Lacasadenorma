@@ -240,15 +240,15 @@ Desde el botón hasta la base, con la ruta pública invalidada al final:
 | --- | --- | --- |
 | 1 | `setUpdatePublishedAction(_state, formData)`, una Server Action | `app/admin/(panel)/novedades/actions.ts` |
 | 2 | `getAdminDeps()` | `src/infrastructure/admin/context.ts` |
-| 3 | `getAdminGateway()` → `createServerSupabaseClient()` → `createAdminGateway(client)` | `src/infrastructure/supabase/admin-repositories.ts` |
+| 3 | `getAdminGateway()` → `createServerSupabaseClient()` → `createAdminGateway(client)` | `src/infrastructure/supabase/admin/gateway.ts` |
 | 4 | `readViewer()` → `client.auth.getClaims()` → rol desde `app_metadata.user_role` | `src/infrastructure/auth/viewer.ts` |
 | 5 | `setUpdatePublished(deps, Object.fromEntries(formData))` | `src/application/admin/updates.ts` |
 | 6 | `perform({ permission: "contenido.escribir", schema: publishSchema, … })` | `src/application/admin/core.ts` |
 | 7 | `actor === null` → `rejected` con `"Tu sesión venció. Volvé a entrar."` | mismo |
 | 8 | `can(actor.role, "contenido.escribir")` → `rejected` con `"Tu rol no permite hacer esto."` | `src/domain/permissions.ts` |
 | 9 | `publishSchema.safeParse(input)` → `invalid` con errores por campo | `updates.ts` |
-| 10 | `gateway.updates.setUpdatePublished({ id, publishedAt })` | `admin-repositories.ts` |
-| 11 | `gateway.audit.append({ action, entityTable, entityId, diff })` | `admin-repositories.ts` |
+| 10 | `gateway.updates.setUpdatePublished({ id, publishedAt })` | `admin/updates-port.ts` |
+| 11 | `gateway.audit.append({ action, entityTable, entityId, diff })` | `admin/audit-port.ts` |
 | 12 | `ok` con mensaje para la pantalla | `core.ts` |
 | 13 | `revalidatePath("/admin/novedades")` y `revalidatePublicUpdates(slug)`: `/`, `/novedades`, `/novedades/<slug>`, `/sitemap.xml` | `actions.ts` |
 

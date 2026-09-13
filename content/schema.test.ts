@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import { getContent } from "./pack";
@@ -64,8 +66,8 @@ describe("contenido publicado", () => {
     );
   });
 
-  it("responde las nueve preguntas del proyecto (FR-001)", () => {
-    expect(faq).toHaveLength(9);
+  it("responde las preguntas que el relato no cubre", () => {
+    expect(faq).toHaveLength(3);
 
     for (const entry of faq) {
       expect(entry.question.endsWith("?")).toBe(true);
@@ -137,8 +139,32 @@ describe("contenido publicado", () => {
     }
   });
 
-  it("no publica testimonios que el documento no transcribió", () => {
-    expect(norma.quotes).toEqual([]);
+  it("los testimonios salen del documento familiar, transcritos, no inventados", () => {
+    expect(norma.quotes).toHaveLength(3);
+
+    for (const entry of norma.quotes) {
+      expect(entry.quote.length).toBeGreaterThan(20);
+      expect(entry.author.length).toBeGreaterThan(0);
+      expect(entry.relation.length).toBeGreaterThan(0);
+    }
+
+    expect(norma.quotes.map((entry) => entry.author)).toEqual([
+      "Celina Espíndola",
+      "Cristian Alejandro Cabrera",
+      "Miguel Vargas",
+    ]);
+  });
+
+  it("no promete una rendición de cifras que el sitio no muestra", () => {
+    const texto = JSON.stringify([faq, transparency]).toLowerCase();
+
+    expect(texto).not.toContain("peso por peso");
+    expect(texto).not.toContain("cada gasto se publica");
+    expect(texto).not.toContain("los gastos sí");
+  });
+
+  it("el PDF de la obra conmemorativa está en el repositorio", () => {
+    expect(existsSync(`public${norma.book.href}`)).toBe(true);
   });
 
   it("no contiene lenguaje de campaña de los que la constitución prohíbe", () => {
@@ -211,7 +237,7 @@ describe("los dos idiomas declaran las mismas fotografías", () => {
     expect(en).toEqual(es);
   });
 
-  it("el inglés también responde las nueve preguntas", () => {
-    expect(getContent("en").faq).toHaveLength(9);
+  it("el inglés también responde las mismas preguntas", () => {
+    expect(getContent("en").faq).toHaveLength(3);
   });
 });

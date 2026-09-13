@@ -29,7 +29,7 @@ Eso es todo. **No hace falta ninguna credencial**, ningún archivo `.env`, ningu
 ningún Docker.
 
 Sin Supabase configurado el sitio muestra todo el contenido editorial —la historia, qué pasó, el
-alcance de la obra, las nueve preguntas frecuentes, las páginas legales— y en el lugar de cada cifra
+alcance de la obra, las preguntas frecuentes, las páginas legales— y en el lugar de cada cifra
 muestra una explicación de por qué todavía no está, nunca un cero ni un dato de ejemplo. Es un
 requisito del producto (FR-034), no una degradación tolerada: la mitad de la suite de pruebas de
 punta a punta existe para verificar que ese modo funcione.

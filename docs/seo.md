@@ -13,30 +13,20 @@ accesibilidad o la velocidad. Cuando hubo conflicto, ganó el otro lado, y está
 
 ## 1. El primer requisito no es técnico
 
-Para que un buscador cite una respuesta, la respuesta tiene que estar escrita. Nueve preguntas
+Para que un buscador cite una respuesta, la respuesta tiene que estar escrita. Tres preguntas
 concretas están en `content/es/preguntas.json` (y su par en `content/en/`), y el sitio las responde **en el HTML del servidor**:
 
-1. ¿Qué es La Casa de Norma?
-2. ¿Quién fue Norma?
-3. ¿Qué pasó?
-4. ¿Dónde queda Riacho He Hé?
-5. ¿Cómo puedo colaborar?
-6. ¿Para qué se va a usar el dinero?
-7. ¿Cómo puedo verificar en qué se usó?
-8. ¿Qué va a pasar cuando la casa esté reconstruida?
-9. ¿Qué es Fundación Norma?
+1. ¿Qué pasó?
+2. ¿Cómo puedo ayudar?
+3. ¿Qué es lo que quieren construir después?
 
-Que sean nueve no es una convención suelta: el esquema de contenido lo exige y falla el build si
-falta una.
+El relato de la home ya cubre quién fue Norma, qué es la campaña y dónde queda Riacho He Hé. El
+esquema de contenido admite como máximo tres preguntas.
 
-```ts
-.min(9, "Las nueve preguntas del proyecto son un requisito (FR-001)");
-```
-
-Se renderizan en la home, en una lista de definiciones, **sin acordeón**. Un acordeón esconde ocho de
-las nueve respuestas detrás de un clic, y una respuesta que hay que abrir es una respuesta que no se
-extracta. `e2e/comun/home.spec.ts` verifica que las nueve preguntas y su primer párrafo estén
-visibles, **incluso con JavaScript desactivado**.
+Se renderizan en la home, en una lista de definiciones, **sin acordeón**. Un acordeón esconde las
+respuestas detrás de un clic, y una respuesta que hay que abrir es una respuesta que no se extracta.
+`e2e/comun/home.spec.ts` verifica que las preguntas y su primer párrafo estén visibles, **incluso con
+JavaScript desactivado**.
 
 Cada pregunta puede tener un `href` a la página que la desarrolla, así que la home responde en corto
 y el sitio responde en largo.
@@ -139,7 +129,7 @@ Marcado que promete lo que la página no cumple es engaño, y además se penaliz
 | `Organization` | Todas las páginas | `content/{locale}/site.json` |
 | `WebSite` | Todas las páginas | `content/{locale}/site.json` |
 | `WebPage` | Home, `/norma`, novedades | Argumentos de la página |
-| `FAQPage` | Home | Las mismas nueve preguntas que se ven en pantalla |
+| `FAQPage` | Home | Las mismas preguntas que se ven en pantalla |
 | `DonateAction` | Home | Apunta a `/ayudar` |
 | `Person` | `/norma` | `content/{locale}/norma.json` |
 | `Article` | `/novedades/[slug]` | La novedad publicada |
@@ -150,8 +140,8 @@ Lo que **no** se emite, y por qué:
 - **`NGO`.** Fundación Norma todavía no existe como organización. Declararla sería afirmar una
   personería que no hay.
 - **`Offer`, `AggregateRating`, `Review`.** No se vende nada y nadie califica nada.
-- **`birthDate` y `deathDate` en `Person`.** No están publicadas porque la familia no las publicó.
-  Un campo nulo es más honesto que un campo inventado a partir de una noticia.
+- **`deathDate` en `Person`.** La fecha de nacimiento está en la obra conmemorativa y se declara.
+  La de fallecimiento no se estima: el relato del incendio está en `/que-paso`.
 - **`BreadcrumbList` de un solo nivel.** Un breadcrumb de un elemento no es una jerarquía.
 
 Hay migas visibles sólo donde hay jerarquía real: la novedad tiene su enlace de vuelta al índice

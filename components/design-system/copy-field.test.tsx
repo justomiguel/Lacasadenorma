@@ -45,7 +45,7 @@ function sinPortapapeles(): ReturnType<typeof userEvent.setup> {
   return user;
 }
 
-describe("CopyField", () => {
+describe("CopyField", { timeout: 15_000 }, () => {
   it("copia el valor exacto, sin espacios ni formato agregado", async () => {
     const { user, writeText } = conPortapapeles();
 

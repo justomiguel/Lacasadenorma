@@ -1,11 +1,10 @@
 {
   "title": "Transparency",
-  "lead": "Everything that comes in and everything that goes out, with its date.",
+  "lead": "How the campaign books are kept. A public ledger of figures is not published yet.",
   "paragraphs": [],
   "method": [
-    "The totals are calculated by adding the records below. They are not typed in by hand: if the sum of the detail did not match the total, that would be an error, and there is an automatic test that catches it before each publication.",
-    "Gifts are recorded after they are reconciled against the bank statement. The date of the last reconciliation is published, because a number without a date is not a fact.",
-    "Individual gift amounts and the names of those who gave are not published. Expenses are, with an indication of whether they have a receipt. The receipt files can be reviewed by a person with an auditor role: they are not published because they often hold third-party data.",
-    "Nothing is deleted. If a record was entered in error, it is voided with the reason and the date, and it stops adding. The void stays on the record."
+    "Gifts are recorded after they are reconciled against the bank statement. Individual amounts and the names of those who gave are not published.",
+    "Invoices and receipts for the work are kept in an internal file. They are not published because they often hold third-party data.",
+    "This page does not show totals or a ledger of expenses. When that accounting is published, it will be here, with its date."
   ]
 }

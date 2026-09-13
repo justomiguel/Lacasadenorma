@@ -1,151 +1,21 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
-import { CopyField } from "@/components/design-system/copy-field";
 import { cn } from "@/components/design-system/cn";
-import { useUiOptional } from "@/components/i18n/ui-provider";
 import type { HelpContent, UiContent } from "@/content/schema";
 import { track } from "@/src/infrastructure/analytics/browser";
 
-const NEVER_CHANGES = () => () => undefined;
-
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    NEVER_CHANGES,
-    () => true,
-    () => false,
-  );
-}
-
-type Channel = "transfer" | "mercadopago" | "paypal";
-type Country = "AR" | "CL";
-
-const CHANNELS: Channel[] = ["transfer", "mercadopago", "paypal"];
-const COUNTRIES: Country[] = ["AR", "CL"];
-
-function Flag({ country }: { country: Country }) {
-  return (
-    <span aria-hidden="true" className="text-[1.1em] leading-none">
-      {country === "AR" ? "🇦🇷" : "🇨🇱"}
-    </span>
-  );
-}
-
-function nextItem<T>(items: readonly T[], current: T, key: string): T | null {
-  const index = items.indexOf(current);
-
-  if (index === -1) {
-    return null;
-  }
-
-  if (key === "ArrowRight" || key === "ArrowDown") {
-    return items[(index + 1) % items.length] ?? null;
-  }
-
-  if (key === "ArrowLeft" || key === "ArrowUp") {
-    return items[(index - 1 + items.length) % items.length] ?? null;
-  }
-
-  if (key === "Home") {
-    return items[0] ?? null;
-  }
-
-  if (key === "End") {
-    return items[items.length - 1] ?? null;
-  }
-
-  return null;
-}
-
-function ArgentinaFields({
-  account,
-  onCopied,
-}: {
-  account: HelpContent["accounts"]["AR"];
-  onCopied: (campo: string) => void;
-}) {
-  const ui = useUiOptional()?.ui;
-
-  return (
-    <div>
-      <h3 className="flex items-center gap-sm font-ui text-subheading font-medium">
-        <Flag country="AR" />
-        {ui?.countries.AR ?? "Argentina"}
-      </h3>
-      <div className="mt-md">
-        <CopyField label="Titular" value={account.holder} copyable={false} />
-        <CopyField label="CUIT/CUIL" value={account.taxId} copyable={false} />
-        <CopyField
-          label="Alias"
-          value={account.alias}
-          onCopied={() => {
-            onCopied("alias");
-          }}
-        />
-        <CopyField
-          label="CBU"
-          value={account.cbu}
-          onCopied={() => {
-            onCopied("cbu");
-          }}
-        />
-        <CopyField
-          label="Número de cuenta"
-          value={account.accountNumber}
-          onCopied={() => {
-            onCopied("cuenta_argentina");
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ChileFields({
-  account,
-  onCopied,
-}: {
-  account: HelpContent["accounts"]["CL"];
-  onCopied: (campo: string) => void;
-}) {
-  const ui = useUiOptional()?.ui;
-
-  return (
-    <div>
-      <h3 className="flex items-center gap-sm font-ui text-subheading font-medium">
-        <Flag country="CL" />
-        {ui?.countries.CL ?? "Chile"}
-      </h3>
-      <div className="mt-md">
-        <CopyField label="Nombre" value={account.holder} copyable={false} />
-        <CopyField
-          label="RUT"
-          value={account.rut}
-          onCopied={() => {
-            onCopied("rut");
-          }}
-        />
-        <CopyField label="Banco" value={account.bank} copyable={false} />
-        <CopyField label="Tipo" value={account.accountType} copyable={false} />
-        <CopyField
-          label="Número Cuenta"
-          value={account.accountNumber}
-          onCopied={() => {
-            onCopied("cuenta_chile");
-          }}
-        />
-        <CopyField
-          label="Correo"
-          value={account.email}
-          onCopied={() => {
-            onCopied("email");
-          }}
-        />
-      </div>
-    </div>
-  );
-}
+import {
+  CHANNELS,
+  COUNTRIES,
+  Flag,
+  nextItem,
+  useHydrated,
+  type Channel,
+  type Country,
+} from "./donation-board-helpers";
+import { ArgentinaFields, ChileFields } from "./donation-fields";
 
 /**
  * Donaciones del mockup: transferencia / Mercado Pago / PayPal, Argentina y Chile.

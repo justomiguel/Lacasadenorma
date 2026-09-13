@@ -83,8 +83,11 @@ export function personSchema(siteUrl: string, locale: Locale = "es"): object {
     "@type": "Person",
     "@id": id.norma,
     name: norma.fullName,
+    ...(norma.knownAs === null ? {} : { alternateName: norma.knownAs }),
     description: norma.summary,
     jobTitle: norma.roleLabel,
+    ...(norma.bornOn === null ? {} : { birthDate: norma.bornOn }),
+    ...(norma.diedOn === null ? {} : { deathDate: norma.diedOn }),
     homeLocation: {
       "@type": "Place",
       name: `${site.place.locality}, ${site.place.province}, ${site.place.country}`,
@@ -94,7 +97,7 @@ export function personSchema(siteUrl: string, locale: Locale = "es"): object {
 }
 
 /**
- * Las nueve preguntas visibles de la home.
+ * Las preguntas visibles de la home.
  *
  * La respuesta es la misma prosa que se renderiza, unida por párrafos. No se
  * reescribe para el buscador: dos versiones distintas de la misma respuesta es

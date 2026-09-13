@@ -110,48 +110,52 @@ export function HomeScreen({ locale }: { locale: Locale }) {
       <Band tone="forest">
         <Container>
           <Section labelledBy="la-comunidad" chapter="community">
-            <div className="grid items-center gap-2xl lg:grid-cols-12">
-              <div className="lg:col-span-7">
-                {community[0] === undefined ? null : (
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-md">
+            <div data-reveal="" className="max-w-quote">
+              <p
+                data-kicker=""
+                className="font-ui text-label uppercase tracking-label text-sage"
+              >
+                {ui.home.chapterCommunity}
+              </p>
+              <h2
+                id="la-comunidad"
+                className="mt-sm whitespace-pre-line font-display text-display"
+              >
+                {ui.home.communityTitle}
+              </h2>
+              <p className="mt-lg max-w-measure text-lead">{ui.home.communityLead}</p>
+            </div>
+            {community.length === 0 ? null : (
+              <div className="mt-2xl grid gap-md sm:grid-cols-2">
+                {community.map((photo, index) => (
+                  <div
+                    key={photo.url}
+                    data-reveal-photo={index === 0 ? "wipe" : "wipe-x"}
+                    className="relative aspect-[4/5] overflow-hidden rounded-md"
+                  >
                     <ParallaxFrame className="absolute inset-[-6%]">
                       <CoverPhoto
-                        media={community[0]}
+                        media={photo}
                         quality={70}
-                        sizes="(min-width: 64rem) 55vw, 100vw"
+                        sizes="(min-width: 64rem) 45vw, 100vw"
                         position="center 40%"
                       />
                     </ParallaxFrame>
                   </div>
-                )}
+                ))}
               </div>
-              <div className="lg:col-span-5" data-reveal="">
-                <p
-                  data-kicker=""
-                  className="font-ui text-label uppercase tracking-label text-sage"
-                >
-                  {ui.home.chapterCommunity}
-                </p>
-                <h2
-                  id="la-comunidad"
-                  className="mt-sm whitespace-pre-line font-display text-title"
-                >
-                  {ui.home.communityTitle}
-                </h2>
-                <p className="mt-lg max-w-measure text-body">{ui.home.communityLead}</p>
-                <p
-                  data-reveal=""
-                  className="mt-lg max-w-measure whitespace-pre-line font-hand text-hand"
-                >
-                  {ui.home.communityNote}
-                </p>
-                <p className="mt-lg">
-                  <InlineLink href={localizedHref("/que-paso", locale)}>
-                    {ui.home.seeStory} →
-                  </InlineLink>
-                </p>
-              </div>
-            </div>
+            )}
+            <p
+              data-reveal=""
+              className="mt-xl max-w-measure whitespace-pre-line font-hand text-hand"
+            >
+              {ui.home.communityNote}
+            </p>
+            <p className="mt-lg">
+              <InlineLink href={localizedHref("/que-paso", locale)}>
+                {ui.home.seeStory} →
+              </InlineLink>
+            </p>
           </Section>
         </Container>
       </Band>
@@ -247,47 +251,34 @@ export function HomeScreen({ locale }: { locale: Locale }) {
       </Container>
 
       <Band tone="forest">
-        <div className="relative overflow-hidden" data-chapter="next">
-          {community[1] === undefined ? null : (
-            <div className="absolute inset-0">
-              <CoverPhoto
-                media={community[1]}
-                quality={64}
-                sizes="100vw"
-                position="center"
-                className="opacity-50"
-              />
-            </div>
-          )}
-          <Container>
-            <Section labelledBy="mas-que-una-casa" className="relative">
-              <div data-reveal="">
-                <p
-                  data-kicker=""
-                  className="font-ui text-label uppercase tracking-label text-sage"
+        <Container>
+          <Section labelledBy="mas-que-una-casa">
+            <div data-reveal="">
+              <p
+                data-kicker=""
+                className="font-ui text-label uppercase tracking-label text-sage"
+              >
+                {ui.home.chapterNext}
+              </p>
+              <h2 id="mas-que-una-casa" className="mt-sm font-display text-title">
+                {ui.home.nextTitle}
+              </h2>
+              <p className="mt-lg max-w-measure text-lead">{ui.home.nextLead}</p>
+              <p className="mt-md max-w-measure text-body">{ui.home.nextBody}</p>
+              <p className="mt-lg max-w-measure font-hand text-hand">
+                {ui.home.nextNote}
+              </p>
+              <p className="mt-xl">
+                <SecondaryAction
+                  href={localizedHref("/legado", locale)}
+                  className="lift-hover border-paper text-paper hover:bg-paper hover:text-forest"
                 >
-                  {ui.home.chapterNext}
-                </p>
-                <h2 id="mas-que-una-casa" className="mt-sm font-display text-title">
-                  {ui.home.nextTitle}
-                </h2>
-                <p className="mt-lg max-w-measure text-lead">{ui.home.nextLead}</p>
-                <p className="mt-md max-w-measure text-body">{ui.home.nextBody}</p>
-                <p className="mt-lg max-w-measure font-hand text-hand">
-                  {ui.home.nextNote}
-                </p>
-                <p className="mt-xl">
-                  <SecondaryAction
-                    href={localizedHref("/legado", locale)}
-                    className="lift-hover border-paper text-paper hover:bg-paper hover:text-forest"
-                  >
-                    {ui.primaryNav["/legado"].label}
-                  </SecondaryAction>
-                </p>
-              </div>
-            </Section>
-          </Container>
-        </div>
+                  {ui.primaryNav["/legado"].label}
+                </SecondaryAction>
+              </p>
+            </div>
+          </Section>
+        </Container>
       </Band>
 
       <Container>

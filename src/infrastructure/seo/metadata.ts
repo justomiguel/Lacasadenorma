@@ -26,6 +26,13 @@ export interface PageMetadataInput {
   readonly path: string;
   readonly publishedTime?: string;
   readonly noIndex?: boolean;
+  /** Foto real para Open Graph. Si falta, el buscador no inventa una. */
+  readonly image?: {
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+    readonly alt: string;
+  };
 }
 
 export function pageMetadata(input: PageMetadataInput): Metadata {
@@ -33,6 +40,16 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
   const url = localizeHref(input.path, input.locale);
   const fullTitle = `${input.title} — ${site.name}`;
   const alternate = ogLocale(otherLocale(input.locale));
+
+  const ogImage =
+    input.image === undefined
+      ? undefined
+      : {
+          url: input.image.url,
+          width: input.image.width,
+          height: input.image.height,
+          alt: input.image.alt,
+        };
 
   return {
     title: input.title,
@@ -49,6 +66,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       title: fullTitle,
       description: input.description,
       url,
+      ...(ogImage === undefined ? {} : { images: [ogImage] }),
       ...(input.publishedTime === undefined
         ? {}
         : { publishedTime: input.publishedTime }),
@@ -57,6 +75,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       card: "summary_large_image",
       title: fullTitle,
       description: input.description,
+      ...(ogImage === undefined ? {} : { images: [ogImage.url] }),
     },
     ...(input.noIndex === true ? { robots: { index: false, follow: false } } : {}),
   };

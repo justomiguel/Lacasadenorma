@@ -186,7 +186,7 @@ describe("get_norma_story", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.output).toMatchObject({ bornOn: null, diedOn: null });
+    expect(result.output).toMatchObject({ bornOn: "1955-01-19", diedOn: null });
   });
 });
 

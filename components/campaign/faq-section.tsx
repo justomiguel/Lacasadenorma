@@ -5,21 +5,17 @@ import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 /**
- * Las nueve preguntas.
+ * Las preguntas de la home.
  *
  * La pregunta es el encabezado y la respuesta va inmediatamente debajo, en prosa,
  * sin acordeón. Un acordeón esconde el contenido de quien busca con Ctrl+F, de un
- * buscador que mide el contenido visible y de un modelo que lee la página, y en
- * nueve preguntas no ahorra nada de desplazamiento que valga la pena (FR-001,
- * estrategia AEO).
+ * buscador que mide el contenido visible y de un modelo que lee la página.
  *
- * El orden es el de `content/{locale}/preguntas.json`, y es el orden en que una
- * persona se hace las preguntas: qué es esto, quién fue, qué pasó, cómo ayudo,
- * cómo verifico.
+ * El orden es el de `content/{locale}/preguntas.json`.
  *
  * El texto de cada enlace viene del contenido y no de acá. Un "ver más" repetido
- * nueve veces se escucha, en la lista de enlaces de un lector de pantalla, como la
- * misma frase nueve veces: no hay forma de elegir uno.
+ * se escucha, en la lista de enlaces de un lector de pantalla, como la misma frase
+ * repetida: no hay forma de elegir uno.
  */
 export function FaqSection({
   locale,

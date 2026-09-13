@@ -9,7 +9,7 @@ const { faq, norma, site, ui } = getContent("es");
  * Flujos críticos 1 y 2: abrir la home y entender la campaña.
  *
  * El mockup aprobado (ADR-025) fija la apertura: foto del incendio, el nombre,
- * qué pasó, y las dos acciones. Las nueve preguntas siguen en el HTML servido.
+ * qué pasó, y las dos acciones. Las preguntas de la home siguen en el HTML servido.
  */
 
 test.describe("flujo 1 · abrir la home", () => {
@@ -89,7 +89,9 @@ test.describe("flujo 1 · abrir la home", () => {
 });
 
 test.describe("flujo 2 · entender la campaña", () => {
-  test("las nueve preguntas están respondidas en el HTML servido", async ({ page }) => {
+  test("las preguntas de la home están respondidas en el HTML servido", async ({
+    page,
+  }) => {
     await page.goto("/");
 
     for (const entrada of faq) {

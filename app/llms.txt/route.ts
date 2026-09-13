@@ -49,8 +49,8 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   pondría al primer programa. No hay a qué anotarse y no hay página propia.
 - Los aportes **no son deducibles de impuestos**: no hay entidad que pueda emitir un comprobante
   fiscal.
-- Las fechas de nacimiento y de muerte de Norma **no están publicadas**. Si un dato aparece como
-  nulo, es porque no está verificado, no porque falte cargarlo en la página.
+- La fecha de nacimiento de Norma **está publicada** (19 de enero de 1955), porque consta en la
+  obra conmemorativa. La de fallecimiento no se estima.
 - **No hay una rendición pública de cifras en el sitio.** No hay totales, libro de gastos, presupuesto
   cotizado ni avance de obra con porcentajes. El método de cómo se lleva la cuenta está en
   /transparencia. El detalle operativo vive en el backoffice.
@@ -58,7 +58,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 ## Páginas
 
 - [Inicio](${siteUrl}/): el relato: el fuego, la comunidad, cómo ayudar, las donaciones, lo que viene.
-- [La historia de Norma](${siteUrl}/norma): quién fue.
+- [La historia de Norma](${siteUrl}/norma): quién fue, con la obra conmemorativa para leer o descargar.
 - [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada y
   qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.

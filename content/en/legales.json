@@ -1,5 +1,5 @@
 {
-  "updatedOn": "2026-09-09",
+  "updatedOn": "2026-09-13",
   "privacy": {
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
@@ -27,7 +27,7 @@
         "heading": "Gifts",
         "paragraphs": [
           "If you give by transfer, your bank tells ours the details of the operation. That information stays in the internal accounting record and is used to reconcile the totals.",
-          "The name of the person who gave and the individual amount are not published. All gifts are published added together.",
+          "The name of the person who gave and the individual amount are not published.",
           "The internal record is kept while the campaign is open and for as long as the accounting requires."
         ]
       },
@@ -35,7 +35,7 @@
         "heading": "Expense receipts",
         "paragraphs": [
           "Invoices and receipts for the work are stored in private storage. They are not public because they often hold third-party data, such as a supplier's name and address.",
-          "The site publishes that the receipt exists. The file can be reviewed by a person with an auditor role, with a temporary access."
+          "The file can be reviewed by a person with an auditor role, with a temporary access."
         ]
       },
       {

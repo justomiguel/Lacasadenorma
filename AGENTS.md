@@ -30,6 +30,8 @@ build, a propósito.
 - Ningún `console.log`. `warn` y `error` están permitidos.
 - Ningún `catch {}` vacío.
 - Ningún `any` sin comentario que explique por qué no hay alternativa.
+- Ningún archivo de código de más de 300 líneas (sin contar blancos ni comentarios). Lo
+  impone ESLint `max-lines`. Si se acerca, se parte; no se sube el número.
 
 ## Reglas que no rompen el build y son igual de obligatorias
 

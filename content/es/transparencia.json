@@ -1,11 +1,10 @@
 {
   "title": "Transparencia",
-  "lead": "Todo lo que entra y todo lo que sale, con su fecha.",
+  "lead": "Cómo se lleva la cuenta de la campaña. La rendición pública de cifras todavía no está publicada.",
   "paragraphs": [],
   "method": [
-    "Los totales se calculan sumando los registros que están más abajo. No se escriben a mano: si la suma del detalle no coincidiera con el total, sería un error, y hay una prueba automática que lo detecta antes de cada publicación.",
-    "Los aportes se registran después de conciliarlos con el resumen del banco. La fecha de la última conciliación está publicada, porque un número sin fecha no es un dato.",
-    "Los montos individuales de los aportes y los nombres de quienes aportaron no se publican. Los gastos sí, con la indicación de si tienen comprobante. Los archivos de los comprobantes los puede revisar una persona con rol de auditoría: no se publican porque suelen tener datos de terceros.",
-    "Nada se borra. Si un registro se cargó por error, se anula con el motivo y la fecha, y deja de sumar. La anulación queda registrada."
+    "Los aportes se registran después de conciliarlos con el resumen del banco. Los montos individuales y los nombres de quienes aportaron no se publican.",
+    "Las facturas y los recibos de la obra se guardan en un archivo interno. No se publican porque suelen tener datos de terceros.",
+    "En esta página no hay totales ni un libro de gastos a la vista. Cuando esa rendición se publique, va a estar acá, con su fecha."
   ]
 }

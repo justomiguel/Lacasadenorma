@@ -1,6 +1,26 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.1.0 → 1.2.0
+Tipo de cambio: MINOR — se agrega una restricción técnica con compuerta.
+Fecha: 2026-09-13
+
+Motivo: los archivos de código se estaban yendo de largo (pantallas, esquemas,
+repositorios, tests) y una guía que sólo vive en un documento no frena nada.
+
+  1. "Restricciones técnicas · Tamaño de archivo" — un archivo de código MUST NOT
+     superar las 300 líneas de código (sin contar blancos ni comentarios). La
+     compuerta es la regla `max-lines` de ESLint. Si un archivo se acerca, se
+     parte por responsabilidad; no se sube el número.
+
+Artefactos actualizados en el mismo commit:
+  ✅ eslint.config.ts — `max-lines` en error, skipBlankLines y skipComments
+  ✅ AGENTS.md — la regla entra en las que rompen el build
+  ✅ archivos que ya pasaban el tope, partidos
+
+---
+Informe de 1.1.0
+==================
 Cambio de versión: 1.0.0 → 1.1.0
 Tipo de cambio: MINOR — se redefine el flujo de Git y se amplían dos guías.
 Fecha: 2026-09-12
@@ -286,6 +306,13 @@ estar documentado y publicado.
 **Prohibiciones de dependencias.** Sin librerías de componentes visuales (el sistema de diseño es
 propio). Sin frameworks agregados "por moda". Sin dependencia que sólo ahorre diez líneas.
 
+**Tamaño de archivo.** Un archivo de código MUST NOT superar las 300 líneas de código. No cuentan
+las líneas en blanco ni los comentarios: el tope es de responsabilidad, no de prosa. La compuerta es
+la regla `max-lines` de ESLint, en `eslint.config.ts`. Si un archivo se acerca, se parte por
+responsabilidad —un módulo, un componente, un `describe`—; no se sube el número. Los archivos
+generados que ya están en `globalIgnores` (hoy `database.types.ts`) no pasan por esta regla
+porque corregirlos a mano se perdería en la próxima generación.
+
 ---
 
 ## Flujo de trabajo y compuertas de calidad
@@ -381,4 +408,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-12
+**Version**: 1.2.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-13

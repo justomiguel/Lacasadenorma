@@ -18,6 +18,7 @@ export default defineConfig([
     "next-env.d.ts",
     ".specify/**",
     ".agents/**",
+    ".local/**",
     "supabase/**",
     // Generado por `npm run db:types` desde el esquema real. Corregirlo a mano
     // se perdería en la próxima generación.
@@ -54,6 +55,18 @@ export default defineConfig([
       // Principio XII: ningún fallo silencioso.
       "no-empty": ["error", { allowEmptyCatch: false }],
       "no-console": ["error", { allow: ["warn", "error"] }],
+    },
+  },
+
+  /**
+   * Un archivo de más de 300 líneas de código no se lee: se recorre. La regla
+   * cuenta código, no comentarios ni líneas en blanco, porque el tope es de
+   * responsabilidad, no de prosa. Si un archivo se acerca, se parte.
+   */
+  {
+    files: ["**/*.{ts,tsx,mts}", "scripts/**/*.mjs"],
+    rules: {
+      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
     },
   },
 

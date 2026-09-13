@@ -1,5 +1,5 @@
 {
-  "updatedOn": "2026-09-09",
+  "updatedOn": "2026-09-13",
   "privacy": {
     "title": "Privacidad",
     "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
@@ -27,7 +27,7 @@
         "heading": "Aportes",
         "paragraphs": [
           "Si aportás por transferencia, tu banco le informa al nuestro los datos de la operación. Esa información queda en el registro contable interno y sirve para conciliar los totales.",
-          "No se publica el nombre de quien aporta ni el monto individual. Todos los aportes se publican sumados.",
+          "No se publica el nombre de quien aporta ni el monto individual.",
           "El registro interno se conserva mientras la campaña esté abierta y por el plazo que exija la rendición de cuentas."
         ]
       },
@@ -35,7 +35,7 @@
         "heading": "Comprobantes de gastos",
         "paragraphs": [
           "Las facturas y los recibos de la obra se guardan en un almacenamiento privado. No son públicos porque suelen tener datos de terceros, como el nombre y el domicilio de un proveedor.",
-          "El sitio publica que el comprobante existe. El archivo lo puede revisar una persona con rol de auditoría, con un acceso temporal."
+          "El archivo lo puede revisar una persona con rol de auditoría, con un acceso temporal."
         ]
       },
       {

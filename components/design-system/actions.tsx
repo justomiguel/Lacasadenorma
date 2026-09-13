@@ -54,6 +54,37 @@ export function SecondaryAction({
 }
 
 /**
+ * Enlace a un archivo del sitio (el PDF de la obra). No es una ruta de Next:
+ * un `Link` tipado no puede apuntar a `/documentos/…`.
+ */
+export function FileAction({
+  href,
+  children,
+  className,
+  download,
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+  /** Si está, el navegador descarga en lugar de abrir. */
+  download?: string | true;
+}) {
+  const isDownload = download !== undefined;
+
+  return (
+    <a
+      href={href}
+      className={cn(isDownload ? SECONDARY : PRIMARY, className)}
+      {...(isDownload
+        ? { download: download === true ? true : download }
+        : { target: "_blank", rel: "noopener noreferrer" })}
+    >
+      {children}
+    </a>
+  );
+}
+
+/**
  * Acción hacia otra parte de **esta** página.
  *
  * Es un `<a>` y no un `Link`: con `typedRoutes` una URL que es sólo un fragmento no
