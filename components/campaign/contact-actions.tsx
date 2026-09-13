@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLabel } from "@/components/design-system/brand-mark";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 export function ContactActions({
@@ -30,12 +31,12 @@ export function ContactActions({
           href={whatsapp}
           rel="noopener noreferrer"
           target="_blank"
-          className="lift-hover inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
+          className="lift-hover inline-flex min-h-touch items-center gap-xs rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
           onClick={() => {
             track({ name: "whatsapp_click", props: { origen } });
           }}
         >
-          {whatsappLabel}
+          <BrandLabel id="whatsapp">{whatsappLabel}</BrandLabel>
         </a>
         <a
           href={tel}

@@ -74,6 +74,9 @@ jobs:
       - name: Comprobar que las fotos existen y miden lo que dicen
         run: npm run check:fotos
 
+      - name: Comprobar que las marcas de terceros tienen logo y se usan
+        run: npm run check:marcas
+
       - name: Construir el sitio como se construye en producción
         run: npm run build
 

@@ -3,7 +3,9 @@
 import { useState } from "react";
 
 import { useUiOptional } from "@/components/i18n/ui-provider";
+import { BRANDS, type BrandId } from "@/content/brands";
 
+import { BrandMark } from "./brand-mark";
 import { cn } from "./cn";
 
 /**
@@ -20,7 +22,7 @@ import { cn } from "./cn";
 export interface ShareTarget {
   readonly label: string;
   readonly href: string;
-  readonly channel: string;
+  readonly channel: BrandId;
 }
 
 export function buildShareTargets(url: string, text: string): ShareTarget[] {
@@ -29,22 +31,22 @@ export function buildShareTargets(url: string, text: string): ShareTarget[] {
 
   return [
     {
-      label: "WhatsApp",
+      label: BRANDS.whatsapp.name,
       channel: "whatsapp",
       href: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
     },
     {
-      label: "Facebook",
+      label: BRANDS.facebook.name,
       channel: "facebook",
       href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     },
     {
-      label: "LinkedIn",
+      label: BRANDS.linkedin.name,
       channel: "linkedin",
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
     },
     {
-      label: "X",
+      label: BRANDS.x.name,
       channel: "x",
       href: `https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}`,
     },
@@ -121,8 +123,9 @@ export function ShareRow({
               onClick={() => {
                 onShared?.(target.channel);
               }}
-              className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
+              className="inline-flex min-h-touch items-center gap-xs font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
             >
+              <BrandMark id={target.channel} />
               {target.label}
             </a>
           </li>

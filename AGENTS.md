@@ -32,6 +32,8 @@ build, a propósito.
 - Ningún `any` sin comentario que explique por qué no hay alternativa.
 - Ningún archivo de código de más de 300 líneas (sin contar blancos ni comentarios). Lo
   impone ESLint `max-lines`. Si se acerca, se parte; no se sube el número.
+- Una marca de terceros (PayPal, Mercado Pago, WhatsApp, etc.) que aparece como tab,
+  botón o enlace lleva su logo al lado del nombre. Lo impone `npm run check:marcas`.
 
 ## Reglas que no rompen el build y son igual de obligatorias
 
@@ -54,7 +56,8 @@ tocar una pantalla. La regla `.cursor/rules/diseno.mdc` resume las dos y se adju
 usan valores por defecto de Tailwind ni valores arbitrarios (`text-[13px]`) en producción.
 
 Prohibido: gradientes decorativos, glassmorphism, blobs, cards para todo, radios grandes, sombras
-difusas, emojis decorativos, iconos de relleno, animaciones sin función, copy de folleto. Y los tres
+difusas, emojis decorativos, iconos de relleno (los logos de marcas de terceros no son eso: van
+siempre al lado del nombre), animaciones sin función, copy de folleto. Y los tres
 delatores que este sitio ya tuvo: la sobrelínea en VERSALES arriba de cada título, un solo plano sin
 sangrado ni bandas, y un solo tamaño de texto haciendo de jerarquía.
 
@@ -73,6 +76,7 @@ npm run test             # unitarios y de componente
 npm run test:e2e         # Playwright
 npm run db:verify        # Postgres local: reset + migraciones + advisors + pgTAP
 npm run check:toolchain  # las versiones de las herramientas son las decididas
+npm run check:marcas     # cada marca de terceros tiene logo y se usa al lado del nombre
 ```
 
 `npm run verify` en verde es la condición para pushear, porque se pushea a `main` y no hay pull

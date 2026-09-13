@@ -23,6 +23,12 @@ clon de recaudación, no landing de Tailwind.
 - Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas emocionales.
 - Botones píldora. Header oscuro superpuesto al hero. Menú hamburguesa en teléfono.
 - Fotos reales de `public/fotos/`. Prohibido stock, IA y placeholders.
+- **Marcas de terceros.** PayPal, Mercado Pago, WhatsApp y cualquier otra marca
+  que aparezca como tab, botón, encabezado de canal o enlace lleva **su logo al
+  lado del nombre**. El catálogo es `content/brands.ts`; los SVG viven en
+  `public/marcas/` con `fill="currentColor"`. No se usan iconos genéricos de
+  librería. La prosa que nombra la marca en un párrafo no lleva el logo
+  incrustado. La compuerta es `npm run check:marcas`.
 
 ## Recorrido
 

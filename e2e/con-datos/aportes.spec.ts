@@ -81,10 +81,16 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
 
     await canales.getByRole("tab", { name: ui.home.mercadoPago }).click();
     await expect(page.getByText(ui.home.mercadoPagoLead)).toBeVisible();
+    await expect(
+      canales.getByRole("tab", { name: ui.home.mercadoPago }).locator("img"),
+    ).toHaveAttribute("src", /mercadopago/);
     await expect(page.getByRole("link", { name: /mercado pago/i })).toHaveCount(0);
 
     await canales.getByRole("tab", { name: ui.home.paypal }).click();
     await expect(page.getByText(ui.home.paypalLead)).toBeVisible();
+    await expect(
+      canales.getByRole("tab", { name: ui.home.paypal }).locator("img"),
+    ).toHaveAttribute("src", /paypal/);
     await expect(page.getByRole("link", { name: /paypal/i })).toHaveCount(0);
   });
 

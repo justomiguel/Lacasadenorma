@@ -9,6 +9,7 @@ import { track } from "@/src/infrastructure/analytics/browser";
 import {
   CHANNELS,
   COUNTRIES,
+  ChannelLabel,
   Flag,
   nextItem,
   useHydrated,
@@ -130,7 +131,9 @@ export function DonationBoard({
   function renderMercadoPago() {
     return (
       <div className="rounded-md bg-paper-sunk p-lg">
-        <h3 className="font-ui text-subheading font-medium">{ui.home.mercadoPago}</h3>
+        <h3 className="font-ui text-subheading font-medium">
+          <ChannelLabel channel="mercadopago">{ui.home.mercadoPago}</ChannelLabel>
+        </h3>
         <p className="mt-sm max-w-measure text-body text-ink-muted">
           {ui.home.mercadoPagoLead}
         </p>
@@ -145,7 +148,7 @@ export function DonationBoard({
               track({ name: "medio_externo_click", props: { medio: "mercadopago" } });
             }}
           >
-            {ui.home.mercadoPagoCta} →
+            <ChannelLabel channel="mercadopago">{ui.home.mercadoPagoCta} →</ChannelLabel>
           </a>
         )}
       </div>
@@ -155,7 +158,9 @@ export function DonationBoard({
   function renderPayPal() {
     return (
       <div className="rounded-md bg-paper-sunk p-lg">
-        <h3 className="font-ui text-subheading font-medium">{ui.home.paypal}</h3>
+        <h3 className="font-ui text-subheading font-medium">
+          <ChannelLabel channel="paypal">{ui.home.paypal}</ChannelLabel>
+        </h3>
         <p className="mt-sm max-w-measure text-body text-ink-muted">
           {ui.home.paypalLead}
         </p>
@@ -170,7 +175,7 @@ export function DonationBoard({
               track({ name: "medio_externo_click", props: { medio: "paypal" } });
             }}
           >
-            {ui.home.paypalCta} →
+            <ChannelLabel channel="paypal">{ui.home.paypalCta} →</ChannelLabel>
           </a>
         )}
       </div>
@@ -228,7 +233,7 @@ export function DonationBoard({
                 aria-controls={`${baseId}-panel`}
                 tabIndex={selected ? 0 : -1}
                 className={cn(
-                  "lift-hover inline-flex min-h-touch flex-1 items-center justify-center rounded-pill px-md font-ui text-small lg:flex-none",
+                  "lift-hover inline-flex min-h-touch flex-1 items-center justify-center gap-xs rounded-pill px-md font-ui text-small lg:flex-none",
                   selected
                     ? "bg-forest text-paper"
                     : "border border-rule text-ink hover:border-forest",
@@ -237,7 +242,7 @@ export function DonationBoard({
                   setChannel(item);
                 }}
               >
-                {channelLabel[item]}
+                <ChannelLabel channel={item}>{channelLabel[item]}</ChannelLabel>
               </button>
             );
           })}

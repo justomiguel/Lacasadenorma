@@ -90,6 +90,10 @@ test.describe("flujo 6 · compartir la campaña", () => {
         page.locator(`a[href*="${canal}"]`).first(),
         `falta el enlace para compartir por ${canal}`,
       ).toHaveCount(1);
+      await expect(
+        page.locator(`a[href*="${canal}"]`).first().locator("img"),
+        `${canal} tiene que llevar el logo de la marca`,
+      ).toBeVisible();
     }
 
     await context.close();

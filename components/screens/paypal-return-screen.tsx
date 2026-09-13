@@ -1,8 +1,10 @@
 import { HelpCta } from "@/components/campaign/help-cta";
 import { SecondaryAction } from "@/components/design-system/actions";
+import { BrandLabel } from "@/components/design-system/brand-mark";
 import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
+import { BRANDS } from "@/content/brands";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -47,7 +49,11 @@ export function PaypalReturnScreen({
 
   return (
     <>
-      <PageHeader title={copy.title} lead={copy.lead} />
+      <PageHeader title={copy.title} lead={copy.lead}>
+        <p className="mt-md">
+          <BrandLabel id="paypal">{BRANDS.paypal.name}</BrandLabel>
+        </p>
+      </PageHeader>
 
       <Container>
         <Section>

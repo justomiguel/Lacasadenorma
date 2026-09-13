@@ -1,12 +1,36 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+
+import { BrandLabel } from "@/components/design-system/brand-mark";
+import type { BrandId } from "@/content/brands";
 
 export type Channel = "transfer" | "mercadopago" | "paypal";
 export type Country = "AR" | "CL";
 
 export const CHANNELS: Channel[] = ["transfer", "mercadopago", "paypal"];
 export const COUNTRIES: Country[] = ["AR", "CL"];
+
+export const CHANNEL_BRAND: Partial<Record<Channel, BrandId>> = {
+  mercadopago: "mercadopago",
+  paypal: "paypal",
+};
+
+export function ChannelLabel({
+  channel,
+  children,
+}: {
+  channel: Channel;
+  children: ReactNode;
+}) {
+  const brand = CHANNEL_BRAND[channel];
+
+  if (brand === undefined) {
+    return children;
+  }
+
+  return <BrandLabel id={brand}>{children}</BrandLabel>;
+}
 
 const NEVER_CHANGES = () => () => undefined;
 
