@@ -325,13 +325,17 @@ export function PhotoEssay({
 /**
  * Foto de fondo: llena el contenedor sin deformarse.
  * `position` cambia el recorte entre teléfono y escritorio.
+ *
+ * `quality` tiene que ser uno de `images.qualities` en `next.config.ts`
+ * (`70` o `80`). El default de Next es 75, que acá no está permitido y
+ * `CoverPhoto` no lo usa.
  */
 export function CoverPhoto({
   media,
   priority = false,
   sizes = "100vw",
   position = "center",
-  quality = 75,
+  quality = 80,
   className,
 }: {
   media: Photograph;

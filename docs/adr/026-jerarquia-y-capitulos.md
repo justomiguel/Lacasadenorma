@@ -70,6 +70,10 @@ concreta:
 7. **El ritmo baja un escalón.** `Section` pasa de 64/88 px a 48/64 px de aire.
    Con bandas y reglas marcando dónde empieza cada sección, el aire ya no separaba:
    alejaba.
+8. **El héroe no estira un JPEG de 1220 px.** La foto de esa noche mide 1220×1568.
+   A sangrado, un escritorio 1440 a 2x pide ~2880 px: de ahí la pixelación. El
+   héroe usa un recorte 16:9 del **mismo archivo**, agrandado a 2880×1620
+   (`incendio-bomberos-frente-hero.jpg`). No se genera otra toma del incendio.
 
 ## Consecuencias
 

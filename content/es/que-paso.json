@@ -6,6 +6,15 @@
     "En ese incendio Norma falleció. Su marido logró salir, pero inhaló mucho humo y hoy su capacidad pulmonar está al 50%. Está en tratamiento y necesita tiempo y cuidados para recuperarse.",
     "Estas son las fotos de esa noche y de lo que quedó. Están acá una vez, porque quien va a colaborar necesita saber qué pasó, y no vuelven a aparecer en el resto del sitio."
   ],
+  "hero": {
+    "url": "/fotos/incendio-bomberos-frente-hero.jpg",
+    "alt": "Un bombero con casco y equipo de respiración entra por la puerta de la casa, de noche. La pared es verde agua y por la ventana enrejada se ve el resplandor naranja del fuego adentro.",
+    "caption": null,
+    "credit": null,
+    "width": 2880,
+    "height": 1620,
+    "takenOn": null
+  },
   "testimony": {
     "quote": "Ahora mi foco está en reconstruir la casa de mi papá y acompañarlo en su recuperación.",
     "author": "Justo Miguel Vargas",
