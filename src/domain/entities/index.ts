@@ -1,6 +1,7 @@
 export * from "./audit";
 export * from "./campaign";
 export * from "./contribution";
+export * from "./donor";
 export * from "./expense";
 export * from "./media";
 export * from "./milestone";
