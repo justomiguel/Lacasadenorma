@@ -112,17 +112,6 @@ export function GroupError({ name }: { name: string }) {
   );
 }
 
-/**
- * `defaultValue` sólo cuando hay algo que precargar.
- *
- * Existe por `exactOptionalPropertyTypes`: una prop opcional no acepta `undefined`
- * explícito, y lo que viene de la base es `string | null`. Esto convierte las dos
- * formas de "no hay dato" en la única que el tipo admite, que es la prop ausente.
- */
-export function defaultOf(value: string | null | undefined): { defaultValue?: string } {
-  return value === null || value === undefined ? {} : { defaultValue: value };
-}
-
 /** Un valor que la acción necesita y la persona no edita: el id, la campaña. */
 export function HiddenValue({ name, value }: { name: string; value: string }) {
   return <input type="hidden" name={name} value={value} />;

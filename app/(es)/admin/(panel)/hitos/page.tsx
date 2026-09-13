@@ -1,7 +1,7 @@
+import { defaultOf } from "@/components/admin/defaults";
 import {
   ActionForm,
   CheckboxField,
-  defaultOf,
   HiddenValue,
   SelectField,
   SubmitButton,

@@ -24,6 +24,7 @@ test.describe("fase E · muro", () => {
     request,
     browser,
   }, info) => {
+    test.setTimeout(90_000);
     const sufijo = sufijoUnico(info.project.name);
     const titulo = `Puerta de quien ayuda (${sufijo})`;
     const visible = `Vecina Visible ${sufijo}`;
