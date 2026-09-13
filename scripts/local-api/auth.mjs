@@ -1,75 +1,19 @@
-import { randomUUID } from "node:crypto";
-
-import { SESSION_SECONDS } from "./config.mjs";
-import { claimsFromHook, findUserById, findUserByPassword } from "./db.mjs";
+import { findUserById, findUserByPassword } from "./db.mjs";
 import { authError, json, readBearer, readBody } from "./http.mjs";
-import { signJwt, verifyAccessToken } from "./jwt.mjs";
-
-/**
- * Los refresh tokens, en memoria.
- *
- * En la plataforma viven en `auth.refresh_tokens`. Acá no: reiniciar este proceso
- * invalida las sesiones abiertas, que para una suite de pruebas es lo correcto —una
- * sesión que sobrevive al reset de la base sería una sesión mintiendo—. Se rotan en
- * cada uso, como hace GoTrue.
- */
-const refreshTokens = new Map();
-
-/** La forma del usuario que devuelve GoTrue, con lo que supabase-js mira. */
-function asGoTrueUser(row) {
-  return {
-    id: row.id,
-    aud: "authenticated",
-    role: "authenticated",
-    email: row.email,
-    email_confirmed_at: row.created_at,
-    confirmed_at: row.created_at,
-    last_sign_in_at: new Date().toISOString(),
-    app_metadata: row.app_metadata,
-    user_metadata: row.user_metadata,
-    identities: [],
-    created_at: row.created_at,
-    updated_at: row.created_at,
-    is_anonymous: false,
-  };
-}
-
-async function issueSession(row) {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const expiresAt = issuedAt + SESSION_SECONDS;
-
-  const claims = await claimsFromHook(row.id, {
-    iss: "supabase-local",
-    sub: row.id,
-    aud: "authenticated",
-    // Éste es el claim que PostgREST lee para elegir con qué rol de Postgres
-    // ejecuta la consulta. De él depende que las policies RLS se apliquen.
-    role: "authenticated",
-    email: row.email,
-    app_metadata: row.app_metadata,
-    user_metadata: row.user_metadata,
-    session_id: randomUUID(),
-    iat: issuedAt,
-    exp: expiresAt,
-  });
-
-  const refreshToken = randomUUID().replaceAll("-", "");
-
-  refreshTokens.set(refreshToken, row.id);
-
-  return {
-    access_token: signJwt(claims),
-    token_type: "bearer",
-    expires_in: SESSION_SECONDS,
-    expires_at: expiresAt,
-    refresh_token: refreshToken,
-    user: asGoTrueUser(row),
-  };
-}
+import { verifyAccessToken } from "./jwt.mjs";
+import { handleRegistro } from "./registro.mjs";
+import { asGoTrueUser, issueSession, refreshTokens } from "./sesion.mjs";
 
 export async function handleAuth(incoming, outgoing, url) {
   const [ruta, consulta] = url.slice("/auth/v1".length).split("?");
   const parametros = new URLSearchParams(consulta ?? "");
+
+  // Crear la cuenta, canjear el enlace del correo, pedir la recuperación y cambiar
+  // la contraseña. Viven aparte porque llegaron con el registro abierto y porque
+  // las cuatro tienen una decisión de seguridad adentro que conviene leer junta.
+  if (await handleRegistro(incoming, outgoing, ruta)) {
+    return;
+  }
 
   if (ruta === "/token" && incoming.method === "POST") {
     const grant = parametros.get("grant_type");
@@ -89,6 +33,15 @@ export async function handleAuth(incoming, outgoing, url) {
         // igual que GoTrue: distinguirlos convierte la pantalla de acceso en un
         // verificador de correos registrados (amenaza S1).
         authError(outgoing, 400, "invalid_credentials", "Invalid login credentials");
+        return;
+      }
+
+      // Con `enable_confirmations = true`, una cuenta sin confirmar no entra. Es la
+      // implicación entera de esa opción: si esto emitiera un token, tener sesión
+      // dejaría de significar correo confirmado y las pantallas tendrían que
+      // verificarlo cada una por su cuenta (contrato de cuentas, amenaza S3).
+      if (row.email_confirmed_at === null) {
+        authError(outgoing, 400, "email_not_confirmed", "Email not confirmed");
         return;
       }
 
@@ -198,6 +151,6 @@ export async function handleAuth(incoming, outgoing, url) {
   }
 
   json(outgoing, 501, {
-    message: `La API local no implementa ${incoming.method ?? "?"} /auth/v1${ruta}. Sólo entrar, leer el usuario, renovar y salir (scripts/local-api.mjs).`,
+    message: `La API local no implementa ${incoming.method ?? "?"} /auth/v1${ruta}. Está emulado lo que usan las pantallas de cuenta y de backoffice (scripts/local-api.mjs).`,
   });
 }

@@ -68,6 +68,7 @@ const SELECT_USER = `
       'email', u.email,
       'app_metadata', u.raw_app_meta_data,
       'user_metadata', u.raw_user_meta_data,
+      'email_confirmed_at', u.email_confirmed_at,
       'created_at', u.created_at
     )
     from auth.users u
@@ -95,6 +96,130 @@ export function findUserByPassword(email, password) {
 
 export function findUserById(id) {
   return query(SELECT_USER.replace("%WHERE%", "u.id = :'id'::uuid"), { id });
+}
+
+export function findUserByEmail(email) {
+  return query(SELECT_USER.replace("%WHERE%", "u.email = lower(:'email')"), { email });
+}
+
+/**
+ * El enlace del correo, guardado donde lo guarda la plataforma.
+ *
+ * `confirmation_token` y `recovery_token` son columnas de `auth.users` en GoTrue, y
+ * el harness las usa como buzón: no hay servidor de correo acá, así que el enlace se
+ * lee de la base en lugar de leerse de una bandeja de entrada.
+ */
+const COLUMNAS_DE_TOKEN = new Set(["confirmation_token", "recovery_token"]);
+
+/**
+ * El nombre de la columna es lo único que se pega en el SQL en lugar de pasarse como
+ * variable, porque psql no interpola identificadores. Por eso se valida contra una
+ * lista cerrada: el resto de este archivo está escrito para que nada que venga de la
+ * red llegue al texto de una consulta, y una excepción sin guardia lo desharía.
+ */
+function columnaDeToken(columna) {
+  if (!COLUMNAS_DE_TOKEN.has(columna)) {
+    throw new Error(`Columna de token desconocida: ${columna}`);
+  }
+
+  return columna;
+}
+
+export function findUserByLinkToken(token, columna) {
+  const nombre = columnaDeToken(columna);
+
+  return query(
+    SELECT_USER.replace("%WHERE%", `u.${nombre} is not null and u.${nombre} = :'token'`),
+    { token },
+  );
+}
+
+/** Crea la cuenta **sin confirmar**: la confirmación llega al canjear el enlace. */
+export async function createUnconfirmedUser(email, password, token) {
+  await query(
+    `
+      insert into auth.users
+        (email, encrypted_password, raw_app_meta_data, confirmation_token, confirmation_sent_at)
+      values (
+        lower(:'email'),
+        extensions.crypt(:'password', extensions.gen_salt('bf')),
+        -- Lo que escribe GoTrue en un alta por correo. No es decorativo acá: la
+        -- respuesta de un alta nueva y la de una dirección ya registrada tienen que
+        -- ser idénticas, y cualquier campo que sólo aparezca en una de las dos
+        -- convierte el formulario en el verificador de direcciones que no debe ser.
+        '{"provider": "email", "providers": ["email"]}'::jsonb,
+        :'token',
+        now()
+      );
+      select 'null'::json;
+    `,
+    { email, password, token },
+  );
+
+  return findUserByEmail(email);
+}
+
+export async function setRecoveryToken(email, token) {
+  await query(
+    `
+      update auth.users
+      set recovery_token = :'token', recovery_sent_at = now()
+      where email = lower(:'email');
+      select 'null'::json;
+    `,
+    { email, token },
+  );
+}
+
+/**
+ * Canjear el enlace: confirma el correo si hacía falta y **quema el token**.
+ *
+ * Que el token se borre no es prolijidad: un enlace de recuperación que sirve dos
+ * veces es un enlace que sigue sirviendo después de que la persona ya cambió su
+ * contraseña, y eso es justamente lo que la pantalla promete que no pasa.
+ */
+export async function consumeLinkToken(id, columna) {
+  await query(
+    `
+      update auth.users
+      set ${columnaDeToken(columna)} = null,
+          email_confirmed_at = coalesce(email_confirmed_at, now())
+      where id = :'id'::uuid;
+      select 'null'::json;
+    `,
+    { id },
+  );
+
+  return findUserById(id);
+}
+
+/** Los tokens pendientes de una dirección: lo que el buzón del harness entrega. */
+export function findPendingLink(email) {
+  return query(
+    `
+      select coalesce((
+        select json_build_object(
+          'confirmation_token', u.confirmation_token,
+          'recovery_token', u.recovery_token
+        )
+        from auth.users u
+        where u.email = lower(:'email')
+      ), 'null'::json);
+    `,
+    { email },
+  );
+}
+
+export async function updatePassword(id, password) {
+  await query(
+    `
+      update auth.users
+      set encrypted_password = extensions.crypt(:'password', extensions.gen_salt('bf'))
+      where id = :'id'::uuid;
+      select 'null'::json;
+    `,
+    { id, password },
+  );
 }
 
 /**

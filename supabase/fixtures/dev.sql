@@ -55,15 +55,19 @@ delete from auth.users where email like '%@ejemplo.invalid';
 -- lo que sí pasa si se desincronizan es que el flujo 9 falla en el primer paso, con
 -- el mensaje de la pantalla de acceso, que es un fallo bien visible.
 
-insert into auth.users (id, email, encrypted_password) values
+-- `email_confirmed_at` se escribe a propósito y no se deja en `null`: desde que el
+-- registro está abierto, la API local rechaza entrar con una cuenta sin confirmar,
+-- igual que GoTrue con `enable_confirmations = true`. Estas cuatro las crea el
+-- equipo desde el panel, donde la confirmación ya viene hecha.
+insert into auth.users (id, email, encrypted_password, email_confirmed_at) values
   ('bbbbbbbb-0000-4000-8000-000000000001', 'propietaria@ejemplo.invalid',
-   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now()),
   ('bbbbbbbb-0000-4000-8000-000000000002', 'administrador@ejemplo.invalid',
-   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now()),
   ('bbbbbbbb-0000-4000-8000-000000000003', 'editora@ejemplo.invalid',
-   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf'))),
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now()),
   ('bbbbbbbb-0000-4000-8000-000000000004', 'auditora@ejemplo.invalid',
-   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')));
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now());
 
 insert into public.user_roles (user_id, role, granted_by) values
   ('bbbbbbbb-0000-4000-8000-000000000001', 'owner', null),

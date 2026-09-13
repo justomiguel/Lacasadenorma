@@ -9,6 +9,7 @@ import { pipeline } from "node:stream/promises";
 import { promisify } from "node:util";
 
 import { handleAuth } from "./auth.mjs";
+import { handleBuzon } from "./buzon.mjs";
 import {
   API_PORT,
   BIN_DIR,
@@ -95,8 +96,14 @@ export async function startLocalApi() {
   const server = createServer((incoming, outgoing) => {
     const url = incoming.url ?? "/";
 
-    if (url.startsWith("/auth/v1")) {
-      handleAuth(incoming, outgoing, url).catch((error) => {
+    const emulado = url.startsWith("/auth/v1")
+      ? handleAuth
+      : url.startsWith("/harness/v1")
+        ? handleBuzon
+        : null;
+
+    if (emulado !== null) {
+      emulado(incoming, outgoing, url).catch((error) => {
         // Principio XII: si la base no contesta o el hook falla, se dice cuál fue el
         // error. Un 500 vacío acá se ve, del otro lado, como "esos datos no coinciden
         // con ninguna cuenta", que es exactamente la pista equivocada.
@@ -112,7 +119,11 @@ export async function startLocalApi() {
 
     if (!url.startsWith("/rest/v1")) {
       outgoing.writeHead(404, { "content-type": "application/json" });
-      outgoing.end(JSON.stringify({ message: "La API local sólo emula /rest/v1." }));
+      outgoing.end(
+        JSON.stringify({
+          message: "La API local emula /rest/v1, /auth/v1 y el buzón /harness/v1.",
+        }),
+      );
       return;
     }
 

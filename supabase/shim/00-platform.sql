@@ -78,6 +78,25 @@ create table if not exists auth.users (
   created_at timestamptz not null default now()
 );
 
+-- Las columnas del registro abierto (ADR-027). Mismos nombres que la plataforma:
+-- GoTrue guarda acá el token del enlace que manda por correo, y `email_confirmed_at`
+-- es lo que distingue una cuenta creada de una cuenta confirmada.
+--
+-- Importan para las pruebas más de lo que parece: con `enable_confirmations = true`,
+-- tener sesión **implica** correo confirmado, y de eso depende que ninguna pantalla
+-- tenga que verificarlo por su cuenta. Sin estas columnas, el harness no podría
+-- reproducir esa implicación y probaría un registro que en producción no existe.
+--
+-- `add column if not exists` y no columnas de la definición de arriba: la tabla se
+-- crea con `if not exists`, así que en una base que ya estaba no se volvería a crear
+-- y las columnas nuevas no aparecerían nunca.
+alter table auth.users
+  add column if not exists email_confirmed_at timestamptz,
+  add column if not exists confirmation_token text,
+  add column if not exists confirmation_sent_at timestamptz,
+  add column if not exists recovery_token text,
+  add column if not exists recovery_sent_at timestamptz;
+
 -- ── Contexto de la petición ─────────────────────────────────────────────────
 -- Misma implementación que la plataforma: leen `request.jwt.claims`, que PostgREST
 -- fija por transacción. En las pruebas se fija con `set local`.
