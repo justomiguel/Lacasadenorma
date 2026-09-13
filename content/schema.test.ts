@@ -121,6 +121,24 @@ describe("contenido publicado", () => {
     expect(legacyText).toContain("todavía no existe como organización");
   });
 
+  it("publica Mercado Pago de Argentina y de Chile, y PayPal, con URLs distintas", () => {
+    const { help: helpEn } = getContent("en");
+
+    expect(help.mercadoPagoUrl.AR).toBe(
+      "https://link.mercadopago.com.ar/donacionescasanorma",
+    );
+    expect(help.mercadoPagoUrl.CL).toBe("https://link.mercadopago.cl/donacioneschile");
+    expect(help.paypalUrl).toBe(
+      "https://www.paypal.com/donate/?hosted_button_id=CMMPSBKNA5ZKL",
+    );
+
+    expect(new URL(help.mercadoPagoUrl.AR ?? "").hostname).not.toBe(
+      new URL(help.mercadoPagoUrl.CL ?? "").hostname,
+    );
+    expect(helpEn.mercadoPagoUrl).toEqual(help.mercadoPagoUrl);
+    expect(helpEn.paypalUrl).toBe(help.paypalUrl);
+  });
+
   /**
    * La bajada de `/norma` decía casi palabra por palabra lo mismo que el segundo
    * párrafo, y las dos cosas se leen a doscientos píxeles de distancia. En una

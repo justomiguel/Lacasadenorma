@@ -1,8 +1,9 @@
 "use client";
 
-import { useSyncExternalStore, type ReactNode } from "react";
+import { useRef, useSyncExternalStore, type ReactNode } from "react";
 
 import { BrandLabel } from "@/components/design-system/brand-mark";
+import { cn } from "@/components/design-system/cn";
 import type { BrandId } from "@/content/brands";
 
 export type Channel = "transfer" | "mercadopago" | "paypal";
@@ -74,4 +75,78 @@ export function nextItem<T>(items: readonly T[], current: T, key: string): T | n
   }
 
   return null;
+}
+
+export function countryPanelClass(
+  enhanced: boolean,
+  active: Country,
+  item: Country,
+): string {
+  return enhanced && active !== item ? "min-w-0 max-lg:hidden" : "min-w-0";
+}
+
+export function DonationCountryTabs({
+  country,
+  countryNames,
+  label,
+  onCountry,
+}: {
+  country: Country;
+  countryNames: Record<Country, string>;
+  label: string;
+  onCountry: (next: Country) => void;
+}) {
+  const countryRefs = useRef(new Map<Country, HTMLButtonElement>());
+
+  return (
+    <div
+      role="tablist"
+      aria-label={label}
+      className="mb-lg flex gap-sm lg:hidden"
+      onKeyDown={(event) => {
+        const next = nextItem(COUNTRIES, country, event.key);
+
+        if (next === null) {
+          return;
+        }
+
+        event.preventDefault();
+        onCountry(next);
+        countryRefs.current.get(next)?.focus();
+      }}
+    >
+      {COUNTRIES.map((item) => {
+        const selected = country === item;
+
+        return (
+          <button
+            key={item}
+            ref={(node) => {
+              if (node === null) {
+                countryRefs.current.delete(item);
+              } else {
+                countryRefs.current.set(item, node);
+              }
+            }}
+            type="button"
+            role="tab"
+            aria-selected={selected}
+            tabIndex={selected ? 0 : -1}
+            className={cn(
+              "lift-hover inline-flex min-h-touch items-center gap-xs rounded-pill px-md font-ui text-small",
+              selected
+                ? "bg-forest text-paper"
+                : "border border-rule text-ink hover:border-forest",
+            )}
+            onClick={() => {
+              onCountry(item);
+            }}
+          >
+            <Flag country={item} />
+            {countryNames[item]}
+          </button>
+        );
+      })}
+    </div>
+  );
 }

@@ -74,24 +74,60 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
     ).toBeVisible();
   });
 
-  test("Mercado Pago y PayPal se ven y no tienen un botón sin URL", async ({ page }) => {
+  test("Mercado Pago distingue Argentina y Chile, y PayPal tiene su enlace", async ({
+    page,
+  }) => {
     await page.goto("/ayudar");
 
     const canales = page.getByRole("tablist", { name: ui.home.donateTitle });
 
     await canales.getByRole("tab", { name: ui.home.mercadoPago }).click();
-    await expect(page.getByText(ui.home.mercadoPagoLead)).toBeVisible();
+    await expect(page.getByText(ui.home.mercadoPagoLead).first()).toBeVisible();
     await expect(
       canales.getByRole("tab", { name: ui.home.mercadoPago }).locator("img"),
     ).toHaveAttribute("src", /mercadopago/);
-    await expect(page.getByRole("link", { name: /mercado pago/i })).toHaveCount(0);
+
+    const arHref = help.mercadoPagoUrl.AR;
+    const clHref = help.mercadoPagoUrl.CL;
+    const paypalHref = help.paypalUrl;
+
+    expect(arHref).not.toBeNull();
+    expect(clHref).not.toBeNull();
+    expect(paypalHref).not.toBeNull();
+
+    const ar = page.locator(`a[href="${arHref ?? ""}"]`);
+    const cl = page.locator(`a[href="${clHref ?? ""}"]`);
+
+    const ancho = page.viewportSize()?.width ?? 0;
+
+    if (ancho >= 1024) {
+      await expect(ar).toBeVisible();
+      await expect(cl).toBeVisible();
+    } else {
+      const paises = page.getByRole("tablist", { name: ui.countryTabsLabel });
+
+      await paises.getByRole("tab", { name: ui.countries.AR }).click();
+      await expect(ar).toBeVisible();
+      await expect(cl).toBeHidden();
+
+      await paises.getByRole("tab", { name: ui.countries.CL }).click();
+      await expect(cl).toBeVisible();
+    }
+
+    await expect(ar).toHaveAttribute("href", arHref ?? "");
+    await expect(cl).toHaveAttribute("href", clHref ?? "");
+    await expect(ar.getByText(ui.countries.AR)).toHaveCount(1);
+    await expect(cl.getByText(ui.countries.CL)).toHaveCount(1);
 
     await canales.getByRole("tab", { name: ui.home.paypal }).click();
-    await expect(page.getByText(ui.home.paypalLead)).toBeVisible();
     await expect(
       canales.getByRole("tab", { name: ui.home.paypal }).locator("img"),
     ).toHaveAttribute("src", /paypal/);
-    await expect(page.getByRole("link", { name: /paypal/i })).toHaveCount(0);
+
+    const paypal = page.getByRole("link", { name: ui.home.paypalCta });
+
+    await expect(paypal).toBeVisible();
+    await expect(paypal).toHaveAttribute("href", paypalHref ?? "");
   });
 
   test("sin JavaScript Argentina y Chile vienen completos en el HTML", async ({

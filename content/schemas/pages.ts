@@ -90,9 +90,13 @@ export const helpSchema = pageSchema.extend({
   }),
   /**
    * URLs reales o `null`. Nulo significa: el canal se muestra, el botón no.
-   * No se inventa un href.
+   * Mercado Pago tiene un link por país: Argentina y Chile no son el mismo
+   * destino. No se inventa un href.
    */
-  mercadoPagoUrl: z.string().url().nullable(),
+  mercadoPagoUrl: z.object({
+    AR: z.string().url().nullable(),
+    CL: z.string().url().nullable(),
+  }),
   paypalUrl: z.string().url().nullable(),
 });
 

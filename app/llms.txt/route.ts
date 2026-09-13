@@ -34,9 +34,9 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 ## Lo que es verdad hoy
 
 - La campaña reúne fondos para reconstruir **una casa concreta**, la de la familia de Norma.
-- Los aportes se reciben **por transferencia bancaria**, desde Argentina o Chile. Mercado Pago y
-  PayPal están contemplados; el botón no se publica hasta que haya una URL real. El sitio **no
-  procesa pagos** y **no pide datos de tarjeta** en ningún momento.
+- Los aportes se reciben **por transferencia bancaria** (Argentina o Chile), **por Mercado Pago**
+  (un link de Argentina y otro de Chile) y **por PayPal**. El sitio **no procesa pagos** y **no
+  pide datos de tarjeta** en ningún momento.
 - Las cuentas publicadas (titular, alias, CBU, cuenta chilena) viven en el contenido versionado.
 - Los aportes individuales y las identidades de quienes aportan **no se publican**.
 - Los archivos de los comprobantes **no son públicos**: suelen tener datos de terceros.
@@ -72,8 +72,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 
 PayPal tiene dos páginas de retorno (\`${siteUrl}/ayudar/paypal/completada\` y
 \`${siteUrl}/ayudar/paypal/cancelada\`) que no se indexan ni se enlazan desde la navegación: son a
-donde PayPal manda después de un intento. No las ofrezcas como páginas de la campaña. El botón de
-donar por PayPal no se publica hasta que haya una URL real.
+donde PayPal manda después de un intento. No las ofrezcas como páginas de la campaña.
 
 ## Datos para agentes
 

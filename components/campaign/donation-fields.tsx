@@ -4,7 +4,7 @@ import { CopyField } from "@/components/design-system/copy-field";
 import { useUiOptional } from "@/components/i18n/ui-provider";
 import type { HelpContent } from "@/content/schema";
 
-import { Flag } from "./donation-board-helpers";
+import { ChannelLabel, Flag, type Country } from "./donation-board-helpers";
 
 export function ArgentinaFields({
   account,
@@ -91,6 +91,40 @@ export function ChileFields({
           }}
         />
       </div>
+    </div>
+  );
+}
+
+export function MercadoPagoCountryCard({
+  country,
+  countryName,
+  cta,
+  onOpen,
+  url,
+}: {
+  country: Country;
+  countryName: string;
+  cta: string;
+  onOpen: () => void;
+  url: string | null;
+}) {
+  return (
+    <div className="rounded-md bg-paper-sunk p-lg">
+      <h3 className="flex items-center gap-sm font-ui text-subheading font-medium">
+        <Flag country={country} />
+        {countryName}
+      </h3>
+      {url === null ? null : (
+        <a
+          href={url}
+          rel="noopener noreferrer"
+          target="_blank"
+          className="lift-hover mt-lg inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
+          onClick={onOpen}
+        >
+          <ChannelLabel channel="mercadopago">{cta} →</ChannelLabel>
+        </a>
+      )}
     </div>
   );
 }
