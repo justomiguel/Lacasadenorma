@@ -14,7 +14,7 @@ export function HelpWays({
   help: HelpContent;
   ui: UiContent;
   origen: "home" | "ayudar";
-  remoteHref: string;
+  remoteHref?: string;
 }) {
   return (
     <div className="mt-2xl grid md:grid-cols-3 md:gap-lg">
@@ -54,14 +54,16 @@ export function HelpWays({
         <p className="font-ui text-label text-olive md:text-sage">03</p>
         <h3 className="mt-xs font-display text-heading">{ui.home.remoteTitle}</h3>
         <p className="mt-md text-body md:text-paper">{ui.home.remoteBody}</p>
-        <p className="mt-lg">
-          <a
-            href={remoteHref}
-            className="lift-hover inline-flex min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest"
-          >
-            {ui.helpCta} →
-          </a>
-        </p>
+        {remoteHref === undefined ? null : (
+          <p className="mt-lg">
+            <a
+              href={remoteHref}
+              className="lift-hover inline-flex min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest"
+            >
+              {ui.helpCta} →
+            </a>
+          </p>
+        )}
       </article>
     </div>
   );

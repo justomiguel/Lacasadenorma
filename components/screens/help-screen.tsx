@@ -47,7 +47,7 @@ export function HelpScreen({ locale }: { locale: Locale }) {
       <Container>
         <Section className="border-t border-rule" labelledBy="formas">
           <SectionHeading title={ui.home.helpKicker} id="formas" />
-          <HelpWays help={help} ui={ui} origen="ayudar" remoteHref="#donaciones" />
+          <HelpWays help={help} ui={ui} origen="ayudar" />
         </Section>
       </Container>
 
