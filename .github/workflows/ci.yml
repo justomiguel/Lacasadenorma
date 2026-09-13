@@ -77,6 +77,13 @@ jobs:
       - name: Comprobar que las marcas de terceros tienen logo y se usan
         run: npm run check:marcas
 
+      # No necesita base: lee las migraciones. Está acá y no sólo en `db.yml`
+      # porque `db.yml` se dispara con los cambios de `supabase/**`, y esta
+      # comprobación tiene que correr en cada cambio para que la lista de aperturas
+      # declaradas del script no se pueda ampliar sin que ninguna compuerta mire.
+      - name: Comprobar que ninguna policy abre el acceso al público sin quererlo
+        run: npm run check:rls
+
       - name: Construir el sitio como se construye en producción
         run: npm run build
 

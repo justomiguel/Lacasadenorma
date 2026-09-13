@@ -53,6 +53,12 @@ jobs:
       - name: Instalar las dependencias fijadas en el lockfile
         run: npm ci
 
+      # Antes de levantar PostgreSQL, que tarda varios minutos: si una policy abre
+      # el acceso a cualquiera que se registre, conviene enterarse en diez segundos
+      # y no después de instalar dos extensiones. Es estático, lee las migraciones.
+      - name: Comprobar que ninguna policy abre el acceso al público sin quererlo
+        run: npm run check:rls
+
       - name: Dejar el runner con el mismo PostgreSQL que una máquina de desarrollo
         uses: ./.github/actions/postgres-local
 

@@ -34,6 +34,12 @@ build, a propósito.
   impone ESLint `max-lines`. Si se acerca, se parte; no se sube el número.
 - Una marca de terceros (PayPal, Mercado Pago, WhatsApp, etc.) que aparece como tab,
   botón o enlace lleva su logo al lado del nombre. Lo impone `npm run check:marcas`.
+- Ninguna policy RLS que alcance a `authenticated` sin comprobar rol o propiedad, ninguna
+  `for all`, ninguna función `security definer` sin `search_path` y ninguna vista sin
+  `security_invoker`. Lo impone `npm run check:rls`, y el motivo está en
+  [ADR-027](./docs/adr/027-identidad-publica.md): con el registro del público abierto,
+  `authenticated` significa cualquiera con un correo. Una apertura deliberada se declara con
+  su motivo en `scripts/check-rls.mjs`.
 
 ## Reglas que no rompen el build y son igual de obligatorias
 
@@ -77,6 +83,7 @@ npm run test:e2e         # Playwright
 npm run db:verify        # Postgres local: reset + migraciones + advisors + pgTAP
 npm run check:toolchain  # las versiones de las herramientas son las decididas
 npm run check:marcas     # cada marca de terceros tiene logo y se usa al lado del nombre
+npm run check:rls        # ninguna policy le abre el acceso a cualquiera que se registre
 ```
 
 `npm run verify` en verde es la condición para pushear, porque se pushea a `main` y no hay pull
