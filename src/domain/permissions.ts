@@ -38,6 +38,12 @@ export const PERMISSIONS = [
   "auditoria.leer",
   /** Otorgar y quitar roles. */
   "roles.escribir",
+  /** Crear, editar y publicar ítems del catálogo de donaciones: qué falta y cuánto. */
+  "catalogo.escribir",
+  /** Ver quién se comprometió a donar qué, con su contacto y su nota privada. */
+  "donaciones.leer",
+  /** Confirmar la llegada de una donación y cancelar una reserva con motivo. */
+  "donaciones.escribir",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -49,6 +55,14 @@ export type Permission = (typeof PERMISSIONS)[number];
  * `cuentas.escribir` es sólo de `owner`, y es la única entrada de la tabla que se
  * justifica sola: quien pueda cambiar un CBU puede desviar todos los aportes de la
  * campaña. No hay razón para que un `admin` lo pueda hacer.
+ *
+ * `donaciones.leer` tiene la misma forma que `finanzas.leer` —`auditor`, `admin`,
+ * `owner`, y `editor` afuera— y por la misma razón: `editor` está por encima de
+ * `auditor` en la jerarquía, así que cualquier permiso resuelto por rango le
+ * abriría los nombres, los correos y las notas privadas de quien se comprometió a
+ * donar algo. El catálogo y las reservas son dos cosas distintas: `editor`
+ * administra la primera con `catalogo.escribir` y no accede a la segunda. Su
+ * espejo en la base es `private.can_read_donors()`.
  */
 const RULES: Record<Permission, readonly AppRole[]> = {
   "backoffice.acceder": ["auditor", "editor", "admin", "owner"],
@@ -60,6 +74,9 @@ const RULES: Record<Permission, readonly AppRole[]> = {
   "cuentas.escribir": ["owner"],
   "auditoria.leer": ["auditor", "admin", "owner"],
   "roles.escribir": ["owner"],
+  "catalogo.escribir": ["editor", "admin", "owner"],
+  "donaciones.leer": ["auditor", "admin", "owner"],
+  "donaciones.escribir": ["admin", "owner"],
 };
 
 export function can(role: AppRole | null, permission: Permission): boolean {

@@ -17,6 +17,13 @@ describe("can", () => {
       expect(can("auditor", "backoffice.acceder")).toBe(true);
     });
 
+    it("lee las donaciones comprometidas", () => {
+      // Quien verifica el libro tiene que poder verificar también lo que llegó en
+      // especie: si no, hay una parte de la ayuda recibida que nadie de afuera
+      // puede revisar.
+      expect(can("auditor", "donaciones.leer")).toBe(true);
+    });
+
     it("no escribe absolutamente nada", () => {
       // Es la razón por la que la tabla existe: con una jerarquía numérica,
       // "al menos auditor" habilitaría toda escritura, y el rol perdería su
@@ -37,12 +44,28 @@ describe("can", () => {
       expect(can("editor", "hitos.escribir")).toBe(true);
     });
 
+    it("administra el catálogo de donaciones", () => {
+      // Qué falta, cuánto y con qué foto es una decisión editorial: es la misma
+      // persona que publica una novedad.
+      expect(can("editor", "catalogo.escribir")).toBe(true);
+    });
+
     it("no ve ni toca plata", () => {
       // Privilegio mínimo real: quien publica una foto de la obra no necesita ver
       // quién aportó ni cuánto.
       expect(can("editor", "finanzas.leer")).toBe(false);
       expect(can("editor", "finanzas.escribir")).toBe(false);
       expect(can("editor", "auditoria.leer")).toBe(false);
+    });
+
+    it("no ve ni una reserva de donación", () => {
+      // La misma lección que obligó a escribir `can_read_ledger()`, aplicada a
+      // datos personales: `editor` es de rango mayor que `auditor`, así que
+      // cualquier permiso resuelto por jerarquía le abriría los nombres, los
+      // correos y las notas privadas de quien se comprometió a donar algo. Dice
+      // qué falta; no sabe quién lo trae.
+      expect(can("editor", "donaciones.leer")).toBe(false);
+      expect(can("editor", "donaciones.escribir")).toBe(false);
     });
   });
 
@@ -51,6 +74,13 @@ describe("can", () => {
       expect(can("admin", "finanzas.escribir")).toBe(true);
       expect(can("admin", "campana.escribir")).toBe(true);
       expect(can("admin", "contenido.escribir")).toBe(true);
+    });
+
+    it("opera las donaciones comprometidas", () => {
+      // Confirmar que algo llegó y cancelar con motivo. Es la operación que mueve
+      // el contador de un ítem y la que puede llevar un nombre al muro.
+      expect(can("admin", "donaciones.leer")).toBe(true);
+      expect(can("admin", "donaciones.escribir")).toBe(true);
     });
 
     it("no administra cuentas bancarias ni roles", () => {
