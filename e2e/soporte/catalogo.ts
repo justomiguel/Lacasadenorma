@@ -17,7 +17,7 @@ export async function cargarItemPublicado(
   await entrar(page, "editor");
   await page.goto("/admin/catalogo");
 
-  const alta = page.locator("#nuevo");
+  const alta = page.getByRole("region", { name: /agregar un ítem/i });
 
   await alta.getByLabel("Qué hace falta").fill(titulo);
   await alta.getByLabel("Cuántas hacen falta").fill(String(cantidad));
@@ -79,12 +79,20 @@ export async function confirmarLlegada(page: Page, titulo: string): Promise<void
   await entrar(page, "admin");
   await page.goto("/admin/donaciones");
 
-  const fila = page.locator("#activas li").filter({ hasText: titulo }).first();
+  const cerradas = page.getByRole("region", { name: /cerradas/i });
+  const yaCerradas = await cerradas.locator("li").filter({ hasText: titulo }).count();
+  const fila = page
+    .getByRole("region", { name: /en curso/i })
+    .locator("li")
+    .filter({ hasText: titulo })
+    .first();
 
   await expect(fila).toBeVisible();
   await fila.getByText("Resolver esta reserva").click();
   await fila.getByRole("button", { name: /^llegó$/i }).click();
-  await expect(fila.getByText(/^llegó$/i).first()).toBeVisible();
+  await expect(cerradas.locator("li").filter({ hasText: titulo })).toHaveCount(
+    yaCerradas + 1,
+  );
 }
 
 export async function habilitarCuenta(page: Page, email: string): Promise<void> {
