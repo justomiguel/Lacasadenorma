@@ -7,37 +7,48 @@ import { getContent } from "./pack";
 /**
  * Lo que el esquema de `emails.json` no puede afirmar solo.
  *
- * Zod verifica que cada correo tenga asunto, cuerpo, acción y motivo. No puede
- * verificar nada que compare **los dos idiomas entre sí**, y ahí están los dos
- * errores que este contenido admite y que no se ven leyendo un archivo:
- *
- *   1. Una traducción que se come una marca de sustitución. El correo sale, se
- *      entrega, y no nombra lo que la persona reservó. `messages.test.ts` no lo
- *      detecta: comprueba que no quede ninguna marca **sin reemplazar**, y una
- *      marca ausente tampoco queda sin reemplazar.
- *   2. Alguien traduciendo el aviso al equipo, que va en castellano a propósito
- *      porque lleva a `/admin` y el backoffice no se traduce (ADR-014). La copia
- *      idéntica en los dos archivos es la decisión; sin esta prueba se lee como
- *      un olvido y la próxima persona lo "arregla".
+ * Zod verifica forma. Esto verifica las dos propiedades que cruzan archivos:
+ * las marcas de sustitución coinciden entre idiomas, y los avisos al equipo
+ * están en castellano en los dos (ADR-014).
  */
 
-/** Las tres de `content/schemas/emails.ts`, y ninguna más. */
 const MARCAS = ["{what}", "{when}", "{link}"] as const;
+
+const STAFF = [
+  "staffNewAccount",
+  "staffNewPledge",
+  "staffPledgeCancelled",
+  "staffPledgeExpired",
+] as const;
+
+const DONANTE = [
+  "accountReceived",
+  "accountApproved",
+  "accountDeclined",
+  "pledgeConfirmed",
+  "pledgeReminder",
+  "pledgeFulfilled",
+] as const;
 
 function todoElTexto(correo: {
   subject: string;
+  preheader: string;
   body: readonly string[];
   action: string;
   why: string;
 }): string {
-  return [correo.subject, ...correo.body, correo.action, correo.why].join("\n");
+  return [
+    correo.subject,
+    correo.preheader,
+    ...correo.body,
+    correo.action,
+    correo.why,
+  ].join("\n");
 }
-
-const CLASES = ["pledgeConfirmed", "pledgeReminder", "pledgeFulfilled"] as const;
 
 describe("el texto de los correos", () => {
   it("usa las mismas marcas de sustitución en los dos idiomas", () => {
-    for (const clase of CLASES) {
+    for (const clase of DONANTE) {
       const usadas = LOCALES.map((locale) => {
         const texto = todoElTexto(getContent(locale).emails[clase]);
 
@@ -52,7 +63,7 @@ describe("el texto de los correos", () => {
 
   it("no inventa una marca que el armador no sabe reemplazar", () => {
     for (const locale of LOCALES) {
-      for (const clase of [...CLASES, "staffNewPledge"] as const) {
+      for (const clase of [...DONANTE, ...STAFF] as const) {
         const texto = todoElTexto(getContent(locale).emails[clase]);
         const encontradas = texto.match(/\{[a-z]+\}/g) ?? [];
 
@@ -63,20 +74,15 @@ describe("el texto de los correos", () => {
     }
   });
 
-  /**
-   * El vencimiento sólo lo nombra el recordatorio. Si otro correo lo nombrara,
-   * saldría vacío cuando la reserva no vence —`substitute()` tira la oración
-   * entera— y el correo perdería un párrafo sin que nadie se entere.
-   */
   it("sólo el recordatorio nombra el vencimiento", () => {
     for (const locale of LOCALES) {
       expect(todoElTexto(getContent(locale).emails.pledgeReminder)).toContain("{when}");
 
-      for (const clase of [
-        "pledgeConfirmed",
-        "pledgeFulfilled",
-        "staffNewPledge",
-      ] as const) {
+      for (const clase of [...DONANTE, ...STAFF] as const) {
+        if (clase === "pledgeReminder") {
+          continue;
+        }
+
         expect(
           todoElTexto(getContent(locale).emails[clase]),
           `${locale}/${clase}`,
@@ -85,21 +91,17 @@ describe("el texto de los correos", () => {
     }
   });
 
-  it("el aviso al equipo dice lo mismo en los dos archivos, y en castellano", () => {
-    expect(getContent("en").emails.staffNewPledge).toEqual(
-      getContent("es").emails.staffNewPledge,
-    );
+  it("los avisos al equipo dicen lo mismo en los dos archivos, y en castellano", () => {
+    for (const clase of STAFF) {
+      expect(getContent("en").emails[clase], clase).toEqual(
+        getContent("es").emails[clase],
+      );
+    }
   });
 
-  /**
-   * "Por qué recibís esto" es lo que separa un correo transaccional de uno que
-   * parece no pedido. Que exista lo verifica el esquema; que **explique algo** no
-   * lo puede verificar ninguna máquina, así que se verifica lo que sí se puede:
-   * que no sea una fórmula de tres palabras.
-   */
-  it("los cuatro explican por qué la persona los está recibiendo", () => {
+  it("todos explican por qué la persona los está recibiendo", () => {
     for (const locale of LOCALES) {
-      for (const clase of [...CLASES, "staffNewPledge"] as const) {
+      for (const clase of [...DONANTE, ...STAFF] as const) {
         expect(
           getContent(locale).emails[clase].why.split(/\s+/).length,
           `${locale}/${clase}`,

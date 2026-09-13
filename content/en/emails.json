@@ -1,6 +1,38 @@
 {
+  "accountReceived": {
+    "subject": "We received your account request",
+    "preheader": "The team reviews it and writes back. Nothing is reserved in the meantime.",
+    "body": [
+      "You confirmed the email, so the request is on the list. The campaign team reviews it by hand: it isn't automatic, and it isn't an endless process.",
+      "In the meantime you can sign in, choose how you appear, and delete the account if you change your mind. Reserving materials comes after they approve you.",
+      "If it takes longer than it should, reply to this email."
+    ],
+    "action": "See your account",
+    "why": "You're getting this because you created an account on the site for rebuilding Norma's house."
+  },
+  "accountApproved": {
+    "subject": "You can now offer what you'll bring",
+    "preheader": "The team approved your account. The catalogue is open for you.",
+    "body": [
+      "The team reviewed your request and approved the account. From now on you can go to the catalogue and note what you'll bring, so nobody else brings the same thing.",
+      "If you'd rather not appear in the list of people who helped, you choose that from your account. The default is not to appear."
+    ],
+    "action": "See your account",
+    "why": "You're getting this because the team approved your account on the site for rebuilding Norma's house."
+  },
+  "accountDeclined": {
+    "subject": "We're not approving the account this time",
+    "preheader": "The team reviewed the request and will not approve it this time.",
+    "body": [
+      "The team reviewed the request and will not approve the account this time. Nothing is reserved under your name, and nothing of yours will appear on the site.",
+      "If this was a mistake, or you want them to look again, reply to this email. You can delete the account from the site whenever you want."
+    ],
+    "action": "See your account",
+    "why": "You're getting this because you had asked for an account on the site for rebuilding Norma's house."
+  },
   "pledgeConfirmed": {
     "subject": "What you're bringing is on the list",
+    "preheader": "Nobody else will bring the same thing. We'll arrange the drop-off over this email.",
     "body": [
       "We've noted that you're bringing {what}. It's reserved under your name, so nobody else will bring the same thing.",
       "If the deadline passes and you couldn't make it, the reservation is released on its own and the material goes back on the list. You don't need to tell us — though if you already know you can't, cancelling makes room for someone else.",
@@ -11,6 +43,7 @@
   },
   "pledgeReminder": {
     "subject": "Your reservation is about to expire",
+    "preheader": "If it doesn't arrive, the material goes back on the list for someone else.",
     "body": [
       "You reserved {what} and the deadline ends on {when}.",
       "If you can still bring it, there's nothing to do: write to us when it's ready and we'll arrange it.",
@@ -21,6 +54,7 @@
   },
   "pledgeFulfilled": {
     "subject": "What you brought arrived. Thank you.",
+    "preheader": "It's already at the site. Your choice about appearing still stands.",
     "body": [
       "We confirm we received {what}. It's already at the site.",
       "If you chose to appear, your name is on the list of the people who helped. If you preferred not to, what you brought still counts and your name appears nowhere on the site. You can change that whenever you want from your account.",
@@ -29,13 +63,44 @@
     "action": "See your account",
     "why": "You're getting this because you brought something for rebuilding Norma's house."
   },
+  "staffNewAccount": {
+    "subject": "Hay una cuenta para revisar",
+    "preheader": "Alguien confirmó el correo y espera que habiliten la cuenta.",
+    "body": [
+      "Alguien confirmó su correo y pidió una cuenta para ofrecerse a traer material.",
+      "Los datos están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
+    ],
+    "action": "Abrir las cuentas del público",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  },
   "staffNewPledge": {
     "subject": "Reserva nueva en el catálogo",
+    "preheader": "Hay que coordinar la entrega. El contacto está en el backoffice.",
     "body": [
       "Alguien se ofreció a traer {what}.",
       "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
     ],
     "action": "Abrir las donaciones",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  },
+  "staffPledgeCancelled": {
+    "subject": "Cancelaron una reserva",
+    "preheader": "Dejá de esperar ese material. Volvió a la lista.",
+    "body": [
+      "Cancelaron la reserva de {what}. El material volvió a la lista.",
+      "Si ya habías coordinado una entrega, no va a llegar."
+    ],
+    "action": "Abrir las donaciones",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  },
+  "staffPledgeExpired": {
+    "subject": "Venció una reserva sin entregar",
+    "preheader": "El material volvió a la lista. Nadie lo está trayendo.",
+    "body": [
+      "Venció el plazo de {what} y no se entregó. El material volvió a la lista.",
+      "No hace falta hacer nada: otra persona ya lo puede pedir."
+    ],
+    "action": "Abrir el catálogo",
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   }
 }

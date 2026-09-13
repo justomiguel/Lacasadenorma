@@ -173,6 +173,76 @@ El primer `owner` se crea así, con SQL, y es deliberado: no hay pantalla de aut
 usuario privilegiado por defecto. Un formulario público que crea el primer administrador es una puerta
 que queda abierta para siempre.
 
+### Correo: dominio, SPF y las plantillas que no viven en el repositorio
+
+Nada sale a una casilla real hasta que el dominio esté verificado en Resend. Hasta entonces, sólo se
+puede probar contra la dirección de prueba del proveedor. Es trabajo humano, previo, y bloquea el
+primer registro público (ADR-028).
+
+1. En Resend, verificar el dominio desde el que va a salir el remitente (`EMAIL_FROM_ADDRESS`).
+2. Cargar en el DNS, y esperar a que Resend los marque como válidos:
+   - **SPF** — autoriza a Resend a hablar en nombre del dominio.
+   - **DKIM** — firma cada correo. Sin esto, Gmail lo manda a spam aunque el SPF esté.
+   - **DMARC** — dice qué hacer con lo que falle. Empieza en `p=none`; no pases a `quarantine` hasta
+     haber mandado unos cuantos y mirado el reporte.
+3. En Vercel (y en el panel de Supabase Auth → SMTP), las mismas variables de `.env.example`:
+   `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_STAFF_ADDRESS`. Sin la del equipo, el aviso al staff
+   no sale y el correo a la persona **sí**.
+4. En el panel de Supabase, **Authentication → Emails → SMTP Settings**: host `smtp.resend.com`,
+   puerto `587`, usuario `resend`, contraseña = la API key. El remitente visible es
+   `La Casa de Norma`. El archivo `supabase/config.toml` ya lo declara para quien aplique con el
+   CLI; el panel hay que tocarlo una vez si el proyecto se creó antes.
+
+**Rotar `RESEND_API_KEY` son dos lugares**, no uno: el entorno de la aplicación (Vercel) y el SMTP de
+Auth (panel de Supabase, o `config.toml` más `supabase config push`). Rotar sólo el primero deja los
+correos de identidad saliendo con una clave muerta; rotar sólo el segundo deja las reservas y las
+habilitaciones sin aviso. Después de rotar: un "olvidé mi contraseña" a una casilla propia, y un
+pedido de cuenta de prueba.
+
+Los tres correos de identidad **se editan en el panel de Supabase**, no en el repositorio: llevan un
+token que esta aplicación no emite. Si alguien los pisa, reponerlos de acá. Un solo idioma —el
+castellano— porque Auth no sabe todavía el idioma de la cuenta: el perfil nace después de confirmar.
+
+**Confirmación de cuenta.** Asunto: `Confirmá tu correo — La Casa de Norma`.
+
+```
+Pediste una cuenta en el sitio de la reconstrucción de la casa de Norma. Para que el
+pedido quede anotado, abrí este enlace:
+
+{{ .ConfirmationURL }}
+
+Si no fuiste vos, ignorá este correo. Nadie va a reservar nada a tu nombre hasta que
+el equipo habilite la cuenta, y eso también te llega por acá.
+```
+
+**Recuperación de contraseña.** Asunto: `Poner una contraseña nueva — La Casa de Norma`.
+
+```
+Alguien pidió poner una contraseña nueva en una cuenta de La Casa de Norma. Si fuiste
+vos, abrí este enlace. Vence; si no llegás, pedí otro desde el sitio.
+
+{{ .ConfirmationURL }}
+
+Si no fuiste vos, ignorá este correo. La contraseña no cambia hasta que alguien abra
+el enlace y escriba una nueva.
+```
+
+**Cambio de dirección.** Asunto: `Confirmá el correo nuevo — La Casa de Norma`.
+
+```
+Pediste cambiar el correo de tu cuenta en La Casa de Norma. Para que el cambio quede,
+abrí este enlace:
+
+{{ .ConfirmationURL }}
+
+Si no fuiste vos, ignorá este correo. El correo de la cuenta no cambia hasta que
+alguien abra el enlace.
+```
+
+Los correos del producto (pedido de cuenta, habilitación, reserva, avisos al equipo) **sí** viven en
+el repositorio: `content/es/emails.json`, `content/en/emails.json` y
+`src/application/emails/layout.ts`. Cambiar una frase no toca el layout.
+
 ---
 
 ## 4. Migraciones
@@ -416,6 +486,7 @@ desde el resumen del banco.
 |---|---|---|
 | Semana | Conciliación (sección 6) | `owner` |
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
+| Semana | Pedidos de cuenta pendientes en `/admin/donantes`. Si no se miran, la persona espera | `admin` |
 | Mes | Revisar quién tiene qué rol (sección 5) | `owner` |
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |

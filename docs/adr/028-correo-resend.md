@@ -83,6 +83,27 @@ razonable de cumplir FR-235 sin inventar un registro de deduplicación propio.
 - La plantilla de los correos de identidad se edita **en el panel de Supabase**, no en el
   repositorio, así que esos tres textos quedan fuera del control de versiones y fuera de
   `check:placeholders`. Se compensa dejando su texto en `docs/runbook.md` para poder reponerlo, y es
-  la razón por la que los otros tres sí viven en `content/`.
+  la razón por la que los del producto sí viven en `content/`.
 - Un fallo de envío es visible en el backoffice, no en la pantalla de quien lo esperaba minutos
   después. Alguien tiene que mirar. Es el precio de no meter el correo en la transacción.
+
+## Enmienda · Plantillas HTML (2026-09-13)
+
+El pedido original de "párrafos, un dato y un enlace" alcanzaba para no mandar un newsletter. No
+alcanza para que el primer correo que recibe una desconocida se reconozca como de este sitio. Los
+correos del producto salen con una plantilla HTML propia, armada en el repositorio, no en el panel
+de Resend:
+
+- Paleta y nombre del sitio (ADR-025): bosque `#153A2E`, papel `#F6F1E8`, sage, tinta. El remitente
+  visual es el mismo que el de la página.
+- **Una** tabla de maquetación, de 600 px, `role="presentation"`. Los clientes de correo sin ella
+  colapsan el diseño; anidar tablas de marketing o usarlas para el cuerpo sigue prohibido.
+- Sin imágenes remotas, sin pixel de seguimiento, sin fuentes que se pidan a la red. Georgia y
+  Arial, que ya están en el aparato. Es ADR-010 aplicado al correo.
+- El cuerpo de texto plano se sigue escribiendo a mano, no se deriva del HTML.
+- El HTML lo arma `src/application/emails/layout.ts` a partir de `content/*/emails.json`. Cambiar
+  una frase no toca el layout; cambiar el layout no toca una frase.
+
+Los tres correos de identidad (confirmar, recuperar, cambiar dirección) **siguen** en el panel de
+Supabase: llevan un token que esta aplicación no emite. Su texto está copiado en el runbook.
+

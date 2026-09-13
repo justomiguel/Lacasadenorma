@@ -1,22 +1,42 @@
 /**
  * El puerto del correo del producto.
  *
- * Son cuatro correos y ninguno es de identidad: la confirmación de la cuenta, la
- * recuperación de la contraseña y el cambio de dirección los manda el servidor de
- * Auth por SMTP, porque llevan un token firmado que sólo él sabe emitir y que la
- * aplicación no tiene ni debería tener (ADR-028).
+ * Ninguno de estos es de identidad: la confirmación de la cuenta, la recuperación
+ * de la contraseña y el cambio de dirección los manda el servidor de Auth por SMTP,
+ * porque llevan un token firmado que sólo él sabe emitir (ADR-028).
  *
- * TypeScript puro: sin `fetch`, sin Next, sin el SDK de nadie. Quien manda de
+ * TypeScript puro: sin `fetch`, sin Next, sin el SDK de nadie. Quién manda de
  * verdad es un adaptador de `src/infrastructure/email/`.
  */
 
-export const EMAIL_KINDS = [
+export const ACCOUNT_EMAIL_KINDS = [
+  "account.received",
+  "account.approved",
+  "account.declined",
+] as const;
+
+export const PLEDGE_EMAIL_KINDS = [
   "pledge.confirmed",
   "pledge.reminder",
   "pledge.fulfilled",
-  "staff.new_pledge",
 ] as const;
 
+export const STAFF_EMAIL_KINDS = [
+  "staff.new_account",
+  "staff.new_pledge",
+  "staff.pledge_cancelled",
+  "staff.pledge_expired",
+] as const;
+
+export const EMAIL_KINDS = [
+  ...ACCOUNT_EMAIL_KINDS,
+  ...PLEDGE_EMAIL_KINDS,
+  ...STAFF_EMAIL_KINDS,
+] as const;
+
+export type AccountEmailKind = (typeof ACCOUNT_EMAIL_KINDS)[number];
+export type PledgeEmailKind = (typeof PLEDGE_EMAIL_KINDS)[number];
+export type StaffEmailKind = (typeof STAFF_EMAIL_KINDS)[number];
 export type EmailKind = (typeof EMAIL_KINDS)[number];
 
 export interface EmailMessage {
@@ -56,17 +76,20 @@ export interface EmailSender {
 }
 
 /**
- * La clave de idempotencia: `<kind>/<pledge_id>`.
+ * La clave de idempotencia: `<kind>/<subject_id>`.
  *
- * Estable —se puede recalcular en un reintento sin guardarla— y sin nada personal
- * adentro: viaja en una cabecera hacia un tercero, así que no puede llevar el
- * correo de nadie.
+ * El sujeto es la reserva o la cuenta, según la clase. Estable —se puede
+ * recalcular en un reintento sin guardarla— y sin nada personal adentro: viaja
+ * en una cabecera hacia un tercero, así que no puede llevar el correo de nadie.
  *
- * Esta capa **no alcanza sola**, y conviene que quede escrito acá: la clave de
- * Resend vence a las 24 horas, y el proceso de recordatorios corre todos los días.
- * A las 25 horas ya no frenaría nada. La deduplicación permanente es
- * `pledges.reminded_at` más `email_deliveries` (FR-235, SC-210).
+ * Esta capa **no alcanza sola**: la clave de Resend vence a las 24 horas. La
+ * deduplicación permanente es `email_deliveries` (y `pledges.reminded_at` para el
+ * recordatorio diario).
  */
-export function idempotencyKeyFor(kind: EmailKind, pledgeId: string): string {
-  return `${kind}/${pledgeId}`;
+export function idempotencyKeyFor(kind: EmailKind, subjectId: string): string {
+  return `${kind}/${subjectId}`;
+}
+
+export function isStaffEmailKind(kind: EmailKind): kind is StaffEmailKind {
+  return kind.startsWith("staff.");
 }
