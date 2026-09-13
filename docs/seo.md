@@ -50,7 +50,7 @@ propio objeto `Metadata` es una garantía de que a alguna le va a faltar la can�
 | `openGraph.alternateLocale` | `pageMetadata()` | El otro idioma |
 | `html lang` | El root layout de cada grupo de rutas | `es-AR` o `en` |
 | `twitter.card` | `pageMetadata()` | `summary_large_image` |
-| `robots` | Layouts públicos / `app/(es)/admin/layout.tsx` | `index, follow` en público; `noindex, nofollow, nocache` en todo `/admin` |
+| `robots` | Layouts públicos / `app/(es)/admin/layout.tsx` / retornos de PayPal | `index, follow` en público; `noindex, nofollow` en `/ayudar/paypal/*` y `noindex, nofollow, nocache` en todo `/admin` |
 | `formatDetection.telephone` | `rootMetadata()` | `false`, para que iOS no convierta un CBU en un teléfono |
 
 Ese último es un detalle que parece cosmético y no lo es: Safari en iOS detecta secuencias de dígitos
@@ -84,13 +84,16 @@ aparecen en los dos idiomas con el mismo slug; el cuerpo sigue en castellano (AD
 Las novedades publicadas se enumeran en tiempo de ejecución con `listUpdates()`. La ruta revalida
 cada 300 segundos, y publicar una novedad invalida `/sitemap.xml` explícitamente (ADR-017).
 
-Dos cosas que el sitemap **no** trae, y son decisiones:
+Tres cosas que el sitemap **no** trae, y son decisiones:
 
 - **`changeFrequency`**. Es una declaración de intención que los buscadores ignoran desde hace años.
   Poner `weekly` en una página que no cambió en dos meses es ruido.
 - **`lastModified` en las páginas editoriales.** Sólo lo llevan las novedades, donde hay una fecha
   real. Inventar `new Date()` para las demás diría "esta página cambió hoy" en cada build, que es
   falso y, peor, entrena al buscador a no creerle a la señal.
+- **Las páginas de retorno de PayPal** (`/ayudar/paypal/completada` y `/ayudar/paypal/cancelada`).
+  PayPal las pide para redirigir; no se navegan, no se indexan (`noIndex: true`) y no van al menú.
+  Sí están en `PAGINAS_PUBLICAS` para que axe y la revisión visual las cubran.
 
 `robots.txt` permite todo el sitio público y bloquea `/admin` y `/api/`, apunta al sitemap y declara
 el host. Bloquear la API es preferencia, no seguridad: la API es pública y cacheable a propósito,
@@ -158,7 +161,7 @@ lea con la conexión de Riacho He Hé y con JavaScript desactivado.
 
 | Ruta | Modo |
 |---|---|
-| `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estáticas en build: su contenido vive en el repositorio |
+| `/norma`, `/que-paso`, `/legado`, `/legales/*`, `/ayudar/paypal/*` | Estáticas en build: su contenido vive en el repositorio |
 | `/`, `/ayudar`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
 | `/llms.txt` | `force-static` |
 | `/api/health` | `force-dynamic`, `no-store` |
@@ -221,8 +224,10 @@ Para agentes que ejecutan herramientas en lugar de leer texto, ver [`webmcp.md`]
 
 ## 9. Qué hacer al agregar una página
 
-1. Sumarla al grupo de navegación que corresponda en `components/site/navigation.ts`. Con eso entra
-   al menú y al sitemap.
+1. Si se navega, sumarla al grupo que corresponda en `components/site/navigation.ts`. Con eso entra
+   al menú y al sitemap. Si **no** se navega —un retorno de un medio de pago— **no** va a
+   `PUBLIC_ROUTES`: va a `PAGINAS_PUBLICAS` y, si no debe aparecer en un buscador,
+   `pageMetadata({ noIndex: true })`.
 2. Exportar `pageMetadata({ title, description, path })`. La descripción se escribe pensando en el
    resultado de búsqueda: es una oración que alguien va a leer antes de decidir si entra.
 3. Decidir si hace falta JSON-LD. Casi siempre no. Si hace falta, tiene que afirmar exactamente lo

@@ -192,6 +192,15 @@ describe("contenido publicado", () => {
     }
   });
 
+  it("las páginas de retorno de PayPal no publican montos", () => {
+    for (const locale of ["es", "en"] as const) {
+      const texto = JSON.stringify(getContent(locale).ui.paypalReturn);
+
+      expect(texto).not.toMatch(/\$\d/);
+      expect(texto).not.toMatch(/\d+[.,]\d{2}/);
+    }
+  });
+
   it("no contiene marcadores de relleno ni datos de ejemplo", () => {
     const contenido = JSON.stringify([
       site,

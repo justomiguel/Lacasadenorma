@@ -8,6 +8,9 @@
  *
  * `/novedades/empezo-el-techo` no está: existe sólo cuando hay base de datos con el
  * fixture, así que vive en la suite que corre con datos.
+ *
+ * `/ayudar/paypal/*` sí está: se llega desde PayPal, no desde el menú, pero axe y
+ * la revisión visual tienen que cubrirlas igual. No van al sitemap.
  */
 export const PAGINAS_PUBLICAS = [
   { path: "/", nombre: "Home" },
@@ -15,6 +18,8 @@ export const PAGINAS_PUBLICAS = [
   { path: "/que-paso", nombre: "Qué ocurrió" },
   { path: "/reconstruccion", nombre: "La reconstrucción" },
   { path: "/ayudar", nombre: "Cómo ayudar" },
+  { path: "/ayudar/paypal/completada", nombre: "PayPal completada" },
+  { path: "/ayudar/paypal/cancelada", nombre: "PayPal cancelada" },
   { path: "/contacto", nombre: "Contacto" },
   { path: "/transparencia", nombre: "Transparencia" },
   { path: "/novedades", nombre: "Novedades" },

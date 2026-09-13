@@ -99,6 +99,24 @@ describe("HelpBar", () => {
     expect(within(container).queryByRole("link", { name: /help rebuild/i })).toBeNull();
   });
 
+  it("tampoco se muestra en el retorno de PayPal, que es parte del mismo flujo", () => {
+    mockDePathname.mockReturnValue("/ayudar/paypal/completada");
+
+    const { container } = render(<HelpBar />);
+
+    expect(barra(container)).toBeNull();
+  });
+
+  it("ni en la cancelada inglesa", () => {
+    mockDePathname.mockReturnValue("/en/ayudar/paypal/cancelada");
+
+    const { container } = render(
+      <HelpBar href={localizedHref("/ayudar", "en")} label="Help rebuild" />,
+    );
+
+    expect(within(container).queryByRole("link", { name: /help rebuild/i })).toBeNull();
+  });
+
   it("se retira mientras la acción primaria está en pantalla", () => {
     const accion = ponerAccionPrimaria();
 

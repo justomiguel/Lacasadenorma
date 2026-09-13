@@ -1,6 +1,14 @@
 import { z } from "zod";
 
-import { phrase } from "./primitives";
+import { paragraphs, phrase } from "./primitives";
+
+const paypalReturnCopySchema = z.object({
+  title: phrase,
+  lead: phrase,
+  seoDescription: phrase,
+  paragraphs,
+  cta: phrase,
+});
 
 export const uiPagesSchema = z.object({
   news: z.object({
@@ -85,6 +93,10 @@ export const uiPagesSchema = z.object({
     title: phrase,
     lead: phrase,
     home: phrase,
+  }),
+  paypalReturn: z.object({
+    completed: paypalReturnCopySchema,
+    cancelled: paypalReturnCopySchema,
   }),
   normaPage: z.object({
     title: phrase,

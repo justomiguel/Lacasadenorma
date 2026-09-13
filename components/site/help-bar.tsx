@@ -10,8 +10,9 @@ import { track } from "@/src/infrastructure/analytics/browser";
 /**
  * CTA inferior del teléfono, como en el mockup.
  *
- * Se oculta en `/ayudar` y cuando `#donaciones` está a la vista.
- * Reserva el alto en el flujo para no tapar el final de la página.
+ * Se oculta en `/ayudar` y en sus retornos de PayPal —son el mismo flujo— y
+ * cuando `#donaciones` está a la vista. Reserva el alto en el flujo para no
+ * tapar el final de la página.
  */
 export function HelpBar({
   href = localizedHref("/ayudar", "es"),
@@ -65,7 +66,7 @@ export function HelpBar({
 
   const canonical = stripLocalePrefix(pathname);
 
-  if (canonical === "/ayudar") {
+  if (canonical === "/ayudar" || canonical.startsWith("/ayudar/")) {
     return null;
   }
 

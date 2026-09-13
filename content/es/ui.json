@@ -214,6 +214,32 @@
     "lead": "El enlace no lleva a ninguna página de La Casa de Norma.",
     "home": "Volver al inicio"
   },
+  "paypalReturn": {
+    "completed": {
+      "title": "Gracias",
+      "lead": "Si la contribución por PayPal se completó, llega a la familia.",
+      "seoDescription": "Gracias por el aporte a la reconstrucción de la casa de la familia de Norma, en Riacho He Hé.",
+      "paragraphs": [
+        "Gracias. La casa se reconstruye con aportes como éste: no hay entidad en el medio, y el sitio no cobra.",
+        "No hace falta que nos escribas. PayPal avisa por su lado. Esta página no es un comprobante ni un recibo: es sólo el lugar al que PayPal te trajo cuando el pago se terminó.",
+        "El detalle de lo que entra a las cuentas se publica en Transparencia cuando hay datos conciliados, no en el instante del pago. Si querés seguir el avance de la obra, está en Novedades.",
+        "Si preferís escribir, el contacto publicado está en Contacto."
+      ],
+      "cta": "Volver al inicio"
+    },
+    "cancelled": {
+      "title": "La contribución no se completó",
+      "lead": "Gracias por haber llegado hasta acá.",
+      "seoDescription": "El aporte por PayPal no se terminó. Si todavía querés ayudar a reconstruir la casa, se puede volver a intentar.",
+      "paragraphs": [
+        "PayPal nos devolvió a esta página porque el pago no se terminó. Gracias igual por haber llegado hasta acá.",
+        "Si fue un cierre accidental, o un dato que no cerró, se puede volver a intentar. Nos sería de mucha ayuda: la prioridad es reconstruir la casa de la familia en Riacho He Hé.",
+        "Los canales están en Cómo ayudar: transferencia desde Argentina o Chile, Mercado Pago y PayPal. Elegí el que te quede más a mano. El sitio no pide datos de tarjeta ni procesa el pago: te lleva al medio y nada más.",
+        "Si preferís no usar PayPal, la transferencia llega entera. Los datos verificados están en esa misma página."
+      ],
+      "cta": "Volver a Cómo ayudar"
+    }
+  },
   "normaPage": {
     "title": "{name}",
     "seoDescription": "Norma Edith Bedoya, conocida como Norma de Vargas: periodista, corresponsal de Diario La Mañana y parte de la Comisión Fundadora de la Biblioteca Pública de Riacho He Hé.",

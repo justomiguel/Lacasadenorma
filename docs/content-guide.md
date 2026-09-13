@@ -35,7 +35,7 @@ directorios.
 | Archivo | Alimenta | Notas |
 |---|---|---|
 | `site.json` | Nombre, bajada, lugar, descripciones, estado | `shortDescription` es la meta description: máximo 160 caracteres, y el esquema lo exige |
-| `ui.json` | Chrome: navegación, botones, cifras, textos de conexión | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
+| `ui.json` | Chrome: navegación, botones, cifras, textos de conexión, y las dos páginas de retorno de PayPal | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
 | `norma.json` | `/norma` y `/en/norma`, el capítulo de Norma en la home, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null`. Los capítulos y hasta tres testimonios salen de la obra conmemorativa. El PDF vive en `public/documentos/` y no se modifica |
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
@@ -286,7 +286,30 @@ contar. El silencio, en una campaña de plata, se lee como que algo salió mal.
 
 ---
 
-## 6. Antes de publicar
+## 6. El enlace de PayPal
+
+PayPal pide dos URLs de retorno al armar el enlace de donación. Ya existen, y **no son el botón de
+donar**: son a donde PayPal manda después de un intento. El botón (`paypalUrl` en `ayudar.json`)
+sigue en `null` hasta que haya una URL real. No se inventa.
+
+En producción, el origen es el de `NEXT_PUBLIC_SITE_URL` (hoy, `https://lacasadenorma.org`). Las
+URLs a pegar en PayPal son:
+
+| Qué pide PayPal | URL |
+|---|---|
+| Completada / Return | `https://lacasadenorma.org/ayudar/paypal/completada` |
+| Cancelada / Cancel | `https://lacasadenorma.org/ayudar/paypal/cancelada` |
+
+Las inglesas existen para el conmutador de idioma (`/en/ayudar/paypal/completada` y
+`/en/ayudar/paypal/cancelada`). Un solo enlace de PayPal usa las castellanas, que son la canónica.
+
+Esas páginas no van al menú ni al sitemap, y declaran `noindex`: no se buscan, se llega desde PayPal.
+No publican el monto ni el identificador que PayPal a veces pone en la query: un redirect no es un
+comprobante ni un total. El aporte se registra en el backoffice después de conciliarlo.
+
+---
+
+## 7. Antes de publicar
 
 Un texto nuevo o corregido, en orden:
 

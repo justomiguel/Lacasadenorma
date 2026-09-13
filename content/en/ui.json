@@ -214,6 +214,32 @@
     "lead": "That link does not lead to a page of La Casa de Norma.",
     "home": "Back to the home page"
   },
+  "paypalReturn": {
+    "completed": {
+      "title": "Thank you",
+      "lead": "If the PayPal contribution went through, it reaches the family.",
+      "seoDescription": "Thank you for contributing to rebuilding the family house of Norma, in Riacho He Hé.",
+      "paragraphs": [
+        "Thank you. The house is being rebuilt with contributions like this: there is no organization in the middle, and the site does not charge.",
+        "You do not need to write to us. PayPal notifies on its side. This page is not a receipt: it is only where PayPal sent you when the payment finished.",
+        "What comes into the accounts is published on Transparency when the figures have been reconciled, not at the moment of payment. If you want to follow the work, that is in Updates.",
+        "If you would rather write, the published contact is on Contact."
+      ],
+      "cta": "Back to the home page"
+    },
+    "cancelled": {
+      "title": "The contribution was not completed",
+      "lead": "Thank you for getting this far.",
+      "seoDescription": "The PayPal contribution was not completed. If you still want to help rebuild the house, you can try again.",
+      "paragraphs": [
+        "PayPal sent us back to this page because the payment was not finished. Thank you anyway for getting this far.",
+        "If it was an accidental close, or a detail that did not go through, you can try again. It would help a great deal: the priority is rebuilding the family house in Riacho He Hé.",
+        "The channels are on How to help: a transfer from Argentina or Chile, Mercado Pago, and PayPal. Use whichever is at hand. The site does not ask for card details or process the payment: it takes you to the channel and nothing more.",
+        "If you would rather not use PayPal, a bank transfer arrives in full. The verified details are on that same page."
+      ],
+      "cta": "Back to How to help"
+    }
+  },
   "normaPage": {
     "title": "{name}",
     "seoDescription": "Norma Edith Bedoya, known as Norma de Vargas: journalist, correspondent for Diario La Mañana, and part of the Founding Committee of the Public Library of Riacho He Hé.",

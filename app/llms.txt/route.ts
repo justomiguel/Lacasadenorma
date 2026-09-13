@@ -70,6 +70,11 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
 - [Privacidad](${siteUrl}/legales/privacidad) · [Términos](${siteUrl}/legales/terminos)
 
+PayPal tiene dos páginas de retorno (\`${siteUrl}/ayudar/paypal/completada\` y
+\`${siteUrl}/ayudar/paypal/cancelada\`) que no se indexan ni se enlazan desde la navegación: son a
+donde PayPal manda después de un intento. No las ofrezcas como páginas de la campaña. El botón de
+donar por PayPal no se publica hasta que haya una URL real.
+
 ## Datos para agentes
 
 Cinco endpoints de lectura, todos \`GET\`, sin autenticación, con límite de tasa por IP. Devuelven

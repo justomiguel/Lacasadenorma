@@ -420,7 +420,23 @@ desde el resumen del banco.
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
 | Antes de cada despliegue | `npm run verify` en verde | CI, y conviene también en local |
-| Cuando cambia una página, y sin excepción cuando lleguen las fotos | El loop de revisión visual: `node scripts/screenshots.mjs` y mirar las once páginas en los dos anchos. Los seis criterios medibles ya los sostiene CI; lo que hay que mirar son los cuatro que son un juicio (`docs/testing.md`) | Quien la cambió |
+| Cuando cambia una página, y sin excepción cuando lleguen las fotos | El loop de revisión visual: `node scripts/screenshots.mjs` y mirar las trece páginas en los dos anchos. Los seis criterios medibles ya los sostiene CI; lo que hay que mirar son los cuatro que son un juicio (`docs/testing.md`) | Quien la cambió |
+
+## 11. Publicar el enlace de PayPal
+
+PayPal pide dos URLs de retorno. Ya están en el sitio; el paso operativo es pegarlas al armar el
+enlace, y **después** poner la URL real del botón en `content/es/ayudar.json` y `content/en/ayudar.json`
+(`paypalUrl`). Hasta que esa URL sea real, el botón no se muestra. No se inventa.
+
+| Qué pide PayPal | URL |
+|---|---|
+| Completada / Return | `https://lacasadenorma.org/ayudar/paypal/completada` |
+| Cancelada / Cancel | `https://lacasadenorma.org/ayudar/paypal/cancelada` |
+
+El detalle de qué dicen esas páginas y por qué no se indexan está en
+[`content-guide.md`](./content-guide.md#6-el-enlace-de-paypal). Un aporte por PayPal se registra en
+`/admin/aportes` después de conciliarlo, igual que una transferencia: el redirect no es un
+comprobante.
 
 ## Documentos relacionados
 

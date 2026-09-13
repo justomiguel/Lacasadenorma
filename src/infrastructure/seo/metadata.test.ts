@@ -21,6 +21,19 @@ describe("pageMetadata", () => {
     expect(es.openGraph?.alternateLocale).toEqual(["en_US"]);
   });
 
+  it("noIndex apaga el rastreo sin sacar la canónica", () => {
+    const meta = pageMetadata({
+      locale: "es",
+      title: "Gracias",
+      description: "Gracias por el aporte a la reconstrucción de la casa de la familia.",
+      path: "/ayudar/paypal/completada",
+      noIndex: true,
+    });
+
+    expect(meta.robots).toEqual({ index: false, follow: false });
+    expect(meta.alternates?.canonical).toBe("/ayudar/paypal/completada");
+  });
+
   it("en inglés la canónica lleva el prefijo y x-default sigue siendo el castellano", () => {
     const en = pageMetadata({
       locale: "en",
