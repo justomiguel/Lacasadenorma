@@ -1,7 +1,10 @@
+import { previewPhotoFor } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { InlineLink } from "@/components/design-system/actions";
+import { PreviewCard } from "@/components/design-system/card";
 import { Band, Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
+import { getContent } from "@/content";
 import type { PersonContent, SiteContent, UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -21,6 +24,8 @@ export function NormaClosing({
   title: string;
   ui: UiContent;
 }) {
+  const { legacy } = getContent(locale);
+
   return (
     <>
       <Band tone="forest">
@@ -31,11 +36,14 @@ export function NormaClosing({
                 {norma.bridge.title}
               </h2>
               <Paragraphs items={[...norma.bridge.paragraphs]} className="mt-lg" />
-              <p className="mt-xl">
-                <InlineLink href={localizedHref("/legado", locale)}>
-                  {ui.primaryNav["/legado"].label} →
-                </InlineLink>
-              </p>
+              <PreviewCard
+                className="mt-xl"
+                href={localizedHref("/legado", locale)}
+                title={legacy.title}
+                action={ui.primaryNav["/legado"].label}
+                media={previewPhotoFor("/legado", locale)}
+                sizes="(min-width: 64rem) 40vw, 100vw"
+              />
             </div>
           </Section>
         </Container>

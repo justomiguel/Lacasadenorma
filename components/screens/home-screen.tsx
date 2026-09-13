@@ -1,9 +1,10 @@
-import { DonationBoard } from "@/components/campaign/donation-board";
 import { FaqSection } from "@/components/campaign/faq-section";
-import { HelpWays } from "@/components/campaign/help-ways";
+import { HelpTabs } from "@/components/campaign/help-tabs";
 import { Hero } from "@/components/campaign/hero";
+import { previewPhotoFor } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
-import { InlineLink, SecondaryAction } from "@/components/design-system/actions";
+import { PreviewCard } from "@/components/design-system/card";
+import { ChapterHeading, ChapterNav } from "@/components/design-system/chapter";
 import { Band, Container, Section } from "@/components/design-system/layout";
 import { CoverPhoto, Figure } from "@/components/design-system/photo";
 import { ParallaxFrame } from "@/components/motion/parallax-frame";
@@ -20,10 +21,18 @@ import {
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 /**
- * Home del mockup: pérdida → comunidad → ayuda → donación → Norma → legado.
+ * Home: un relato en cinco capítulos, con el índice arriba.
+ *
+ * pérdida → comunidad → cómo ayudar → Norma → lo que viene después.
+ *
+ * Cada capítulo abre igual (`ChapterHeading`), cambia de superficie respecto
+ * del anterior —papel, bosque, papel hundido, papel, bosque— y, si apunta a
+ * otra página, cierra con una `PreviewCard` con foto real. Es lo que hace que
+ * se vea dónde termina uno y empieza el otro (ADR-026).
  */
 export function HomeScreen({ locale }: { locale: Locale }) {
-  const { help, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
+  const { help, legacy, norma, reconstruction, site, ui, whatHappened } =
+    getContent(locale);
   const siteUrl = getSiteUrl();
   const after = whatHappened.photoEssay[1]?.photos ?? [];
   const fireMain = after[1] ?? after[0];
@@ -31,6 +40,14 @@ export function HomeScreen({ locale }: { locale: Locale }) {
     (photo): photo is NonNullable<(typeof after)[0]> => photo !== undefined,
   );
   const community = reconstruction.photoEssay[0]?.photos ?? [];
+
+  const chapters = [
+    { fragment: "lo-que-paso", label: ui.home.chapterWhatHappened },
+    { fragment: "la-comunidad", label: ui.home.chapterCommunity },
+    { fragment: "donaciones", label: ui.home.chapterHelp },
+    { fragment: "norma-en-casa", label: `04. ${ui.home.chapterNorma}` },
+    { fragment: "mas-que-una-casa", label: ui.home.chapterNext },
+  ];
 
   return (
     <>
@@ -50,33 +67,37 @@ export function HomeScreen({ locale }: { locale: Locale }) {
 
       <Hero locale={locale} />
 
+      <ChapterNav chapters={chapters} label={ui.home.chaptersLabel} />
+
       <Container>
-        <Section labelledBy="lo-que-paso" chapter="fire">
-          <div className="grid items-start gap-2xl lg:grid-cols-12 lg:gap-xl">
+        <Section labelledBy="lo-que-paso" chapter="fire" className="scroll-mt-24">
+          <div className="grid items-start gap-2xl lg:grid-cols-12 lg:gap-2xl">
             <div className="lg:col-span-5" data-reveal="">
-              <p
-                data-kicker=""
-                className="font-ui text-label uppercase tracking-label text-olive"
-              >
-                {ui.home.chapterWhatHappened}
-              </p>
-              <h2
+              <ChapterHeading
+                label={ui.home.chapterWhatHappened}
+                title={ui.home.fireTitle}
                 id="lo-que-paso"
-                className="mt-sm whitespace-pre-line font-display text-title"
-              >
-                {ui.home.fireTitle}
-              </h2>
+              />
               <p className="mt-lg max-w-measure text-body">{ui.home.fireLead}</p>
+              <PreviewCard
+                className="mt-xl"
+                href={localizedHref("/que-paso", locale)}
+                title={whatHappened.lead}
+                action={ui.home.seeStory}
+                media={previewPhotoFor("/que-paso", locale)}
+                sizes="(min-width: 64rem) 32vw, 100vw"
+              />
             </div>
 
             <div className="lg:col-span-7">
               {fireMain === undefined ? null : (
-                <div data-reveal-photo="wipe" className="overflow-hidden rounded-md">
+                <div data-reveal-photo="wipe">
                   <Figure
                     media={fireMain}
+                    crop="wide"
                     reservedFor=""
                     showCaption={false}
-                    sizes="(min-width: 64rem) 50vw, 100vw"
+                    sizes="(min-width: 64rem) 55vw, 100vw"
                   />
                 </div>
               )}
@@ -87,13 +108,13 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                       key={photo.url}
                       data-reveal-photo="wipe-x"
                       data-stagger={index === 0 ? "1" : "2"}
-                      className="overflow-hidden rounded-md"
                     >
                       <Figure
                         media={photo}
+                        crop="landscape"
                         reservedFor=""
                         showCaption={false}
-                        sizes="(min-width: 64rem) 25vw, 50vw"
+                        sizes="(min-width: 64rem) 27vw, 50vw"
                       />
                     </div>
                   ))}
@@ -109,184 +130,135 @@ export function HomeScreen({ locale }: { locale: Locale }) {
 
       <Band tone="forest">
         <Container>
-          <Section labelledBy="la-comunidad" chapter="community">
-            <div data-reveal="" className="max-w-quote">
-              <p
-                data-kicker=""
-                className="font-ui text-label uppercase tracking-label text-sage"
-              >
-                {ui.home.chapterCommunity}
-              </p>
-              <h2
-                id="la-comunidad"
-                className="mt-sm whitespace-pre-line font-display text-display"
-              >
-                {ui.home.communityTitle}
-              </h2>
-              <p className="mt-lg max-w-measure text-lead">{ui.home.communityLead}</p>
-            </div>
-            {community.length === 0 ? null : (
-              <div className="mt-2xl grid gap-md sm:grid-cols-2">
-                {community.map((photo, index) => (
-                  <div
-                    key={photo.url}
-                    data-reveal-photo={index === 0 ? "wipe" : "wipe-x"}
-                    className="relative aspect-[4/5] overflow-hidden rounded-md"
-                  >
-                    <ParallaxFrame className="absolute inset-[-6%]">
-                      <CoverPhoto
-                        media={photo}
-                        quality={70}
-                        sizes="(min-width: 64rem) 45vw, 100vw"
-                        position="center 40%"
-                      />
-                    </ParallaxFrame>
-                  </div>
-                ))}
+          <Section labelledBy="la-comunidad" chapter="community" className="scroll-mt-24">
+            <div className="grid items-start gap-2xl lg:grid-cols-12 lg:gap-2xl">
+              <div className="lg:col-span-5" data-reveal="">
+                <ChapterHeading
+                  label={ui.home.chapterCommunity}
+                  title={ui.home.communityTitle}
+                  id="la-comunidad"
+                  size="display"
+                />
+                <p className="mt-lg max-w-measure text-lead">{ui.home.communityLead}</p>
+                <p className="mt-xl max-w-measure whitespace-pre-line font-hand text-hand">
+                  {ui.home.communityNote}
+                </p>
+                <PreviewCard
+                  className="mt-xl"
+                  href={localizedHref("/reconstruccion", locale)}
+                  title={reconstruction.title}
+                  action={ui.home.seeWork}
+                  media={previewPhotoFor("/reconstruccion", locale)}
+                  sizes="(min-width: 64rem) 32vw, (min-width: 40rem) 50vw, 100vw"
+                />
               </div>
-            )}
-            <p
-              data-reveal=""
-              className="mt-xl max-w-measure whitespace-pre-line font-hand text-hand"
-            >
-              {ui.home.communityNote}
-            </p>
-            <p className="mt-lg">
-              <InlineLink href={localizedHref("/que-paso", locale)}>
-                {ui.home.seeStory} →
-              </InlineLink>
-            </p>
+              {community.length === 0 ? null : (
+                <div className="grid gap-md sm:grid-cols-2 lg:col-span-7">
+                  {community.map((photo, index) => (
+                    <div
+                      key={photo.url}
+                      data-reveal-photo={index === 0 ? "wipe" : "wipe-x"}
+                      className="relative aspect-portrait overflow-hidden rounded-md"
+                    >
+                      <ParallaxFrame className="absolute inset-0">
+                        <CoverPhoto
+                          media={photo}
+                          quality={70}
+                          sizes="(min-width: 64rem) 28vw, (min-width: 40rem) 50vw, 100vw"
+                          position="center 40%"
+                        />
+                      </ParallaxFrame>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Section>
+        </Container>
+      </Band>
+
+      <Band tone="sunk">
+        <Container>
+          <Section
+            id="donaciones"
+            labelledBy="como-ayudar"
+            chapter="help"
+            className="scroll-mt-24"
+          >
+            <ChapterHeading
+              label={ui.home.chapterHelp}
+              title={ui.home.helpTitle}
+              id="como-ayudar"
+              lead={ui.home.helpKicker}
+            />
+            <HelpTabs help={help} ui={ui} origen="home" className="mt-2xl" />
           </Section>
         </Container>
       </Band>
 
       <Container>
-        <Section labelledBy="como-ayudar" chapter="help">
-          <p
-            data-kicker=""
-            data-reveal=""
-            className="font-ui text-label uppercase tracking-label text-olive"
+        <Section labelledBy="norma-en-casa" chapter="norma" className="scroll-mt-24">
+          <ChapterHeading
+            label={ui.home.chapterNorma}
+            number="04"
+            title={norma.openingTitle}
+            id="norma-en-casa"
+          />
+          <PreviewCard
+            className="mt-2xl"
+            layout="split"
+            crop="portrait"
+            href={localizedHref("/norma", locale)}
+            title={norma.knownAs ?? norma.fullName}
+            summary={ui.home.normaLead}
+            action={ui.home.seeNorma}
+            media={previewPhotoFor("/norma", locale)}
+            sizes="(min-width: 64rem) 40vw, 100vw"
           >
-            {ui.home.chapterHelp}
-          </p>
-          <h2
-            id="como-ayudar"
-            className="mt-sm whitespace-pre-line font-display text-title"
-          >
-            {ui.home.helpTitle}
-          </h2>
-          <p
-            data-kicker=""
-            className="mt-md font-ui text-label uppercase tracking-label text-ink-muted"
-          >
-            {ui.home.helpKicker}
-          </p>
-
-          <HelpWays help={help} ui={ui} origen="home" remoteHref="#donaciones" />
-        </Section>
-      </Container>
-
-      <Container>
-        <Section id="donaciones" labelledBy="donaciones-titulo" className="scroll-mt-24">
-          <p
-            data-kicker=""
-            data-reveal=""
-            className="font-ui text-label uppercase tracking-label text-olive"
-          >
-            {ui.home.chapterDonate}
-          </p>
-          <h2 id="donaciones-titulo" className="mt-sm font-display text-title">
-            {ui.home.donateTitle}
-          </h2>
-          <p className="mt-md max-w-measure text-body text-ink-muted">
-            {ui.home.donateLead}
-          </p>
-          <DonationBoard help={help} ui={ui} className="mt-2xl" />
-          <p className="mt-xl max-w-measure font-hand text-hand text-olive">
-            {ui.home.thanksNote}
-          </p>
-        </Section>
-      </Container>
-
-      <Container>
-        <Section labelledBy="norma-en-casa" chapter="norma">
-          <div className="grid items-center gap-2xl lg:grid-cols-12">
-            <div className="lg:col-span-6" data-reveal="">
-              <p
-                data-kicker=""
-                className="font-ui text-label uppercase tracking-label text-olive"
-              >
-                {ui.home.chapterNorma}
-              </p>
-              <h2
-                id="norma-en-casa"
-                className="mt-sm whitespace-pre-line font-display text-title"
-              >
-                {norma.openingTitle}
-              </h2>
-              <p className="mt-lg max-w-measure text-body">{ui.home.normaLead}</p>
-              <p className="mt-lg max-w-measure text-body text-ink-muted">
-                {norma.paragraphs[0]}
-              </p>
-              <p className="mt-xl">
-                <InlineLink href={localizedHref("/norma", locale)}>
-                  {ui.home.seeNorma} →
-                </InlineLink>
-              </p>
-            </div>
-            {norma.portrait === null ? null : (
-              <div className="lg:col-span-5 lg:col-start-8">
-                <div data-reveal-photo="wipe" className="overflow-hidden rounded-md">
-                  <Figure
-                    media={norma.portrait}
-                    reservedFor=""
-                    showCaption={false}
-                    sizes="(min-width: 64rem) 40vw, 90vw"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            <p className="mt-sm max-w-measure text-small text-ink-muted">
+              {norma.paragraphs[0]}
+            </p>
+          </PreviewCard>
         </Section>
       </Container>
 
       <Band tone="forest">
         <Container>
-          <Section labelledBy="mas-que-una-casa">
-            <div data-reveal="">
-              <p
-                data-kicker=""
-                className="font-ui text-label uppercase tracking-label text-sage"
-              >
-                {ui.home.chapterNext}
-              </p>
-              <h2 id="mas-que-una-casa" className="mt-sm font-display text-title">
-                {ui.home.nextTitle}
-              </h2>
-              <p className="mt-lg max-w-measure text-lead">{ui.home.nextLead}</p>
-              <p className="mt-md max-w-measure text-body">{ui.home.nextBody}</p>
-              <p className="mt-lg max-w-measure font-hand text-hand">
-                {ui.home.nextNote}
-              </p>
-              <p className="mt-xl">
-                <SecondaryAction
+          <Section labelledBy="mas-que-una-casa" chapter="next" className="scroll-mt-24">
+            <div className="grid gap-2xl lg:grid-cols-12 lg:gap-2xl" data-reveal="">
+              <div className="lg:col-span-6">
+                <ChapterHeading
+                  label={ui.home.chapterNext}
+                  title={ui.home.nextTitle}
+                  id="mas-que-una-casa"
+                  lead={ui.home.nextLead}
+                />
+              </div>
+              <div className="lg:col-span-5 lg:col-start-8 lg:pt-4xl">
+                <PreviewCard
                   href={localizedHref("/legado", locale)}
-                  className="lift-hover border-paper text-paper hover:bg-paper hover:text-forest"
+                  title={legacy.title}
+                  summary={ui.home.nextBody}
+                  action={ui.primaryNav["/legado"].label}
+                  media={previewPhotoFor("/legado", locale)}
+                  sizes="(min-width: 64rem) 32vw, 100vw"
                 >
-                  {ui.primaryNav["/legado"].label}
-                </SecondaryAction>
-              </p>
+                  <p className="mt-sm max-w-measure font-hand text-hand text-olive">
+                    {ui.home.nextNote}
+                  </p>
+                </PreviewCard>
+              </div>
             </div>
           </Section>
         </Container>
       </Band>
 
       <Container>
-        <Section labelledBy="preguntas" tight>
+        <Section labelledBy="preguntas">
           <h2 id="preguntas" className="font-display text-heading">
             {ui.home.faqHeading}
           </h2>
-          <FaqSection locale={locale} />
+          <FaqSection locale={locale} className="mt-xl" />
         </Section>
       </Container>
 

@@ -1,4 +1,5 @@
 import { HelpCta } from "@/components/campaign/help-cta";
+import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { Band, Container, Section } from "@/components/design-system/layout";
 import { PhotoSequence } from "@/components/design-system/photo";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
@@ -12,12 +13,14 @@ export const revalidate = 300;
 
 export function reconstructionMetadata(locale: Locale) {
   const { reconstruction, ui } = getContent(locale);
+  const image = ogImageFrom("/reconstruccion", locale);
 
   return pageMetadata({
     locale,
     title: reconstruction.title,
     description: ui.reconstructionPage.seoDescription,
     path: "/reconstruccion",
+    ...(image === undefined ? {} : { image }),
   });
 }
 

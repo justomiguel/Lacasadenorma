@@ -14,10 +14,22 @@ import { cn } from "./cn";
  */
 
 const PRIMARY =
-  "lift-hover inline-flex min-h-touch items-center justify-center rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper hover:bg-forest-strong";
+  "lift-hover inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper hover:bg-forest-strong";
 
-const SECONDARY =
-  "lift-hover inline-flex min-h-touch items-center justify-center rounded-pill border border-forest px-lg py-sm font-ui text-subheading text-forest hover:bg-forest hover:text-paper";
+const SECONDARY_BASE =
+  "lift-hover inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill border px-lg py-sm font-ui text-subheading";
+
+/**
+ * La secundaria tiene dos tonos y no una clase suelta: `cn` no resuelve
+ * conflictos de Tailwind, y sumar `border-paper` encima de `border-forest`
+ * dejaba el resultado librado al orden de la hoja de estilos.
+ */
+const SECONDARY_TONE = {
+  forest: "border-forest text-forest hover:bg-forest hover:text-paper",
+  paper: "border-paper text-paper hover:bg-paper hover:text-forest",
+} as const;
+
+const SECONDARY = `${SECONDARY_BASE} ${SECONDARY_TONE.forest}`;
 
 export function PrimaryAction({
   href,
@@ -40,14 +52,21 @@ export function SecondaryAction({
   href,
   children,
   className,
+  tone = "forest",
   ...rest
 }: {
   href: ComponentProps<typeof Link>["href"];
   children: ReactNode;
   className?: string;
+  /** `paper` es para las bandas oscuras. */
+  tone?: keyof typeof SECONDARY_TONE;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
-    <Link href={href} className={cn(SECONDARY, className)} {...rest}>
+    <Link
+      href={href}
+      className={cn(SECONDARY_BASE, SECONDARY_TONE[tone], className)}
+      {...rest}
+    >
       {children}
     </Link>
   );

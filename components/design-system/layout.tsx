@@ -65,7 +65,10 @@ export function Section({
       {...(id === undefined ? {} : { id })}
       {...(labelledBy === undefined ? {} : { "aria-labelledby": labelledBy })}
       {...(chapter === undefined ? {} : { "data-chapter": chapter })}
-      className={cn(tight ? "py-2xl lg:py-3xl" : "py-3xl lg:py-4xl", className)}
+      /* El ritmo bajó un escalón (ADR-026): con bandas y reglas marcando dónde
+         empieza cada sección, 88 px de aire arriba y abajo ya no separaban, sólo
+         alejaban. */
+      className={cn(tight ? "py-xl lg:py-2xl" : "py-2xl lg:py-3xl", className)}
     >
       {children}
     </section>

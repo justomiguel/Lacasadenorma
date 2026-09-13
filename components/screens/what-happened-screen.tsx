@@ -1,4 +1,5 @@
 import { HelpCta } from "@/components/campaign/help-cta";
+import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { PressClippings } from "@/components/campaign/press-clippings";
 import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
 import { PhotoSequence } from "@/components/design-system/photo";
@@ -15,12 +16,14 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 export function whatHappenedMetadata(locale: Locale) {
   const { ui, whatHappened } = getContent(locale);
+  const image = ogImageFrom("/que-paso", locale);
 
   return pageMetadata({
     locale,
     title: whatHappened.title,
     description: ui.whatHappenedPage.seoDescription,
     path: "/que-paso",
+    ...(image === undefined ? {} : { image }),
   });
 }
 

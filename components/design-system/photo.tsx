@@ -35,17 +35,24 @@ export interface Photograph {
   readonly height: number;
 }
 
-export type PhotoRatio = "portrait" | "landscape" | "wide";
+export type PhotoRatio = "portrait" | "landscape" | "wide" | "square" | "card";
 
-const RATIO_VALUE: Record<PhotoRatio, string> = {
-  portrait: "3 / 4",
-  landscape: "4 / 3",
-  wide: "16 / 9",
+/**
+ * Las proporciones son tokens de `globals.css` (`--aspect-*`), no valores
+ * arbitrarios: así el recorte de una grilla y el de una tarjeta son el mismo.
+ */
+const RATIO_CLASS: Record<PhotoRatio, string> = {
+  portrait: "aspect-portrait",
+  landscape: "aspect-landscape",
+  wide: "aspect-wide",
+  square: "aspect-square",
+  card: "aspect-card",
 };
 
 export function Figure({
   media,
   ratio = "landscape",
+  crop,
   priority = false,
   sizes = "100vw",
   reservedFor,
@@ -54,6 +61,13 @@ export function Figure({
 }: {
   media: Photograph | null;
   ratio?: PhotoRatio;
+  /**
+   * Recorta la foto a una proporción fija y la rellena (`object-cover`). Para
+   * grillas y mosaicos, donde fotos de distinta proporción tienen que quedar
+   * parejas en cualquier ancho. Sin `crop`, la foto conserva su proporción real,
+   * que es lo que corresponde en un ensayo documental.
+   */
+  crop?: PhotoRatio;
   priority?: boolean;
   sizes?: string;
   /** Qué foto va acá, para cuando todavía no existe. */
@@ -69,17 +83,31 @@ export function Figure({
     );
   }
 
+  const image = (
+    <Image
+      src={media.url}
+      alt={media.alt}
+      width={media.width}
+      height={media.height}
+      sizes={sizes}
+      priority={priority}
+      className={
+        crop === undefined
+          ? "h-auto w-full max-w-full rounded-md object-cover"
+          : "h-full w-full object-cover"
+      }
+    />
+  );
+
   return (
     <figure className={cn("min-w-0 max-w-full", className)}>
-      <Image
-        src={media.url}
-        alt={media.alt}
-        width={media.width}
-        height={media.height}
-        sizes={sizes}
-        priority={priority}
-        className="h-auto w-full max-w-full rounded-md object-cover"
-      />
+      {crop === undefined ? (
+        image
+      ) : (
+        <div className={cn("w-full overflow-hidden rounded-md", RATIO_CLASS[crop])}>
+          {image}
+        </div>
+      )}
       {showCaption && (media.caption !== null || media.credit !== null) ? (
         <figcaption className="mt-sm max-w-measure font-ui text-small text-ink-muted">
           {media.caption}
@@ -113,9 +141,9 @@ export function ReservedSpace({
       data-espacio-reservado
       className={cn(
         "relative flex w-full items-end border border-rule bg-paper-sunk p-md",
+        RATIO_CLASS[ratio],
         className,
       )}
-      style={{ aspectRatio: RATIO_VALUE[ratio] }}
     >
       {/*
         Sin `uppercase`: esto es una oración, no una etiqueta. En versales, dos o
@@ -219,13 +247,23 @@ export function PhotoSequence({
             <p className="mt-sm max-w-measure text-body text-ink-muted">{group.note}</p>
           )}
 
-          <div className="mt-lg grid gap-lg sm:grid-cols-2">
+          <div
+            className={cn(
+              "mt-lg grid gap-lg sm:grid-cols-2",
+              /* Tres fotos chicas van a tres columnas en escritorio: a ~370 px
+                 no se estiran, y no queda un hueco al final de la grilla. */
+              group.photos.length === 3 &&
+                group.photos.every((photo) => photo.width < 1000)
+                ? "lg:grid-cols-3"
+                : "",
+            )}
+          >
             {group.photos.map((photo, index) => (
               <Figure
                 key={photo.url}
                 media={photo}
                 reservedFor=""
-                sizes="(min-width: 40rem) 50vw, 100vw"
+                sizes="(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw"
                 /* Ninguna lleva `priority`, y eso es una corrección: antes la
                    primera de cada tramo lo llevaba, «porque se ve entera antes de
                    desplazarse». No se ve. En las dos páginas que usan este
@@ -237,8 +275,11 @@ export function PhotoSequence({
                    párrafo y llegaba a 3 040 ms con un presupuesto de 2 800. */
                 /* Cuando el tramo tiene una cantidad impar de fotos, la primera
                    ocupa las dos columnas: así no queda un hueco al final de la
-                   grilla, y la que abre el tramo es la que más se ve. */
-                {...(group.photos.length % 2 === 1 && index === 0
+                   grilla, y la que abre el tramo es la que más se ve. Sólo si el
+                   archivo tiene resolución para eso: las fotos recortadas del
+                   collage miden 602 px de ancho y a dos columnas se estiraban al
+                   doble, borrosas. Ésas se quedan en una columna. */
+                {...(group.photos.length % 2 === 1 && index === 0 && photo.width >= 1000
                   ? { className: "sm:col-span-2" }
                   : {})}
               />
@@ -284,13 +325,17 @@ export function PhotoEssay({
 /**
  * Foto de fondo: llena el contenedor sin deformarse.
  * `position` cambia el recorte entre teléfono y escritorio.
+ *
+ * `quality` tiene que ser uno de `images.qualities` en `next.config.ts`
+ * (`70` o `80`). El default de Next es 75, que acá no está permitido y
+ * `CoverPhoto` no lo usa.
  */
 export function CoverPhoto({
   media,
   priority = false,
   sizes = "100vw",
   position = "center",
-  quality = 75,
+  quality = 80,
   className,
 }: {
   media: Photograph;

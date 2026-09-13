@@ -89,12 +89,15 @@ export function SectionHeading({
   title,
   id,
   level = 2,
+  rule = true,
   className,
 }: {
   label?: string;
   title: string;
   id?: string;
   level?: 2 | 3;
+  /** Sin regla cuando la sección ya está delimitada por su propia banda. */
+  rule?: boolean;
   className?: string;
 }) {
   const Heading = level === 2 ? "h2" : "h3";
@@ -113,7 +116,7 @@ export function SectionHeading({
       >
         {title}
       </Heading>
-      {level === 2 ? <hr className="mt-md border-t border-rule" /> : null}
+      {level === 2 && rule ? <hr className="mt-md border-t border-rule" /> : null}
     </div>
   );
 }

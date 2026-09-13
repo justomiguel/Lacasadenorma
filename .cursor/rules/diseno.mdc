@@ -6,9 +6,11 @@ alwaysApply: false
 
 # Diseño de La Casa de Norma
 
-Fuente de verdad visual: el mockup aprobado y `docs/adr/025-mockup-aprobado.md`.
+Fuente de verdad visual: el mockup aprobado y `docs/adr/025-mockup-aprobado.md`. Para la
+jerarquía —cómo abre y cierra un capítulo, qué es una acción, qué es una vista previa, dónde
+termina una sección— manda `docs/adr/026-jerarquia-y-capitulos.md`.
 
-En caso de conflicto: **MOCKUP > esta regla > Skills > implementación actual.**
+En caso de conflicto: **MOCKUP > ADR-026 > esta regla > Skills > implementación actual.**
 
 Las Skills (`frontend-design` y similares) sirven para ejecutar el mockup —accesibilidad,
 responsive, performance, motion sutil, SEO—. No tienen autorización para cambiar paleta, tipografía,
@@ -32,7 +34,29 @@ clon de recaudación, no landing de Tailwind.
 
 ## Recorrido
 
-La home cuenta la historia en scroll: pérdida → comunidad → acción → donación → Norma → legado.
+La home cuenta la historia en scroll, en cinco capítulos: pérdida → comunidad → cómo ayudar →
+Norma → legado. Debajo de la apertura va el índice de capítulos (`ChapterNav`).
+
+## Jerarquía (ADR-026)
+
+- **Un capítulo abre con `ChapterHeading`** —numeral grande, nombre sin versales, título— y, si
+  apunta a otra página, **cierra con `PreviewCard`**: foto real, borde de regla, toda ella enlace.
+  Los capítulos alternan superficie (papel / bosque / papel hundido); sobre la misma superficie,
+  una regla.
+- **Tres clases de acción, ninguna más.** Primaria (`PrimaryAction`, `HelpCta`): sólo «Ayudar a
+  reconstruir». Vista previa (`PreviewCard`): ir a otra página. Enlace de prosa (`InlineLink`):
+  dentro de un párrafo. `SecondaryAction` (píldora con borde, `tone` según la banda) queda en la
+  apertura y en pantallas de error. No existe el «texto chico con flecha» como cierre de sección.
+- **Una vista previa de otra página es una tarjeta** (`PreviewCard`): borde de regla, superficie
+  propia, foto a 3:2, toda ella enlace. Sin sombra. Si el tramo todavía no tiene foto, se reserva
+  el hueco; no se pone stock. `previewPhotoFor` elige la foto real de cada destino.
+- **Las tres formas de ayudar son pestañas** (`HelpTabs` sobre `SectionTabs`), en la home y en
+  `/ayudar`. Primer nivel: regla con la pestaña marcada. Segundo nivel (canales): píldoras.
+  Sin JavaScript se apilan.
+- **Títulos dentro de tarjetas y paneles: `text-card`.** Un escalón por debajo de `heading`.
+- **Una foto no se muestra más ancha que su archivo.** En grillas y tarjetas, `Figure` recorta
+  con `crop` a un token `--aspect-*`; en los ensayos conserva la proporción real. Nada de
+  `aspect-[…]` ni `inset-[…]` arbitrarios.
 
 CTA primario: Ayudar a reconstruir. Secundario: Conocer la historia.
 

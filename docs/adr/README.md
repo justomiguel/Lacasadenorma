@@ -36,3 +36,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [023](./023-i18n-estructural.md) | i18n estructural: castellano sin prefijo, inglés en `/en` | Aceptada |
 | [024](./024-tercera-direccion-visual.md) | El color sale de la casa: tercera dirección visual y limpieza de contenido | Reemplazada por ADR-025 para la dirección de arte |
 | [025](./025-mockup-aprobado.md) | El mockup aprobado es la fuente de verdad visual | Aceptada |
+| [026](./026-jerarquia-y-capitulos.md) | Capítulos visibles, una sola clase de acción y las tres formas de ayudar en pestañas | Aceptada |

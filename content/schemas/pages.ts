@@ -42,6 +42,13 @@ export const whatHappenedSchema = pageSchema.extend({
     })
     .nullable(),
   /**
+   * Recorte apaisado de la foto de esa noche, a la resolución del sangrado.
+   * El archivo que sacó la familia mide 1220 px; el héroe pide ~2880 en un
+   * escritorio 2x. Éste es **el mismo JPEG**, recortado a 16:9 y agrandado.
+   * No es otra foto ni una imagen generada.
+   */
+  hero: photoSchema.nullable(),
+  /**
    * El ensayo fotográfico del incendio, en tramos. Vacío hasta que haya material:
    * la página se lee igual sin él.
    */

@@ -35,20 +35,44 @@ export interface PageMetadataInput {
   };
 }
 
+function shareImage(
+  locale: Locale,
+  image: PageMetadataInput["image"],
+): NonNullable<PageMetadataInput["image"]> | undefined {
+  if (image !== undefined) {
+    return image;
+  }
+
+  const { whatHappened } = getContent(locale);
+  const fallback = whatHappened.hero ?? whatHappened.photoEssay[0]?.photos[0];
+
+  if (fallback === undefined || fallback === null) {
+    return undefined;
+  }
+
+  return {
+    url: fallback.url,
+    width: fallback.width,
+    height: fallback.height,
+    alt: fallback.alt,
+  };
+}
+
 export function pageMetadata(input: PageMetadataInput): Metadata {
   const { site } = getContent(input.locale);
   const url = localizeHref(input.path, input.locale);
   const fullTitle = `${input.title} — ${site.name}`;
   const alternate = ogLocale(otherLocale(input.locale));
+  const image = shareImage(input.locale, input.image);
 
   const ogImage =
-    input.image === undefined
+    image === undefined
       ? undefined
       : {
-          url: input.image.url,
-          width: input.image.width,
-          height: input.image.height,
-          alt: input.image.alt,
+          url: image.url,
+          width: image.width,
+          height: image.height,
+          alt: image.alt,
         };
 
   return {
