@@ -4,6 +4,6 @@ export const revalidate = 300;
 
 export const metadata = helpMetadata("en");
 
-export default function HelpPage() {
+export default async function HelpPage() {
   return <HelpScreen locale="en" />;
 }

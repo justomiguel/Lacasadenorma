@@ -29,6 +29,8 @@ export function previewPhotoFor(href: string, locale: Locale): Photograph | null
       return work[1] ?? work[0] ?? null;
     case "/catalogo":
       return work[0] ?? work[1] ?? null;
+    case "/quienes-ayudaron":
+      return work[1] ?? work[0] ?? after[0] ?? null;
     case "/novedades":
       return work[0] ?? after[0] ?? night[0] ?? null;
     default:

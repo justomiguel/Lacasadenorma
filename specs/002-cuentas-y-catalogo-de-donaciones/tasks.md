@@ -204,19 +204,19 @@ mensaje diseñado, y nunca hay sobreventa.
 **Prueba independiente**: una donación con nombre aparece; una anónima no aparece en ningún lugar del
 HTML servido.
 
-- [ ] **T057** [P] `supabase/tests/080-donantes-y-muro.sql` **en rojo**: `column_privs_are` para
+- [x] **T057** [P] `supabase/tests/080-donantes-y-muro.sql` **en rojo**: `column_privs_are` para
       `anon` sobre `donation_pledges` —**exactamente** las cinco columnas—; `user_id`, `donor_note` y
       `select *` fallando con `42501` y el mensaje `permission denied for table`; que una anónima no
       aparezca en la vista; que una reservada-no-entregada tampoco (D2).
-- [ ] **T058** Migración `…_donation_wall.sql`: policy de filas para `anon`, `grant select` de las
+- [x] **T058** Migración `…_donation_wall.sql`: policy de filas para `anon`, `grant select` de las
       cinco columnas, y la vista `donation_wall` con `security_invoker`.
-- [ ] **T059** `get-donation-wall.ts` + repositorio, consultando la vista.
-- [ ] **T060** `/quienes-ayudaron` en los dos idiomas, con el estado vacío diseñado: "la primera
+- [x] **T059** `get-donation-wall.ts` + repositorio, consultando la vista.
+- [x] **T060** `/quienes-ayudaron` en los dos idiomas, con el estado vacío diseñado: "la primera
       donación abre la lista", no una página en blanco ni una lista de ejemplo.
-- [ ] **T061** [P] Vista previa del muro en `/catalogo` y en `/ayudar`, con los primitivos de
+- [x] **T061** [P] Vista previa del muro en `/catalogo` y en `/ayudar`, con los primitivos de
       ADR-026.
-- [ ] **T062** Revalidación al confirmar una llegada y al cambiar el anonimato (FR-229, SC-212).
-- [ ] **T063** [P] `e2e/con-datos/catalogo.spec.ts`: que el HTML servido de todas las páginas
+- [x] **T062** Revalidación al confirmar una llegada y al cambiar el anonimato (FR-229, SC-212).
+- [x] **T063** [P] `e2e/con-datos/muro.spec.ts`: que el HTML servido de todas las páginas
       públicas no contenga ningún correo ni ningún UUID de cuenta (SC-204).
 
 ---

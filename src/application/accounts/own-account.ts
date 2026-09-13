@@ -168,13 +168,20 @@ export async function updateOwnProfile(
   }
 
   try {
-    return accountOk(
-      await port.saveOwnProfile({
+    const saved = await port.saveOwnProfile({
+      displayName,
+      locale: parsed.data.locale,
+      defaultAnonymous,
+    });
+
+    if (deps.session.status === "ready") {
+      await deps.session.donations.updateOwnAppearance({
+        isAnonymous: defaultAnonymous,
         displayName,
-        locale: parsed.data.locale,
-        defaultAnonymous,
-      }),
-    );
+      });
+    }
+
+    return accountOk(saved);
   } catch (error) {
     return describeFailure(deps, "guardar tus preferencias", error);
   }

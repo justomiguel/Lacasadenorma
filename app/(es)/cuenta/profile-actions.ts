@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDonationPages } from "@/app/(es)/revalidate-donations";
 import { redirect } from "next/navigation";
 
 import {
@@ -45,11 +45,8 @@ export async function updateProfile(
   }
 
   // El muro de donantes es contenido cacheado, y cambiar el anonimato tiene que
-  // sacar o poner un nombre ahí mismo, no en el próximo despliegue (FR-229). La
-  // ruta se revalida aunque el muro todavía no exista: cuando exista, esto ya va a
-  // estar hecho y nadie va a tener que acordarse.
-  revalidatePath(localizeHref("/quienes-ayudaron", locale));
-  revalidatePath(localizeHref("/cuenta", locale));
+  // sacar o poner un nombre ahí mismo, no en el próximo despliegue (FR-229).
+  revalidateDonationPages();
 
   return { phase: "done" };
 }
@@ -77,7 +74,7 @@ export async function deleteAccount(
     return failure(result.code, result.field);
   }
 
-  revalidatePath(localizeHref("/quienes-ayudaron", locale));
+  revalidateDonationPages();
 
   redirect(localizeHref("/", locale));
 }

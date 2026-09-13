@@ -429,9 +429,11 @@ insert into esperado values
   -- Un perfil de donante es un dato personal y no tiene nada de público: `anon` no
   -- recibe ni el GRANT de lectura, igual que en `contributions` (I2).
   ('anon', 'donor_profiles',   'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
-  -- El muro de cinco columnas llega en la fase E. Hasta entonces `anon` no tiene
-  -- ni el GRANT: una reserva no es pública por existir.
-  ('anon', 'donation_pledges', 'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
+  -- El GRANT de `anon` es por columna, no de tabla: `select 1` recorre las filas
+  -- que la policy admite. En esta matriz las dos reservas están en `reserved`,
+  -- así que ve cero —'nada'— y no las propias. Las cinco columnas y la vista se
+  -- afirman en `080-donantes-y-muro.sql`.
+  ('anon', 'donation_pledges', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `donante` es la columna que ADR-027 agregó, y la que decide si abrir el registro
 -- fue seguro. Su token es válido y su `app_metadata` está vacío.

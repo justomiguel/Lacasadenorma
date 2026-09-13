@@ -68,6 +68,25 @@ export async function ocultarItem(
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
 }
 
+export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
+  const salir = page.getByRole("button", { name: /cerrar sesión/i });
+
+  if (await salir.isVisible()) {
+    await salir.click();
+    await expect(page).toHaveURL(/\/admin\/login/);
+  }
+
+  await entrar(page, "admin");
+  await page.goto("/admin/donaciones");
+
+  const fila = page.locator("#activas li").filter({ hasText: titulo }).first();
+
+  await expect(fila).toBeVisible();
+  await fila.getByText("Resolver esta reserva").click();
+  await fila.getByRole("button", { name: /^llegó$/i }).click();
+  await expect(fila.getByText(/^llegó$/i).first()).toBeVisible();
+}
+
 export async function habilitarCuenta(page: Page, email: string): Promise<void> {
   const salir = page.getByRole("button", { name: /cerrar sesión/i });
 

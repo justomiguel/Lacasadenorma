@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
   cargarItemPublicado,
   habilitarCuenta,
@@ -8,7 +9,6 @@ import {
   vencerReserva,
 } from "../soporte/catalogo";
 import { CLAVE_PUBLICA, correoDePrueba, crearCuenta } from "../soporte/cuentas";
-import { entrar, sufijoUnico } from "../soporte/backoffice";
 
 /**
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).

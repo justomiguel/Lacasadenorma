@@ -1,0 +1,17 @@
+{
+  "title": "Quiénes ayudaron",
+  "lead": "Los nombres de quienes trajeron algo para la casa y eligieron aparecer. Una reserva no figura: esta lista dice quién ayudó, no quién prometió ayudar.",
+  "paragraphs": [
+    "Aparecer con nombre se elige. El valor por defecto es no aparecer: lo que llegó se cuenta igual, y el nombre no se publica en ninguna parte de este sitio.",
+    "Si alguien cambia de opinión, el cambio se ve acá. No hace falta avisarle a nadie del equipo. Borrar la cuenta saca el nombre y deja la donación, anónima, porque lo que ya está en la obra no se puede deshacer.",
+    "Esta lista no junta montos ni dice quién dio más. Cada línea es una entrega: un nombre, qué trajo, y el día en que llegó."
+  ],
+  "seoDescription": "Quiénes trajeron materiales para reconstruir la casa de Norma, con nombre, cuando eligieron aparecer.",
+  "emptyTitle": "La primera donación abre la lista",
+  "emptyBody": "Todavía nadie donó en especie eligiendo aparecer con nombre. Cuando el material llegue y la familia lo confirme, el nombre se publica acá. No se adelanta una lista de ejemplo.",
+  "unavailableTitle": "Esta lista no está disponible ahora",
+  "brought": "{name} trajo {what}.",
+  "quantityOnly": "{count}",
+  "previewAction": "Ver quiénes ayudaron",
+  "previewSummary": "Los nombres de quienes eligieron aparecer, cuando el material ya llegó. Nadie figura por haberse anotado."
+}

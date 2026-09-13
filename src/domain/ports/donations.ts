@@ -20,10 +20,21 @@ export interface ClaimInput {
   readonly note: string | null;
 }
 
+export interface OwnAppearance {
+  readonly isAnonymous: boolean;
+  readonly displayName: string | null;
+}
+
 export interface DonationsPort {
   claimItem(input: ClaimInput): Promise<DonationPledge>;
   listOwnPledges(): Promise<readonly OwnPledge[]>;
   cancelOwnPledge(pledgeId: string): Promise<void>;
+  /**
+   * Aplica el anonimato y el nombre a **todas** las reservas propias, también
+   * a las que ya se entregaron. Es lo que hace que cambiar de opinión en
+   * `/cuenta` se vea en el muro sin que intervenga nadie (FR-229).
+   */
+  updateOwnAppearance(next: OwnAppearance): Promise<void>;
 }
 
 /**

@@ -2,6 +2,7 @@ import type {
   BudgetItem,
   Campaign,
   DonationItem,
+  DonationWallEntry,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
@@ -62,4 +63,9 @@ export interface UpdateRepository {
 export interface CatalogRepository {
   /** Ítems publicados de la campaña, en orden editorial. Los borradores no existen acá. */
   listPublishedItems(campaignId: string): Promise<DonationItem[]>;
+}
+
+export interface DonationWallRepository {
+  /** Entregadas, no anónimas, más recientes primero. Lo demás no existe acá. */
+  listEntries(): Promise<DonationWallEntry[]>;
 }

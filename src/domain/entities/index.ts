@@ -3,6 +3,7 @@ export * from "./campaign";
 export * from "./contribution";
 export * from "./donation-item";
 export * from "./donation-pledge";
+export * from "./donation-wall";
 export * from "./donor";
 export * from "./expense";
 export * from "./media";

@@ -1,6 +1,7 @@
 import type {
   CampaignRepository,
   CatalogRepository,
+  DonationWallRepository,
   MilestoneRepository,
   PaymentMethodRepository,
   TransparencyRepository,
@@ -28,5 +29,6 @@ export type DataLayer =
       readonly paymentMethods: PaymentMethodRepository;
       readonly updates: UpdateRepository;
       readonly catalog: CatalogRepository;
+      readonly wall: DonationWallRepository;
     }
   | { readonly source: "content-only" };

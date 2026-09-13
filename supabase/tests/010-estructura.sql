@@ -354,8 +354,8 @@ select results_eq(
     values ('public.budget_items.published_at'),
            ('public.campaigns.published_at'),
            ('public.donation_items.published_at'),
-           -- Las policies de `donation_pledges` filtran por dueño. `user_id` es
-           -- nullable (la cuenta se puede borrar) y tiene índice propio.
+           ('public.donation_pledges.is_anonymous'),
+           ('public.donation_pledges.status'),
            ('public.donation_pledges.user_id'),
            -- Las policies de `donor_profiles` filtran por propiedad y por estado
            -- de habilitación, no por publicación. `id` es la clave primaria.
@@ -373,7 +373,7 @@ select results_eq(
            ('public.updates.published_at'),
            ('storage.objects.bucket_id')
   $q$,
-  'las policies filtran exactamente por estas catorce columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
+  'las policies filtran exactamente por estas columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
 
 -- Y los índices que data-model.md §4 nombra uno por uno, con su nombre real. La

@@ -74,6 +74,7 @@ class FakeAccountPort implements AccountPort {
 
 class FakeDonationsPort implements DonationsPort {
   pledges: OwnPledge[] = [];
+  appearance: { isAnonymous: boolean; displayName: string | null } | null = null;
 
   async claimItem(_input: ClaimInput): Promise<OwnPledge> {
     throw new Error("no se reserva desde esta prueba");
@@ -85,6 +86,13 @@ class FakeDonationsPort implements DonationsPort {
 
   async cancelOwnPledge(): Promise<void> {
     return;
+  }
+
+  async updateOwnAppearance(next: {
+    isAnonymous: boolean;
+    displayName: string | null;
+  }): Promise<void> {
+    this.appearance = next;
   }
 }
 
@@ -292,6 +300,20 @@ describe("updateOwnProfile", () => {
 
     expect(result).toEqual({ status: "error", code: "noSession", field: null });
     expect(port.profile).toBeNull();
+  });
+
+  it("el cambio de anonimato se aplica también a lo que ya ofreció (FR-229)", async () => {
+    const result = await updateOwnProfile(deps(), {
+      displayName: "Vecina de la cuadra",
+      anonymous: "no",
+      locale: "es",
+    });
+
+    expect(result.status).toBe("ok");
+    expect(donations.appearance).toEqual({
+      isAnonymous: false,
+      displayName: "Vecina de la cuadra",
+    });
   });
 });
 

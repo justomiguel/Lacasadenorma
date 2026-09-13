@@ -447,6 +447,13 @@ export type Database = {
             referencedRelation: "donation_pledges";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "email_deliveries_pledge_id_fkey";
+            columns: ["pledge_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_wall";
+            referencedColumns: ["id"];
+          },
         ];
       };
       expense_receipts: {
@@ -967,6 +974,45 @@ export type Database = {
             columns: ["photo_media_id"];
             isOneToOne: false;
             referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      donation_wall: {
+        Row: {
+          donor_display_name: string | null;
+          fulfilled_at: string | null;
+          id: string | null;
+          item_id: string | null;
+          quantity: number | null;
+        };
+        Insert: {
+          donor_display_name?: string | null;
+          fulfilled_at?: string | null;
+          id?: string | null;
+          item_id?: string | null;
+          quantity?: number | null;
+        };
+        Update: {
+          donor_display_name?: string | null;
+          fulfilled_at?: string | null;
+          id?: string | null;
+          item_id?: string | null;
+          quantity?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_pledges_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_catalog";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_pledges_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_items";
             referencedColumns: ["id"];
           },
         ];

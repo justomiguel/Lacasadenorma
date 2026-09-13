@@ -26,7 +26,7 @@ menos que uno que verifica que algo no se puede hacer.**
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
 | Base de datos | pgTAP sobre PostgreSQL real | 155 | Cada combinación rol × tabla × operación, integridad financiera, storage | GoTrue y PostgREST reales |
 | Punta a punta | Playwright, tres navegadores, dos modos | 532 | Los nueve flujos críticos y los criterios visuales | Rendimiento medido |
-| Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 14 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
+| Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 15 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 9 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos, con la red estrangulada de verdad (ADR-022) | Lo que sólo se ve en dispositivos reales |
 
 Los totales: **520 tests en 55 archivos** con Vitest, **221 aserciones pgTAP** en 8 suites, **532
@@ -59,7 +59,7 @@ captura**:
 | Las reglas del encabezado y del pie caían en una tercera extensión | 96 px de diferencia sobre 1440. A ojo, nada | Midiendo las cajas con borde de cada página |
 
 Por eso **nueve de los catorce criterios dejaron de depender de la vista** y viven en
-`e2e/comun/revision-visual.spec.ts`, que corre en las catorce páginas, en los tres navegadores y en los
+`e2e/comun/revision-visual.spec.ts`, que corre en las quince páginas, en los tres navegadores y en los
 dos modos: desborde horizontal, medida de la prosa, superficies con acento sobre el pliegue,
 gradientes y sombras y esquinas redondeadas, números tabulares, proporción declarada de cada imagen,
 huecos de foto reservados, texto en versales, y que la home rompa el plano. Un décimo —el anillo de
@@ -81,7 +81,7 @@ eran tres landmarks indistinguibles.
 Lo que sigue necesitando ojos son los cuatro criterios que son un juicio y no una medida: si la
 primera pantalla comunica, si el orden de lectura acompaña, si el tono es el correcto, si la página se
 parece a un documento y no a un producto. Para ésos está `node scripts/screenshots.mjs`, que captura
-las catorce páginas en los dos anchos, en pliegue y completas.
+las quince páginas en los dos anchos, en pliegue y completas.
 
 Un test no reemplaza el loop: lo deja concentrado en lo que de verdad hay que mirar.
 
@@ -123,7 +123,8 @@ La persona **`donante`** de pgTAP es autenticada y no tiene fila en `user_roles`
 puede reservar por la función, y no ve el libro. La concurrencia por la última unidad (SC-202) está
 en `supabase/tests/070-catalogo.sql`; el recorrido de reservar, conflicto, cancelar y vencer está en
 `e2e/con-datos/catalogo.spec.ts`. El vencimiento se dispara con `POST /harness/v1/vencer-reserva`,
-porque `authenticated` no puede escribir `expires_at`.
+porque `authenticated` no puede escribir `expires_at`. Que una entrega con nombre aparezca en el muro
+y una anónima no aparezca en ningún HTML público está en `e2e/con-datos/muro.spec.ts` (SC-204).
 
 
 Los tests no comprueban que la página cargue. Comprueban afirmaciones que se pueden falsear:
@@ -202,7 +203,7 @@ el proyecto real, y están en el runbook.
 
 ## 3. Accesibilidad
 
-`e2e/comun/accesibilidad.spec.ts` corre axe sobre las **catorce páginas públicas** en **dos viewports** —el
+`e2e/comun/accesibilidad.spec.ts` corre axe sobre las **quince páginas públicas** en **dos viewports** —el
 del proyecto y 360 px— con las etiquetas `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` y `wcag22aa`. Cero
 violaciones, sin excepciones configuradas.
 
@@ -369,7 +370,7 @@ Ocho suites sobre PostgreSQL 17 real con un shim que emula lo que Supabase agreg
 | `050-roles-y-token.sql` | 21 | Que el rol venga de `app_metadata`, que `user_metadata` se ignore, y que el servidor de auth pueda ejecutar el hook |
 | `060-storage.sql` | 16 | `fotos` público, `comprobantes` privado, y las policies de cada uno |
 | `070-catalogo.sql` | 49 | El `check` de no-sobreventa, la vista pública, dos sesiones concurrentes por la última unidad, el tope de reservas, el vencimiento sin cron, que un `insert` directo falle, que cumplir una reserva no mueva totales de dinero, y que borrar la cuenta anonimice el nombre |
-| `080-donantes-y-muro.sql` | 41 | Que una cuenta del público vea sólo su fila, y que no pueda habilitarse sola |
+| `080-donantes-y-muro.sql` | 55 | Que una cuenta del público vea sólo su fila, que no pueda habilitarse sola, y que `anon` lea exactamente cinco columnas del muro |
 
 La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.
 `030-matriz-de-permisos.sql` recorre seis roles contra quince tablas y cuatro operaciones, y la mayoría

@@ -163,6 +163,17 @@ export const catalogSchema = pageSchema.extend({
   }),
 });
 
+export const wallSchema = pageSchema.extend({
+  seoDescription: z.string().min(1),
+  emptyTitle: z.string().min(1),
+  emptyBody: z.string().min(1),
+  unavailableTitle: z.string().min(1),
+  brought: z.string().min(1),
+  quantityOnly: z.string().min(1),
+  previewAction: z.string().min(1),
+  previewSummary: z.string().min(1),
+});
+
 export const faqSchema = z
   .array(
     z
@@ -204,6 +215,7 @@ export type ReconstructionContent = z.infer<typeof reconstructionSchema>;
 export type HelpContent = z.infer<typeof helpSchema>;
 export type TransparencyContent = z.infer<typeof transparencySchema>;
 export type CatalogContent = z.infer<typeof catalogSchema>;
+export type WallContent = z.infer<typeof wallSchema>;
 export type FaqContent = z.infer<typeof faqSchema>;
 export type LegalContent = z.infer<typeof legalSchema>;
 export type SectionContent = z.infer<typeof sectionSchema>;

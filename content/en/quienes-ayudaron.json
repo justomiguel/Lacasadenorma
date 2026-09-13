@@ -1,0 +1,17 @@
+{
+  "title": "Who helped",
+  "lead": "The names of people who brought something for the house and chose to appear. A pledge does not show up: this list says who helped, not who promised to help.",
+  "paragraphs": [
+    "Appearing by name is a choice. The default is not to appear: what arrived still counts, and the name is not published anywhere on this site.",
+    "If someone changes their mind, the change shows up here. There is no need to tell the team. Deleting the account removes the name and keeps the donation, anonymous, because what is already in the house cannot be undone.",
+    "This list does not add up amounts or say who gave more. Each line is one delivery: a name, what they brought, and the day it arrived."
+  ],
+  "seoDescription": "Who brought materials to rebuild Norma’s house, by name, when they chose to appear.",
+  "emptyTitle": "The first donation opens the list",
+  "emptyBody": "No one has yet donated in kind and chosen to appear by name. When the material arrives and the family confirms it, the name is published here. No sample list is shown in the meantime.",
+  "unavailableTitle": "This list is not available right now",
+  "brought": "{name} brought {what}.",
+  "quantityOnly": "{count}",
+  "previewAction": "See who helped",
+  "previewSummary": "The names of people who chose to appear, once the material has arrived. No one is listed for signing up."
+}

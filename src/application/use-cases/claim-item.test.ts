@@ -43,6 +43,10 @@ class FakeDonationsPort implements DonationsPort {
   async cancelOwnPledge(): Promise<void> {
     return;
   }
+
+  async updateOwnAppearance(): Promise<void> {
+    return;
+  }
 }
 
 const silent: Logger = {

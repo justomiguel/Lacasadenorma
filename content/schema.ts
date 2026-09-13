@@ -15,6 +15,7 @@ export {
   pageSchema,
   reconstructionSchema,
   transparencySchema,
+  wallSchema,
   whatHappenedSchema,
 } from "./schemas/pages";
 export type {
@@ -26,6 +27,7 @@ export type {
   ReconstructionContent,
   SectionContent,
   TransparencyContent,
+  WallContent,
   WhatHappenedContent,
 } from "./schemas/pages";
 export { personSchema } from "./schemas/person";

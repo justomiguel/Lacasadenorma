@@ -3,6 +3,7 @@ import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { CatalogFocus } from "@/components/catalog/focus";
 import { CatalogItem } from "@/components/catalog/item";
 import { ConflictNotice } from "@/components/catalog/conflict-notice";
+import { WallPreview } from "@/components/catalog/wall-preview";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
@@ -10,6 +11,7 @@ import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { getCatalog } from "@/src/application/use-cases/get-catalog";
+import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -41,7 +43,12 @@ export async function CatalogScreen({
   focusId: string | null;
 }) {
   const { catalog, account, ui } = getContent(locale);
-  const result = await getCatalog({ dataLayer: getPublicDataLayer(), logger });
+  const dataLayer = getPublicDataLayer();
+  const [result, wall] = await Promise.all([
+    getCatalog({ dataLayer, logger }),
+    getDonationWall({ dataLayer, logger }),
+  ]);
+  const wallEntries = wall.status === "ok" ? wall.data : [];
 
   return (
     <>
@@ -80,6 +87,12 @@ export async function CatalogScreen({
               ))}
             </div>
           )}
+        </Section>
+      </Container>
+
+      <Container>
+        <Section tight className="border-t border-rule">
+          <WallPreview locale={locale} entries={wallEntries} />
         </Section>
       </Container>
 

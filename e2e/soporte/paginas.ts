@@ -18,6 +18,7 @@ export const PAGINAS_PUBLICAS = [
   { path: "/que-paso", nombre: "Qué ocurrió" },
   { path: "/reconstruccion", nombre: "La reconstrucción" },
   { path: "/catalogo", nombre: "Qué le falta a la casa" },
+  { path: "/quienes-ayudaron", nombre: "Quiénes ayudaron" },
   { path: "/ayudar", nombre: "Cómo ayudar" },
   { path: "/ayudar/paypal/completada", nombre: "PayPal completada" },
   { path: "/ayudar/paypal/cancelada", nombre: "PayPal cancelada" },

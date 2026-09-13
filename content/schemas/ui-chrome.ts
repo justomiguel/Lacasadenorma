@@ -59,6 +59,7 @@ export const uiChromeSchema = z.object({
     "/novedades": namedLinkSchema,
     "/reconstruccion": namedLinkSchema,
     "/catalogo": namedLinkSchema,
+    "/quienes-ayudaron": namedLinkSchema,
   }),
   legalNav: z.object({
     "/legales/privacidad": namedLinkSchema,

@@ -1,12 +1,16 @@
 import { HelpTabs } from "@/components/campaign/help-tabs";
 import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
+import { WallPreview } from "@/components/catalog/wall-preview";
 import { Callout } from "@/components/design-system/callout";
 import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
+import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
 import type { Locale } from "@/src/i18n/locale";
+import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
+import { logger } from "@/src/infrastructure/logging/logger";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
@@ -35,8 +39,10 @@ export function helpMetadata(locale: Locale) {
  * fondo separadas por reglas, y las tres formas y el tablero de donaciones se
  * leían como dos cosas distintas.
  */
-export function HelpScreen({ locale }: { locale: Locale }) {
+export async function HelpScreen({ locale }: { locale: Locale }) {
   const { help, site, ui } = getContent(locale);
+  const wall = await getDonationWall({ dataLayer: getPublicDataLayer(), logger });
+  const wallEntries = wall.status === "ok" ? wall.data : [];
 
   return (
     <>
@@ -64,6 +70,12 @@ export function HelpScreen({ locale }: { locale: Locale }) {
           </Section>
         </Container>
       </Band>
+
+      <Container>
+        <Section className="border-t border-rule">
+          <WallPreview locale={locale} entries={wallEntries} />
+        </Section>
+      </Container>
 
       <Container>
         <Section labelledBy="despues">

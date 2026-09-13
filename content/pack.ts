@@ -9,6 +9,7 @@ import legalesEn from "./en/legales.json";
 import normaEn from "./en/norma.json";
 import preguntasEn from "./en/preguntas.json";
 import quePasoEn from "./en/que-paso.json";
+import quienesAyudaronEn from "./en/quienes-ayudaron.json";
 import reconstruccionEn from "./en/reconstruccion.json";
 import siteEn from "./en/site.json";
 import transparenciaEn from "./en/transparencia.json";
@@ -22,6 +23,7 @@ import legalesEs from "./es/legales.json";
 import normaEs from "./es/norma.json";
 import preguntasEs from "./es/preguntas.json";
 import quePasoEs from "./es/que-paso.json";
+import quienesAyudaronEs from "./es/quienes-ayudaron.json";
 import reconstruccionEs from "./es/reconstruccion.json";
 import siteEs from "./es/site.json";
 import transparenciaEs from "./es/transparencia.json";
@@ -40,6 +42,7 @@ import {
   siteSchema,
   transparencySchema,
   uiSchema,
+  wallSchema,
   whatHappenedSchema,
 } from "./schema";
 
@@ -67,6 +70,7 @@ function pack(
     reconstruccion: unknown;
     ayudar: unknown;
     catalogo: unknown;
+    quienesAyudaron: unknown;
     transparencia: unknown;
     legado: unknown;
     preguntas: unknown;
@@ -93,6 +97,11 @@ function pack(
     ),
     help: parseContent(helpSchema, files.ayudar, `${prefix}ayudar.json`),
     catalog: parseContent(catalogSchema, files.catalogo, `${prefix}catalogo.json`),
+    wall: parseContent(
+      wallSchema,
+      files.quienesAyudaron,
+      `${prefix}quienes-ayudaron.json`,
+    ),
     transparency: parseContent(
       transparencySchema,
       files.transparencia,
@@ -115,6 +124,7 @@ const packs = {
     reconstruccion: reconstruccionEs,
     ayudar: ayudarEs,
     catalogo: catalogoEs,
+    quienesAyudaron: quienesAyudaronEs,
     transparencia: transparenciaEs,
     legado: legadoEs,
     preguntas: preguntasEs,
@@ -130,6 +140,7 @@ const packs = {
     reconstruccion: reconstruccionEn,
     ayudar: ayudarEn,
     catalogo: catalogoEn,
+    quienesAyudaron: quienesAyudaronEn,
     transparencia: transparenciaEn,
     legado: legadoEn,
     preguntas: preguntasEn,

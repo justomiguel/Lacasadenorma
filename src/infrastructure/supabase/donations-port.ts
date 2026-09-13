@@ -111,6 +111,21 @@ export function createDonationsPort(client: ServerSupabaseClient): DonationsPort
         throw new QueryError("cancelar la reserva", error);
       }
     },
+
+    async updateOwnAppearance(next): Promise<void> {
+      const userId = await requireUserId();
+      const { error } = await client
+        .from("donation_pledges")
+        .update({
+          is_anonymous: next.isAnonymous,
+          donor_display_name: next.isAnonymous ? null : next.displayName,
+        })
+        .eq("user_id", userId);
+
+      if (error !== null) {
+        throw new QueryError("actualizar cómo aparecés", error);
+      }
+    },
   };
 }
 

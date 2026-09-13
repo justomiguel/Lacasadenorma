@@ -64,6 +64,9 @@
     },
     "/catalogo": {
       "label": "Qué falta"
+    },
+    "/quienes-ayudaron": {
+      "label": "Quiénes ayudaron"
     }
   },
   "legalNav": {

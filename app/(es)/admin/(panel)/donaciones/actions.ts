@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { revalidateDonationPages } from "@/app/(es)/revalidate-donations";
+
 import type { ActionState } from "@/components/admin/form";
 import { cancelPledge, fulfillPledge } from "@/src/application/admin";
 import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context";
@@ -69,10 +71,7 @@ export async function fulfillPledgeAction(
 
   if (result.status === "ok") {
     revalidatePath("/admin/donaciones");
-    revalidatePath("/catalogo");
-    revalidatePath("/en/catalogo");
-    revalidatePath("/cuenta");
-    revalidatePath("/en/cuenta");
+    revalidateDonationPages();
   }
 
   return result;
@@ -96,10 +95,7 @@ export async function cancelPledgeAction(
 
   if (result.status === "ok") {
     revalidatePath("/admin/donaciones");
-    revalidatePath("/catalogo");
-    revalidatePath("/en/catalogo");
-    revalidatePath("/cuenta");
-    revalidatePath("/en/cuenta");
+    revalidateDonationPages();
   }
 
   return result;

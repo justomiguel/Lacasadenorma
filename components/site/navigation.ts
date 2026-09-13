@@ -44,6 +44,7 @@ export const SECONDARY_NAV = [
   { href: "/novedades", label: "Novedades" },
   { href: "/reconstruccion", label: "La obra" },
   { href: "/catalogo", label: "Qué falta" },
+  { href: "/quienes-ayudaron", label: "Quiénes ayudaron" },
 ] as const;
 
 export const LEGAL_NAV = [

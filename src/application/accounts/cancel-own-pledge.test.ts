@@ -25,6 +25,10 @@ class FakeDonationsPort implements DonationsPort {
 
     this.cancelled = pledgeId;
   }
+
+  async updateOwnAppearance(): Promise<void> {
+    return;
+  }
 }
 
 const silent: Logger = {

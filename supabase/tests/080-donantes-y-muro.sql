@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(41);
+select plan(55);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -72,6 +72,47 @@ insert into public.donation_pledges (
     '20000000-0000-4000-8000-000000000001',
     1,
     now() + interval '14 days'
+  );
+
+-- Tres filas para el muro: una entregada con nombre, una entregada anónima y
+-- una reservada con nombre. Las tres juntas dicen D2 y FR-225: aparece sólo
+-- quien ya trajo y eligió aparecer.
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, is_anonymous, donor_display_name,
+  expires_at, fulfilled_at
+) values
+  (
+    '30000000-0000-4000-8000-000000000004',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    2,
+    'fulfilled',
+    false,
+    'Vecina de la esquina',
+    now() + interval '14 days',
+    now() - interval '1 day'
+  ),
+  (
+    '30000000-0000-4000-8000-000000000005',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000002',
+    1,
+    'fulfilled',
+    true,
+    null,
+    now() + interval '14 days',
+    now() - interval '1 day'
+  ),
+  (
+    '30000000-0000-4000-8000-000000000006',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    1,
+    'reserved',
+    false,
+    'Todavía no llegó',
+    now() + interval '14 days',
+    null
   );
 
 -- ── Estructura ──────────────────────────────────────────────────────────────
@@ -627,6 +668,107 @@ select is(
   (select public.donor_contact('20000000-0000-4000-8000-000000000006')),
   null::text,
   'una cuenta del público no lee el correo de otra: donor_contact no es un oráculo'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+-- ── El muro, por privilegio de columna (ADR-030) ────────────────────────────
+-- Tres barreras, tres preguntas: la policy dice qué filas, el GRANT dice qué
+-- columnas, y security_invoker dice que la vista no las sortee. Se prueban las
+-- tres, y se prueba que las otras dos filas —anónima y reservada— no existan
+-- para `anon`. Correr esto como superusuario no prueba nada: bypassa RLS.
+
+select has_view('public', 'donation_wall', 'existe la vista pública del muro');
+
+select isnt_empty(
+  $q$
+    select 1
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = 'donation_wall'
+       and coalesce(array_to_string(c.reloptions, ','), '') ~ 'security_invoker=(true|on)'
+  $q$,
+  'donation_wall declara security_invoker: sin eso bypasea RLS (I3)'
+);
+
+select ok(
+  pg_get_viewdef('public.donation_wall'::regclass, true) !~ 'is_anonymous'
+  and pg_get_viewdef('public.donation_wall'::regclass, true) !~ 'status',
+  'la vista no nombra status ni is_anonymous: el filtro está en la policy (ADR-030)'
+);
+
+select is(
+  (
+    select coalesce(array_agg(column_name::text order by column_name), '{}')
+      from information_schema.column_privileges
+     where table_schema = 'public'
+       and table_name = 'donation_pledges'
+       and grantee = 'anon'
+       and privilege_type = 'SELECT'
+  ),
+  array['donor_display_name', 'fulfilled_at', 'id', 'item_id', 'quantity']::text[],
+  'anon lee exactamente las cinco columnas del muro, ni una más'
+);
+
+select column_privs_are(
+  'public', 'donation_pledges', 'id', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.id'
+);
+select column_privs_are(
+  'public', 'donation_pledges', 'item_id', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.item_id'
+);
+select column_privs_are(
+  'public', 'donation_pledges', 'quantity', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.quantity'
+);
+select column_privs_are(
+  'public', 'donation_pledges', 'donor_display_name', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.donor_display_name'
+);
+select column_privs_are(
+  'public', 'donation_pledges', 'fulfilled_at', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.fulfilled_at'
+);
+
+set local role anon;
+
+select throws_ok(
+  $s$ select user_id from public.donation_pledges $s$,
+  '42501',
+  null,
+  'nombrar user_id falla: anon no tiene privilegio de esa columna'
+);
+
+select throws_ok(
+  $s$ select donor_note from public.donation_pledges $s$,
+  '42501',
+  null,
+  'nombrar donor_note falla: el mensaje a la familia no es público'
+);
+
+select throws_ok(
+  $s$ select * from public.donation_pledges $s$,
+  '42501',
+  null,
+  'select * sobre donation_pledges falla: publica columnas que anon no puede nombrar'
+);
+
+select results_eq(
+  $q$ select donor_display_name from public.donation_wall order by donor_display_name $q$,
+  $q$ values ('Vecina de la esquina'::text) $q$,
+  'el muro muestra la entregada con nombre y no la anónima ni la reservada (D2, FR-225)'
+);
+
+select is_empty(
+  $q$
+    select donor_display_name
+      from public.donation_wall
+     where donor_display_name = 'Todavía no llegó'
+  $q$,
+  'una reserva con nombre no aparece en el muro: el muro dice quién ayudó, no quién prometió (D2)'
 );
 
 reset role;

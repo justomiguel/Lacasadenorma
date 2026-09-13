@@ -11,6 +11,7 @@ const DESTINOS = [
   "/legado",
   "/ayudar",
   "/catalogo",
+  "/quienes-ayudaron",
   "/novedades",
 ] as const;
 
