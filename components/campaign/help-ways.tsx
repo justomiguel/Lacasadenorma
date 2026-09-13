@@ -27,8 +27,12 @@ export function HelpWays({
             name={help.contact.name}
             phoneDisplay={help.contact.phoneDisplay}
             phoneTel={help.contact.phoneTel}
+            email={help.contact.email}
+            instagram={help.contact.instagram}
             whatsappLabel={ui.home.whatsapp}
             callLabel={ui.home.call}
+            emailLabel={ui.home.email}
+            instagramLabel={ui.home.instagram}
             origen={`${origen}-escombros`}
           />
         </div>

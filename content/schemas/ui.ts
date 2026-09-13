@@ -59,6 +59,8 @@ export const uiPagesSchema = z.object({
     remoteBody: phrase,
     whatsapp: phrase,
     call: phrase,
+    email: phrase,
+    instagram: phrase,
     chapterDonate: phrase,
     donateTitle: phrase,
     donateLead: phrase,
@@ -88,6 +90,8 @@ export const uiPagesSchema = z.object({
     lead: phrase,
     whatsapp: phrase,
     call: phrase,
+    email: phrase,
+    instagram: phrase,
   }),
   notFoundPage: z.object({
     title: phrase,

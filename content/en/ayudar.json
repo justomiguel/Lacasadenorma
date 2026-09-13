@@ -10,9 +10,11 @@
   ],
   "materials": ["Cement", "Lime", "Sand", "Roof sheets"],
   "contact": {
-    "name": "Saúl",
-    "phoneDisplay": "+54 9 3718 58-0131",
-    "phoneTel": "+5493718580131"
+    "name": "Justo Miguel Vargas",
+    "phoneDisplay": "+56 9 6578 9862",
+    "phoneTel": "+56965789862",
+    "email": "justomiguelvargas@gmail.com",
+    "instagram": "justomiguelv"
   },
   "accounts": {
     "AR": {

@@ -52,7 +52,7 @@
     "/contacto": {
       "label": "Contact",
       "shortLabel": "Contact",
-      "summary": "Saúl's WhatsApp and the published phone number."
+      "summary": "WhatsApp, email and Instagram to coordinate."
     }
   },
   "secondaryNav": {
@@ -179,6 +179,8 @@
     "remoteBody": "A bank transfer arrives just the same. Choose the country and copy the details.",
     "whatsapp": "WhatsApp",
     "call": "Call",
+    "email": "Email",
+    "instagram": "Instagram",
     "chapterDonate": "04. Donations",
     "donateTitle": "Choose how to help",
     "donateLead": "Any gift, by whichever channel is closest to you, counts.",
@@ -204,10 +206,12 @@
   },
   "contactPage": {
     "title": "Contact",
-    "seoDescription": "Saúl's WhatsApp and phone to coordinate debris removal and material donations in Riacho He Hé, Formosa.",
-    "lead": "To help on the ground, the published contact is Saúl.",
+    "seoDescription": "WhatsApp, email and Instagram of Justo Miguel Vargas to coordinate debris removal and material donations in Riacho He Hé, Formosa.",
+    "lead": "To coordinate help on the ground, the published contact is Justo Miguel Vargas.",
     "whatsapp": "Write on WhatsApp",
-    "call": "Call"
+    "call": "Call",
+    "email": "Write an email",
+    "instagram": "Instagram"
   },
   "notFoundPage": {
     "title": "This page is not here",
@@ -280,7 +284,7 @@
     "helpLead": "Each gift helps rebuild the house. The transfer details are on the how to help page."
   },
   "helpPage": {
-    "seoDescription": "Details to transfer from Argentina or Chile, Saúl's WhatsApp, and material donations. This page does not take money or ask for card details.",
+    "seoDescription": "Details to transfer from Argentina or Chile, Justo's WhatsApp, and material donations. This page does not take money or ask for card details.",
     "beforeTransferTitle": "Before you transfer",
     "beforeTransfer": "Check that you are on the right domain. If the bank details you see do not match the ones we share on our channels, do not transfer. We will never ask you for a password, a code from your bank, or your card details.",
     "accountsHeading": "Choose where you will transfer from",

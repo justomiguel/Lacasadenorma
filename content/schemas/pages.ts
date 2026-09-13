@@ -70,6 +70,9 @@ export const helpSchema = pageSchema.extend({
     phoneDisplay: z.string().min(1),
     /** E.164, para `tel:` y `wa.me`. */
     phoneTel: z.string().regex(/^\+[1-9]\d{6,14}$/),
+    email: z.string().email(),
+    /** Usuario de Instagram, sin @. */
+    instagram: z.string().regex(/^[A-Za-z0-9._]{1,30}$/),
   }),
   accounts: z.object({
     AR: z.object({

@@ -36,7 +36,7 @@ export const PRIMARY_NAV = [
     href: "/contacto",
     label: "Contacto",
     shortLabel: "Contacto",
-    summary: "WhatsApp de Saúl y el teléfono publicado.",
+    summary: "WhatsApp, correo e Instagram para coordinar.",
   },
 ] as const;
 

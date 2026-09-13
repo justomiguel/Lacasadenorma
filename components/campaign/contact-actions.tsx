@@ -7,20 +7,30 @@ export function ContactActions({
   name,
   phoneDisplay,
   phoneTel,
+  email,
+  instagram,
   whatsappLabel,
   callLabel,
+  emailLabel,
+  instagramLabel,
   origen,
 }: {
   name: string;
   phoneDisplay: string;
   phoneTel: string;
+  email: string;
+  instagram: string;
   whatsappLabel: string;
   callLabel: string;
+  emailLabel: string;
+  instagramLabel: string;
   origen: string;
 }) {
   const digits = phoneTel.replace("+", "");
   const whatsapp = `https://wa.me/${digits}`;
   const tel = `tel:${phoneTel}`;
+  const mail = `mailto:${email}`;
+  const instagramHref = `https://www.instagram.com/${instagram}/`;
 
   return (
     <div>
@@ -46,6 +56,20 @@ export function ContactActions({
           }}
         >
           {callLabel}
+        </a>
+        <a
+          href={mail}
+          className="lift-hover inline-flex min-h-touch items-center rounded-pill border border-forest px-lg font-ui text-small font-medium text-forest"
+        >
+          {emailLabel}
+        </a>
+        <a
+          href={instagramHref}
+          rel="noopener noreferrer"
+          target="_blank"
+          className="lift-hover inline-flex min-h-touch items-center gap-xs rounded-pill border border-forest px-lg font-ui text-small font-medium text-forest"
+        >
+          <BrandLabel id="instagram">{instagramLabel}</BrandLabel>
         </a>
       </div>
     </div>

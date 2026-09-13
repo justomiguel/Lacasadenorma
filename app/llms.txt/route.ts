@@ -64,7 +64,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.
 - [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
   Chile.
-- [Contacto](${siteUrl}/contacto): WhatsApp y teléfono de Saúl.
+- [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.
 - [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta, sin cifras públicas.
 - [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.

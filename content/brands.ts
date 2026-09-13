@@ -26,6 +26,12 @@ export const BRANDS = {
     width: 24,
     height: 24,
   },
+  instagram: {
+    name: "Instagram",
+    src: "/marcas/instagram.svg",
+    width: 24,
+    height: 24,
+  },
   whatsapp: {
     name: "WhatsApp",
     src: "/marcas/whatsapp.svg",

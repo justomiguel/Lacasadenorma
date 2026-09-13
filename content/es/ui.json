@@ -52,7 +52,7 @@
     "/contacto": {
       "label": "Contacto",
       "shortLabel": "Contacto",
-      "summary": "WhatsApp de Saúl y el teléfono publicado."
+      "summary": "WhatsApp, correo e Instagram para coordinar."
     }
   },
   "secondaryNav": {
@@ -179,6 +179,8 @@
     "remoteBody": "Un aporte por transferencia llega igual. Elegí el país y copiá los datos.",
     "whatsapp": "WhatsApp",
     "call": "Llamar",
+    "email": "Correo",
+    "instagram": "Instagram",
     "chapterDonate": "04. Donaciones",
     "donateTitle": "Elegí cómo ayudar",
     "donateLead": "Cualquier aporte, por el canal que te quede más cerca, suma.",
@@ -204,10 +206,12 @@
   },
   "contactPage": {
     "title": "Contacto",
-    "seoDescription": "WhatsApp y teléfono de Saúl para coordinar el retiro de escombros y las donaciones de materiales en Riacho He Hé, Formosa.",
-    "lead": "Para dar una mano en el terreno, el contacto publicado es Saúl.",
+    "seoDescription": "WhatsApp, correo e Instagram de Justo Miguel Vargas para coordinar el retiro de escombros y las donaciones de materiales en Riacho He Hé, Formosa.",
+    "lead": "Para coordinar una ayuda en el terreno, el contacto publicado es Justo Miguel Vargas.",
     "whatsapp": "Escribir por WhatsApp",
-    "call": "Llamar"
+    "call": "Llamar",
+    "email": "Escribir un correo",
+    "instagram": "Instagram"
   },
   "notFoundPage": {
     "title": "Esta página no está",
@@ -280,7 +284,7 @@
     "helpLead": "Cada aporte suma a reconstruir la casa. Los datos para transferir están en la página de cómo ayudar."
   },
   "helpPage": {
-    "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Saúl y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
+    "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Justo y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
     "beforeTransferTitle": "Antes de transferir",
     "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",

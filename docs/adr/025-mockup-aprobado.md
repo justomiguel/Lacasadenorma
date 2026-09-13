@@ -36,7 +36,7 @@ propósito, como capítulos de una secuencia y no como chrome.
    performance, motion sutil, SEO y calidad de implementación. No tienen autorización
    para cambiar la dirección de arte.
 3. **El contenido sigue siendo el de siempre.** Fotos reales de `public/fotos/`.
-   Cuentas, teléfono de Saúl y materiales, los que el mockup y la familia
+   Cuentas, contacto de la familia y materiales, los que el mockup y la familia
    publicaron. Sin cantidades, sin precios, sin URLs inventadas. Fundación Norma
    sigue sin existir. Las secciones financieras públicas que se rechazaron
    —totales, libro de gastos, presupuesto, avance de obra, avisos de «no pudimos

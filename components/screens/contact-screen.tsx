@@ -20,8 +20,8 @@ export function contactMetadata(locale: Locale) {
 }
 
 /**
- * Contacto publicado: Saúl, WhatsApp y teléfono. No hay formulario: el sitio
- * no pide datos (docs/privacy.md).
+ * Contacto publicado: Justo Miguel Vargas, WhatsApp, correo e Instagram.
+ * No hay formulario: el sitio no pide datos (docs/privacy.md).
  */
 export function ContactScreen({ locale }: { locale: Locale }) {
   const { help, ui } = getContent(locale);
@@ -36,8 +36,12 @@ export function ContactScreen({ locale }: { locale: Locale }) {
             name={help.contact.name}
             phoneDisplay={help.contact.phoneDisplay}
             phoneTel={help.contact.phoneTel}
+            email={help.contact.email}
+            instagram={help.contact.instagram}
             whatsappLabel={ui.contactPage.whatsapp}
             callLabel={ui.contactPage.call}
+            emailLabel={ui.contactPage.email}
+            instagramLabel={ui.contactPage.instagram}
             origen="contacto"
           />
 
