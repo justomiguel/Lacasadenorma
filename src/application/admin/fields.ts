@@ -87,6 +87,16 @@ export const sortOrder = z
   .refine((value) => /^\d{1,3}$/.test(value), "El orden es un número de 0 a 999.")
   .transform((value) => Number(value));
 
+/** Un entero positivo escrito como texto de formulario. */
+export const positiveInt = (label: string) =>
+  z
+    .string({ error: `Falta ${label}.` })
+    .trim()
+    .min(1, `Falta ${label}.`)
+    .refine((value) => /^\d{1,6}$/.test(value), `${label} es un número entero.`)
+    .transform((value) => Number(value))
+    .refine((value) => value > 0, `${label} tiene que ser mayor que cero.`);
+
 /**
  * Una casilla marcada llega como `"on"`; una sin marcar no llega. Es la única
  * codificación que existe en HTML, y por eso la ausencia es `false` y no un error.

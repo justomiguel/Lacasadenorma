@@ -3,6 +3,8 @@ import type {
   BudgetItemAdminRecord,
   Campaign,
   ContributionAdminRecord,
+  DonationItemAdminRecord,
+  DonationUnit,
   DonorAccountAdminRecord,
   ExpenseAdminRecord,
   ExpenseCategory,
@@ -145,6 +147,23 @@ export interface AdminMilestonePort {
   }): Promise<string>;
 }
 
+export interface AdminCatalogPort {
+  listItems(campaignId: string): Promise<DonationItemAdminRecord[]>;
+  saveItem(input: {
+    campaignId: string;
+    id: string | null;
+    title: string;
+    description: string | null;
+    unit: DonationUnit;
+    neededQuantity: number;
+    budgetItemId: string | null;
+    estimatedValue: Money | null;
+    photoMediaId: string | null;
+    sortOrder: number;
+    publish: boolean;
+  }): Promise<string>;
+}
+
 // ── Cuentas bancarias ───────────────────────────────────────────────────────
 
 export interface AdminPaymentMethodPort {
@@ -228,6 +247,7 @@ export interface AdminGateway {
   readonly expenses: AdminExpensePort;
   readonly updates: AdminUpdatePort;
   readonly milestones: AdminMilestonePort;
+  readonly catalog: AdminCatalogPort;
   readonly paymentMethods: AdminPaymentMethodPort;
   readonly donors: AdminDonorPort;
   readonly audit: AuditPort;

@@ -1,0 +1,123 @@
+import { isDonationUnit, remaining } from "@/src/domain/catalog";
+import type { DonationItem } from "@/src/domain/entities";
+import type { CatalogRepository } from "@/src/domain/ports/repositories";
+
+import { MEDIA_COLUMNS, PHOTO_BUCKET } from "./admin/columns";
+import type { Database } from "./database.types";
+import { MappingError, mapMedia, type MediaRow } from "./mappers";
+import type { ServerSupabaseClient } from "./server-client";
+
+/**
+ * Lectura pública del catálogo. Consulta **la vista**, nunca la tabla, y enumera
+ * las columnas: el valor estimado no puede colarse por existir en `donation_items`
+ * (D3, contrato del catálogo).
+ *
+ * El filtro de publicación está en la vista (`where published_at is not null`).
+ * Esta consulta corre con el cliente anónimo, así que un editor con sesión en el
+ * sitio público no ve borradores por este camino.
+ */
+
+const CATALOG_COLUMNS =
+  "id, campaign_id, budget_item_id, title, description, unit, needed_quantity, remaining_quantity, fulfilled_quantity, photo_media_id, sort_order";
+
+type CatalogRow = Database["public"]["Views"]["donation_catalog"]["Row"];
+
+export function createCatalogRepository(client: ServerSupabaseClient): CatalogRepository {
+  const publicUrlFor = (storagePath: string): string =>
+    client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+
+  return {
+    async listPublishedItems(campaignId: string): Promise<DonationItem[]> {
+      const { data, error } = await client
+        .from("donation_catalog")
+        .select(CATALOG_COLUMNS)
+        .eq("campaign_id", campaignId)
+        .order("sort_order", { ascending: true });
+
+      if (error !== null) {
+        throw new Error(`leer el catálogo: ${error.message}`);
+      }
+
+      const photos = await loadPhotos(
+        client,
+        data.map((row) => row.photo_media_id),
+        publicUrlFor,
+      );
+
+      return data.map((row) => toDonationItem(row, photos));
+    },
+  };
+}
+
+export async function loadPhotos(
+  client: ServerSupabaseClient,
+  ids: readonly (string | null)[],
+  publicUrlFor: (storagePath: string) => string,
+): Promise<Map<string, ReturnType<typeof mapMedia>>> {
+  const unique = [...new Set(ids.filter((id): id is string => id !== null))];
+
+  if (unique.length === 0) {
+    return new Map();
+  }
+
+  const { data, error } = await client
+    .from("media")
+    .select(MEDIA_COLUMNS)
+    .in("id", unique);
+
+  if (error !== null) {
+    throw new Error(`leer las fotos del catálogo: ${error.message}`);
+  }
+
+  const photos = new Map<string, ReturnType<typeof mapMedia>>();
+
+  for (const row of data as MediaRow[]) {
+    photos.set(row.id, mapMedia(row, publicUrlFor));
+  }
+
+  return photos;
+}
+
+function toDonationItem(
+  row: CatalogRow,
+  photos: Map<string, ReturnType<typeof mapMedia>>,
+): DonationItem {
+  if (
+    row.id === null ||
+    row.campaign_id === null ||
+    row.title === null ||
+    row.unit === null ||
+    row.needed_quantity === null ||
+    row.remaining_quantity === null ||
+    row.fulfilled_quantity === null ||
+    row.sort_order === null
+  ) {
+    throw new MappingError("donation_catalog: una fila de la vista llegó incompleta.");
+  }
+
+  if (!isDonationUnit(row.unit)) {
+    throw new MappingError(
+      `donation_catalog.${row.id}: unidad desconocida "${String(row.unit)}".`,
+    );
+  }
+
+  const quantities = {
+    needed: row.needed_quantity,
+    reserved: row.needed_quantity - row.remaining_quantity - row.fulfilled_quantity,
+    fulfilled: row.fulfilled_quantity,
+  };
+
+  return {
+    id: row.id,
+    campaignId: row.campaign_id,
+    budgetItemId: row.budget_item_id,
+    title: row.title,
+    description: row.description,
+    unit: row.unit,
+    neededQuantity: row.needed_quantity,
+    remainingQuantity: remaining(quantities),
+    fulfilledQuantity: row.fulfilled_quantity,
+    photo: row.photo_media_id === null ? null : (photos.get(row.photo_media_id) ?? null),
+    sortOrder: row.sort_order,
+  };
+}

@@ -214,6 +214,92 @@ export type Database = {
           },
         ];
       };
+      donation_items: {
+        Row: {
+          budget_item_id: string | null;
+          campaign_id: string;
+          created_at: string;
+          currency: string | null;
+          description: string | null;
+          estimated_unit_amount_minor: number | null;
+          fulfilled_quantity: number;
+          id: string;
+          needed_quantity: number;
+          photo_media_id: string | null;
+          published_at: string | null;
+          reserved_quantity: number;
+          sort_order: number;
+          title: string;
+          unit: Database["public"]["Enums"]["donation_unit"];
+          updated_at: string;
+        };
+        Insert: {
+          budget_item_id?: string | null;
+          campaign_id: string;
+          created_at?: string;
+          currency?: string | null;
+          description?: string | null;
+          estimated_unit_amount_minor?: number | null;
+          fulfilled_quantity?: number;
+          id?: string;
+          needed_quantity: number;
+          photo_media_id?: string | null;
+          published_at?: string | null;
+          reserved_quantity?: number;
+          sort_order?: number;
+          title: string;
+          unit: Database["public"]["Enums"]["donation_unit"];
+          updated_at?: string;
+        };
+        Update: {
+          budget_item_id?: string | null;
+          campaign_id?: string;
+          created_at?: string;
+          currency?: string | null;
+          description?: string | null;
+          estimated_unit_amount_minor?: number | null;
+          fulfilled_quantity?: number;
+          id?: string;
+          needed_quantity?: number;
+          photo_media_id?: string | null;
+          published_at?: string | null;
+          reserved_quantity?: number;
+          sort_order?: number;
+          title?: string;
+          unit?: Database["public"]["Enums"]["donation_unit"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_items_budget_item_id_fkey";
+            columns: ["budget_item_id"];
+            isOneToOne: false;
+            referencedRelation: "budget_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_items_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaign_totals";
+            referencedColumns: ["campaign_id"];
+          },
+          {
+            foreignKeyName: "donation_items_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_items_photo_media_id_fkey";
+            columns: ["photo_media_id"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       donor_profiles: {
         Row: {
           approval_status: string;
@@ -740,6 +826,77 @@ export type Database = {
         };
         Relationships: [];
       };
+      donation_catalog: {
+        Row: {
+          budget_item_id: string | null;
+          campaign_id: string | null;
+          description: string | null;
+          fulfilled_quantity: number | null;
+          id: string | null;
+          needed_quantity: number | null;
+          photo_media_id: string | null;
+          remaining_quantity: number | null;
+          sort_order: number | null;
+          title: string | null;
+          unit: Database["public"]["Enums"]["donation_unit"] | null;
+        };
+        Insert: {
+          budget_item_id?: string | null;
+          campaign_id?: string | null;
+          description?: string | null;
+          fulfilled_quantity?: number | null;
+          id?: string | null;
+          needed_quantity?: number | null;
+          photo_media_id?: string | null;
+          remaining_quantity?: never;
+          sort_order?: number | null;
+          title?: string | null;
+          unit?: Database["public"]["Enums"]["donation_unit"] | null;
+        };
+        Update: {
+          budget_item_id?: string | null;
+          campaign_id?: string | null;
+          description?: string | null;
+          fulfilled_quantity?: number | null;
+          id?: string | null;
+          needed_quantity?: number | null;
+          photo_media_id?: string | null;
+          remaining_quantity?: never;
+          sort_order?: number | null;
+          title?: string | null;
+          unit?: Database["public"]["Enums"]["donation_unit"] | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_items_budget_item_id_fkey";
+            columns: ["budget_item_id"];
+            isOneToOne: false;
+            referencedRelation: "budget_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_items_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaign_totals";
+            referencedColumns: ["campaign_id"];
+          },
+          {
+            foreignKeyName: "donation_items_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_items_photo_media_id_fkey";
+            columns: ["photo_media_id"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
@@ -776,6 +933,7 @@ export type Database = {
     Enums: {
       app_role: "auditor" | "editor" | "admin" | "owner";
       campaign_status: "draft" | "active" | "paused" | "completed";
+      donation_unit: "unidad" | "metro" | "metro_cuadrado" | "bolsa" | "litro" | "juego";
       expense_category:
         | "materiales"
         | "mano_de_obra"
@@ -910,6 +1068,7 @@ export const Constants = {
     Enums: {
       app_role: ["auditor", "editor", "admin", "owner"],
       campaign_status: ["draft", "active", "paused", "completed"],
+      donation_unit: ["unidad", "metro", "metro_cuadrado", "bolsa", "litro", "juego"],
       expense_category: [
         "materiales",
         "mano_de_obra",

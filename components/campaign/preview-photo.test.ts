@@ -10,6 +10,7 @@ const DESTINOS = [
   "/norma",
   "/legado",
   "/ayudar",
+  "/catalogo",
   "/novedades",
 ] as const;
 

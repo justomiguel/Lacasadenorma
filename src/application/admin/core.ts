@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 import type { AuditAction } from "@/src/domain/entities/audit";
-import { NotAuthorizedError } from "@/src/domain/errors";
+import { CatalogOversubscribedError, NotAuthorizedError } from "@/src/domain/errors";
 import { can, type Permission } from "@/src/domain/permissions";
 import type { AppRole } from "@/src/domain/entities/role";
 import type { AdminGateway } from "@/src/domain/ports/admin";
@@ -123,6 +123,14 @@ export async function perform<Input, Output>({
   } catch (error) {
     if (error instanceof NotAuthorizedError) {
       return { status: "rejected", message: error.message };
+    }
+
+    if (error instanceof CatalogOversubscribedError) {
+      return {
+        status: "invalid",
+        message: error.message,
+        fieldErrors: { neededQuantity: error.message },
+      };
     }
 
     logger.error(`No se pudo ${describe}`, { error, permission });

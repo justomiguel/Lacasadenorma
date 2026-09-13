@@ -38,6 +38,9 @@ export const AUDIT_ACTION_LABELS = {
   "payment_method.updated": "editó una cuenta bancaria",
   "payment_method.published": "publicó una cuenta bancaria",
   "payment_method.unpublished": "dejó de publicar una cuenta bancaria",
+  "donation_item.created": "agregó un ítem al catálogo",
+  "donation_item.updated": "editó un ítem del catálogo",
+  "donation_item.published": "publicó un ítem del catálogo",
   "donor.approved": "habilitó una cuenta del público",
   "donor.declined": "rechazó una cuenta del público",
 } as const satisfies Record<string, string>;
@@ -68,6 +71,7 @@ export const AUDIT_ENTITY_LABELS: Record<string, string> = {
   expense_receipts: "Comprobantes",
   updates: "Novedades",
   milestones: "Hitos",
+  donation_items: "Catálogo",
   payment_methods: "Cuentas",
   donor_profiles: "Cuentas del público",
 };

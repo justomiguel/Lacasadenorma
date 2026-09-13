@@ -24,6 +24,7 @@ const DEFAULT_ROUTES = [
   "/norma",
   "/que-paso",
   "/reconstruccion",
+  "/catalogo",
   "/ayudar",
   "/ayudar/paypal/completada",
   "/ayudar/paypal/cancelada",

@@ -2,6 +2,7 @@ import type { AdminGateway } from "@/src/domain/ports/admin";
 
 import type { ServerSupabaseClient } from "../server-client";
 import { createAuditPort, createRolesPort } from "./audit-port";
+import { createCatalogPort } from "./catalog-port";
 import { createCampaignPort } from "./campaign-port";
 import { createContributionsPort } from "./contributions-port";
 import { createExpensesPort } from "./expenses-port";
@@ -29,6 +30,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     expenses: createExpensesPort(client),
     updates: createUpdatesPort(client),
     milestones: createMilestonesPort(client),
+    catalog: createCatalogPort(client),
     paymentMethods: createPaymentMethodsPort(client),
     donors: createDonorsPort(client),
     audit: createAuditPort(client),

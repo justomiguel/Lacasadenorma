@@ -25,3 +25,24 @@ export class NotAuthorizedError extends Error {
     this.name = "NotAuthorizedError";
   }
 }
+
+/**
+ * Bajar `needed_quantity` por debajo de lo ya comprometido.
+ *
+ * Postgres lo rechaza con `23514` y el nombre del check. Este error es la
+ * traducción: el formulario del backoffice no puede mostrar un mensaje del
+ * motor (US4 escenario 5).
+ */
+export class CatalogOversubscribedError extends DomainError {
+  readonly committed: number;
+
+  constructor(committed: number) {
+    super(
+      committed === 1
+        ? "Hay 1 unidad comprometida; cancelala primero."
+        : `Hay ${String(committed)} unidades comprometidas; cancelalas primero.`,
+    );
+    this.name = "CatalogOversubscribedError";
+    this.committed = committed;
+  }
+}

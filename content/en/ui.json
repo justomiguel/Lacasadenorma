@@ -61,6 +61,9 @@
     },
     "/reconstruccion": {
       "label": "The work"
+    },
+    "/catalogo": {
+      "label": "What's missing"
     }
   },
   "legalNav": {

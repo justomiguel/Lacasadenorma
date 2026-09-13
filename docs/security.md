@@ -137,7 +137,7 @@ ataque que ahorro de trabajo.
 
 ## 3. RLS: la frontera de verdad
 
-RLS habilitado en las catorce tablas, y `010-estructura.sql` falla si alguien agrega una tabla sin
+RLS habilitado en las quince tablas, y `010-estructura.sql` falla si alguien agrega una tabla sin
 habilitarlo. Los patrones que se repiten:
 
 | Patrón | Cómo se ve | Por qué |

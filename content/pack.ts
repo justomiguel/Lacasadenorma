@@ -1,6 +1,7 @@
 import type { Locale } from "@/src/i18n/locale";
 
 import ayudarEn from "./en/ayudar.json";
+import catalogoEn from "./en/catalogo.json";
 import cuentaEn from "./en/cuenta.json";
 import emailsEn from "./en/emails.json";
 import legadoEn from "./en/legado.json";
@@ -13,6 +14,7 @@ import siteEn from "./en/site.json";
 import transparenciaEn from "./en/transparencia.json";
 import uiEn from "./en/ui.json";
 import ayudarEs from "./es/ayudar.json";
+import catalogoEs from "./es/catalogo.json";
 import cuentaEs from "./es/cuenta.json";
 import emailsEs from "./es/emails.json";
 import legadoEs from "./es/legado.json";
@@ -26,6 +28,7 @@ import transparenciaEs from "./es/transparencia.json";
 import uiEs from "./es/ui.json";
 import {
   accountSchema,
+  catalogSchema,
   emailsSchema,
   faqSchema,
   helpSchema,
@@ -63,6 +66,7 @@ function pack(
     quePaso: unknown;
     reconstruccion: unknown;
     ayudar: unknown;
+    catalogo: unknown;
     transparencia: unknown;
     legado: unknown;
     preguntas: unknown;
@@ -88,6 +92,7 @@ function pack(
       `${prefix}reconstruccion.json`,
     ),
     help: parseContent(helpSchema, files.ayudar, `${prefix}ayudar.json`),
+    catalog: parseContent(catalogSchema, files.catalogo, `${prefix}catalogo.json`),
     transparency: parseContent(
       transparencySchema,
       files.transparencia,
@@ -109,6 +114,7 @@ const packs = {
     quePaso: quePasoEs,
     reconstruccion: reconstruccionEs,
     ayudar: ayudarEs,
+    catalogo: catalogoEs,
     transparencia: transparenciaEs,
     legado: legadoEs,
     preguntas: preguntasEs,
@@ -123,6 +129,7 @@ const packs = {
     quePaso: quePasoEn,
     reconstruccion: reconstruccionEn,
     ayudar: ayudarEn,
+    catalogo: catalogoEn,
     transparencia: transparenciaEn,
     legado: legadoEn,
     preguntas: preguntasEn,

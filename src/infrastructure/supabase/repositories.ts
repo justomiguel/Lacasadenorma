@@ -10,12 +10,14 @@ import type {
 import type { Money } from "@/src/domain/money";
 import type {
   CampaignRepository,
+  CatalogRepository,
   MilestoneRepository,
   PaymentMethodRepository,
   TransparencyRepository,
   UpdateRepository,
 } from "@/src/domain/ports/repositories";
 
+import { createCatalogRepository } from "./catalog-repository";
 import {
   mapBudgetItem,
   mapCampaign,
@@ -84,6 +86,7 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
   milestones: MilestoneRepository;
   paymentMethods: PaymentMethodRepository;
   updates: UpdateRepository;
+  catalog: CatalogRepository;
 } {
   const publicUrlFor = (storagePath: string): string =>
     client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
@@ -276,5 +279,12 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
     },
   };
 
-  return { campaigns, transparency, milestones, paymentMethods, updates };
+  return {
+    campaigns,
+    transparency,
+    milestones,
+    paymentMethods,
+    updates,
+    catalog: createCatalogRepository(client),
+  };
 }

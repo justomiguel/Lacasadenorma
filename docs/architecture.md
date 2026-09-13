@@ -278,7 +278,7 @@ No son dos configuraciones: son dos formas de estar desplegado, y las dos son co
 | --- | --- | --- |
 | `getPublicDataLayer()` | `{ source: "supabase", …repositorios }` | `{ source: "content-only" }` |
 | Contenido editorial | Se sirve | Se sirve igual |
-| Cifras, gastos, hitos, cuentas | Se leen de la base | Se omiten con una explicación |
+| Cifras, gastos, hitos, catálogo, cuentas, novedades, fotos | Se leen de la base | Se omiten con una explicación |
 | `/api/public/*` | 200 con datos | 503, nunca 200 con ceros |
 | `/api/public/norma-story` | 200 | 200: la historia no depende de la base |
 | `/api/health` | `"dataSource": "supabase"` | `"dataSource": "content-only"` |
@@ -304,7 +304,7 @@ según de qué habla:
 
 | | `content/*.json` | Base de datos |
 | --- | --- | --- |
-| Qué | La historia, qué pasó, el alcance de la obra, las preguntas frecuentes, los textos legales | Cifras, gastos, hitos, cuentas, novedades, fotos |
+| Qué | La historia, qué pasó, el alcance de la obra, las preguntas frecuentes, los textos legales, la prosa del catálogo | Cifras, gastos, hitos, cuentas, novedades, fotos, ítems del catálogo |
 | Cada cuánto cambia | Meses | Días |
 | Quién lo edita | Un pull request | El backoffice, desde un teléfono |
 | Cuándo se valida | Al importar el módulo, o sea al construir | Al guardar, con Zod, y otra vez con constraints de la base |
@@ -342,7 +342,7 @@ privilegiado que se pueda quedar desactualizado. El detalle está en [`docs/webm
 | Ruta | Estrategia | Por qué |
 | --- | --- | --- |
 | `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estática | No dependen de la base |
-| `/`, `/reconstruccion`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
+| `/`, `/reconstruccion`, `/catalogo`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
 | `/llms.txt` | `force-static` | Es un resumen del sitio, no un dato |
 | `/api/public/*` | `public, max-age=60, stale-while-revalidate=300` | Respuestas chicas y cacheables en el borde |
 | `/api/health` | `force-dynamic`, `no-store` | Un diagnóstico cacheado no es un diagnóstico |

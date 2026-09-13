@@ -43,6 +43,7 @@ export const PRIMARY_NAV = [
 export const SECONDARY_NAV = [
   { href: "/novedades", label: "Novedades" },
   { href: "/reconstruccion", label: "La obra" },
+  { href: "/catalogo", label: "Qué falta" },
 ] as const;
 
 export const LEGAL_NAV = [

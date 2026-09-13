@@ -1,6 +1,7 @@
 import type {
   BudgetItem,
   Campaign,
+  DonationItem,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
@@ -56,4 +57,9 @@ export interface UpdateRepository {
   listPublishedUpdates(campaignId: string, limit?: number): Promise<UpdateRecord[]>;
   /** Devuelve `null` si el slug no existe o si todavía no está publicado (I7). */
   findPublishedUpdateBySlug(slug: string): Promise<UpdateRecord | null>;
+}
+
+export interface CatalogRepository {
+  /** Ítems publicados de la campaña, en orden editorial. Los borradores no existen acá. */
+  listPublishedItems(campaignId: string): Promise<DonationItem[]>;
 }

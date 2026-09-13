@@ -41,6 +41,12 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
     description: "El avance de la obra, paso por paso.",
   },
   {
+    href: "/admin/catalogo",
+    label: "Catálogo",
+    permission: "catalogo.escribir",
+    description: "Qué le falta a la casa, en especie, y cuánto.",
+  },
+  {
     href: "/admin/objetivos",
     label: "Objetivo",
     permission: "campana.escribir",

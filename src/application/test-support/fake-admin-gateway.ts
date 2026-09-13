@@ -83,6 +83,10 @@ export function fakeAdminGateway(
       listMilestones: () => record("listMilestones", null, []),
       saveMilestone: (input) => record("saveMilestone", input, id),
     },
+    catalog: {
+      listItems: () => record("listItems", null, []),
+      saveItem: (input) => record("saveItem", input, id),
+    },
     paymentMethods: {
       listMethods: () => record("listMethods", null, []),
       saveMethod: (input) => record("saveMethod", input, id),

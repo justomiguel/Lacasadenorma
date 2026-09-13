@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
+import { saveDonationItem } from "./catalog";
 import { reviewDonorAccount } from "./donors";
 import { recordExpense } from "./expenses";
 import { savePaymentMethod } from "./payment-methods";
@@ -98,5 +99,32 @@ describe("autorización", () => {
     });
 
     expect(result.status).toBe("ok");
+  });
+
+  it("deja pasar a un editor en el catálogo", async () => {
+    const { deps: editor } = deps("editor");
+    const result = await saveDonationItem(editor, {
+      campaignId: CAMPAIGN,
+      title: "Chapas del techo",
+      unit: "unidad",
+      neededQuantity: "40",
+      currency: "ARS",
+    });
+
+    expect(result.status).toBe("ok");
+  });
+
+  it("rechaza a un auditor que intenta cargar un ítem del catálogo", async () => {
+    const { deps: auditor, fake } = deps("auditor");
+    const result = await saveDonationItem(auditor, {
+      campaignId: CAMPAIGN,
+      title: "Chapas del techo",
+      unit: "unidad",
+      neededQuantity: "40",
+      currency: "ARS",
+    });
+
+    expect(result.status).toBe("rejected");
+    expect(fake.calls).toEqual([]);
   });
 });

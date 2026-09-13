@@ -21,6 +21,7 @@ export {
   voidExpense,
 } from "./expenses";
 export { saveMilestone } from "./milestones";
+export { saveDonationItem } from "./catalog";
 export { reviewDonorAccount } from "./donors";
 export type { ReviewAccountMail } from "./donors";
 export { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";

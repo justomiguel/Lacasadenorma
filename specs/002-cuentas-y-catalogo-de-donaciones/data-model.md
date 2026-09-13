@@ -183,12 +183,15 @@ select
   i.needed_quantity,
   i.needed_quantity - i.reserved_quantity - i.fulfilled_quantity as remaining_quantity,
   i.fulfilled_quantity, i.photo_media_id, i.sort_order
-from public.donation_items i;
+from public.donation_items i
+where i.published_at is not null;
 ```
 
 `remaining_quantity` se calcula en la base (FR-210) y **nunca** es negativo, porque el `check` de la
 tabla lo impide. `estimated_unit_amount_minor` **no está en la vista**: es la aplicación de D3 en el
-único lugar donde no depende de que nadie se acuerde.
+único lugar donde no depende de que nadie se acuerde. El `where published_at is not null` es FR-215
+en la vista, además de la policy sobre la tabla: un editor con sesión no ve borradores por este
+camino.
 
 ```sql
 create view public.donation_wall with (security_invoker = true) as
@@ -254,7 +257,18 @@ Cuatro decisiones que hay que notar:
 grant select on public.donation_items, public.donation_catalog, public.donation_wall
   to anon, authenticated;
 
-grant select, insert, update on public.donation_items to authenticated;
+-- INSERT/UPDATE por columna: `reserved_quantity` y `fulfilled_quantity` no se
+-- escriben con un update directo, ni siquiera como `owner`. Las mueve sólo la
+-- función de reserva (ADR-029). DELETE lo filtra la policy a `admin`+.
+grant insert (
+  campaign_id, budget_item_id, title, description, unit, needed_quantity,
+  estimated_unit_amount_minor, currency, photo_media_id, sort_order, published_at
+) on public.donation_items to authenticated;
+grant update (
+  campaign_id, budget_item_id, title, description, unit, needed_quantity,
+  estimated_unit_amount_minor, currency, photo_media_id, sort_order, published_at
+) on public.donation_items to authenticated;
+grant delete on public.donation_items to authenticated;
 grant select, insert, delete on public.donor_profiles to authenticated;
 grant update (display_name, locale, default_anonymous) on public.donor_profiles
   to authenticated;

@@ -1,5 +1,6 @@
 import type {
   CampaignRepository,
+  CatalogRepository,
   MilestoneRepository,
   PaymentMethodRepository,
   TransparencyRepository,
@@ -26,5 +27,6 @@ export type DataLayer =
       readonly milestones: MilestoneRepository;
       readonly paymentMethods: PaymentMethodRepository;
       readonly updates: UpdateRepository;
+      readonly catalog: CatalogRepository;
     }
   | { readonly source: "content-only" };

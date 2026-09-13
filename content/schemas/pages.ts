@@ -128,6 +128,32 @@ export const transparencySchema = pageSchema.extend({
   method: paragraphs,
 });
 
+const unitCopy = z.object({
+  one: z.string().min(1),
+  other: z.string().min(1),
+});
+
+export const catalogSchema = pageSchema.extend({
+  seoDescription: z.string().min(1),
+  emptyTitle: z.string().min(1),
+  emptyBody: z.string().min(1),
+  unavailableTitle: z.string().min(1),
+  covered: z.string().min(1),
+  remaining: z.string().min(1),
+  needed: z.string().min(1),
+  reservedPhoto: z.string().min(1),
+  howToHelp: z.string().min(1),
+  loading: z.string().min(1),
+  units: z.object({
+    unidad: unitCopy,
+    metro: unitCopy,
+    metro_cuadrado: unitCopy,
+    bolsa: unitCopy,
+    litro: unitCopy,
+    juego: unitCopy,
+  }),
+});
+
 export const faqSchema = z
   .array(
     z
@@ -168,6 +194,7 @@ export type WhatHappenedContent = z.infer<typeof whatHappenedSchema>;
 export type ReconstructionContent = z.infer<typeof reconstructionSchema>;
 export type HelpContent = z.infer<typeof helpSchema>;
 export type TransparencyContent = z.infer<typeof transparencySchema>;
+export type CatalogContent = z.infer<typeof catalogSchema>;
 export type FaqContent = z.infer<typeof faqSchema>;
 export type LegalContent = z.infer<typeof legalSchema>;
 export type SectionContent = z.infer<typeof sectionSchema>;

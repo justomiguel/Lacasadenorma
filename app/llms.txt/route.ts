@@ -62,6 +62,9 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada,
   lo que cubrió la prensa y qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.
+- [Qué le falta a la casa](${siteUrl}/catalogo): materiales y cosas que todavía hacen falta, y
+  cuánto queda. Sin foto no se inventa una. Reservar una unidad se abre cuando la cuenta está
+  habilitada.
 - [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
   Chile.
 - [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.

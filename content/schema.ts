@@ -8,6 +8,7 @@ export type { AccountContent } from "./schemas/account";
 export { emailsSchema } from "./schemas/emails";
 export type { EmailCopy, EmailsContent } from "./schemas/emails";
 export {
+  catalogSchema,
   faqSchema,
   helpSchema,
   legalSchema,
@@ -17,6 +18,7 @@ export {
   whatHappenedSchema,
 } from "./schemas/pages";
 export type {
+  CatalogContent,
   FaqContent,
   HelpContent,
   LegalContent,

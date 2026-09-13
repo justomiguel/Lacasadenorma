@@ -7,8 +7,8 @@
 --
 -- ── Cómo se ejecuta ─────────────────────────────────────────────────────────
 --
--- En lugar de escribir 336 aserciones a mano, se **ejecuta de verdad** cada una
--- de las 4 operaciones sobre cada una de las 14 tablas con cada uno de los 6
+-- En lugar de escribir 360 aserciones a mano, se **ejecuta de verdad** cada una
+-- de las 4 operaciones sobre cada una de las 15 tablas con cada uno de los 6
 -- roles, y recién después se compara el resultado completo contra la matriz
 -- esperada. La diferencia con una lista de `throws_ok` no es de estilo: acá una
 -- tabla nueva o una policy nueva aparecen solas en el resultado observado y la
@@ -17,7 +17,7 @@
 -- `pg_temp.intentar()` cambia de rol, fija el JWT, ejecuta la sentencia dentro de
 -- una subtransacción y **la revierte siempre**, gane o pierda. Por eso una celda
 -- no puede contaminar a la siguiente, y por eso el fixture sigue intacto cuando
--- terminan las 336 ejecuciones.
+-- terminan las 360 ejecuciones.
 --
 -- ── Los tres veredictos de una negación, que no son lo mismo ────────────────
 --
@@ -98,6 +98,10 @@ insert into public.milestones (id, campaign_id, title, status, happened_on, publ
 insert into public.media (id, storage_path, alt_text, width, height) values
   ('d0000000-0000-4000-8000-000000000001', 'fotos/techo.jpg', 'Cabriadas apoyadas sobre los muros', 1600, 1200),
   ('d0000000-0000-4000-8000-000000000002', 'fotos/frente.jpg', 'Frente de la casa con el revoque a la vista', 1600, 1200);
+
+insert into public.donation_items (id, campaign_id, title, unit, needed_quantity, published_at) values
+  ('ab000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000001', 'Chapas publicadas', 'unidad', 40, now()),
+  ('ab000000-0000-4000-8000-000000000002', 'c0000000-0000-4000-8000-000000000001', 'Chapas en borrador', 'unidad', 10, null);
 
 insert into public.updates (id, campaign_id, slug, title, body, published_at) values
   ('a0000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000001', 'llego-el-techo', 'Llegó el techo', 'Se colocaron las cabriadas.', now()),
@@ -274,6 +278,11 @@ insert into caso (tabla, operacion, sentencia) values
   ('budget_items', 'modificación', $s$update public.budget_items set description = 'Descripción cambiada' where id = 'b0000000-0000-4000-8000-000000000001'$s$),
   ('budget_items', 'borrado', $s$delete from public.budget_items where id = 'b0000000-0000-4000-8000-000000000002'$s$),
 
+  ('donation_items', 'lectura', $s$select 1 from public.donation_items$s$),
+  ('donation_items', 'inserción', $s$insert into public.donation_items (campaign_id, title, unit, needed_quantity) values ('c0000000-0000-4000-8000-000000000001', 'Ítem nuevo', 'unidad', 4)$s$),
+  ('donation_items', 'modificación', $s$update public.donation_items set description = 'Descripción cambiada' where id = 'ab000000-0000-4000-8000-000000000001'$s$),
+  ('donation_items', 'borrado', $s$delete from public.donation_items where id = 'ab000000-0000-4000-8000-000000000002'$s$),
+
   ('contributions', 'lectura', $s$select 1 from public.contributions$s$),
   ('contributions', 'inserción', $s$insert into public.contributions (campaign_id, amount_minor, currency, received_at) values ('c0000000-0000-4000-8000-000000000001', 1000, 'ARS', date '2026-08-10')$s$),
   ('contributions', 'modificación', $s$update public.contributions set source_note = 'Conciliado' where id = 'f0000000-0000-4000-8000-000000000001'$s$),
@@ -375,6 +384,7 @@ create temporary table esperado (
 insert into esperado values
   ('anon', 'campaigns',        'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'budget_items',     'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  ('anon', 'donation_items',   'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'contributions',    'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'expenses',         'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'expense_receipts', 'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
@@ -418,6 +428,7 @@ insert into esperado values
 insert into esperado values
   ('donante', 'campaigns',        'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'budget_items',     'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('donante', 'donation_items',   'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'contributions',    'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'expenses',         'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'expense_receipts', 'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
@@ -447,6 +458,7 @@ insert into esperado values
 insert into esperado values
   ('auditor', 'campaigns',        'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'budget_items',     'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('auditor', 'donation_items',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'contributions',    'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'expenses',         'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('auditor', 'expense_receipts', 'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
@@ -484,6 +496,9 @@ insert into esperado values
 insert into esperado values
   ('editor', 'campaigns',        'todo',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('editor', 'budget_items',     'todo',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  -- El catálogo es contenido de obra, no dato personal: `editor` crea y edita,
+  -- igual que un hito. Borrar un ítem publicado es administración.
+  ('editor', 'donation_items',   'todo',              'permitido',      'permitido',      'denegado (RLS)'),
   ('editor', 'contributions',    'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('editor', 'expenses',         'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('editor', 'expense_receipts', 'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
@@ -518,6 +533,7 @@ insert into esperado values
 insert into esperado values
   ('admin', 'campaigns',        'todo', 'permitido',      'permitido',      'denegado (RLS)'),
   ('admin', 'budget_items',     'todo', 'permitido',      'permitido',      'permitido'),
+  ('admin', 'donation_items',   'todo', 'permitido',      'permitido',      'permitido'),
   -- Nada financiero se borra: se anula con motivo (FR-015). No hay policy de
   -- DELETE en `contributions` ni en `expenses`, y esa ausencia es la regla.
   ('admin', 'contributions',    'todo', 'permitido',      'permitido',      'denegado (RLS)'),
@@ -544,6 +560,7 @@ insert into esperado values
 insert into esperado values
   ('owner', 'campaigns',        'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'budget_items',     'todo', 'permitido', 'permitido',      'permitido'),
+  ('owner', 'donation_items',   'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'contributions',    'todo', 'permitido', 'permitido',      'denegado (RLS)'),
   ('owner', 'expenses',         'todo', 'permitido', 'permitido',      'denegado (RLS)'),
   ('owner', 'expense_receipts', 'todo', 'permitido', 'denegado (RLS)', 'permitido'),
@@ -606,7 +623,7 @@ select results_eq(
   'la matriz esperada nombra exactamente las tablas que existen en public: una tabla nueva rompe esta prueba hasta que se le asigne una fila'
 );
 
--- ── Se ejecutan las 336 celdas ──────────────────────────────────────────────
+-- ── Se ejecutan las 360 celdas ──────────────────────────────────────────────
 
 create temporary table observado (
   rol text not null,

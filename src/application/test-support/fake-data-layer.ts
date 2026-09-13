@@ -1,6 +1,7 @@
 import type {
   BudgetItem,
   Campaign,
+  DonationItem,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
@@ -28,6 +29,7 @@ export interface FakeData {
   milestones?: MilestoneRecord[];
   paymentMethods?: PaymentMethod[];
   updates?: UpdateRecord[];
+  catalog?: DonationItem[];
   /** Cuando está definido, todas las lecturas fallan con este error. */
   failWith?: Error;
 }
@@ -93,6 +95,9 @@ export function fakeSupabaseLayer(
       listPublishedUpdates: () => guard(data.updates ?? []),
       findPublishedUpdateBySlug: (slug) =>
         guard(data.updates?.find((item) => item.slug === slug) ?? null),
+    },
+    catalog: {
+      listPublishedItems: () => guard(data.catalog ?? []),
     },
   };
 }

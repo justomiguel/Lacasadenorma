@@ -124,27 +124,27 @@ el panel de Supabase (ADR-003, consecuencias).
 **Prueba independiente**: `/catalogo` con ítems cargados muestra qué falta y cuánto; sin Supabase se
 omite con aviso.
 
-- [ ] **T028** [P] `src/domain/catalog.test.ts` **en rojo**: `remaining`, `isCovered`, que nunca dé
+- [x] **T028** [P] `src/domain/catalog.test.ts` **en rojo**: `remaining`, `isCovered`, que nunca dé
       negativo, y que un ítem sin valor estimado no invente ninguno.
-- [ ] **T029** [P] `supabase/tests/070-catalogo.sql` **en rojo**: el `check` de no-sobreventa atacado
+- [x] **T029** [P] `supabase/tests/070-catalogo.sql` **en rojo**: el `check` de no-sobreventa atacado
       con un `update` de superusuario, y bajar `needed_quantity` por debajo de lo comprometido.
-- [ ] **T030** Migración `…_donation_catalog.sql`: enum `donation_unit`, `donation_items` con sus
+- [x] **T030** Migración `…_donation_catalog.sql`: enum `donation_unit`, `donation_items` con sus
       cuatro restricciones, índices, policies y la vista `donation_catalog` con `security_invoker`.
-- [ ] **T031** [P] `src/domain/entities/donation-item.ts` y `src/domain/catalog.ts`.
-- [ ] **T032** `src/domain/ports/repositories.ts` + `src/infrastructure/supabase/catalog-repository.ts`,
+- [x] **T031** [P] `src/domain/entities/donation-item.ts` y `src/domain/catalog.ts`.
+- [x] **T032** `src/domain/ports/repositories.ts` + `src/infrastructure/supabase/catalog-repository.ts`,
       consultando **la vista** con lista de columnas explícita.
-- [ ] **T033** `src/application/use-cases/get-catalog.ts`, con `DataResult` como los demás.
-- [ ] **T034** Pantalla `/catalogo` en los dos idiomas: `components/screens/catalog-screen.tsx` y
-      `components/catalog/*`. Primitivos existentes (`ChapterHeading`, `PreviewCard`, `Figure`,
-      `Band`); **sin** lenguaje visual nuevo.
-- [ ] **T035** [P] Estados vacío, de carga y de error, diseñados los tres (principio XII).
-- [ ] **T036** [P] Espacio reservado con su leyenda para el ítem sin foto, y el número **exacto**
+- [x] **T033** `src/application/use-cases/get-catalog.ts`, con `DataResult` como los demás.
+- [x] **T034** Pantalla `/catalogo` en los dos idiomas: `components/screens/catalog-screen.tsx` y
+      `components/catalog/*`. Primitivos existentes (`PageHeader`, `EditorialImage`, `ReservedSpace`,
+      `SecondaryAction`); **sin** lenguaje visual nuevo (ADR-032 gana sobre el mockup de tarjetas).
+- [x] **T035** [P] Estados vacío, de carga y de error, diseñados los tres (principio XII).
+- [x] **T036** [P] Espacio reservado con su leyenda para el ítem sin foto, y el número **exacto**
       declarado en `ESPACIOS_RESERVADOS` de `e2e/comun/revision-visual.spec.ts` (FR-212).
-- [ ] **T037** `/admin/catalogo`: alta, edición, publicación, foto con `alt` obligatorio. Pasa por
+- [x] **T037** `/admin/catalogo`: alta, edición, publicación, foto con `alt` obligatorio. Pasa por
       `perform()` y escribe el rastro (FR-223).
-- [ ] **T038** [P] La traducción del error `23514` a "hay N unidades comprometidas" (US4 escenario 5).
+- [x] **T038** [P] La traducción del error `23514` a "hay N unidades comprometidas" (US4 escenario 5).
       Sin esto, el formulario muestra un mensaje de Postgres.
-- [ ] **T039** [P] `content/*/catalogo.json`, `e2e/sin-datos/degradacion.spec.ts`, sitemap y
+- [x] **T039** [P] `content/*/catalogo.json`, `e2e/sin-datos/degradacion.spec.ts`, sitemap y
       metadata.
 
 **Punto de control**: el sitio ya contesta "qué falta", que es la mitad del pedido.

@@ -1,7 +1,7 @@
 -- El perfil de una cuenta del público: sólo el propio, y todo el propio.
 --
 -- `030-matriz-de-permisos.sql` ya dice lo que una cuenta del público **no** puede:
--- ahí `donor_profiles` es una fila más de una matriz de 336 celdas y su veredicto
+-- ahí `donor_profiles` es una fila más de una matriz de 360 celdas y su veredicto
 -- se mide contando filas. Eso alcanza para las negaciones y no alcanza para dos
 -- cosas que este archivo cubre:
 --

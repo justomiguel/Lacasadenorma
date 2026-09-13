@@ -15,7 +15,7 @@
 -- por qué cumplir sus reglas.
 
 begin;
-select plan(36);
+select plan(38);
 
 -- ── RLS ─────────────────────────────────────────────────────────────────────
 
@@ -353,6 +353,7 @@ select results_eq(
   $q$
     values ('public.budget_items.published_at'),
            ('public.campaigns.published_at'),
+           ('public.donation_items.published_at'),
            -- Las policies de `donor_profiles` filtran por propiedad y por estado
            -- de habilitación, no por publicación. `id` es la clave primaria.
            -- `approval_status` está en el `with check` del insert: nacer habilitada
@@ -369,7 +370,7 @@ select results_eq(
            ('public.updates.published_at'),
            ('storage.objects.bucket_id')
   $q$,
-  'las policies filtran exactamente por estas doce columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
+  'las policies filtran exactamente por estas trece columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
 
 -- Y los índices que data-model.md §4 nombra uno por uno, con su nombre real. La
@@ -407,6 +408,14 @@ select has_index('public', 'media', 'media_storage_path_idx',
 
 select has_index('public', 'user_roles', 'user_roles_user_id_idx',
   array['user_id']::name[], 'user_roles(user_id): lo resuelve el hook del token en cada emisión');
+
+select has_index('public', 'donation_items', 'donation_items_campaign_idx',
+  array['campaign_id', 'sort_order']::name[],
+  'donation_items(campaign_id, sort_order): el orden editorial de una campaña');
+
+select has_index('public', 'donation_items', 'donation_items_published_at_idx',
+  array['published_at']::name[],
+  'donation_items(published_at): lo filtra la policy de lectura pública');
 
 -- ── published_at es la frontera de lo público (T047, amenaza I7) ────────────
 -- `published_at` nulo significa borrador en todas las tablas que tienen la

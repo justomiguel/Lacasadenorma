@@ -38,6 +38,11 @@ values
   ('c0000000-0000-4000-8000-000000000001', 'Techo y cabriadas', 1, now()),
   ('c0000000-0000-4000-8000-000000000001', 'Aberturas sin cotizar', 2, null);
 
+insert into public.donation_items (campaign_id, title, unit, needed_quantity, published_at)
+values
+  ('c0000000-0000-4000-8000-000000000001', 'Chapas del techo', 'unidad', 40, now()),
+  ('c0000000-0000-4000-8000-000000000001', 'Arena en borrador', 'bolsa', 20, null);
+
 -- Aportes: uno válido en pesos, uno anulado en pesos, uno válido en dólares, y uno
 -- de la campaña en borrador que no tiene que aparecer en ningún total público.
 insert into public.contributions (campaign_id, amount_minor, currency, received_at, voided_at, void_reason)

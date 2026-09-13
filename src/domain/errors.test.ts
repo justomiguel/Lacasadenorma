@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DomainError, NotAuthorizedError } from "./errors";
+import { CatalogOversubscribedError, DomainError, NotAuthorizedError } from "./errors";
 
 describe("DomainError", () => {
   it("lleva nombre propio, para poder distinguirlo en un catch", () => {
@@ -35,5 +35,22 @@ describe("NotAuthorizedError", () => {
     // para uno tape al otro.
     expect(new NotAuthorizedError()).not.toBeInstanceOf(DomainError);
     expect(new DomainError("x")).not.toBeInstanceOf(NotAuthorizedError);
+  });
+});
+
+describe("CatalogOversubscribedError", () => {
+  it("traduce una unidad al singular", () => {
+    const error = new CatalogOversubscribedError(1);
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("CatalogOversubscribedError");
+    expect(error.committed).toBe(1);
+    expect(error.message).toBe("Hay 1 unidad comprometida; cancelala primero.");
+  });
+
+  it("nombra las unidades comprometidas, no el error de Postgres (US4 escenario 5)", () => {
+    const error = new CatalogOversubscribedError(3);
+
+    expect(error.message).toBe("Hay 3 unidades comprometidas; cancelalas primero.");
   });
 });
