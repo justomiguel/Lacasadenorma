@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { InlineLink } from "@/components/design-system/actions";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -11,11 +10,17 @@ import type { Locale } from "@/src/i18n/locale";
  * sin acordeón. Un acordeón esconde el contenido de quien busca con Ctrl+F, de un
  * buscador que mide el contenido visible y de un modelo que lee la página.
  *
+ * En escritorio van a dos columnas: son entradas cortas e independientes, y en
+ * una sola columna la sección medía dos pantallas de texto angosto con dos
+ * tercios de la página vacíos. Cada entrada abre con su regla, así que se ve
+ * dónde termina una y empieza la otra también cuando quedan lado a lado.
+ *
  * El orden es el de `content/{locale}/preguntas.json`.
  *
  * El texto de cada enlace viene del contenido y no de acá. Un "ver más" repetido
  * se escucha, en la lista de enlaces de un lector de pantalla, como la misma frase
- * repetida: no hay forma de elegir uno.
+ * repetida: no hay forma de elegir uno. Y es un enlace de prosa como cualquier
+ * otro del sitio, con el mismo estilo: no hay una tercera clase de enlace.
  */
 export function FaqSection({
   locale,
@@ -28,16 +33,11 @@ export function FaqSection({
 
   return (
     <div className={className}>
-      <dl>
+      <dl className="grid gap-x-3xl lg:grid-cols-2">
         {faq.map((item) => (
-          <div
-            key={item.question}
-            className="border-t border-rule py-xl first:border-t-0 first:pt-0"
-          >
+          <div key={item.question} className="border-t border-rule py-lg lg:py-xl">
             <dt>
-              <h3 className="max-w-measure font-display text-subheading font-medium">
-                {item.question}
-              </h3>
+              <h3 className="max-w-measure font-display text-card">{item.question}</h3>
             </dt>
             {item.answer.map((paragraph) => (
               <dd key={paragraph.slice(0, 48)} className="mt-sm max-w-measure text-body">
@@ -45,13 +45,10 @@ export function FaqSection({
               </dd>
             ))}
             {item.href === null || item.linkLabel === null ? null : (
-              <dd className="mt-sm">
-                <Link
-                  href={localizedHref(item.href, locale)}
-                  className="font-ui text-small text-aqua underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
-                >
+              <dd className="mt-md font-ui text-small">
+                <InlineLink href={localizedHref(item.href, locale)}>
                   {item.linkLabel}
-                </Link>
+                </InlineLink>
               </dd>
             )}
           </div>

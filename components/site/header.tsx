@@ -109,7 +109,7 @@ export function SiteHeader({
         </Link>
 
         <nav aria-label={ui.nav.primary} className="hidden lg:block">
-          <ul className="flex items-center gap-lg">
+          <ul className="flex items-center gap-md xl:gap-lg">
             {NAV_HREFS.map((href) => {
               const actual = canonical === href;
               const item = ui.primaryNav[href];
@@ -121,8 +121,8 @@ export function SiteHeader({
                     {...(actual ? { "aria-current": "page" as const } : {})}
                     className={
                       actual
-                        ? "inline-flex min-h-touch items-center font-ui text-small text-paper underline decoration-sage decoration-2 underline-offset-4"
-                        : "inline-flex min-h-touch items-center font-ui text-small text-paper/80 transition-colors duration-fast hover:text-paper"
+                        ? "inline-flex min-h-touch items-center whitespace-nowrap font-ui text-small text-paper underline decoration-sage decoration-2 underline-offset-4"
+                        : "inline-flex min-h-touch items-center whitespace-nowrap font-ui text-small text-paper/80 transition-colors duration-fast hover:text-paper"
                     }
                   >
                     {item.shortLabel}
@@ -146,7 +146,7 @@ export function SiteHeader({
           <Link
             href={helpHref}
             data-help-primary=""
-            className="lift-hover hidden min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest sm:inline-flex"
+            className="lift-hover hidden min-h-touch items-center whitespace-nowrap rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest sm:inline-flex"
             onClick={() => {
               track({ name: "ayudar_click", props: { origen: "encabezado" } });
             }}

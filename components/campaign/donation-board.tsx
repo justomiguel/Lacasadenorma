@@ -156,7 +156,9 @@ export function DonationBoard({
         <div
           role="tablist"
           aria-label={ui.home.donateTitle}
-          className="mb-lg flex w-full gap-xs lg:w-auto lg:flex-wrap lg:gap-sm"
+          /* En teléfono la fila se desplaza en horizontal en lugar de partir
+             «Transferencia bancaria» en dos renglones dentro de una píldora. */
+          className="-mx-5 mb-lg flex gap-xs overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0 lg:gap-sm"
           onKeyDown={(event) => {
             const next = nextItem(CHANNELS, channel, event.key);
 
@@ -189,7 +191,7 @@ export function DonationBoard({
                 aria-controls={`${baseId}-panel`}
                 tabIndex={selected ? 0 : -1}
                 className={cn(
-                  "lift-hover inline-flex min-h-touch flex-1 items-center justify-center gap-xs rounded-pill px-md font-ui text-small lg:flex-none",
+                  "lift-hover inline-flex min-h-touch shrink-0 items-center justify-center gap-xs whitespace-nowrap rounded-pill px-md font-ui text-small",
                   selected
                     ? "bg-forest text-paper"
                     : "border border-rule text-ink hover:border-forest",

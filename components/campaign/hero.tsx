@@ -7,20 +7,28 @@ import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 /**
- * Apertura del mockup: foto real del interior incendiado a sangrado, título, dos CTA.
+ * Apertura: foto real a sangrado, título, dos acciones.
+ *
+ * La foto de fondo es la de los bomberos en la puerta, esa madrugada, y no la
+ * del interior quemado que pedía el mockup. No es una decisión de gusto: el
+ * interior llegó recortado de un collage y mide **602 px de ancho**; estirado a
+ * 1440 px se veía borroso, y una apertura borrosa es lo primero que alguien ve
+ * del sitio. Las dos fotos de esa noche miden 1220 px y aguantan el sangrado.
+ * El interior pasa al capítulo siguiente, al tamaño que su archivo permite.
+ *
  * El header se superpone. 88–96 svh según el viewport, como el mockup.
  */
 export function Hero({ locale }: { locale: Locale }) {
   const { site, ui, whatHappened } = getContent(locale);
-  const after = whatHappened.photoEssay[1]?.photos ?? [];
-  const hero = after[1] ?? after[0];
-  const quotePhoto = after[0] ?? whatHappened.photoEssay[0]?.photos[0];
+  const night = whatHappened.photoEssay[0]?.photos ?? [];
+  const hero = night[0];
+  const quotePhoto = night[1] ?? whatHappened.photoEssay[1]?.photos[0];
 
   return (
     <ScrollDepth>
       <section
         aria-labelledby="apertura"
-        className="relative isolate flex min-h-[88svh] overflow-hidden bg-forest text-paper lg:min-h-[96svh]"
+        className="relative isolate flex min-h-[88svh] overflow-hidden bg-forest text-paper lg:min-h-[92svh]"
         data-tone="forest"
       >
         {hero === undefined ? null : (
@@ -30,22 +38,22 @@ export function Hero({ locale }: { locale: Locale }) {
                 <CoverPhoto
                   media={hero}
                   priority
-                  quality={72}
+                  quality={70}
                   sizes="100vw"
-                  position="center 38%"
+                  position="center 45%"
                 />
               </div>
             </div>
-            <div className="absolute inset-0 bg-forest/40 lg:bg-forest/36" />
+            <div className="absolute inset-0 bg-forest/50 lg:bg-forest/45" />
           </div>
         )}
 
-        <div className="mx-auto grid w-full max-w-page flex-1 items-end gap-2xl px-5 pb-3xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-4xl lg:pt-32">
+        <div className="mx-auto grid w-full max-w-page flex-1 items-end gap-2xl px-5 pb-2xl pt-24 sm:px-xl lg:grid-cols-12 lg:px-4xl lg:pb-3xl lg:pt-32">
           <div className="lg:col-span-6" data-hero-copy="">
             <p
               data-kicker=""
               data-hero-enter="kicker"
-              className="font-ui text-label uppercase tracking-label text-sage"
+              className="font-ui text-small font-medium text-sage"
             >
               {ui.home.locationLine}
             </p>
@@ -69,7 +77,7 @@ export function Hero({ locale }: { locale: Locale }) {
 
             <div
               data-hero-enter="actions"
-              className="mt-xl flex flex-col items-start gap-md sm:flex-row sm:items-center"
+              className="mt-xl flex flex-wrap items-center gap-md"
             >
               <HelpCta
                 origen="apertura"
@@ -80,27 +88,25 @@ export function Hero({ locale }: { locale: Locale }) {
               <span data-hero-enter="secondary">
                 <SecondaryAction
                   href={localizedHref("/que-paso", locale)}
-                  className="lift-hover border-paper text-paper hover:bg-paper hover:text-forest"
+                  tone="paper"
+                  className="lift-hover"
                 >
                   {ui.home.knowStory}
                 </SecondaryAction>
               </span>
             </div>
-            <p data-hero-enter="hint" className="mt-xl font-ui text-small text-paper/80">
-              {ui.home.scrollHint}
-            </p>
           </div>
 
           {quotePhoto === undefined ? null : (
             <div
               data-hero-enter="quote"
-              className="relative hidden lg:col-span-5 lg:col-start-8 lg:block"
+              className="relative hidden lg:col-span-4 lg:col-start-9 lg:block"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-md">
+              <div className="relative aspect-portrait overflow-hidden rounded-md">
                 <CoverPhoto
                   media={quotePhoto}
-                  quality={68}
-                  sizes="(min-width: 64rem) 40vw, 100vw"
+                  quality={70}
+                  sizes="(min-width: 64rem) 32vw, 100vw"
                   position="center"
                 />
                 <div className="absolute inset-0 bg-forest/45" />

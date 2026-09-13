@@ -1,8 +1,8 @@
 import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
+import { PreviewCard } from "@/components/design-system/card";
 import { Container, Section } from "@/components/design-system/layout";
-import { Figure } from "@/components/design-system/photo";
 import { Byline } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
@@ -102,54 +102,26 @@ export async function NewsIndexScreen({ locale }: { locale: Locale }) {
               )}
             </div>
           ) : (
-            <ul className="border-t border-rule">
-              {updates.data.map((update) => {
-                const cover = update.media[0];
-                const titleAndExcerpt = (
-                  <>
-                    <h2 className="mt-xs font-display text-heading">
-                      <InlineLink
-                        href={localizedHref(`/novedades/${update.slug}`, locale)}
-                        className="text-ink decoration-aqua hover:text-aqua-strong"
-                      >
-                        {update.title}
-                      </InlineLink>
-                    </h2>
-                    <p className="mt-sm max-w-measure text-body text-ink-muted">
-                      {excerpt(update.body, 180)}
-                    </p>
-                  </>
-                );
-
-                return (
-                  <li
-                    key={update.id}
-                    className="grid gap-lg border-b border-rule py-xl lg:grid-cols-12 lg:gap-lg"
-                  >
-                    <div className="lg:col-span-7">
-                      {update.publishedAt === null ? null : (
+            <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
+              {updates.data.map((update) => (
+                <li key={update.id} className="flex min-w-0">
+                  <PreviewCard
+                    as="h2"
+                    href={localizedHref(`/novedades/${update.slug}`, locale)}
+                    title={update.title}
+                    summary={excerpt(update.body, 140)}
+                    action={ui.news.readUpdate}
+                    media={update.media[0] ?? null}
+                    className="w-full"
+                    {...(locale === "en" ? { lang: "es-AR" } : {})}
+                    eyebrow={
+                      update.publishedAt === null ? undefined : (
                         <Byline isoDate={update.publishedAt} locale={locale} />
-                      )}
-                      {locale === "en" ? (
-                        <div lang="es-AR">{titleAndExcerpt}</div>
-                      ) : (
-                        titleAndExcerpt
-                      )}
-                    </div>
-
-                    {cover === undefined ? null : (
-                      <div className="lg:col-span-4 lg:col-start-9">
-                        <Figure
-                          media={cover}
-                          ratio="landscape"
-                          reservedFor=""
-                          sizes="(min-width: 64rem) 30vw, 100vw"
-                        />
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
+                      )
+                    }
+                  />
+                </li>
+              ))}
             </ul>
           )}
         </Section>
