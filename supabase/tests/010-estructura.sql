@@ -447,7 +447,18 @@ select is_empty(
 -- policies y el cuerpo de las funciones del proyecto.
 --
 -- La técnica: borrar del texto todo `(select auth.loquesea())` y después buscar si
--- quedó algún `auth.` suelto. Lo que sobrevive es una llamada sin envolver.
+-- quedó alguna **llamada** a `auth.algo(` suelta. Lo que sobrevive es una llamada sin
+-- envolver.
+--
+-- **Lo que se busca es un paréntesis, no un punto.** El patrón original era
+-- `'\mauth\.'`, y eso no dice "llamás a una función de auth": dice "nombrás el
+-- esquema `auth`". La diferencia apareció con `public.delete_own_account()`, que
+-- hace `delete from auth.users where id = quien` con el `quien` ya resuelto en un
+-- subselect al declararlo. Referenciar una tabla no tiene costo por fila —es la
+-- sentencia, no un predicado— y la prueba lo reportaba igual. Un patrón de más
+-- rechaza código correcto, que es la otra forma de que una compuerta deje de
+-- servir: la primera vez que se la desactiva "porque esta vez no aplica", deja de
+-- frenar lo que sí aplica.
 --
 -- **El alias no es opcional en el patrón.** Hasta las policies de `donor_profiles`
 -- ninguna llamaba a `auth.*()` directamente —todas pasaban por
@@ -468,7 +479,7 @@ select is_empty(
        and regexp_replace(
              coalesce(qual, '') || ' ' || coalesce(with_check, ''),
              '\(\s*select\s+auth\.[a-z_]+\(\s*\)(\s+as\s+[a-z_]+)?\s*\)', ' ', 'gi'
-           ) ~* '\mauth\.'
+           ) ~* '\mauth\.[a-z_]+\s*\('
   $q$,
   'ninguna policy llama a auth.*() fuera de un subselect (T049)'
 );
@@ -484,7 +495,7 @@ select is_empty(
        )
        and regexp_replace(
              p.prosrc, '\(\s*select\s+auth\.[a-z_]+\(\s*\)\s*\)', ' ', 'gi'
-           ) ~* '\mauth\.'
+           ) ~* '\mauth\.[a-z_]+\s*\('
   $q$,
   'ninguna función del proyecto llama a auth.*() fuera de un subselect (T049)'
 );

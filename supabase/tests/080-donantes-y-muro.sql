@@ -20,11 +20,13 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(11);
+select plan(17);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
-  ('20000000-0000-4000-8000-000000000002', 'quien.tambien.dona@ejemplo.invalid');
+  ('20000000-0000-4000-8000-000000000002', 'quien.tambien.dona@ejemplo.invalid'),
+  ('20000000-0000-4000-8000-000000000003', 'quien.se.va@ejemplo.invalid'),
+  ('20000000-0000-4000-8000-000000000005', 'quien.administra@ejemplo.invalid');
 
 -- El perfil ajeno existe de entrada. El propio **no**: crearlo es el primer caso.
 insert into public.donor_profiles (id, display_name, locale, default_anonymous) values
@@ -231,6 +233,78 @@ select throws_ok(
   null,
   'el nombre público es nulo o es un nombre: una cadena de espacios se publicaría como un renglón vacío'
 );
+
+-- ── Irse ────────────────────────────────────────────────────────────────────
+-- FR-208 y `docs/privacy.md` § Derechos: el borrado se ejerce desde `/cuenta`, sin
+-- pedirle permiso a nadie y sin dar explicaciones. Eso obliga a que la aplicación
+-- web pueda borrar una fila de `auth.users`, y la aplicación web **no tiene la
+-- clave secreta**: la única credencial que maneja es la publicable, que se resuelve
+-- como `authenticated`.
+--
+-- La alternativa era darle a Next la clave `service_role` para llamar a
+-- `auth.admin.deleteUser()`. Una clave que saltea RLS por completo, presente en el
+-- proceso que sirve el sitio público, para una operación que la persona hace sobre
+-- sí misma: el remedio es peor. Una función `security definer` acotada a
+-- `auth.uid()` no puede borrar a nadie más, ni con el argumento equivocado, porque
+-- no recibe argumentos.
+
+select has_function(
+  'public', 'delete_own_account', '{}'::name[],
+  'la cuenta se borra desde el sitio con una función acotada, no con la clave secreta en el servidor web (FR-208)'
+);
+
+select function_privs_are(
+  'public', 'delete_own_account', '{}'::name[], 'anon', '{}'::text[],
+  'y anon no puede ni invocarla: sin sesión no hay cuenta propia que borrar (E3)'
+);
+
+insert into public.donor_profiles (id, display_name, default_anonymous) values
+  ('20000000-0000-4000-8000-000000000003', 'Quien se va', false);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000003", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $s$ select public.delete_own_account() $s$,
+  'una cuenta del público se borra a sí misma sin intervención de nadie (FR-208)'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+select is_empty(
+  $q$ select id from auth.users where id = '20000000-0000-4000-8000-000000000003' $q$,
+  'la cuenta ya no existe: el borrado es de auth.users y no una marca de baja'
+);
+
+select is_empty(
+  $q$ select id from public.donor_profiles where id = '20000000-0000-4000-8000-000000000003' $q$,
+  'y el perfil se fue con ella por la cascada, sin que nadie tuviera que acordarse (FR-240)'
+);
+
+-- Una persona con rol interno **no** se borra sola, y no es una restricción
+-- arbitraria: `owner` es el rol que otorga roles. Si la última propietaria pudiera
+-- irse desde `/cuenta`, el proyecto quedaría sin nadie que pueda volver a entrar al
+-- backoffice, y la recuperación sería un `insert` a mano en la base de producción.
+-- Quien administra la campaña se da de baja quitándose el rol primero.
+insert into public.user_roles (user_id, role) values
+  ('20000000-0000-4000-8000-000000000005', 'owner');
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000005", "role": "authenticated",
+    "app_metadata": {"user_role": "owner"}}';
+
+select throws_ok(
+  $s$ select public.delete_own_account() $s$,
+  'P0001',
+  null,
+  'quien tiene rol interno no se borra desde /cuenta: se le quita el rol primero, para que el proyecto no quede sin owner'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
 
 select * from finish();
 rollback;
