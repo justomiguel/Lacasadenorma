@@ -56,16 +56,20 @@ build, a propósito.
 
 ## Diseño
 
-Leé `specs/001-sitio-publico-campana/ux.md` y `docs/adr/021-segunda-direccion-visual.md` antes de
+Leé `docs/adr/032-relato-mobile-editorial.md` y `specs/001-sitio-publico-campana/ux.md` antes de
 tocar una pantalla. La regla `.cursor/rules/diseno.mdc` resume las dos y se adjunta sola al editar
-`app/`, `components/` o `content/`. Los tokens viven en `app/globals.css` dentro de `@theme`; **no** se
+`app/`, `components/` o `content/`. **Se diseña a 390 px primero** y después se adapta a escritorio,
+nunca al revés. Los tokens viven en `app/globals.css` dentro de `@theme`; **no** se
 usan valores por defecto de Tailwind ni valores arbitrarios (`text-[13px]`) en producción.
 
 Prohibido: gradientes decorativos, glassmorphism, blobs, cards para todo, radios grandes, sombras
 difusas, emojis decorativos, iconos de relleno (los logos de marcas de terceros no son eso: van
-siempre al lado del nombre), animaciones sin función, copy de folleto. Y los tres
-delatores que este sitio ya tuvo: la sobrelínea en VERSALES arriba de cada título, un solo plano sin
-sangrado ni bandas, y un solo tamaño de texto haciendo de jerarquía.
+siempre al lado del nombre), animaciones sin función, copy de folleto, píldoras fuera de lo que es
+redondo por significado. Y los tres delatores que este sitio ya tuvo: la sobrelínea en VERSALES
+arriba de cada título (hoy existe **sólo** como etiqueta de los cinco momentos de la home, con
+`data-kicker`), un solo plano sin sangrado ni bandas, y un solo tamaño de texto haciendo de
+jerarquía. Tres familias de acción y ninguna más: primaria rectangular, secundaria texto + flecha,
+utilitaria icónica (`components/design-system/actions.tsx`, `icons.tsx`).
 
 La fotografía estructura la página. Las editoriales viven en `public/fotos/` declaradas en
 `content/*.json`; las del avance vienen de la base con cada novedad. Sin foto real no se pone stock ni

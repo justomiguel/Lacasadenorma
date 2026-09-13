@@ -11,6 +11,12 @@ import { localizedHref } from "@/src/i18n/href";
  * que no existe si el JavaScript no llega. De ahí la forma de estos tests: el
  * primero mira el HTML servido, que es lo que recibe un navegador sin JavaScript, y
  * comprueba que ahí la barra está. Los demás simulan el observador a mano.
+ *
+ * Retirarse no es desmontarse: la barra baja con una transición y queda inerte y
+ * oculta para la accesibilidad, así que «no está» se comprueba por rol, que es lo
+ * que ve quien navega con un lector de pantalla. En la home arranca retirada,
+ * porque la apertura ya trae la acción primaria a la vista; en las interiores
+ * arranca visible.
  */
 
 const { mockDePathname } = vi.hoisted(() => ({ mockDePathname: vi.fn(() => "/") }));
@@ -117,7 +123,30 @@ describe("HelpBar", () => {
     expect(within(container).queryByRole("link", { name: /help rebuild/i })).toBeNull();
   });
 
-  it("se retira mientras la acción primaria está en pantalla", () => {
+  it("en la home arranca retirada: la apertura ya trae la acción a la vista", () => {
+    ponerAccionPrimaria();
+
+    const { container } = render(<HelpBar />);
+
+    expect(barra(container)).toBeNull();
+    expect(container.querySelector("[inert]")).not.toBeNull();
+  });
+
+  it("en la home sube cuando la apertura sale de pantalla", () => {
+    const accion = ponerAccionPrimaria();
+
+    const { container } = render(<HelpBar />);
+
+    act(() => {
+      notificar([{ target: accion, isIntersecting: false }]);
+    });
+
+    expect(barra(container)).toBeVisible();
+    expect(container.querySelector("[inert]")).toBeNull();
+  });
+
+  it("en una página interior arranca visible y se retira mientras la acción primaria está en pantalla", () => {
+    mockDePathname.mockReturnValue("/norma");
     const accion = ponerAccionPrimaria();
 
     const { container } = render(<HelpBar />);
@@ -129,9 +158,11 @@ describe("HelpBar", () => {
     });
 
     expect(barra(container)).toBeNull();
+    expect(container.querySelector("[inert]")).not.toBeNull();
   });
 
   it("vuelve cuando la acción primaria sale de pantalla", () => {
+    mockDePathname.mockReturnValue("/norma");
     const accion = ponerAccionPrimaria();
 
     const { container } = render(<HelpBar />);
@@ -147,6 +178,7 @@ describe("HelpBar", () => {
   });
 
   it("con dos acciones primarias, alcanza que una esté visible", () => {
+    mockDePathname.mockReturnValue("/norma");
     const primera = ponerAccionPrimaria();
     const segunda = ponerAccionPrimaria();
 
@@ -169,6 +201,7 @@ describe("HelpBar", () => {
   });
 
   it("no se retira con el foco adentro: nadie pierde el foco sin haber hecho nada", () => {
+    mockDePathname.mockReturnValue("/norma");
     const accion = ponerAccionPrimaria();
 
     const { container } = render(<HelpBar />);
@@ -182,6 +215,8 @@ describe("HelpBar", () => {
   });
 
   it("en una página sin acción primaria se queda, y no observa nada", () => {
+    mockDePathname.mockReturnValue("/norma");
+
     const { container } = render(<HelpBar />);
 
     expect(barra(container)).toBeVisible();
@@ -189,6 +224,7 @@ describe("HelpBar", () => {
   });
 
   it("reserva su alto siempre, también cuando se retira: el layout no salta", () => {
+    mockDePathname.mockReturnValue("/norma");
     const accion = ponerAccionPrimaria();
 
     const { container } = render(<HelpBar />);

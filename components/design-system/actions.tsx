@@ -2,47 +2,64 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "./cn";
+import { ArrowIcon } from "./icons";
 
 /**
- * Acciones.
+ * Tres familias de acción, y ninguna más (ADR-032).
  *
- * Hay **una** acción primaria por pantalla. La secundaria es un enlace de texto
- * con regla, no un segundo botón: dos botones compitiendo diluyen la decisión
- * (ux.md §9).
+ * - **Primaria**: rectangular, radio medio, 56 px de alto en teléfono, todo el
+ *   ancho. Hay una por pantalla y dice «Ayudar a reconstruir».
+ * - **Secundaria**: texto y flecha. Sin caja, sin fondo, sin borde. La flecha se
+ *   mueve 3 px al pasar el puntero y nada más.
+ * - **Utilitaria**: un icono de 44 px para copiar, cerrar, abrir el menú.
  *
- * Los objetivos táctiles llegan a 44 px por padding, no por tamaño visual.
+ * Los objetivos táctiles llegan a 44 px por tamaño mínimo, no por padding visual.
  */
 
-const PRIMARY =
-  "lift-hover inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper hover:bg-forest-strong";
+const PRIMARY_BASE =
+  "inline-flex min-h-cta w-full items-center justify-center rounded-md px-lg font-ui text-body font-medium transition-colors duration-fast ease-editorial active:translate-y-px sm:min-h-12 sm:w-auto sm:px-xl";
 
-const SECONDARY_BASE =
-  "lift-hover inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill border px-lg py-sm font-ui text-subheading";
-
-/**
- * La secundaria tiene dos tonos y no una clase suelta: `cn` no resuelve
- * conflictos de Tailwind, y sumar `border-paper` encima de `border-forest`
- * dejaba el resultado librado al orden de la hoja de estilos.
- */
-const SECONDARY_TONE = {
-  forest: "border-forest text-forest hover:bg-forest hover:text-paper",
-  paper: "border-paper text-paper hover:bg-paper hover:text-forest",
+const PRIMARY_TONE = {
+  forest: "bg-forest text-paper hover:bg-forest-strong active:bg-forest-strong",
+  paper: "bg-paper text-forest hover:bg-sage active:bg-sage",
 } as const;
 
-const SECONDARY = `${SECONDARY_BASE} ${SECONDARY_TONE.forest}`;
+export type ActionTone = keyof typeof PRIMARY_TONE;
+
+export function primaryActionClass(tone: ActionTone = "forest", className?: string) {
+  return cn(PRIMARY_BASE, PRIMARY_TONE[tone], className);
+}
+
+const SECONDARY_BASE =
+  "arrow-link inline-flex min-h-touch items-center gap-xs font-ui text-body font-medium transition-colors duration-fast ease-editorial";
+
+const SECONDARY_TONE = {
+  forest: "text-forest hover:text-forest-strong",
+  paper: "text-paper hover:text-sage",
+} as const;
+
+export function secondaryActionClass(tone: ActionTone = "forest", className?: string) {
+  return cn(SECONDARY_BASE, SECONDARY_TONE[tone], className);
+}
+
+/** Icono de 44 px, sin fondo. Para copiar, cerrar, compartir. */
+export const ICON_ACTION =
+  "inline-flex size-touch shrink-0 items-center justify-center rounded-sm transition-colors duration-fast ease-editorial hover:bg-paper-sunk active:bg-paper-muted";
 
 export function PrimaryAction({
   href,
   children,
   className,
+  tone = "forest",
   ...rest
 }: {
   href: ComponentProps<typeof Link>["href"];
   children: ReactNode;
   className?: string;
+  tone?: ActionTone;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
-    <Link href={href} className={cn(PRIMARY, className)} {...rest}>
+    <Link href={href} className={primaryActionClass(tone, className)} {...rest}>
       {children}
     </Link>
   );
@@ -59,15 +76,12 @@ export function SecondaryAction({
   children: ReactNode;
   className?: string;
   /** `paper` es para las bandas oscuras. */
-  tone?: keyof typeof SECONDARY_TONE;
+  tone?: ActionTone;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
-    <Link
-      href={href}
-      className={cn(SECONDARY_BASE, SECONDARY_TONE[tone], className)}
-      {...rest}
-    >
-      {children}
+    <Link href={href} className={secondaryActionClass(tone, className)} {...rest}>
+      <span>{children}</span>
+      <ArrowIcon />
     </Link>
   );
 }
@@ -93,12 +107,23 @@ export function FileAction({
   return (
     <a
       href={href}
-      className={cn(isDownload ? SECONDARY : PRIMARY, className)}
+      className={
+        isDownload
+          ? secondaryActionClass("forest", className)
+          : primaryActionClass("forest", className)
+      }
       {...(isDownload
         ? { download: download === true ? true : download }
         : { target: "_blank", rel: "noopener noreferrer" })}
     >
-      {children}
+      {isDownload ? (
+        <>
+          <span>{children}</span>
+          <ArrowIcon />
+        </>
+      ) : (
+        children
+      )}
     </a>
   );
 }
@@ -107,26 +132,25 @@ export function FileAction({
  * Acción hacia otra parte de **esta** página.
  *
  * Es un `<a>` y no un `Link`: con `typedRoutes` una URL que es sólo un fragmento no
- * es una ruta del sitio, y forzarla al tipo de `Link` sería mentirle al compilador
- * para no escribir cuatro líneas. El navegador ya sabe desplazarse a un `id`, así
- * que no hace falta JavaScript.
- *
- * Comparte el estilo de la acción secundaria porque es del mismo rango: en la
- * apertura hay una sola cosa con forma de botón (ux.md §9).
+ * es una ruta del sitio. El navegador ya sabe desplazarse a un `id`, así que no
+ * hace falta JavaScript. Es del rango de la secundaria: texto y flecha.
  */
 export function InPageAction({
   fragment,
   children,
   className,
+  tone = "forest",
 }: {
   /** El `id` del destino, sin `#`. */
   fragment: string;
   children: ReactNode;
   className?: string;
+  tone?: ActionTone;
 }) {
   return (
-    <a href={`#${fragment}`} className={cn(SECONDARY, className)}>
-      {children}
+    <a href={`#${fragment}`} className={secondaryActionClass(tone, className)}>
+      <span>{children}</span>
+      <ArrowIcon />
     </a>
   );
 }

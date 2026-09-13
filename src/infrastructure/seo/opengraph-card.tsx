@@ -21,7 +21,7 @@ export const contentType = "image/png";
  */
 const PAPER = "#f6f1e8";
 const INK = "#1c1c1c";
-const INK_MUTED = "#5c5f56";
+const INK_MUTED = "#4a4d44";
 const FOREST = "#153a2e";
 const RULE = "#d4cfc0";
 

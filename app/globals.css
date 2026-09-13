@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 /*
- * Tokens del mockup aprobado (ADR-025).
+ * Tokens del sistema mobile editorial (ADR-032, sobre la paleta y las fuentes
+ * del mockup de ADR-025).
  *
  * Los valores por defecto de Tailwind se limpian con `initial` (ADR-012): si
- * alguien escribe `text-base` o `bg-slate-100`, la utilidad no existe.
+ * alguien escribe `text-base`, `bg-slate-100` o `shadow-lg`, la utilidad no existe.
  *
  * `@theme inline` es necesario para las fuentes: sin `inline`, Tailwind emite
  * `var(--font-display)` apuntando a un token que a su vez es una variable, y la
@@ -30,8 +31,13 @@
   --color-paper-muted: #d4cfc0;
 
   --color-ink: #1c1c1c;
-  --color-ink-muted: #5c5f56;
-  --color-ink-faint: #585c54;
+  /*
+   * `muted` y `faint` tienen que pasar 4.5:1 sobre papel, papel hundido y
+   * `paper-muted` (la superficie más oscura de las claras). `#5c5f56` llegaba a
+   * 4.18:1 sobre `#d4cfc0` y axe lo marcaba en pestañas y epígrafes de 12–15 px.
+   */
+  --color-ink-muted: #4a4d44;
+  --color-ink-faint: #52554a;
   --color-rule: #d4cfc0;
 
   /* Verde principal del mockup. Bloqueado. */
@@ -57,31 +63,56 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
+  /*
+   * Escala tipográfica semántica. Los nombres dicen el rol, no el tamaño, y cada
+   * uno se decidió primero en 390 px: `display` 49 px, `headline` 40 px, cuerpo
+   * 17 px con interlínea 1.65. En escritorio crecen con `clamp`.
+   */
   --text-*: initial;
 
-  --text-display: clamp(2.75rem, 1.4rem + 5.2vw, 5.25rem);
-  --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.02em;
+  --text-display: clamp(3rem, 2.1rem + 4vw, 5.5rem);
+  --text-display--line-height: 0.96;
+  --text-display--letter-spacing: -0.025em;
 
-  --text-title: clamp(2rem, 1.4rem + 2.2vw, 3.25rem);
-  --text-title--line-height: 1.08;
+  --text-headline: clamp(2.375rem, 1.9rem + 2.4vw, 3.75rem);
+  --text-headline--line-height: 1.02;
+  --text-headline--letter-spacing: -0.02em;
+
+  /* Título de página interior. */
+  --text-title: clamp(2.25rem, 1.7rem + 2vw, 3.25rem);
+  --text-title--line-height: 1.06;
   --text-title--letter-spacing: -0.015em;
 
-  --text-heading: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
+  /* Título de sección de página interior. */
+  --text-heading: clamp(1.75rem, 1.5rem + 1vw, 2.375rem);
   --text-heading--line-height: 1.15;
   --text-heading--letter-spacing: -0.01em;
+
+  --text-section-title: clamp(1.5rem, 1.35rem + 0.6vw, 1.875rem);
+  --text-section-title--line-height: 1.15;
+  --text-section-title--letter-spacing: -0.01em;
 
   --text-subheading: 1.125rem;
   --text-subheading--line-height: 1.35;
 
-  --text-lead: 1.125rem;
-  --text-lead--line-height: 1.55;
+  --text-body-large: 1.125rem;
+  --text-body-large--line-height: 1.6;
 
-  --text-body: 1rem;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+
+  --text-body: 1.0625rem;
   --text-body--line-height: 1.65;
 
   --text-small: 0.9375rem;
   --text-small--line-height: 1.5;
+
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.5;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.1em;
 
   --text-label: 0.75rem;
   --text-label--line-height: 1.3;
@@ -93,24 +124,11 @@
   --text-hand: clamp(1.35rem, 1.15rem + 0.7vw, 1.85rem);
   --text-hand--line-height: 1.3;
 
-  /*
-   * Título de tarjeta y de pestaña: un escalón por debajo de `heading`. Sin
-   * este tamaño, los títulos de las tres formas de ayudar competían con el
-   * título del capítulo, y la jerarquía no se leía.
-   */
-  --text-card: 1.5rem;
-  --text-card--line-height: 1.2;
-  --text-card--letter-spacing: -0.01em;
-
-  /* Numeral de capítulo: la marca que dice «acá empieza otra cosa». */
-  --text-chapter: clamp(2.25rem, 1.8rem + 1.6vw, 3.25rem);
-  --text-chapter--line-height: 1;
-  --text-chapter--letter-spacing: -0.02em;
-
   --tracking-*: initial;
   --tracking-tight: -0.02em;
-  --tracking-label: 0.12em;
+  --tracking-label: 0.1em;
 
+  /* Escala de espaciado: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 120. */
   --spacing-3xs: 2px;
   --spacing-2xs: 4px;
   --spacing-xs: 8px;
@@ -120,22 +138,26 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
-  --spacing-4xl: 88px;
-  --spacing-5xl: 120px;
-  --spacing-6xl: 176px;
+  --spacing-4xl: 80px;
+  --spacing-5xl: 96px;
+  --spacing-6xl: 120px;
 
   --spacing-touch: 44px;
-  --spacing-helpbar: 76px;
+  --spacing-cta: 56px;
+  --spacing-header: 60px;
+  --spacing-helpbar: 80px;
 
   --container-*: initial;
   --container-measure: 26em;
   --container-page: 80rem;
   --container-quote: 20em;
+  --container-hero: 44rem;
+  --container-story: 36rem;
 
   /*
    * Proporciones de recorte. Las fotos documentales conservan su proporción
-   * real en los ensayos; en las grillas y tarjetas se recortan a una de éstas
-   * para que las filas queden parejas en cualquier ancho.
+   * real en los ensayos; en las grillas se recortan a una de éstas para que las
+   * filas queden parejas en cualquier ancho.
    */
   --aspect-*: initial;
   --aspect-square: 1 / 1;
@@ -144,15 +166,21 @@
   --aspect-card: 3 / 2;
   --aspect-wide: 16 / 9;
 
-  /* El mockup usa píldoras y tarjetas con radio. ADR-025. */
+  /*
+   * Radios: chico para controles, medio para la acción primaria, grande para lo
+   * poco que se eleva. Las fotos editoriales no llevan radio. La píldora queda
+   * sólo para lo que es redondo por significado (ADR-032).
+   */
   --radius-*: initial;
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
   --radius-pill: 999px;
 
   --shadow-*: initial;
-  --shadow-card: 0 8px 24px color-mix(in oklab, #153a2e 12%, transparent);
+
+  --blur-*: initial;
+  --blur-chrome: 6px;
 
   --ease-*: initial;
   --ease-editorial: cubic-bezier(0.22, 0.7, 0.2, 1);
@@ -160,7 +188,8 @@
   --duration-fast: 200ms;
   --duration-base: 420ms;
   --duration-chrome: 240ms;
-  --duration-tab: 200ms;
+  --duration-tab: 220ms;
+  --duration-slow: 600ms;
 
   --breakpoint-*: initial;
   --breakpoint-sm: 40rem;
@@ -236,6 +265,77 @@
   }
 }
 
+/*
+ * Sangrado: cancela el margen lateral de `Container` para que una foto llegue
+ * al borde. Los tres valores son los tres paddings del contenedor.
+ */
+@utility bleed {
+  margin-inline: calc(var(--spacing) * -5);
+
+  @media (min-width: 40rem) {
+    margin-inline: calc(var(--spacing-xl) * -1);
+  }
+
+  @media (min-width: 64rem) {
+    /* En escritorio la foto vuelve al margen: el sangrado más el `max-w-page`
+       de 80 rem desbordaba el viewport del proyecto (~1280). */
+    margin-inline: 0;
+  }
+}
+
+/* Sangrado sólo hacia la derecha: la foto arranca en el margen y sale del grid. */
+@utility bleed-end {
+  margin-inline-end: calc(var(--spacing) * -5);
+
+  @media (min-width: 40rem) {
+    margin-inline-end: calc(var(--spacing-xl) * -1);
+  }
+
+  @media (min-width: 64rem) {
+    margin-inline-end: 0;
+  }
+}
+
+/* La apertura ocupa 82 svh en teléfono y 90 svh en escritorio: una foto, no una franja. */
+@utility hero-height {
+  min-height: 82svh;
+
+  @media (min-width: 64rem) {
+    min-height: 90svh;
+  }
+}
+
+/* Áreas seguras del teléfono: la barra inferior y el menú a pantalla completa. */
+@utility safe-bottom {
+  padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom));
+}
+
+@utility safe-top {
+  padding-top: calc(var(--spacing-sm) + env(safe-area-inset-top));
+}
+
+/*
+ * Velo de legibilidad al pie de una foto. Es el único gradiente del sitio y
+ * tiene una función: que el título se lea sobre la fotografía. Lleva
+ * `data-scrim` para que la revisión visual lo distinga de un gradiente decorativo.
+ */
+@utility scrim-bottom {
+  background-image: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--color-forest-strong) 82%, transparent) 0%,
+    color-mix(in oklab, var(--color-forest-strong) 45%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+@utility scrim-top {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-forest-strong) 38%, transparent) 0%,
+    transparent 100%
+  );
+}
+
 [data-tone="ink"],
 [data-tone="forest"] {
   --color-ink: var(--color-paper);
@@ -246,14 +346,14 @@
 }
 
 /*
- * Isla de papel dentro de una banda oscura. Sin esto, `text-ink` en una
- * PreviewCard sobre bosque se vuelve beige sobre beige: la inversión de
- * `--color-ink` gotea al interior. Los hex son los mismos de `@theme`.
+ * Isla de papel dentro de una banda oscura. Sin esto, `text-ink` dentro de una
+ * previa sobre bosque se vuelve beige sobre beige: la inversión de `--color-ink`
+ * gotea al interior. Los hex son los mismos de `@theme`.
  */
 [data-tone="paper"] {
   --color-ink: #1c1c1c;
-  --color-ink-muted: #5c5f56;
-  --color-ink-faint: #585c54;
+  --color-ink-muted: #4a4d44;
+  --color-ink-faint: #52554a;
   --color-aqua: #153a2e;
   --color-rule: #d4cfc0;
 }
@@ -269,10 +369,26 @@
   text-decoration-color: var(--color-paper);
 }
 
+/* Enlace con flecha: la flecha se mueve 3 px al pasar el puntero, nada más. */
+.arrow-link svg {
+  flex-shrink: 0;
+}
+
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes photo-reveal {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
   }
   to {
     opacity: 1;
@@ -292,29 +408,11 @@
 @keyframes hero-copy-enter {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes wipe-y {
-  from {
-    clip-path: inset(100% 0 0 0);
-  }
-  to {
-    clip-path: inset(0);
-  }
-}
-
-@keyframes wipe-x {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0);
   }
 }
 
@@ -332,7 +430,27 @@
 @keyframes menu-enter {
   from {
     opacity: 0;
-    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-item-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
   }
   to {
     opacity: 1;
@@ -346,79 +464,44 @@
   }
 
   [data-hero-enter] {
-    animation: hero-copy-enter 700ms var(--ease-editorial) both;
+    animation: hero-copy-enter var(--duration-slow) var(--ease-editorial) both;
   }
 
   [data-hero-enter="kicker"] {
-    animation-delay: 180ms;
+    animation-delay: 240ms;
   }
 
   [data-hero-enter="line-1"] {
-    animation-delay: 320ms;
+    animation-delay: 360ms;
   }
 
   [data-hero-enter="line-2"] {
-    animation-delay: 440ms;
+    animation-delay: 460ms;
   }
 
   [data-hero-enter="copy"] {
-    animation-delay: 580ms;
+    animation-delay: 600ms;
   }
 
   [data-hero-enter="actions"] {
-    animation-delay: 720ms;
-  }
-
-  [data-hero-enter="secondary"] {
-    animation-delay: 840ms;
-  }
-
-  [data-hero-enter="hint"] {
-    animation-delay: 1080ms;
-  }
-
-  [data-hero-enter="quote"] {
-    animation-delay: 700ms;
+    animation-delay: 740ms;
   }
 
   @supports (animation-timeline: view()) {
     [data-reveal] {
-      animation: reveal-up 800ms var(--ease-editorial) both;
+      animation: reveal-up var(--duration-slow) var(--ease-editorial) both;
       animation-timeline: view();
-      animation-range: entry 8% entry 42%;
-      animation-delay: var(--reveal-delay, 0ms);
+      animation-range: entry 10% entry 40%;
     }
 
-    [data-reveal-photo="wipe"] {
-      animation: wipe-y 900ms var(--ease-editorial) both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 48%;
-    }
-
-    [data-reveal-photo="wipe-x"] {
-      animation: wipe-x 800ms var(--ease-editorial) both;
+    [data-reveal-photo] {
+      animation: photo-reveal 700ms var(--ease-editorial) both;
       animation-timeline: view();
       animation-range: entry 0% entry 45%;
     }
 
-    [data-reveal-photo="wipe-x"][data-stagger="1"] {
-      animation-delay: 90ms;
-    }
-
-    [data-reveal-photo="wipe-x"][data-stagger="2"] {
-      animation-delay: 200ms;
-    }
-
-    [data-chapter="community"] [data-reveal] {
-      animation-duration: 640ms;
-    }
-
-    [data-chapter="norma"] [data-reveal] {
-      animation-duration: 980ms;
-    }
-
-    [data-chapter="next"] [data-reveal] {
-      animation-duration: 720ms;
+    [data-reveal-photo][data-stagger="1"] {
+      animation-range: entry 8% entry 52%;
     }
   }
 
@@ -427,7 +510,16 @@
   }
 
   [data-menu-panel] {
-    animation: menu-enter 280ms var(--ease-editorial) both;
+    animation: menu-enter var(--duration-chrome) var(--ease-editorial) both;
+  }
+
+  [data-menu-item] {
+    animation: menu-item-enter var(--duration-base) var(--ease-editorial) both;
+    animation-delay: calc(80ms + var(--menu-index, 0) * 40ms);
+  }
+
+  [data-check-in] {
+    animation: check-in var(--duration-chrome) var(--ease-editorial) both;
   }
 
   [data-hero-depth] {
@@ -439,35 +531,13 @@
     opacity: calc(1 - (var(--scroll-depth, 0) * 0.18));
   }
 
-  @media (min-width: 64rem) {
-    /* El marco sobra un 6 % por cada lado para que el desplazamiento no
-       descubra el fondo. Sólo donde el parallax está activo. */
-    [data-parallax] {
-      inset: -6%;
-      transform: translate3d(0, calc(var(--parallax, 0) * 5%), 0);
-      will-change: transform;
-    }
-  }
-
   @media (hover: hover) and (pointer: fine) {
-    .lift-hover {
-      transition:
-        transform var(--duration-fast) var(--ease-editorial),
-        background-color var(--duration-fast) var(--ease-editorial),
-        color var(--duration-fast) var(--ease-editorial),
-        border-color var(--duration-fast) var(--ease-editorial);
-    }
-
-    .lift-hover:hover {
-      transform: translateY(-2px);
-    }
-
-    .lift-hover:hover svg {
-      transform: translateX(3px);
-    }
-
-    .lift-hover svg {
+    .arrow-link svg {
       transition: transform var(--duration-fast) var(--ease-editorial);
+    }
+
+    .arrow-link:hover svg {
+      transform: translateX(3px);
     }
   }
 }

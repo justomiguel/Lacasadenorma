@@ -6,75 +6,81 @@ alwaysApply: false
 
 # Diseño de La Casa de Norma
 
-Fuente de verdad visual: el mockup aprobado y `docs/adr/025-mockup-aprobado.md`. Para la
-jerarquía —cómo abre y cierra un capítulo, qué es una acción, qué es una vista previa, dónde
-termina una sección— manda `docs/adr/026-jerarquia-y-capitulos.md`.
+Fuente de verdad visual: el mockup aprobado (`docs/adr/025-mockup-aprobado.md`) para paleta,
+tipografía, orden del relato y fotos. Para todo lo demás —jerarquía, acciones, encabezado,
+apertura, fotografía, donaciones, barra, pie— manda `docs/adr/032-relato-mobile-editorial.md`.
 
-En caso de conflicto: **MOCKUP > ADR-026 > esta regla > Skills > implementación actual.**
+En caso de conflicto: **ADR-032 > MOCKUP > esta regla > Skills > implementación actual.**
 
-Las Skills (`frontend-design` y similares) sirven para ejecutar el mockup —accesibilidad,
-responsive, performance, motion sutil, SEO—. No tienen autorización para cambiar paleta, tipografía,
-composición, estructura visual, estilo de botones, fotografía ni jerarquía.
+Las Skills (`frontend-design` y similares) sirven para ejecutar —accesibilidad, responsive,
+performance, motion sutil, SEO—. No tienen autorización para cambiar paleta, tipografía,
+composición, estilo de acciones, fotografía ni jerarquía.
 
 ## Dirección de arte (bloqueada)
 
-Editorial, documental, humana, cinematográfica, sobria. No SaaS, no startup, no ONG genérica, no
-clon de recaudación, no landing de Tailwind.
+Editorial, documental, humana, sobria, mobile native. No SaaS, no dashboard, no startup, no ONG
+genérica, no colección de tarjetas ni de píldoras. Regla de descarte: si un componente podría
+estar igual en una fintech o en un panel, no va acá.
 
-- Paleta: verde bosque `#153A2E`, oliva, sage, beige/blanco roto, gris piedra, carbón.
-- Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas emocionales.
-- Botones píldora. Header oscuro superpuesto al hero. Menú hamburguesa en teléfono.
-- Fotos reales de `public/fotos/`. Prohibido stock, IA y placeholders.
-- **Marcas de terceros.** PayPal, Mercado Pago, WhatsApp y cualquier otra marca
-  que aparezca como tab, botón, encabezado de canal o enlace lleva **su logo al
-  lado del nombre**. El catálogo es `content/brands.ts`; los SVG viven en
-  `public/marcas/` con `fill="currentColor"`. No se usan iconos genéricos de
-  librería. La prosa que nombra la marca en un párrafo no lleva el logo
-  incrustado. La compuerta es `npm run check:marcas`.
+- Paleta: verde bosque `#153A2E`, oliva, sage, beige/blanco roto, carbón. El verde se usa poco.
+- Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas de la familia.
+- Fotos reales de `public/fotos/`, sin radio ni borde. Prohibido stock, IA y placeholders.
+- **Marcas de terceros.** PayPal, Mercado Pago, WhatsApp y cualquier otra marca que aparezca como
+  tab, botón, encabezado de canal o enlace lleva **su logo al lado del nombre**. Catálogo en
+  `content/brands.ts`; SVG en `public/marcas/` con `fill="currentColor"`. Compuerta:
+  `npm run check:marcas`.
+
+## Se diseña a 390 px primero
+
+Cada decisión se mira primero en 390 px y después en 320, 375, 393, 430, 768, 1024 y 1440. Los
+tokens viven en `app/globals.css` dentro de `@theme`: tipografía semántica (`display`,
+`headline`, `section-title`, `body-large`, `body`, `caption`, `eyebrow`), espacio 4 · 8 · 12 · 16 ·
+24 · 32 · 48 · 64 · 80 · 96 · 120, radios `sm` 6 / `md` 10 / `lg` 16. Nada de valores por
+defecto de Tailwind ni arbitrarios (`text-[13px]`, `aspect-[16/9]`).
 
 ## Recorrido
 
-La home cuenta la historia en scroll, en cinco capítulos: pérdida → comunidad → cómo ayudar →
-Norma → legado. Debajo de la apertura va el índice de capítulos (`ChapterNav`).
+La home es una historia que se lee desplazándose: incendio → comunidad → ayuda → Norma → lo que
+viene. No hay índice de capítulos: la página es la navegación.
 
-## Jerarquía (ADR-026)
+## Jerarquía (ADR-032)
 
-- **Un capítulo abre con `ChapterHeading`** —numeral grande, nombre sin versales, título— y, si
-  apunta a otra página, **cierra con `PreviewCard`**: foto real, borde de regla, toda ella enlace.
-  Los capítulos alternan superficie (papel / bosque / papel hundido); sobre la misma superficie,
-  una regla.
-- **Tres clases de acción, ninguna más.** Primaria (`PrimaryAction`, `HelpCta`): sólo «Ayudar a
-  reconstruir». Vista previa (`PreviewCard`): ir a otra página. Enlace de prosa (`InlineLink`):
-  dentro de un párrafo. `SecondaryAction` (píldora con borde, `tone` según la banda) queda en la
-  apertura y en pantallas de error. No existe el «texto chico con flecha» como cierre de sección.
-- **Una vista previa de otra página es una tarjeta** (`PreviewCard`): borde de regla, superficie
-  propia, foto a 3:2, toda ella enlace. Sin sombra. Si el tramo todavía no tiene foto, se reserva
-  el hueco; no se pone stock. `previewPhotoFor` elige la foto real de cada destino.
-- **Las tres formas de ayudar son pestañas** (`HelpTabs` sobre `SectionTabs`), en la home y en
-  `/ayudar`. Primer nivel: regla con la pestaña marcada. Segundo nivel (canales): píldoras.
-  Sin JavaScript se apilan.
-- **Títulos dentro de tarjetas y paneles: `text-card`.** Un escalón por debajo de `heading`.
-- **Una foto no se muestra más ancha que su archivo.** En grillas y tarjetas, `Figure` recorta
-  con `crop` a un token `--aspect-*`; en los ensayos conserva la proporción real. Nada de
-  `aspect-[…]` ni `inset-[…]` arbitrarios.
-
-CTA primario: Ayudar a reconstruir. Secundario: Conocer la historia.
+- **Un momento abre con `StoryHeading`** dentro de `StorySection`: numeral chico, etiqueta en
+  versales de 12 px (`data-kicker`, sólo acá) y titular grande. Entre momentos separa el aire
+  (80/120 px) y el cambio de superficie —papel, bosque, hundido, carbón—, no una caja.
+- **Tres familias de acción, ninguna más.** `PrimaryAction` / `HelpCta`: rectangular, radio
+  `md`, 56 px, una por pantalla, «Ayudar a reconstruir». `SecondaryAction` / `InPageAction`:
+  texto y flecha, sin caja. `ICON_ACTION`: icono de 44 px (copiar, cerrar, menú). Los iconos
+  salen de `components/design-system/icons.tsx` y de ningún otro lado.
+- **La fotografía estructura.** `EditorialImage` (`full-bleed`, `offset`, `portrait`, `inline`,
+  `documentary`) y `DocumentaryGallery`. Las fotos tocan los bordes, salen del grid o se quedan
+  en la medida; ninguna se muestra más ancha que su archivo ni dentro de un rectángulo redondeado.
+- **Una vista previa de otra página** (`PreviewCard`) es foto, título y flecha, sin borde ni
+  fondo. En la home no hay ninguna.
+- **Aportar** es `DonationSelector`: `CountrySelector` (Argentina, Chile, Internacional),
+  `BankTransferDetails` con `CopyField` icónico, `ExternalPayment` como método y no como banner.
+  Sin JavaScript se apila y se transfiere igual.
+- **Norma** es `NormaStory`: la única banda carbón del sitio, el retrato a cinco sextos del
+  ancho, sin círculo.
+- **Encabezado** (`SiteHeader` + `MobileMenu`): nombre y menú, transparente sobre la apertura.
+  **Barra** (`HelpBar`): nativa, papel, safe-area, baja cuando la acción ya está a la vista.
+  **Pie** (`SiteFooter`): colofón, no mapa del sitio.
 
 ## Piso de calidad, no negociable
 
-360 px primero, después escritorio. Medida de prosa hasta 68 caracteres. Contraste 4.5:1 en
-cualquier tamaño, incluida la banda oscura. Foco visible siempre, nunca `outline: none`. Objetivo
-táctil de 44 px por padding. `prefers-reduced-motion` respetado.
+Medida de prosa hasta 68 caracteres. Contraste 4.5:1 en cualquier superficie. Foco visible
+siempre. Objetivo táctil de 44 px por tamaño mínimo. Sin desborde horizontal en 320 px.
+`prefers-reduced-motion` respetado; duraciones 200–700 ms con `--ease-editorial`.
 
 Un dato sin verificar no se muestra —ni cero, ni ejemplo, ni estimación—: la sección se omite.
-Las secciones financieras públicas rechazadas no vuelven al DOM.
 
 ## Copy
 
-Castellano rioplatense, voseo, frases cortas. Concreto en lugar de abstracto. El relato del incendio
-y de Norma se escribe con las palabras de la familia.
+Castellano rioplatense, voseo, frases cortas. Menos texto: la foto también cuenta. El relato del
+incendio y de Norma se escribe con las palabras de la familia.
 
 ## Antes de decir que está listo
 
-Mirarlo. `node scripts/screenshots.mjs` y comparar lado a lado con el mockup en 390, 430, 768,
-1024, 1280 y 1440. Si se desvía, se corrige.
+Mirarlo en 320, 375, 390, 393, 430, 768, 1024 y 1440, con capturas completas. Buscar densidad,
+ritmo, desborde, repetición, píldoras, tarjetas, espacios muertos, fotos mal recortadas, texto
+de más. Corregirlo. Que compile no es que esté.

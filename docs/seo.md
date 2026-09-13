@@ -23,7 +23,7 @@ concretas están en `content/es/preguntas.json` (y su par en `content/en/`), y e
 El relato de la home ya cubre quién fue Norma, qué es la campaña y dónde queda Riacho He Hé. El
 esquema de contenido admite como máximo tres preguntas.
 
-Se renderizan en la home como tarjetas con foto (`PreviewCard`), **sin acordeón**. Un acordeón esconde las
+Se renderizan en la home como una lista comprimida (`FaqSection`: pregunta, primera respuesta y enlace), **sin acordeón**. Un acordeón esconde las
 respuestas detrás de un clic, y una respuesta que hay que abrir es una respuesta que no se extracta.
 `e2e/comun/home.spec.ts` verifica que las preguntas y su primer párrafo estén visibles, **incluso con
 JavaScript desactivado**.

@@ -3,16 +3,22 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { primaryActionClass } from "@/components/design-system/actions";
+import { cn } from "@/components/design-system/cn";
 import { localizedHref } from "@/src/i18n/href";
 import { stripLocalePrefix } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 /**
- * CTA inferior del teléfono, como en el mockup.
+ * La barra de ayudar del teléfono (ADR-032).
  *
- * Se oculta en `/ayudar` y en sus retornos de PayPal —son el mismo flujo— y
- * cuando `#donaciones` está a la vista. Reserva el alto en el flujo para no
- * tapar el final de la página.
+ * Una barra nativa, no una píldora flotante: papel, una regla arriba, la acción
+ * primaria al ancho completo y el relleno que pide `env(safe-area-inset-bottom)`.
+ * Cuando `#donaciones` o una acción primaria de la página están a la vista, baja
+ * con una transición y queda inerte —no se desmonta, para que la salida se vea— y
+ * vuelve a subir cuando salen. No aparece en `/ayudar` ni en sus retornos de
+ * PayPal, que son el mismo flujo. Reserva su alto en el flujo para no tapar el
+ * final de la página.
  */
 export function HelpBar({
   href = localizedHref("/ayudar", "es"),
@@ -22,77 +28,84 @@ export function HelpBar({
   label?: string;
 }) {
   const pathname = usePathname();
-  const barra = useRef<HTMLDivElement>(null);
-  const [medicion, setMedicion] = useState<{ ruta: string; redundante: boolean } | null>(
+  const bar = useRef<HTMLDivElement>(null);
+  const [reading, setReading] = useState<{ route: string; redundant: boolean } | null>(
     null,
   );
 
-  const redundante =
-    medicion !== null && medicion.ruta === pathname && medicion.redundante;
+  const canonical = stripLocalePrefix(pathname);
+
+  /* Antes de la primera medición, en la home la barra arranca abajo: la apertura
+     trae la acción primaria a la vista y la barra la repetiría. Una recarga a
+     mitad de página la hace subir en cuanto el observador mide. */
+  const redundant =
+    reading !== null && reading.route === pathname
+      ? reading.redundant
+      : canonical === "/";
 
   useEffect(() => {
-    const acciones = document.querySelectorAll("[data-help-primary], #donaciones");
+    const anchors = document.querySelectorAll("[data-help-primary], #donaciones");
 
-    if (acciones.length === 0) {
+    if (anchors.length === 0) {
       return;
     }
 
-    const visibles = new Set<Element>();
+    const visible = new Set<Element>();
 
-    const observador = new IntersectionObserver((entradas) => {
-      for (const entrada of entradas) {
-        if (entrada.isIntersecting) {
-          visibles.add(entrada.target);
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          visible.add(entry.target);
         } else {
-          visibles.delete(entrada.target);
+          visible.delete(entry.target);
         }
       }
 
-      if (barra.current?.contains(document.activeElement)) {
+      if (bar.current?.contains(document.activeElement)) {
         return;
       }
 
-      setMedicion({ ruta: pathname, redundante: visibles.size > 0 });
+      setReading({ route: pathname, redundant: visible.size > 0 });
     });
 
-    for (const accion of acciones) {
-      observador.observe(accion);
+    for (const anchor of anchors) {
+      observer.observe(anchor);
     }
 
     return () => {
-      observador.disconnect();
+      observer.disconnect();
     };
   }, [pathname]);
-
-  const canonical = stripLocalePrefix(pathname);
 
   if (canonical === "/ayudar" || canonical.startsWith("/ayudar/")) {
     return null;
   }
 
-  const destino = canonical === "/" ? "#donaciones" : `${href}#donaciones`;
+  const target = canonical === "/" ? "#donaciones" : `${href}#donaciones`;
 
   return (
     <>
       <div aria-hidden="true" className="h-helpbar sm:hidden" />
 
-      {redundante ? null : (
-        <div
-          ref={barra}
-          data-foco-condicional=""
-          className="fixed inset-x-0 bottom-0 z-10 bg-forest px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-sm sm:hidden"
+      <div
+        ref={bar}
+        data-foco-condicional=""
+        {...(redundant ? { "aria-hidden": true, inert: true } : {})}
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-10 border-t border-rule bg-paper px-5 pt-sm transition-transform duration-base ease-editorial safe-bottom sm:hidden",
+          redundant ? "translate-y-full" : "translate-y-0",
+        )}
+      >
+        <a
+          href={target}
+          className={primaryActionClass("forest")}
+          onClick={() => {
+            track({ name: "ayudar_click", props: { origen: "barra" } });
+          }}
         >
-          <a
-            href={destino}
-            className="lift-hover flex min-h-touch w-full items-center justify-center rounded-pill bg-sage px-lg font-ui text-subheading font-medium text-forest"
-            onClick={() => {
-              track({ name: "ayudar_click", props: { origen: "barra" } });
-            }}
-          >
-            {label} →
-          </a>
-        </div>
-      )}
+          {label}
+        </a>
+      </div>
     </>
   );
 }

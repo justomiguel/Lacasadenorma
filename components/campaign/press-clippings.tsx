@@ -80,16 +80,12 @@ function Clipping({
   const Heading = headingLevel;
 
   return (
-    <article
-      className={cn(
-        "border-b border-rule py-xl md:overflow-hidden md:rounded-md md:border md:border-rule md:bg-paper md:py-0 md:shadow-card",
-      )}
-    >
+    <article className="border-b border-rule py-xl md:border-b-0 md:py-0">
       {item.image === null ? null : (
         <div
           className={cn(
-            "relative overflow-hidden",
-            featured ? "aspect-[16/9]" : "aspect-[4/3]",
+            "relative overflow-hidden bg-paper-sunk",
+            featured ? "aspect-wide" : "aspect-landscape",
           )}
         >
           <Image
@@ -106,8 +102,8 @@ function Clipping({
           />
         </div>
       )}
-      <div className="md:p-lg">
-        <p className="font-ui text-label text-olive">{item.source}</p>
+      <div className="md:pt-md">
+        <p className="font-ui text-caption text-olive">{item.source}</p>
         <Heading className="mt-xs font-display text-subheading font-medium">
           <a
             href={item.url}

@@ -74,6 +74,9 @@ export function SectionTabs({
 }) {
   const enhanced = useHydrated();
   const [selected, setSelected] = useState<string>(initial ?? items[0]?.id ?? "");
+  /* La entrada animada del panel es para el cambio de pestaña, no para la
+     hidratación: el primer panel aparece quieto, como venía en el HTML servido. */
+  const [changed, setChanged] = useState(false);
   const baseId = useId();
   const refs = useRef(new Map<string, HTMLButtonElement>());
 
@@ -95,7 +98,7 @@ export function SectionTabs({
             {item.heading === undefined ? null : (
               <h3
                 id={`${baseId}-heading-${item.id}`}
-                className="mb-lg font-display text-card"
+                className="mb-lg font-display text-section-title"
               >
                 {item.heading}
               </h3>
@@ -115,7 +118,9 @@ export function SectionTabs({
 
   function select(id: string) {
     setSelected(id);
+    setChanged(true);
     onChange?.(id);
+    refs.current.get(id)?.scrollIntoView?.({ inline: "nearest", block: "nearest" });
   }
 
   return (
@@ -123,7 +128,7 @@ export function SectionTabs({
       <div
         role="tablist"
         aria-label={label}
-        className="-mx-5 flex overflow-x-auto border-b border-rule px-5 sm:mx-0 sm:px-0"
+        className="flex min-w-0 max-w-full overflow-x-auto overscroll-x-contain border-b border-rule"
         onKeyDown={(event) => {
           const index = items.findIndex((item) => item.id === active.id);
           const next = moveIndex(items.length, index, event.key);
@@ -182,7 +187,7 @@ export function SectionTabs({
         role="tabpanel"
         id={`${baseId}-panel`}
         aria-labelledby={`${baseId}-tab-${active.id}`}
-        data-tab-panel=""
+        {...(changed ? { "data-tab-panel": "" } : {})}
         className="pt-xl"
       >
         {active.content}

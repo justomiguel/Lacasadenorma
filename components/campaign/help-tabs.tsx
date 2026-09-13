@@ -1,21 +1,17 @@
 "use client";
 
 import { ContactActions } from "@/components/campaign/contact-actions";
-import { DonationBoard } from "@/components/campaign/donation-board";
+import { DonationSelector } from "@/components/campaign/donation-selector";
 import { SectionTabs } from "@/components/design-system/tabs";
 import type { HelpContent, UiContent } from "@/content/schema";
 
 /**
  * Las tres formas de ayudar, como pestañas de un solo capítulo.
  *
- * Antes eran dos secciones seguidas —tres tarjetas y, debajo, el tablero de
- * donaciones— y la tercera tarjeta era un botón que bajaba a la sección
- * siguiente. Quien llegaba veía dos veces «cómo ayudar» y no sabía si eran la
- * misma cosa. Son la misma cosa: una decisión con tres respuestas. Las pestañas
- * la muestran así, y la primera abierta es la que más gente necesita, el aporte.
- *
- * Cada panel se sostiene solo, con su contacto adentro, porque quien elige
- * «dar una mano» no tiene que ir a buscar el WhatsApp a otra pestaña.
+ * Son una sola decisión con tres respuestas: aportar, dar una mano, acercar
+ * materiales. La primera abierta es la que más gente necesita. Cada panel se
+ * sostiene solo, con su contacto adentro, porque quien elige «dar una mano» no
+ * tiene que ir a buscar el WhatsApp a otra pestaña.
  *
  * Sin JavaScript, `SectionTabs` apila los tres paneles: se lee todo igual.
  *
@@ -59,15 +55,21 @@ export function HelpTabs({
           id: "aporte",
           label: ui.home.tabDonate,
           content: (
-            <div>
-              <h3 className="font-display text-card">{ui.home.donateTitle}</h3>
-              <p className="mt-sm max-w-measure text-body text-ink-muted">
-                {ui.home.donateLead}
-              </p>
-              <DonationBoard help={help} ui={ui} className="mt-xl" />
-              <p className="mt-xl max-w-measure font-hand text-hand text-olive">
-                {ui.home.thanksNote}
-              </p>
+            <div className="lg:grid lg:grid-cols-12 lg:gap-2xl">
+              <div className="lg:col-span-4">
+                <h3 className="font-display text-section-title">{ui.home.donateTitle}</h3>
+                <p className="mt-sm max-w-measure text-body text-ink-muted">
+                  {ui.home.donateLead}
+                </p>
+              </div>
+              <div className="mt-xl lg:col-span-7 lg:col-start-6 lg:mt-0">
+                <DonationSelector help={help} ui={ui} />
+                <DonationConfirmation
+                  paragraphs={help.afterTransfer}
+                  note={ui.home.thanksNote}
+                  className="mt-xl"
+                />
+              </div>
             </div>
           ),
         },
@@ -76,13 +78,13 @@ export function HelpTabs({
           label: ui.home.tabHands,
           content: (
             <div className="grid gap-xl lg:grid-cols-12">
-              <div className="lg:col-span-6">
-                <h3 className="font-display text-card">{ui.home.debrisTitle}</h3>
+              <div className="lg:col-span-5">
+                <h3 className="font-display text-section-title">{ui.home.debrisTitle}</h3>
                 <p className="mt-sm max-w-measure text-body text-ink-muted">
                   {ui.home.debrisBody}
                 </p>
               </div>
-              <div className="lg:col-span-5 lg:col-start-8">{contact("escombros")}</div>
+              <div className="lg:col-span-6 lg:col-start-7">{contact("escombros")}</div>
             </div>
           ),
         },
@@ -91,23 +93,15 @@ export function HelpTabs({
           label: ui.home.tabMaterials,
           content: (
             <div className="grid gap-xl lg:grid-cols-12">
-              <div className="lg:col-span-6">
-                <h3 className="font-display text-card">{ui.home.materialsTitle}</h3>
+              <div className="lg:col-span-5">
+                <h3 className="font-display text-section-title">
+                  {ui.home.materialsTitle}
+                </h3>
                 <p className="mt-sm max-w-measure text-body text-ink-muted">
                   {ui.home.materialsBody}
                 </p>
-                <ul className="mt-md flex flex-wrap gap-xs">
-                  {help.materials.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-pill bg-sage px-md py-xs font-ui text-small text-forest"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
-              <div className="lg:col-span-5 lg:col-start-8">
+              <div className="lg:col-span-6 lg:col-start-7">
                 <p className="mb-md max-w-measure text-body">
                   {ui.home.materialsContact}
                 </p>
@@ -118,5 +112,30 @@ export function HelpTabs({
         },
       ]}
     />
+  );
+}
+
+/**
+ * Qué pasa después de aportar. No hay comprobante ni recibo que mostrar: el
+ * sitio no cobra. Lo que sí se dice es que no hace falta avisar, y gracias.
+ */
+function DonationConfirmation({
+  paragraphs,
+  note,
+  className,
+}: {
+  paragraphs: readonly string[];
+  note: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      {paragraphs.map((text) => (
+        <p key={text.slice(0, 48)} className="max-w-measure text-small text-ink-muted">
+          {text}
+        </p>
+      ))}
+      <p className="mt-md max-w-measure font-hand text-hand text-olive">{note}</p>
+    </div>
   );
 }

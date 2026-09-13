@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { cn } from "@/components/design-system/cn";
+import { primaryActionClass, type ActionTone } from "@/components/design-system/actions";
 import { localizedHref } from "@/src/i18n/href";
 import { track } from "@/src/infrastructure/analytics/browser";
 
@@ -20,20 +20,11 @@ import { track } from "@/src/infrastructure/analytics/browser";
  * `data-help-primary` es lo que mira `HelpBar` para retirarse mientras esta
  * acción está en pantalla, en lugar de duplicarla (ux.md §9).
  *
- * `href` y `label` los pone la página, que es de servidor y conoce el idioma.
- * Por omisión siguen siendo el castellano, para no romper los tests que no
- * pasan locale.
+ * `fragment` es para quedarse en la misma página. No se puede pasar por `Link`:
+ * con `typedRoutes` un hash no es una ruta.
  *
- * `fragment` es para quedarse en la misma página (el scroll del mockup). No se
- * puede pasar por `Link`: con `typedRoutes` un hash no es una ruta.
- *
- * `tone="sage"` es el CTA del hero sobre la foto oscura. `cn` no resuelve
- * conflictos de Tailwind, así que el tono no se mezcla con otra clase de fondo.
+ * `tone="paper"` es el CTA sobre la foto oscura de la apertura.
  */
-
-const BASE =
-  "lift-hover inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill px-lg py-sm font-ui text-subheading font-medium";
-
 export function HelpCta({
   origen,
   label = "Ayudar a reconstruir",
@@ -46,16 +37,10 @@ export function HelpCta({
   label?: string;
   href?: ReturnType<typeof localizedHref>;
   fragment?: string;
-  tone?: "forest" | "sage";
+  tone?: ActionTone;
   className?: string;
 }) {
-  const resolved = cn(
-    BASE,
-    tone === "sage"
-      ? "bg-sage text-forest hover:bg-paper"
-      : "bg-forest text-paper hover:bg-forest-strong",
-    className,
-  );
+  const resolved = primaryActionClass(tone, className);
 
   const onClick = () => {
     track({ name: "ayudar_click", props: { origen } });
