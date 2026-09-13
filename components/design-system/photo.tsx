@@ -290,12 +290,14 @@ export function CoverPhoto({
   priority = false,
   sizes = "100vw",
   position = "center",
+  quality = 75,
   className,
 }: {
   media: Photograph;
   priority?: boolean;
   sizes?: string;
   position?: string;
+  quality?: number;
   className?: string;
 }) {
   return (
@@ -305,6 +307,7 @@ export function CoverPhoto({
       width={media.width}
       height={media.height}
       sizes={sizes}
+      quality={quality}
       priority={priority}
       className={cn("h-full w-full object-cover", className)}
       style={{ objectPosition: position }}

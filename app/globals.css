@@ -131,8 +131,10 @@
   --ease-*: initial;
   --ease-editorial: cubic-bezier(0.22, 0.7, 0.2, 1);
 
-  --duration-fast: 160ms;
+  --duration-fast: 200ms;
   --duration-base: 420ms;
+  --duration-chrome: 240ms;
+  --duration-tab: 200ms;
 
   --breakpoint-*: initial;
   --breakpoint-sm: 40rem;
@@ -231,6 +233,28 @@
 @keyframes reveal-up {
   from {
     opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-photo-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-copy-enter {
+  from {
+    opacity: 0;
     transform: translateY(16px);
   }
   to {
@@ -239,9 +263,172 @@
   }
 }
 
+@keyframes wipe-y {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes wipe-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes menu-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  [data-reveal] {
-    animation: reveal-up var(--duration-base) var(--ease-editorial) both;
+  [data-hero-photo] {
+    animation: hero-photo-enter 900ms var(--ease-editorial) both;
+  }
+
+  [data-hero-enter] {
+    animation: hero-copy-enter 700ms var(--ease-editorial) both;
+  }
+
+  [data-hero-enter="kicker"] {
+    animation-delay: 180ms;
+  }
+
+  [data-hero-enter="line-1"] {
+    animation-delay: 320ms;
+  }
+
+  [data-hero-enter="line-2"] {
+    animation-delay: 440ms;
+  }
+
+  [data-hero-enter="copy"] {
+    animation-delay: 580ms;
+  }
+
+  [data-hero-enter="actions"] {
+    animation-delay: 720ms;
+  }
+
+  [data-hero-enter="secondary"] {
+    animation-delay: 840ms;
+  }
+
+  [data-hero-enter="hint"] {
+    animation-delay: 1080ms;
+  }
+
+  [data-hero-enter="quote"] {
+    animation-delay: 700ms;
+  }
+
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      animation: reveal-up 800ms var(--ease-editorial) both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 42%;
+      animation-delay: var(--reveal-delay, 0ms);
+    }
+
+    [data-reveal-photo="wipe"] {
+      animation: wipe-y 900ms var(--ease-editorial) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 48%;
+    }
+
+    [data-reveal-photo="wipe-x"] {
+      animation: wipe-x 800ms var(--ease-editorial) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+
+    [data-reveal-photo="wipe-x"][data-stagger="1"] {
+      animation-delay: 90ms;
+    }
+
+    [data-reveal-photo="wipe-x"][data-stagger="2"] {
+      animation-delay: 200ms;
+    }
+
+    [data-chapter="community"] [data-reveal] {
+      animation-duration: 640ms;
+    }
+
+    [data-chapter="norma"] [data-reveal] {
+      animation-duration: 980ms;
+    }
+
+    [data-chapter="next"] [data-reveal] {
+      animation-duration: 720ms;
+    }
+  }
+
+  [data-tab-panel] {
+    animation: tab-in var(--duration-tab) var(--ease-editorial) both;
+  }
+
+  [data-menu-panel] {
+    animation: menu-enter 280ms var(--ease-editorial) both;
+  }
+
+  [data-hero-depth] {
+    transform: scale(calc(1 + (var(--scroll-depth, 0) * 0.04)));
+    will-change: transform;
+  }
+
+  [data-hero-copy] {
+    opacity: calc(1 - (var(--scroll-depth, 0) * 0.18));
+  }
+
+  @media (min-width: 64rem) {
+    [data-parallax] {
+      transform: translate3d(0, calc(var(--parallax, 0) * 5%), 0);
+      will-change: transform;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lift-hover {
+      transition:
+        transform var(--duration-fast) var(--ease-editorial),
+        background-color var(--duration-fast) var(--ease-editorial),
+        color var(--duration-fast) var(--ease-editorial),
+        border-color var(--duration-fast) var(--ease-editorial);
+    }
+
+    .lift-hover:hover {
+      transform: translateY(-2px);
+    }
+
+    .lift-hover:hover svg {
+      transform: translateX(3px);
+    }
+
+    .lift-hover svg {
+      transition: transform var(--duration-fast) var(--ease-editorial);
+    }
   }
 }
 

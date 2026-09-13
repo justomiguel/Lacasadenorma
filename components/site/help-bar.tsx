@@ -83,7 +83,7 @@ export function HelpBar({
         >
           <a
             href={destino}
-            className="flex min-h-touch w-full items-center justify-center rounded-pill bg-sage px-lg font-ui text-subheading font-medium text-forest"
+            className="lift-hover flex min-h-touch w-full items-center justify-center rounded-pill bg-sage px-lg font-ui text-subheading font-medium text-forest"
             onClick={() => {
               track({ name: "ayudar_click", props: { origen: "barra" } });
             }}

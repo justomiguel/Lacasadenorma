@@ -23,6 +23,41 @@ import { cn } from "./cn";
 
 type CopyState = "idle" | "copied" | "failed";
 
+function CopyIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect
+        x="5.2"
+        y="5.2"
+        width="7.6"
+        height="8.4"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M3.4 10.5V3.7A1.3 1.3 0 0 1 4.7 2.4h6.2"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path
+        d="M3.2 8.2 6.3 11.5 12.8 4.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function CopyField({
   label,
   value,
@@ -71,12 +106,12 @@ export function CopyField({
 
     timeout.current = setTimeout(() => {
       setState("idle");
-    }, 4000);
+    }, 1500);
   }
 
   return (
     <div className={cn("min-w-0 border-b border-rule py-sm", className)}>
-      <div className="flex items-baseline justify-between gap-md">
+      <div className="flex items-center justify-between gap-md">
         <div className="min-w-0">
           <p className="font-ui text-label text-ink-muted">{label}</p>
           {/*
@@ -105,8 +140,9 @@ export function CopyField({
               void copy();
             }}
             aria-describedby={valueId}
-            className="inline-flex min-h-touch shrink-0 items-center rounded-pill px-sm font-ui text-small font-medium text-forest underline decoration-1 underline-offset-4 transition-colors duration-fast ease-editorial hover:text-forest-strong"
+            className="lift-hover inline-flex min-h-touch shrink-0 items-center gap-xs rounded-pill px-sm font-ui text-small font-medium text-forest underline decoration-1 underline-offset-4 hover:text-forest-strong"
           >
+            {state === "copied" ? <CheckIcon /> : <CopyIcon />}
             {state === "copied" ? copiedLabel : copyLabel}
           </button>
         ) : null}

@@ -87,6 +87,12 @@ export const siteSchema = z.object({
   status: z.string().min(1),
 });
 
+const personChapterSchema = z.object({
+  kicker: z.string().min(1).nullable(),
+  title: z.string().min(1),
+  paragraphs,
+});
+
 export const personSchema = z.object({
   slug: z.string().min(1),
   fullName: z.string().min(1),
@@ -94,7 +100,25 @@ export const personSchema = z.object({
   knownAs: z.string().min(1).nullable(),
   roleLabel: z.string().min(1),
   summary: z.string().min(1),
+  /** Título de apertura de `/norma` y del capítulo en la home. */
+  openingTitle: z.string().min(1),
   paragraphs,
+  /**
+   * Capítulos del relato publicado. El documento familiar es la fuente; no se
+   * inventan cargos, fechas ni testimonios. `quotes` vacío omite esa sección.
+   */
+  chapters: z.array(personChapterSchema).min(1),
+  quotes: z.array(
+    z.object({
+      quote: z.string().min(1),
+      author: z.string().min(1),
+      relation: z.string().min(1),
+    }),
+  ),
+  bridge: z.object({
+    title: z.string().min(1),
+    paragraphs,
+  }),
   /** Nulos mientras la familia no publique las fechas. No se estiman. */
   bornOn: isoDate.nullable(),
   diedOn: isoDate.nullable(),
@@ -421,6 +445,9 @@ export const uiSchema = z.object({
     paypalLead: phrase,
     paypalCta: phrase,
     thanksNote: phrase,
+    chapterNorma: phrase,
+    normaLead: phrase,
+    seeNorma: phrase,
     chapterNext: phrase,
     nextTitle: phrase,
     nextLead: phrase,

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { getContent } from "@/content/pack";
 import { VIEWPORT_MINIMO } from "../soporte/paginas";
 
-const { faq, site, ui } = getContent("es");
+const { faq, norma, site, ui } = getContent("es");
 
 /**
  * Flujos críticos 1 y 2: abrir la home y entender la campaña.
@@ -68,6 +68,9 @@ test.describe("flujo 1 · abrir la home", () => {
       page.getByRole("heading", { name: ui.home.helpTitle.replaceAll("\n", " ") }),
     ).toBeVisible();
     await expect(page.getByRole("heading", { name: ui.home.donateTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: norma.openingTitle.replaceAll("\n", " ") }),
+    ).toBeVisible();
     await expect(page.getByRole("heading", { name: ui.home.nextTitle })).toBeVisible();
   });
 

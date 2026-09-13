@@ -32,7 +32,7 @@ import { track } from "@/src/infrastructure/analytics/browser";
  */
 
 const BASE =
-  "inline-flex min-h-touch items-center justify-center rounded-pill px-lg py-sm font-ui text-subheading font-medium transition-colors duration-fast ease-editorial";
+  "lift-hover inline-flex min-h-touch items-center justify-center rounded-pill px-lg py-sm font-ui text-subheading font-medium";
 
 export function HelpCta({
   origen,

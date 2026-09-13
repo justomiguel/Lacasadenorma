@@ -30,7 +30,7 @@ export function ContactActions({
           href={whatsapp}
           rel="noopener noreferrer"
           target="_blank"
-          className="inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
+          className="lift-hover inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
           onClick={() => {
             track({ name: "whatsapp_click", props: { origen } });
           }}
@@ -39,7 +39,7 @@ export function ContactActions({
         </a>
         <a
           href={tel}
-          className="inline-flex min-h-touch items-center rounded-pill border border-forest px-lg font-ui text-small font-medium text-forest"
+          className="lift-hover inline-flex min-h-touch items-center rounded-pill border border-forest px-lg font-ui text-small font-medium text-forest"
           onClick={() => {
             track({ name: "llamar_click", props: { origen } });
           }}

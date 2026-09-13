@@ -3,12 +3,65 @@
   "fullName": "Norma Edith Bedoya",
   "knownAs": "Norma de Vargas",
   "roleLabel": "Una de las primeras comunicadoras sociales de Riacho He Hé",
-  "summary": "Norma pasó gran parte de su vida ayudando a que las historias de Riacho He Hé pudieran ser escuchadas.",
+  "summary": "Norma Edith Bedoya, conocida por muchos como Norma de Vargas, dedicó buena parte de su vida a registrar y difundir la historia cotidiana de Riacho He Hé.",
+  "openingTitle": "Una mujer que\ncontó la historia\nde su pueblo.",
   "paragraphs": [
-    "Norma Edith Bedoya fue una de las primeras comunicadoras sociales de Riacho He Hé, en la provincia de Formosa. En el pueblo la conocían como Norma de Vargas.",
-    "Ahora queremos que su historia ayude a otros a encontrar su propia voz.",
-    "Su familia está escribiendo el relato completo: cómo empezó, con quién trabajó, qué dejó hecho. Se publica en esta página cuando esté terminado. Preferimos que llegue tarde y que sea verdadero."
+    "Periodista, corresponsal, fotógrafa. También era quien hacía llegar los diarios y las revistas hasta el pueblo."
   ],
+  "chapters": [
+    {
+      "kicker": null,
+      "title": "Pionera de la comunicación",
+      "paragraphs": [
+        "Norma fue periodista, corresponsal y fotógrafa. Su trabajo permitió registrar acontecimientos, instituciones, obras y personas que fueron construyendo la historia cotidiana de Riacho He Hé.",
+        "Distribuir diarios y revistas era parte de ese mismo oficio: llevar la noticia hasta donde se vive."
+      ]
+    },
+    {
+      "kicker": null,
+      "title": "Las noticias\nque contaron\nun pueblo",
+      "paragraphs": [
+        "Durante años fue corresponsal de Diario La Mañana. Documentó obras, instituciones, acontecimientos, personas y la vida cotidiana.",
+        "No para un archivo lejano. Para que Riacho He Hé pudiera verse."
+      ]
+    },
+    {
+      "kicker": null,
+      "title": "Detrás de cada noticia\nhabía una historia.",
+      "paragraphs": [
+        "Recorría calles, instituciones, escuelas y parajes. La cámara y las palabras eran herramientas para preservar memoria."
+      ]
+    },
+    {
+      "kicker": null,
+      "title": "No solo contaba\nla comunidad.\nTambién la construía.",
+      "paragraphs": [
+        "Participó en la Comisión Fundadora de la Biblioteca Pública de Riacho He Hé. Fue parte de su compromiso con el pueblo, no un cargo para exhibir."
+      ]
+    },
+    {
+      "kicker": null,
+      "title": "Su pueblo\ntambién la recordó.",
+      "paragraphs": [
+        "La comunidad reconoció su trabajo como corresponsal de Diario La Mañana. Queda como pieza de archivo: un reconocimiento de vecinos."
+      ]
+    },
+    {
+      "kicker": null,
+      "title": "La mujer\ndetrás de la periodista",
+      "paragraphs": [
+        "La familia fue uno de los pilares de su vida. Quienes la conocían recuerdan la generosidad y el compromiso de todos los días, no sólo el oficio."
+      ]
+    }
+  ],
+  "quotes": [],
+  "bridge": {
+    "title": "Lo que viene después",
+    "paragraphs": [
+      "Norma usó la comunicación para contar su comunidad. La intención de este proyecto es que ese legado pueda inspirar nuevas oportunidades para otras personas de Riacho He Hé.",
+      "Primero, reconstruir una casa. Todavía no hay una organización constituida ni un programa publicado."
+    ]
+  },
   "bornOn": null,
   "diedOn": null,
   "portrait": {

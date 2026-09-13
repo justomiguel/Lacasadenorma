@@ -224,7 +224,7 @@ export function DonationBoard({
                   aria-selected={selected}
                   tabIndex={selected ? 0 : -1}
                   className={cn(
-                    "inline-flex min-h-touch items-center gap-xs rounded-pill px-md font-ui text-small",
+                    "lift-hover inline-flex min-h-touch items-center gap-xs rounded-pill px-md font-ui text-small",
                     selected
                       ? "bg-forest text-paper"
                       : "border border-rule text-ink hover:border-forest",
@@ -270,7 +270,7 @@ export function DonationBoard({
             href={help.mercadoPagoUrl}
             rel="noopener noreferrer"
             target="_blank"
-            className="mt-lg inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
+            className="lift-hover mt-lg inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
             onClick={() => {
               track({ name: "medio_externo_click", props: { medio: "mercadopago" } });
             }}
@@ -295,7 +295,7 @@ export function DonationBoard({
             href={help.paypalUrl}
             rel="noopener noreferrer"
             target="_blank"
-            className="mt-lg inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
+            className="lift-hover mt-lg inline-flex min-h-touch items-center rounded-pill bg-forest px-lg font-ui text-small font-medium text-paper"
             onClick={() => {
               track({ name: "medio_externo_click", props: { medio: "paypal" } });
             }}
@@ -325,7 +325,7 @@ export function DonationBoard({
         <div
           role="tablist"
           aria-label={ui.home.donateTitle}
-          className="mb-lg flex flex-wrap gap-sm"
+          className="mb-lg flex w-full gap-xs lg:w-auto lg:flex-wrap lg:gap-sm"
           onKeyDown={(event) => {
             const next = nextItem(CHANNELS, channel, event.key);
 
@@ -358,7 +358,7 @@ export function DonationBoard({
                 aria-controls={`${baseId}-panel`}
                 tabIndex={selected ? 0 : -1}
                 className={cn(
-                  "inline-flex min-h-touch items-center rounded-pill px-md font-ui text-small",
+                  "lift-hover inline-flex min-h-touch flex-1 items-center justify-center rounded-pill px-md font-ui text-small lg:flex-none",
                   selected
                     ? "bg-forest text-paper"
                     : "border border-rule text-ink hover:border-forest",
@@ -376,8 +376,10 @@ export function DonationBoard({
 
       {enhanced ? (
         <div
+          key={channel}
           role="tabpanel"
           id={`${baseId}-panel`}
+          data-tab-panel=""
           aria-labelledby={`${baseId}-tab-${channel}`}
         >
           {renderChannel(channel)}

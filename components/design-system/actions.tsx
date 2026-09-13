@@ -14,10 +14,10 @@ import { cn } from "./cn";
  */
 
 const PRIMARY =
-  "inline-flex min-h-touch items-center justify-center rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper transition-colors duration-fast ease-editorial hover:bg-forest-strong";
+  "lift-hover inline-flex min-h-touch items-center justify-center rounded-pill bg-forest px-lg py-sm font-ui text-subheading font-medium text-paper hover:bg-forest-strong";
 
 const SECONDARY =
-  "inline-flex min-h-touch items-center justify-center rounded-pill border border-forest px-lg py-sm font-ui text-subheading text-forest transition-colors duration-fast ease-editorial hover:bg-forest hover:text-paper";
+  "lift-hover inline-flex min-h-touch items-center justify-center rounded-pill border border-forest px-lg py-sm font-ui text-subheading text-forest hover:bg-forest hover:text-paper";
 
 export function PrimaryAction({
   href,

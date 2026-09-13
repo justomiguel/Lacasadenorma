@@ -28,7 +28,11 @@ export function getNormaStory(): NormaStory {
     roleLabel: norma.roleLabel,
     place: `${site.place.locality}, ${site.place.province}, ${site.place.country}`,
     summary: norma.summary,
-    paragraphs: norma.paragraphs,
+    paragraphs: [
+      ...norma.paragraphs,
+      ...norma.chapters.flatMap((chapter) => chapter.paragraphs),
+      ...norma.bridge.paragraphs,
+    ],
     bornOn: norma.bornOn,
     diedOn: norma.diedOn,
   };

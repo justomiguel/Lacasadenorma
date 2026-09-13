@@ -1,5 +1,5 @@
-import { ContactActions } from "@/components/campaign/contact-actions";
 import { DonationBoard } from "@/components/campaign/donation-board";
+import { HelpWays } from "@/components/campaign/help-ways";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { Callout } from "@/components/design-system/callout";
 import { Container, Editorial, Section } from "@/components/design-system/layout";
@@ -47,40 +47,7 @@ export function HelpScreen({ locale }: { locale: Locale }) {
       <Container>
         <Section className="border-t border-rule" labelledBy="formas">
           <SectionHeading title={ui.home.helpKicker} id="formas" />
-          <div className="grid gap-lg md:grid-cols-3">
-            <article className="rounded-md border border-rule p-lg">
-              <h3 className="font-display text-heading">{ui.home.debrisTitle}</h3>
-              <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
-              <div className="mt-lg">
-                <ContactActions
-                  name={help.contact.name}
-                  phoneDisplay={help.contact.phoneDisplay}
-                  phoneTel={help.contact.phoneTel}
-                  whatsappLabel={ui.home.whatsapp}
-                  callLabel={ui.home.call}
-                  origen="ayudar-escombros"
-                />
-              </div>
-            </article>
-            <article className="rounded-md border border-rule p-lg">
-              <h3 className="font-display text-heading">{ui.home.materialsTitle}</h3>
-              <p className="mt-md text-body text-ink-muted">{ui.home.materialsBody}</p>
-              <ul className="mt-md flex flex-wrap gap-xs">
-                {help.materials.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-pill bg-sage px-md py-xs font-ui text-small text-forest"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </article>
-            <article className="rounded-md border border-rule p-lg">
-              <h3 className="font-display text-heading">{ui.home.remoteTitle}</h3>
-              <p className="mt-md text-body text-ink-muted">{ui.home.remoteBody}</p>
-            </article>
-          </div>
+          <HelpWays help={help} ui={ui} origen="ayudar" remoteHref="#donaciones" />
         </Section>
       </Container>
 

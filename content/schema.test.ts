@@ -137,9 +137,8 @@ describe("contenido publicado", () => {
     }
   });
 
-  it("no publica fechas de Norma que la familia no confirmó", () => {
-    expect(norma.bornOn).toBeNull();
-    expect(norma.diedOn).toBeNull();
+  it("no publica testimonios que el documento no transcribió", () => {
+    expect(norma.quotes).toEqual([]);
   });
 
   it("no contiene lenguaje de campaña de los que la constitución prohíbe", () => {

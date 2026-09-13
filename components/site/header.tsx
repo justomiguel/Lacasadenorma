@@ -21,7 +21,9 @@ const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
 
 /**
  * Encabezado del mockup: logo a la izquierda, enlaces, CTA píldora.
- * En teléfono, hamburguesa y panel a pantalla completa.
+ * En la home es fijo y transparente sobre el hero; al scrollear gana fondo
+ * bosque con un desenfoque muy leve. En teléfono, hamburguesa y panel a
+ * pantalla completa.
  */
 export function SiteHeader({
   locale,
@@ -40,8 +42,22 @@ export function SiteHeader({
   const helpHref = `${localizedHref("/ayudar", locale)}#donaciones`;
   const menuId = useId();
   const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [compact, setCompact] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const open = menuFor === pathname;
+
+  useEffect(() => {
+    function onScroll() {
+      setCompact(window.scrollY > 24);
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -66,19 +82,27 @@ export function SiteHeader({
     };
   }, [open]);
 
+  const chrome = overlay
+    ? compact
+      ? "fixed inset-x-0 top-0 z-20 bg-forest/88 text-paper backdrop-blur-[8px]"
+      : "fixed inset-x-0 top-0 z-20 bg-transparent text-paper"
+    : "sticky top-0 z-20 bg-forest text-paper";
+
   return (
     <header
-      className={
-        overlay
-          ? "absolute inset-x-0 top-0 z-20 bg-forest/92 text-paper"
-          : "sticky top-0 z-20 bg-forest text-paper"
-      }
+      className={`${chrome} transition-[background-color,backdrop-filter] duration-[240ms] ease-editorial`}
     >
-      <div className="mx-auto flex w-full max-w-page items-center justify-between gap-md px-5 py-md sm:px-xl lg:px-4xl">
+      <div
+        className={
+          compact
+            ? "mx-auto flex w-full max-w-page items-center justify-between gap-md px-5 py-sm transition-[padding] duration-[240ms] ease-editorial sm:px-xl lg:px-4xl"
+            : "mx-auto flex w-full max-w-page items-center justify-between gap-md px-5 py-md transition-[padding] duration-[240ms] ease-editorial sm:px-xl lg:px-4xl"
+        }
+      >
         <Link
           href={localizedHref("/", locale)}
           aria-label={siteName}
-          className="shrink-0 font-display text-small font-medium leading-tight tracking-tight text-paper"
+          className="lift-hover shrink-0 font-display text-small font-medium leading-tight tracking-tight text-paper"
         >
           <span className="block uppercase tracking-label">La Casa</span>
           <span className="block text-[0.7em] uppercase tracking-label">de Norma</span>
@@ -122,7 +146,7 @@ export function SiteHeader({
           <Link
             href={helpHref}
             data-help-primary=""
-            className="hidden min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest sm:inline-flex"
+            className="lift-hover hidden min-h-touch items-center rounded-pill bg-sage px-lg font-ui text-small font-medium text-forest sm:inline-flex"
             onClick={() => {
               track({ name: "ayudar_click", props: { origen: "encabezado" } });
             }}
@@ -155,6 +179,7 @@ export function SiteHeader({
           role="dialog"
           aria-modal="true"
           aria-label={ui.nav.primary}
+          data-menu-panel=""
           className="fixed inset-0 z-30 flex flex-col bg-forest px-5 py-md text-paper"
         >
           <div className="flex items-center justify-between">
@@ -198,7 +223,7 @@ export function SiteHeader({
           <Link
             href={helpHref}
             data-help-primary=""
-            className="mt-3xl inline-flex min-h-touch w-fit items-center rounded-pill bg-sage px-xl py-sm font-ui text-subheading font-medium text-forest"
+            className="lift-hover mt-3xl inline-flex min-h-touch w-fit items-center rounded-pill bg-sage px-xl py-sm font-ui text-subheading font-medium text-forest"
             onClick={() => {
               setMenuFor(null);
               track({ name: "ayudar_click", props: { origen: "menu" } });

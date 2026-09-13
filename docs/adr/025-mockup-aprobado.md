@@ -62,7 +62,7 @@ propósito, como capítulos de una secuencia y no como chrome.
   manuscrita (Caveat) reemplazan a Archivo y Newsreader en el sitio público.
 - El radio de 2 px deja de ser el máximo: el mockup usa píldoras y tarjetas.
 - La home deja de ser un índice de páginas con FAQ. El scroll es
-  pérdida → comunidad → acción → donación → legado.
+  pérdida → comunidad → acción → donación → Norma → legado.
 - `/contacto` existe. La navegación primaria es la del mockup.
 - `/transparencia` y `/reconstruccion` siguen como URL, sin widgets de cifras.
 - `e2e/comun/revision-visual.spec.ts` deja de prohibir el radio del mockup.

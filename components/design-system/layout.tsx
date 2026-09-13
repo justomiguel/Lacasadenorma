@@ -51,17 +51,20 @@ export function Section({
   id,
   labelledBy,
   tight = false,
+  chapter,
 }: {
   children: ReactNode;
   className?: string;
   id?: string;
   labelledBy?: string;
   tight?: boolean;
+  chapter?: string;
 }) {
   return (
     <section
       {...(id === undefined ? {} : { id })}
       {...(labelledBy === undefined ? {} : { "aria-labelledby": labelledBy })}
+      {...(chapter === undefined ? {} : { "data-chapter": chapter })}
       className={cn(tight ? "py-2xl lg:py-3xl" : "py-3xl lg:py-4xl", className)}
     >
       {children}
