@@ -255,7 +255,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 quality={64}
                 sizes="100vw"
                 position="center"
-                className="opacity-[0.32]"
+                className="opacity-50"
               />
             </div>
           )}

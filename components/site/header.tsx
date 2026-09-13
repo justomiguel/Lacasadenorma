@@ -180,7 +180,7 @@ export function SiteHeader({
           aria-modal="true"
           aria-label={ui.nav.primary}
           data-menu-panel=""
-          className="fixed inset-0 z-30 flex flex-col bg-forest px-5 py-md text-paper"
+          className="fixed inset-0 z-30 flex h-dvh w-screen flex-col bg-forest px-5 py-md text-paper"
         >
           <div className="flex items-center justify-between">
             <p className="font-display text-small uppercase tracking-label">
