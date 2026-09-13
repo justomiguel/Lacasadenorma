@@ -53,7 +53,10 @@ export function CountrySelector({
     <div
       role="tablist"
       aria-label={label}
-      className={cn("flex border-b border-rule", className)}
+      className={cn(
+        "flex min-w-0 max-w-full overflow-x-auto overscroll-x-contain border-b border-rule",
+        className,
+      )}
       onKeyDown={(event) => {
         const next = moveIndex(REGIONS.length, REGIONS.indexOf(region), event.key);
 
@@ -70,6 +73,10 @@ export function CountrySelector({
         event.preventDefault();
         onChange(target);
         refs.current.get(target)?.focus();
+        refs.current.get(target)?.scrollIntoView?.({
+          inline: "nearest",
+          block: "nearest",
+        });
       }}
     >
       {REGIONS.map((item) => {
@@ -99,6 +106,10 @@ export function CountrySelector({
             )}
             onClick={() => {
               onChange(item);
+              refs.current.get(item)?.scrollIntoView?.({
+                inline: "nearest",
+                block: "nearest",
+              });
             }}
           >
             {names[item]}

@@ -120,6 +120,7 @@ export function SectionTabs({
     setSelected(id);
     setChanged(true);
     onChange?.(id);
+    refs.current.get(id)?.scrollIntoView?.({ inline: "nearest", block: "nearest" });
   }
 
   return (
@@ -127,7 +128,7 @@ export function SectionTabs({
       <div
         role="tablist"
         aria-label={label}
-        className="-mx-5 flex overflow-x-auto border-b border-rule px-5 sm:mx-0 sm:px-0"
+        className="flex min-w-0 max-w-full overflow-x-auto overscroll-x-contain border-b border-rule"
         onKeyDown={(event) => {
           const index = items.findIndex((item) => item.id === active.id);
           const next = moveIndex(items.length, index, event.key);
