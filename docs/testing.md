@@ -20,7 +20,7 @@ menos que uno que verifica que algo no se puede hacer.**
 | Nivel | Herramienta | Cuántos | Qué cubre | Qué **no** cubre |
 | --- | --- | --- | --- | --- |
 | Dominio | Vitest | 120 | Dinero, porcentajes, progreso, agregación de transparencia, permisos, Markdown restringido, etiquetas de auditoría | Nada que toque red o base |
-| Aplicación | Vitest con dobles en memoria | 146 | Casos de uso, las quince operaciones del backoffice, las seis capacidades, la equivalencia REST | Persistencia real |
+| Aplicación | Vitest con dobles en memoria | 225 | Casos de uso, las quince operaciones del backoffice, las seis capacidades, la equivalencia REST | Persistencia real |
 | Infraestructura | Vitest | 49 | Redacción del logger, validación de archivos por contenido, límite de tasa, honestidad del JSON-LD | El comportamiento de Supabase |
 | Componentes | Vitest + Testing Library | 64 | `CopyField`, `CountryTabs`, `Ledger`, `Figure`, fechas, la barra de ayuda y el puente WebMCP, con sus estados vacíos | Estilos, píxeles |
 | Contenido | Vitest | 12 | Que los diez JSON cumplan su esquema | |
@@ -29,7 +29,7 @@ menos que uno que verifica que algo no se puede hacer.**
 | Accesibilidad | `@axe-core/playwright` | incluidos arriba | Cero violaciones en 15 páginas × 2 viewports | Orden lógico, calidad del `alt`, sentido del texto |
 | Performance | Lighthouse CI | 11 páginas × 3 corridas | Las cuatro categorías ≥ 95 y los presupuestos, con la red estrangulada de verdad (ADR-022) | Lo que sólo se ve en dispositivos reales |
 
-Los totales: **520 tests en 55 archivos** con Vitest, **221 aserciones pgTAP** en 8 suites, **532
+Los totales: **581 tests en 62 archivos** con Vitest, **221 aserciones pgTAP** en 8 suites, **532
 tests de Playwright** entre los dos modos (255 sin datos, 277 con datos).
 
 ### TDD, donde es obligatorio
