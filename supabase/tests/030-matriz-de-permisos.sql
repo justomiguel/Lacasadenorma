@@ -149,6 +149,28 @@ insert into public.email_deliveries (kind, pledge_id, recipient, status) values
   ('pledge.confirmed', null, 'quien.dona@ejemplo.invalid', 'sent'),
   ('staff.new_pledge', null, null, 'skipped');
 
+-- Dos reservas: una de `donante` y una ajena. Exactamente dos filas, como el
+-- resto de la matriz. Las crea el superusuario a propósito: ningún rol inserta.
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, expires_at
+) values
+  (
+    'ab000000-0000-4000-8000-0000000000e1',
+    'ab000000-0000-4000-8000-000000000001',
+    '10000000-0000-4000-8000-000000000003',
+    1,
+    'reserved',
+    now() + interval '14 days'
+  ),
+  (
+    'ab000000-0000-4000-8000-0000000000e2',
+    'ab000000-0000-4000-8000-000000000001',
+    '10000000-0000-4000-8000-000000000004',
+    1,
+    'reserved',
+    now() + interval '14 days'
+  );
+
 -- ── El ejecutor ─────────────────────────────────────────────────────────────
 -- Cambia de rol, fija el JWT igual que lo hace PostgREST por transacción, corre la
 -- sentencia y revierte. El `raise` con el código ZZ001 es el mecanismo de la
@@ -357,7 +379,11 @@ insert into caso (tabla, operacion, sentencia, etiqueta_una) values
   ('donor_profiles', 'lectura', $s$select 1 from public.donor_profiles$s$, 'sólo la propia'),
   ('donor_profiles', 'inserción', $s$insert into public.donor_profiles (id) values ('10000000-0000-4000-8000-000000000005')$s$, 'sólo la propia'),
   ('donor_profiles', 'modificación', $s$update public.donor_profiles set display_name = 'Nombre cambiado' where id = '10000000-0000-4000-8000-000000000004'$s$, 'sólo la propia'),
-  ('donor_profiles', 'borrado', $s$delete from public.donor_profiles where id = '10000000-0000-4000-8000-000000000003'$s$, 'sólo la propia');
+  ('donor_profiles', 'borrado', $s$delete from public.donor_profiles where id = '10000000-0000-4000-8000-000000000003'$s$, 'sólo la propia'),
+  ('donation_pledges', 'lectura', $s$select 1 from public.donation_pledges$s$, 'sólo la propia'),
+  ('donation_pledges', 'inserción', $s$insert into public.donation_pledges (item_id, user_id, quantity, expires_at) values ('ab000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', 1, now() + interval '14 days')$s$, 'sólo la propia'),
+  ('donation_pledges', 'modificación', $s$update public.donation_pledges set donor_note = 'nota' where id = 'ab000000-0000-4000-8000-0000000000e2'$s$, 'sólo la propia'),
+  ('donation_pledges', 'borrado', $s$delete from public.donation_pledges where id = 'ab000000-0000-4000-8000-0000000000e1'$s$, 'sólo la propia');
 
 -- ── La matriz esperada ──────────────────────────────────────────────────────
 -- Se lee igual que la tabla de data-model.md §4, con una fila por rol y tabla.
@@ -402,7 +428,10 @@ insert into esperado values
   ('anon', 'email_deliveries', 'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- Un perfil de donante es un dato personal y no tiene nada de público: `anon` no
   -- recibe ni el GRANT de lectura, igual que en `contributions` (I2).
-  ('anon', 'donor_profiles',   'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('anon', 'donor_profiles',   'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- El muro de cinco columnas llega en la fase E. Hasta entonces `anon` no tiene
+  -- ni el GRANT: una reserva no es pública por existir.
+  ('anon', 'donation_pledges', 'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `donante` es la columna que ADR-027 agregó, y la que decide si abrir el registro
 -- fue seguro. Su token es válido y su `app_metadata` está vacío.
@@ -446,7 +475,10 @@ insert into esperado values
   ('donante', 'email_deliveries', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- Lo único suyo. El borrado es el propio perfil: irse tiene que poder hacerse sin
   -- pedirle permiso a nadie (FR-208).
-  ('donante', 'donor_profiles',   'sólo la propia',    'denegado (RLS)', 'denegado (RLS)', 'permitido');
+  ('donante', 'donor_profiles',   'sólo la propia',    'denegado (RLS)', 'denegado (RLS)', 'permitido'),
+  -- Lee las propias. No inserta: la función es el único camino. El UPDATE de la
+  -- prueba toca la reserva ajena, así que RLS lo niega. DELETE no tiene GRANT.
+  ('donante', 'donation_pledges', 'sólo la propia',    'sin privilegio', 'denegado (RLS)', 'sin privilegio');
 
 -- `auditor` es el rol que permite que alguien externo a la familia verifique sin
 -- poder alterar nada: lee todo, incluidos aportes y comprobantes, y **no escribe
@@ -480,7 +512,8 @@ insert into esperado values
   -- `auditor` lee los perfiles por `private.can_read_donors()` y no escribe ninguno:
   -- verificar quién donó qué es parte de verificar la campaña, y sigue siendo
   -- lectura sin escritura (E2).
-  ('auditor', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
+  ('auditor', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('auditor', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
 
 -- `editor` es el privilegio mínimo hecho rol: publica contenido y **no ve plata**.
 --
@@ -526,7 +559,10 @@ insert into esperado values
   -- Con `has_min_role('auditor')` esta celda diría 'todo', porque `editor` es de
   -- rango mayor que `auditor`. Es la amenaza E1 aplicada a datos personales, y es la
   -- razón por la que hay una función nueva en lugar de un chequeo por rango.
-  ('editor', 'donor_profiles',   'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
+  ('editor', 'donor_profiles',   'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  -- El GRANT de SELECT existe (lo necesita `auditor`) y `can_read_donors()` no lo
+  -- incluye. Con `has_min_role('auditor')` esta celda diría 'todo'.
+  ('editor', 'donation_pledges', 'nada',              'sin privilegio', 'denegado (RLS)', 'sin privilegio');
 
 -- `admin` registra aportes y gastos, y no toca dos cosas: las cuentas de aporte
 -- (amenaza T1) y los roles de las personas. Tampoco borra una campaña entera.
@@ -552,7 +588,9 @@ insert into esperado values
   -- Ni `admin` ni `owner` escriben un perfil ajeno. Un nombre público lo elige su
   -- dueña, y que el equipo pueda leerlo para coordinar una entrega no implica que
   -- pueda cambiarlo: el rol interno no sustituye a la propiedad (FR-230).
-  ('admin', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
+  ('admin', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  -- Opera por función, no por INSERT. El UPDATE directo es de la dueña.
+  ('admin', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
 
 -- `owner` es el único que escribe cuentas de aporte y el único que otorga roles.
 -- Aun así hay tres cosas que tampoco puede hacer, y las tres son a propósito:
@@ -573,7 +611,8 @@ insert into esperado values
   ('owner', 'user_roles',       'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('owner', 'email_deliveries', 'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
-  ('owner', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
+  ('owner', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
+  ('owner', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
 
 -- ── Antes de medir: que lo medido sea lo que se cree ────────────────────────
 
@@ -829,7 +868,13 @@ select is_empty(
       from observado
      where rol = 'editor'
        and operacion = 'lectura'
-       and tabla in ('contributions', 'expense_receipts', 'audit_log', 'email_deliveries')
+       and tabla in (
+         'contributions',
+         'expense_receipts',
+         'audit_log',
+         'email_deliveries',
+         'donation_pledges'
+       )
        and veredicto <> 'nada'
      order by 1
   $q$,
@@ -885,7 +930,7 @@ select is_empty(
         from observado
        where operacion = 'lectura'
          and rol in ('anon', 'donante')
-         and tabla <> 'donor_profiles'
+         and tabla not in ('donor_profiles', 'donation_pledges')
     )
     select d.tabla || ': donante ve ' || d.filas || ' y anon ve ' || a.filas
       from visible d

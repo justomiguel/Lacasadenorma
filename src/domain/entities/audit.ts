@@ -43,6 +43,9 @@ export const AUDIT_ACTION_LABELS = {
   "donation_item.published": "publicó un ítem del catálogo",
   "donor.approved": "habilitó una cuenta del público",
   "donor.declined": "rechazó una cuenta del público",
+  "pledge.claimed": "registró una reserva del público",
+  "pledge.cancelled": "canceló una reserva",
+  "pledge.fulfilled": "confirmó la llegada de una donación en especie",
 } as const satisfies Record<string, string>;
 
 export type AuditAction = keyof typeof AUDIT_ACTION_LABELS;
@@ -72,6 +75,7 @@ export const AUDIT_ENTITY_LABELS: Record<string, string> = {
   updates: "Novedades",
   milestones: "Hitos",
   donation_items: "Catálogo",
+  donation_pledges: "Reservas",
   payment_methods: "Cuentas",
   donor_profiles: "Cuentas del público",
 };

@@ -8,6 +8,8 @@ import { logger } from "@/src/infrastructure/logging/logger";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 import { createServerSupabaseClient } from "@/src/infrastructure/supabase/server-client";
 
+import { safeAccountReturn } from "@/src/application/accounts/return-path";
+
 import {
   credentials,
   localeOf,
@@ -172,7 +174,7 @@ export async function signIn(
     return credentials();
   }
 
-  redirect(localizeHref("/cuenta", parsed.locale));
+  redirect(safeAccountReturn(textOf(formData, "volver"), parsed.locale));
 }
 
 /**

@@ -59,6 +59,12 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
     description: "Los datos bancarios que se publican para transferir.",
   },
   {
+    href: "/admin/donaciones",
+    label: "Donaciones",
+    permission: "donaciones.leer",
+    description: "Confirmar la llegada del material y cancelar una reserva.",
+  },
+  {
     href: "/admin/donantes",
     label: "Donantes",
     permission: "donaciones.leer",

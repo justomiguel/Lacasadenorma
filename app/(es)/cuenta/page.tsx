@@ -11,6 +11,13 @@ export const metadata = accountMetadata("es");
  */
 export const dynamic = "force-dynamic";
 
-export default function CuentaPage() {
-  return <AccountScreen locale="es" />;
+export default async function CuentaPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const aviso = params["aviso"];
+
+  return <AccountScreen locale="es" notice={typeof aviso === "string" ? aviso : null} />;
 }

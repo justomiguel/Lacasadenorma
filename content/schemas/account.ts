@@ -45,6 +45,11 @@ const errors = z.object({
   noRecoverySession: phrase,
   linkExpired: phrase,
   internalRole: phrase,
+  notApproved: phrase,
+  ahead: phrase,
+  tooManyPledges: phrase,
+  alreadyGone: phrase,
+  quantityInvalid: phrase,
   failed: phrase,
 });
 
@@ -122,6 +127,16 @@ export const accountSchema = z.object({
     declinedTitle: phrase,
     declinedBody: paragraphs,
     approvedNote: phrase,
+    pledgesHeading: phrase,
+    pledgesLead: phrase,
+    pledgesEmpty: phrase,
+    pledgeExpires: phrase,
+    pledgeExpired: phrase,
+    pledgeCancelled: phrase,
+    pledgeFulfilled: phrase,
+    pledgeQuantity: phrase,
+    cancelPledge: phrase,
+    cancellingPledge: phrase,
   }),
 
   errors,

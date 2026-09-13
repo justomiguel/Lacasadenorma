@@ -119,6 +119,13 @@ noveno necesita una sesión de administrador, y hasta dónde llega esa sesión e
 | 8 | Entrar al backoffice | `e2e/comun/admin.spec.ts` | los dos |
 | 9 | Publicar una actualización | `e2e/con-datos/publicar.spec.ts` | con datos |
 
+La persona **`donante`** de pgTAP es autenticada y no tiene fila en `user_roles`: ve su perfil y
+puede reservar por la función, y no ve el libro. La concurrencia por la última unidad (SC-202) está
+en `supabase/tests/070-catalogo.sql`; el recorrido de reservar, conflicto, cancelar y vencer está en
+`e2e/con-datos/catalogo.spec.ts`. El vencimiento se dispara con `POST /harness/v1/vencer-reserva`,
+porque `authenticated` no puede escribir `expires_at`.
+
+
 Los tests no comprueban que la página cargue. Comprueban afirmaciones que se pueden falsear:
 
 - **La suma del libro de gastos es exactamente el total publicado.** Suma las filas de la tabla y las
@@ -361,7 +368,7 @@ Ocho suites sobre PostgreSQL 17 real con un shim que emula lo que Supabase agreg
 | `040-integridad-financiera.sql` | 26 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
 | `050-roles-y-token.sql` | 21 | Que el rol venga de `app_metadata`, que `user_metadata` se ignore, y que el servidor de auth pueda ejecutar el hook |
 | `060-storage.sql` | 16 | `fotos` público, `comprobantes` privado, y las policies de cada uno |
-| `070-catalogo.sql` | 17 | El `check` de no-sobreventa, la vista pública sin valor estimado y sin borradores |
+| `070-catalogo.sql` | 49 | El `check` de no-sobreventa, la vista pública, dos sesiones concurrentes por la última unidad, el tope de reservas, el vencimiento sin cron, que un `insert` directo falle, que cumplir una reserva no mueva totales de dinero, y que borrar la cuenta anonimice el nombre |
 | `080-donantes-y-muro.sql` | 41 | Que una cuenta del público vea sólo su fila, y que no pueda habilitarse sola |
 
 La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.

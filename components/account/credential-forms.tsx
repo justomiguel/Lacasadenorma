@@ -93,6 +93,7 @@ export function SignInForm({
   fields,
   locale,
   notice,
+  returnTo,
 }: {
   copy: AccountContent["signIn"];
   errors: AccountContent["errors"];
@@ -100,6 +101,8 @@ export function SignInForm({
   locale: Locale;
   /** El aviso con el que llega quien vino de un enlace vencido. */
   notice: string | null;
+  /** Destino post-ingreso. Vacío cae en `/cuenta`. */
+  returnTo?: string | null;
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(signIn, IDLE);
 
@@ -108,6 +111,9 @@ export function SignInForm({
   return (
     <form action={formAction} className="max-w-measure space-y-lg">
       <LocaleField locale={locale} />
+      {returnTo === null || returnTo === undefined || returnTo.length === 0 ? null : (
+        <input type="hidden" name="volver" value={returnTo} />
+      )}
 
       <TextField
         name="email"

@@ -97,6 +97,12 @@ export function fakeAdminGateway(
       reviewAccount: (input) => record("reviewAccount", input, undefined),
       contactOf: (input) => record("contactOf", input, null),
     },
+    donations: {
+      listPledges: () => record("listPledges", null, []),
+      fulfillPledge: (input) => record("fulfillPledge", input, undefined),
+      cancelPledge: (input) => record("cancelPledge", input, undefined),
+      markReminded: (input) => record("markReminded", input, undefined),
+    },
     audit: {
       append: (input) => {
         calls.push({ name: "audit.append", input });

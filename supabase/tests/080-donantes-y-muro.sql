@@ -33,6 +33,47 @@ insert into auth.users (id, email) values
 insert into public.donor_profiles (id, display_name, locale, default_anonymous) values
   ('20000000-0000-4000-8000-000000000002', 'Vecina de la cuadra', 'es', false);
 
+-- Reservas reales para anotar envíos. `email_deliveries.pledge_id` referencia
+-- `donation_pledges`; un UUID inventado choca con la clave foránea.
+insert into public.campaigns (id, slug, title, summary, status, published_at) values
+  ('c8000000-0000-4000-8000-000000000001', 'obra-correos', 'Obra de correos', 'Resumen', 'active', now());
+
+insert into public.donation_items (
+  id, campaign_id, title, unit, needed_quantity, published_at
+) values (
+  'ab800000-0000-4000-8000-000000000001',
+  'c8000000-0000-4000-8000-000000000001',
+  'Chapas para anotar envíos',
+  'unidad',
+  10,
+  now()
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, expires_at
+) values
+  (
+    '30000000-0000-4000-8000-000000000001',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    1,
+    now() + interval '14 days'
+  ),
+  (
+    '30000000-0000-4000-8000-000000000002',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000002',
+    1,
+    now() + interval '14 days'
+  ),
+  (
+    '30000000-0000-4000-8000-000000000003',
+    'ab800000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    1,
+    now() + interval '14 days'
+  );
+
 -- ── Estructura ──────────────────────────────────────────────────────────────
 -- Lo que las policies asumen. Sin la clave foránea con `on delete cascade`, borrar
 -- la cuenta dejaría el perfil huérfano y el nombre publicado para siempre (FR-240).

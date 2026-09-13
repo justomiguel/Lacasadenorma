@@ -74,10 +74,13 @@ export function signInMetadata(locale: Locale) {
 export function SignInScreen({
   locale,
   notice,
+  returnTo,
 }: {
   locale: Locale;
   /** El código con el que llega quien vino de un enlace vencido, si vino de uno. */
   notice: string | null;
+  /** A dónde volver después de ingresar. Sólo el catálogo pasa el filtro. */
+  returnTo?: string | null;
 }) {
   const { account } = getContent(locale);
   const { signIn, fields, errors } = account;
@@ -115,6 +118,7 @@ export function SignInScreen({
         fields={fields}
         locale={locale}
         notice={aviso}
+        returnTo={returnTo ?? null}
       />
     </AuthShell>
   );

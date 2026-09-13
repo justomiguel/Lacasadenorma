@@ -1,3 +1,4 @@
+import { OwnPledges } from "@/components/account/own-pledges";
 import { AuthShell } from "@/components/account/auth-shell";
 import {
   DeleteAccountForm,
@@ -23,10 +24,7 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  * algún día se guardara un dato más, tiene que aparecer en esta pantalla o la
  * política pasa a ser falsa.
  *
- * Lo que todavía **no** está: las reservas. Llegan con el catálogo, y hasta que
- * existan no se reserva un espacio vacío con una promesa: una sección que dice
- * "acá van a estar tus reservas" en un sitio donde no se puede reservar nada es
- * ruido.
+ * Lo que todavía **no** está: el muro. Llega en la fase E.
  */
 
 export function accountMetadata(locale: Locale) {
@@ -41,8 +39,14 @@ export function accountMetadata(locale: Locale) {
   });
 }
 
-export async function AccountScreen({ locale }: { locale: Locale }) {
-  const { account } = getContent(locale);
+export async function AccountScreen({
+  locale,
+  notice,
+}: {
+  locale: Locale;
+  notice: string | null;
+}) {
+  const { account, catalog } = getContent(locale);
   const { profile: copy, fields, errors } = account;
 
   const [viewer, result] = await Promise.all([
@@ -60,8 +64,11 @@ export async function AccountScreen({ locale }: { locale: Locale }) {
     );
   }
 
-  const donor = result.value;
+  const donor = result.value.profile;
+  const pledges = result.value.pledges;
   const name = displayNameOf(donor);
+  const aviso =
+    notice !== null && notice in errors ? errors[notice as keyof typeof errors] : null;
   const approval =
     donor.approvalStatus === "pending" ? (
       <Callout tone="warning" title={copy.pendingTitle}>
@@ -83,6 +90,11 @@ export async function AccountScreen({ locale }: { locale: Locale }) {
 
   return (
     <AuthShell title={copy.title} lead={copy.lead}>
+      {aviso === null ? null : (
+        <Callout tone="warning">
+          <p>{aviso}</p>
+        </Callout>
+      )}
       {approval}
 
       <div className="max-w-measure space-y-lg">
@@ -90,6 +102,12 @@ export async function AccountScreen({ locale }: { locale: Locale }) {
           {copy.signedInAs} <span className="text-ink">{viewer?.email ?? "—"}</span>
         </p>
         <SignOutForm copy={copy} locale={locale} />
+      </div>
+
+      <div className="mt-3xl">
+        <SectionHeading title={copy.pledgesHeading} />
+        <p className="mb-xl max-w-measure text-body text-ink-muted">{copy.pledgesLead}</p>
+        <OwnPledges pledges={pledges} copy={copy} catalog={catalog} locale={locale} />
       </div>
 
       <div className="mt-3xl">

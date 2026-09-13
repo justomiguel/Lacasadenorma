@@ -9,7 +9,7 @@ import { pipeline } from "node:stream/promises";
 import { promisify } from "node:util";
 
 import { handleAuth } from "./auth.mjs";
-import { handleBuzon } from "./buzon.mjs";
+import { handleHarness } from "./harness.mjs";
 import {
   API_PORT,
   BIN_DIR,
@@ -99,7 +99,7 @@ export async function startLocalApi() {
     const emulado = url.startsWith("/auth/v1")
       ? handleAuth
       : url.startsWith("/harness/v1")
-        ? handleBuzon
+        ? handleHarness
         : null;
 
     if (emulado !== null) {
@@ -121,7 +121,7 @@ export async function startLocalApi() {
       outgoing.writeHead(404, { "content-type": "application/json" });
       outgoing.end(
         JSON.stringify({
-          message: "La API local emula /rest/v1, /auth/v1 y el buzón /harness/v1.",
+          message: "La API local emula /rest/v1, /auth/v1 y /harness/v1.",
         }),
       );
       return;

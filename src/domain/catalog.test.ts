@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { remaining, isCovered, estimatedValueOf } from "./catalog";
+import {
+  remaining,
+  isCovered,
+  canClaim,
+  estimatedValueOf,
+  isDonationUnit,
+} from "./catalog";
 import { DomainError } from "./errors";
 import { money } from "./money";
 
@@ -27,6 +33,9 @@ describe("remaining", () => {
     expect(() => remaining({ needed: 10, reserved: -1, fulfilled: 0 })).toThrow(
       DomainError,
     );
+    expect(() => remaining({ needed: 10, reserved: 0, fulfilled: -1 })).toThrow(
+      DomainError,
+    );
   });
 });
 
@@ -34,6 +43,13 @@ describe("isCovered", () => {
   it("es verdadero sólo cuando no queda nada", () => {
     expect(isCovered({ needed: 10, reserved: 4, fulfilled: 6 })).toBe(true);
     expect(isCovered({ needed: 10, reserved: 3, fulfilled: 6 })).toBe(false);
+  });
+});
+
+describe("canClaim", () => {
+  it("no ofrece reservar un ítem cubierto", () => {
+    expect(canClaim({ needed: 10, reserved: 4, fulfilled: 6 })).toBe(false);
+    expect(canClaim({ needed: 10, reserved: 3, fulfilled: 6 })).toBe(true);
   });
 });
 
@@ -52,5 +68,17 @@ describe("estimatedValueOf", () => {
 
   it("un monto sin moneda no es un monto", () => {
     expect(() => estimatedValueOf(1_000, null)).toThrow(DomainError);
+  });
+
+  it("una moneda que el sitio no usa no es un monto", () => {
+    expect(() => estimatedValueOf(1_000, "XXX")).toThrow(DomainError);
+  });
+});
+
+describe("isDonationUnit", () => {
+  it("acepta las unidades del catálogo y rechaza el resto", () => {
+    expect(isDonationUnit("unidad")).toBe(true);
+    expect(isDonationUnit("metro_cuadrado")).toBe(true);
+    expect(isDonationUnit("kilo")).toBe(false);
   });
 });

@@ -300,6 +300,72 @@ export type Database = {
           },
         ];
       };
+      donation_pledges: {
+        Row: {
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          donor_display_name: string | null;
+          donor_note: string | null;
+          expires_at: string;
+          fulfilled_at: string | null;
+          id: string;
+          is_anonymous: boolean;
+          item_id: string;
+          quantity: number;
+          reminded_at: string | null;
+          status: Database["public"]["Enums"]["pledge_status"];
+          user_id: string | null;
+        };
+        Insert: {
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          donor_display_name?: string | null;
+          donor_note?: string | null;
+          expires_at: string;
+          fulfilled_at?: string | null;
+          id?: string;
+          is_anonymous?: boolean;
+          item_id: string;
+          quantity: number;
+          reminded_at?: string | null;
+          status?: Database["public"]["Enums"]["pledge_status"];
+          user_id?: string | null;
+        };
+        Update: {
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          donor_display_name?: string | null;
+          donor_note?: string | null;
+          expires_at?: string;
+          fulfilled_at?: string | null;
+          id?: string;
+          is_anonymous?: boolean;
+          item_id?: string;
+          quantity?: number;
+          reminded_at?: string | null;
+          status?: Database["public"]["Enums"]["pledge_status"];
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_pledges_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_catalog";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_pledges_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       donor_profiles: {
         Row: {
           approval_status: string;
@@ -373,7 +439,15 @@ export type Database = {
           recipient?: string | null;
           status?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "email_deliveries_pledge_id_fkey";
+            columns: ["pledge_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_pledges";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       expense_receipts: {
         Row: {
@@ -899,12 +973,55 @@ export type Database = {
       };
     };
     Functions: {
+      cancel_donation_pledge: {
+        Args: { p_pledge_id: string; p_reason?: string };
+        Returns: undefined;
+      };
+      claim_donation_item: {
+        Args: {
+          p_display_name?: string;
+          p_is_anonymous?: boolean;
+          p_item_id: string;
+          p_note?: string;
+          p_quantity?: number;
+        };
+        Returns: {
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          donor_display_name: string | null;
+          donor_note: string | null;
+          expires_at: string;
+          fulfilled_at: string | null;
+          id: string;
+          is_anonymous: boolean;
+          item_id: string;
+          quantity: number;
+          reminded_at: string | null;
+          status: Database["public"]["Enums"]["pledge_status"];
+          user_id: string | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "donation_pledges";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
       delete_own_account: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
       donor_contact: { Args: { p_user_id: string }; Returns: string };
+      fulfill_donation_pledge: {
+        Args: { p_pledge_id: string };
+        Returns: undefined;
+      };
+      mark_pledge_reminded: {
+        Args: { p_pledge_id: string };
+        Returns: undefined;
+      };
       record_audit: {
         Args: {
           p_action: string;
@@ -925,6 +1042,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      release_expired_holds: { Args: { p_item_id?: string }; Returns: number };
       review_donor_account: {
         Args: { p_decision: string; p_note?: string; p_user_id: string };
         Returns: undefined;
@@ -943,6 +1061,7 @@ export type Database = {
         | "otros";
       milestone_status: "pendiente" | "en_curso" | "completado";
       payment_method_kind: "bank_transfer" | "mercado_pago" | "stripe" | "paypal";
+      pledge_status: "reserved" | "fulfilled" | "cancelled" | "expired";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1079,6 +1198,7 @@ export const Constants = {
       ],
       milestone_status: ["pendiente", "en_curso", "completado"],
       payment_method_kind: ["bank_transfer", "mercado_pago", "stripe", "paypal"],
+      pledge_status: ["reserved", "fulfilled", "cancelled", "expired"],
     },
   },
 } as const;

@@ -24,5 +24,7 @@ export { saveMilestone } from "./milestones";
 export { saveDonationItem } from "./catalog";
 export { reviewDonorAccount } from "./donors";
 export type { ReviewAccountMail } from "./donors";
+export { cancelPledge, fulfillPledge } from "./pledges";
+export type { PledgeMail } from "./pledges";
 export { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
 export { addUpdatePhoto, saveUpdate, setUpdatePublished } from "./updates";

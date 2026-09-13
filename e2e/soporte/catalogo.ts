@@ -1,0 +1,99 @@
+import { expect, type APIRequestContext, type Page } from "@playwright/test";
+
+import { apiLocal, entrar, primeraFila, tokenDe } from "./backoffice";
+
+/**
+ * Cargar un ítem publicado desde el backoffice, como lo haría el equipo.
+ *
+ * No va en el fixture: un ítem sin foto suma un hueco en `/catalogo` y
+ * `revision-visual.spec.ts` exige el número exacto. Cada prueba crea el suyo y
+ * lo despublica al terminar.
+ */
+export async function cargarItemPublicado(
+  page: Page,
+  titulo: string,
+  cantidad = 1,
+): Promise<string> {
+  await entrar(page, "editor");
+  await page.goto("/admin/catalogo");
+
+  const alta = page.locator("#nuevo");
+
+  await alta.getByLabel("Qué hace falta").fill(titulo);
+  await alta.getByLabel("Cuántas hacen falta").fill(String(cantidad));
+  await alta.getByRole("button", { name: /guardar ítem/i }).click();
+
+  await expect(alta.getByRole("status")).toHaveText(/ítem guardado/i);
+
+  return titulo;
+}
+
+export async function idDeItem(
+  request: APIRequestContext,
+  titulo: string,
+): Promise<string> {
+  const token = await tokenDe(request, "editor");
+  const respuesta = await request.get(
+    `${apiLocal()}/rest/v1/donation_items?select=id,title&title=eq.${encodeURIComponent(titulo)}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+
+  expect(respuesta.status(), `no se encontró el ítem «${titulo}»`).toBe(200);
+
+  const { id } = primeraFila(
+    (await respuesta.json()) as { id: string }[],
+    `el ítem «${titulo}»`,
+  );
+
+  return id;
+}
+
+/** Lo saca de `/catalogo` para no dejar un hueco de foto en la revisión visual. */
+export async function ocultarItem(
+  request: APIRequestContext,
+  itemId: string,
+): Promise<void> {
+  const token = await tokenDe(request, "editor");
+  const respuesta = await request.patch(
+    `${apiLocal()}/rest/v1/donation_items?id=eq.${itemId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Prefer: "return=minimal",
+      },
+      data: { published_at: null },
+    },
+  );
+
+  expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
+}
+
+export async function habilitarCuenta(page: Page, email: string): Promise<void> {
+  const salir = page.getByRole("button", { name: /cerrar sesión/i });
+
+  if (await salir.isVisible()) {
+    await salir.click();
+    await expect(page).toHaveURL(/\/admin\/login/);
+  }
+
+  await entrar(page, "admin");
+  await page.goto("/admin/donantes");
+
+  const fila = page.locator("li").filter({ hasText: email });
+
+  await expect(fila).toBeVisible();
+  await fila.getByText("Decidir").click();
+  await fila.getByRole("button", { name: /^habilitar$/i }).click();
+  await expect(fila.getByText(/habilitada/i).first()).toBeVisible();
+}
+
+export async function vencerReserva(
+  request: APIRequestContext,
+  pledgeId: string,
+): Promise<void> {
+  const respuesta = await request.post(`${apiLocal()}/harness/v1/vencer-reserva`, {
+    data: { pledgeId },
+  });
+
+  expect(respuesta.status(), await respuesta.text()).toBe(200);
+}

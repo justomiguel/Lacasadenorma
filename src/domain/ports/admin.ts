@@ -18,6 +18,7 @@ import type {
 } from "../entities";
 import type { AppRole } from "../entities/role";
 import type { Money } from "../money";
+import type { AdminDonationsPort } from "./donations";
 
 /**
  * Puertos del backoffice.
@@ -250,6 +251,7 @@ export interface AdminGateway {
   readonly catalog: AdminCatalogPort;
   readonly paymentMethods: AdminPaymentMethodPort;
   readonly donors: AdminDonorPort;
+  readonly donations: AdminDonationsPort;
   readonly audit: AuditPort;
   readonly roles: AdminRolePort;
 }

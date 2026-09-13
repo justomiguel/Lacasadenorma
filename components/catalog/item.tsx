@@ -1,20 +1,27 @@
 import { EditorialImage } from "@/components/design-system/editorial-image";
 import { ReservedSpace } from "@/components/design-system/photo";
-import type { CatalogContent } from "@/content/schema";
-import { isCovered } from "@/src/domain/catalog";
+import type { AccountContent, CatalogContent } from "@/content/schema";
+import { canClaim, isCovered } from "@/src/domain/catalog";
 import type { DonationItem, DonationUnit } from "@/src/domain/entities";
+import type { Locale } from "@/src/i18n/locale";
 import { fill } from "@/src/i18n/fill";
 
+import { ClaimForm } from "./claim-form";
+
 /**
- * Un renglón del catálogo. No es una tarjeta: foto o hueco, título, cuánto
- * falta. La reserva llega en la fase D; acá sólo se dice qué falta.
+ * Un renglón del catálogo. Foto o hueco, título, cuánto falta, y el formulario
+ * para anotarse cuando queda algo.
  */
 export function CatalogItem({
   item,
   copy,
+  account,
+  locale,
 }: {
   item: DonationItem;
   copy: CatalogContent;
+  account: AccountContent;
+  locale: Locale;
 }) {
   const quantities = {
     needed: item.neededQuantity,
@@ -31,7 +38,7 @@ export function CatalogItem({
       });
 
   return (
-    <article className="border-t border-rule py-xl">
+    <article id={`item-${item.id}`} className="scroll-mt-xl border-t border-rule py-xl">
       {item.photo === null ? (
         <ReservedSpace
           ratio="landscape"
@@ -45,6 +52,15 @@ export function CatalogItem({
         <p className="mt-sm max-w-measure text-body text-ink-muted">{item.description}</p>
       )}
       <p className="mt-md font-ui text-body tabular-nums">{remainingText}</p>
+      {canClaim(quantities) ? (
+        <ClaimForm
+          itemId={item.id}
+          remaining={item.remainingQuantity}
+          copy={copy}
+          account={account}
+          locale={locale}
+        />
+      ) : null}
     </article>
   );
 }

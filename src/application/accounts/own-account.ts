@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 import { normalizeDisplayName, type DonorProfile } from "@/src/domain/entities/donor";
+import type { OwnPledge } from "@/src/domain/entities/donation-pledge";
 import type { AccountPort } from "@/src/domain/ports/accounts";
+import type { DonationsPort } from "@/src/domain/ports/donations";
 import type { Logger } from "@/src/domain/ports/logger";
 import { LOCALES, type Locale } from "@/src/i18n/locale";
 
@@ -27,9 +29,18 @@ import { accountError, accountOk, type AccountOutcome } from "./outcome";
  * error (principio XII, FR-034).
  */
 export type AccountSession =
-  | { readonly status: "ready"; readonly port: AccountPort }
+  | {
+      readonly status: "ready";
+      readonly port: AccountPort;
+      readonly donations: DonationsPort;
+    }
   | { readonly status: "not-configured" }
   | { readonly status: "anonymous" };
+
+export interface OwnAccount {
+  readonly profile: DonorProfile;
+  readonly pledges: readonly OwnPledge[];
+}
 
 export interface AccountDeps {
   readonly session: AccountSession;
@@ -97,7 +108,7 @@ function describeFailure(
 export async function getOwnAccount(
   deps: AccountDeps,
   fallbackLocale: Locale,
-): Promise<AccountOutcome<DonorProfile>> {
+): Promise<AccountOutcome<OwnAccount>> {
   const port = readyPort(deps);
 
   if (isOutcome(port)) {
@@ -115,7 +126,12 @@ export async function getOwnAccount(
       }
     }
 
-    return accountOk(profile);
+    const pledges =
+      deps.session.status === "ready"
+        ? await deps.session.donations.listOwnPledges()
+        : [];
+
+    return accountOk({ profile, pledges });
   } catch (error) {
     return describeFailure(deps, "leer tu cuenta", error);
   }

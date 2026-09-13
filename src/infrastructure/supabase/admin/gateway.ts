@@ -7,6 +7,7 @@ import { createCampaignPort } from "./campaign-port";
 import { createContributionsPort } from "./contributions-port";
 import { createExpensesPort } from "./expenses-port";
 import { createDonorsPort } from "./donors-port";
+import { createPledgesPort } from "./pledges-port";
 import { createMilestonesPort } from "./milestones-port";
 import { createPaymentMethodsPort } from "./payment-methods-port";
 import { createUpdatesPort } from "./updates-port";
@@ -33,6 +34,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     catalog: createCatalogPort(client),
     paymentMethods: createPaymentMethodsPort(client),
     donors: createDonorsPort(client),
+    donations: createPledgesPort(client),
     audit: createAuditPort(client),
     roles: createRolesPort(client),
   };

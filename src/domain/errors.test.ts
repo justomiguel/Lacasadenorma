@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { CatalogOversubscribedError, DomainError, NotAuthorizedError } from "./errors";
+import {
+  CatalogOversubscribedError,
+  DomainError,
+  NotAuthorizedError,
+  PledgeUnavailableError,
+  TooManyPledgesError,
+} from "./errors";
 
 describe("DomainError", () => {
   it("lleva nombre propio, para poder distinguirlo en un catch", () => {
@@ -52,5 +58,26 @@ describe("CatalogOversubscribedError", () => {
     const error = new CatalogOversubscribedError(3);
 
     expect(error.message).toBe("Hay 3 unidades comprometidas; cancelalas primero.");
+  });
+});
+
+describe("PledgeUnavailableError", () => {
+  it("es el estado diseñado de alguien que se adelantó", () => {
+    const error = new PledgeUnavailableError();
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("PledgeUnavailableError");
+    expect(error.message).toBe("Alguien se adelantó.");
+  });
+});
+
+describe("TooManyPledgesError", () => {
+  it("nombra cuántas reservas activas hay", () => {
+    expect(new TooManyPledgesError(1).message).toBe(
+      "Tenés 1 reserva activa; cancelá una para anotar otra.",
+    );
+    expect(new TooManyPledgesError(5).message).toBe(
+      "Tenés 5 reservas activas; cancelá una para anotar otra.",
+    );
   });
 });

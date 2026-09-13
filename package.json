@@ -38,6 +38,7 @@
     "check:marcas": "node scripts/check-marcas.mjs",
     "check:rls": "node scripts/check-rls.mjs",
     "check:toolchain": "node scripts/check-toolchain.mjs",
+    "remind:pledges": "node scripts/remind-pledges.mjs",
     "verify": "npm run check:toolchain && npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run check:placeholders && npm run check:secrets && npm run check:rls && npm run check:fotos && npm run check:marcas && npm run build"
   },
   "dependencies": {

@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { DonorProfile } from "@/src/domain/entities/donor";
+import type { OwnPledge } from "@/src/domain/entities/donation-pledge";
 import type { AccountPort } from "@/src/domain/ports/accounts";
+import type { ClaimInput, DonationsPort } from "@/src/domain/ports/donations";
 import type { Logger } from "@/src/domain/ports/logger";
 
 import {
@@ -70,6 +72,22 @@ class FakeAccountPort implements AccountPort {
   }
 }
 
+class FakeDonationsPort implements DonationsPort {
+  pledges: OwnPledge[] = [];
+
+  async claimItem(_input: ClaimInput): Promise<OwnPledge> {
+    throw new Error("no se reserva desde esta prueba");
+  }
+
+  async listOwnPledges(): Promise<readonly OwnPledge[]> {
+    return this.pledges;
+  }
+
+  async cancelOwnPledge(): Promise<void> {
+    return;
+  }
+}
+
 const silent: Logger = {
   debug: () => undefined,
   info: () => undefined,
@@ -78,10 +96,14 @@ const silent: Logger = {
 };
 
 let port: FakeAccountPort;
+let donations: FakeDonationsPort;
 
 function deps(state: "ready" | "anonymous" | "not-configured" = "ready"): AccountDeps {
   if (state === "ready") {
-    return { session: { status: "ready", port }, logger: silent };
+    return {
+      session: { status: "ready", port, donations },
+      logger: silent,
+    };
   }
 
   return { session: { status: state }, logger: silent };
@@ -89,6 +111,7 @@ function deps(state: "ready" | "anonymous" | "not-configured" = "ready"): Accoun
 
 beforeEach(() => {
   port = new FakeAccountPort();
+  donations = new FakeDonationsPort();
 });
 
 describe("getOwnAccount", () => {
@@ -98,11 +121,14 @@ describe("getOwnAccount", () => {
     expect(result).toEqual({
       status: "ok",
       value: {
-        userId: "00000000-0000-4000-8000-000000000001",
-        displayName: null,
-        locale: "en",
-        defaultAnonymous: true,
-        approvalStatus: "pending",
+        profile: {
+          userId: "00000000-0000-4000-8000-000000000001",
+          displayName: null,
+          locale: "en",
+          defaultAnonymous: true,
+          approvalStatus: "pending",
+        },
+        pledges: [],
       },
     });
   });
@@ -161,6 +187,34 @@ describe("getOwnAccount", () => {
 
     expect(result.status).toBe("ok");
     expect(port.profile?.approvalStatus).toBe("pending");
+  });
+
+  it("trae las reservas propias junto con el perfil", async () => {
+    donations.pledges = [
+      {
+        id: "30000000-0000-4000-8000-000000000001",
+        itemId: "ab700000-0000-4000-8000-000000000003",
+        itemTitle: "Chapas del techo",
+        quantity: 2,
+        status: "reserved",
+        isAnonymous: true,
+        donorDisplayName: null,
+        donorNote: null,
+        expiresAt: "2026-09-27T00:00:00.000Z",
+        remindedAt: null,
+        fulfilledAt: null,
+        cancelledAt: null,
+        cancelReason: null,
+        createdAt: "2026-09-13T00:00:00.000Z",
+      },
+    ];
+
+    const result = await getOwnAccount(deps(), "es");
+
+    expect(result.status).toBe("ok");
+    if (result.status !== "ok") return;
+    expect(result.value.pledges).toHaveLength(1);
+    expect(result.value.pledges[0]?.itemTitle).toBe("Chapas del techo");
   });
 });
 

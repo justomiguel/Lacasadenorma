@@ -33,6 +33,16 @@ export const ACCOUNT_ERROR_CODES = [
   "linkExpired",
   /** Una cuenta con rol interno no se borra desde el sitio público. */
   "internalRole",
+  /** Confirmó el correo y todavía no está habilitada (ADR-033). */
+  "notApproved",
+  /** El `update` condicional no tocó ninguna fila: alguien se adelantó. */
+  "ahead",
+  /** La cuenta ya tiene el tope de reservas activas. */
+  "tooManyPledges",
+  /** La reserva ya no está activa: se canceló, venció o se entregó. */
+  "alreadyGone",
+  /** La cantidad pedida no es un entero positivo. */
+  "quantityInvalid",
   /** Cualquier otra cosa. Ya quedó en el registro del servidor (amenaza I6). */
   "failed",
 ] as const;
@@ -40,7 +50,8 @@ export const ACCOUNT_ERROR_CODES = [
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /** El campo del formulario que hay que señalar, cuando hay uno. */
-export type AccountField = "email" | "password" | "confirmPassword" | "displayName";
+export type AccountField =
+  "email" | "password" | "confirmPassword" | "displayName" | "quantity";
 
 export type AccountOutcome<T> =
   | { readonly status: "ok"; readonly value: T }

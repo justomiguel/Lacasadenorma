@@ -12,6 +12,13 @@ export default async function IngresarPage({
 }) {
   const params = await searchParams;
   const aviso = params["aviso"];
+  const volver = params["volver"];
 
-  return <SignInScreen locale="es" notice={typeof aviso === "string" ? aviso : null} />;
+  return (
+    <SignInScreen
+      locale="es"
+      notice={typeof aviso === "string" ? aviso : null}
+      returnTo={typeof volver === "string" ? volver : null}
+    />
+  );
 }

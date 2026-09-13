@@ -5,6 +5,7 @@ import { saveDonationItem } from "./catalog";
 import { reviewDonorAccount } from "./donors";
 import { recordExpense } from "./expenses";
 import { savePaymentMethod } from "./payment-methods";
+import { fulfillPledge } from "./pledges";
 import { saveUpdate } from "./updates";
 import { CAMPAIGN, deps, noSession, validExpense } from "./admin-test-helpers";
 
@@ -123,6 +124,18 @@ describe("autorización", () => {
       neededQuantity: "40",
       currency: "ARS",
     });
+
+    expect(result.status).toBe("rejected");
+    expect(fake.calls).toEqual([]);
+  });
+
+  it("rechaza a un editor que intenta confirmar una reserva", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const result = await fulfillPledge(
+      editor,
+      { id: "44444444-4444-4444-8444-444444444444" },
+      null,
+    );
 
     expect(result.status).toBe("rejected");
     expect(fake.calls).toEqual([]);

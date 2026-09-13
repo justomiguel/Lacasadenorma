@@ -98,7 +98,17 @@
       "The team reviewed the request and did not approve the account this time. Nothing will be reserved under your name.",
       "If this was a mistake, reply to the email we sent. You can delete the account from here."
     ],
-    "approvedNote": "Your account is approved. When the catalogue is published, you'll be able to note what you'll bring."
+    "approvedNote": "Your account is approved. From the catalogue you can note what you'll bring.",
+    "pledgesHeading": "What you signed up to bring",
+    "pledgesLead": "Each reservation expires after fourteen days. If you won't be able to bring it, cancel it so someone else can sign up.",
+    "pledgesEmpty": "You haven't signed up to bring anything yet. The list is in the catalogue.",
+    "pledgeExpires": "Expires on {when}.",
+    "pledgeExpired": "Expired on {when}. The units went back on the list.",
+    "pledgeCancelled": "You cancelled it.",
+    "pledgeFulfilled": "It arrived. Thank you.",
+    "pledgeQuantity": "{count} {unit}",
+    "cancelPledge": "Cancel this reservation",
+    "cancellingPledge": "Cancelling…"
   },
   "errors": {
     "notConfigured": "This part of the site isn't connected to the campaign's database yet. As soon as it is, accounts can be created.",
@@ -112,6 +122,11 @@
     "noRecoverySession": "This link doesn't open a recovery session. Ask for a new one.",
     "linkExpired": "That link has expired or has already been used. Ask for a new one.",
     "internalRole": "This account has a backoffice role. To delete it, the role has to be removed first.",
+    "notApproved": "The team is still reviewing your account. You'll get an email when you can reserve.",
+    "ahead": "Someone got there first: that unit is already reserved under someone else's name.",
+    "tooManyPledges": "You have five active reservations, which is the limit. Cancel one to note another.",
+    "alreadyGone": "That reservation is no longer active. Reload the account to see the current state.",
+    "quantityInvalid": "The quantity has to be a positive integer.",
     "failed": "Couldn't complete that. The details are in the server log."
   }
 }

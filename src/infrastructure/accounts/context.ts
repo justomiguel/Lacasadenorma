@@ -4,6 +4,7 @@ import { notifyAccountOpened } from "./notify";
 import { readViewer } from "../auth/viewer";
 import { logger } from "../logging/logger";
 import { createAccountPort } from "../supabase/accounts-port";
+import { createDonationsPort } from "../supabase/donations-port";
 import { createServerSupabaseClient } from "../supabase/server-client";
 
 /**
@@ -30,7 +31,11 @@ export async function getAccountDeps(): Promise<AccountDeps> {
   }
 
   return {
-    session: { status: "ready", port: createAccountPort(client) },
+    session: {
+      status: "ready",
+      port: createAccountPort(client),
+      donations: createDonationsPort(client),
+    },
     logger,
     onAccountOpened: notifyAccountOpened,
   };

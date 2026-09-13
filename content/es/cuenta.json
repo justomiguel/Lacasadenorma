@@ -98,7 +98,17 @@
       "El equipo revisó el pedido y esta vez no habilitó la cuenta. No se va a reservar nada a tu nombre.",
       "Si fue un error, respondé el correo que te mandamos. La cuenta se puede borrar desde acá."
     ],
-    "approvedNote": "Tu cuenta está habilitada. Cuando el catálogo esté publicado, vas a poder anotar lo que vas a traer."
+    "approvedNote": "Tu cuenta está habilitada. Desde el catálogo podés anotar lo que vas a traer.",
+    "pledgesHeading": "Lo que te anotaste a traer",
+    "pledgesLead": "Cada reserva vence a los catorce días. Si no vas a poder, cancelala para que otra persona pueda anotarse.",
+    "pledgesEmpty": "Todavía no te anotaste a traer nada. El listado está en el catálogo.",
+    "pledgeExpires": "Vence el {when}.",
+    "pledgeExpired": "Venció el {when}. Las unidades volvieron al listado.",
+    "pledgeCancelled": "La cancelaste.",
+    "pledgeFulfilled": "Llegó. Gracias.",
+    "pledgeQuantity": "{count} {unit}",
+    "cancelPledge": "Cancelar esta reserva",
+    "cancellingPledge": "Cancelando…"
   },
   "errors": {
     "notConfigured": "Esta parte del sitio todavía no está conectada a la base de la campaña. En cuanto lo esté, se pueden crear cuentas.",
@@ -112,6 +122,11 @@
     "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",
     "linkExpired": "Ese enlace ya venció o ya se usó. Pedí uno nuevo.",
     "internalRole": "Esta cuenta tiene un rol del backoffice. Para borrarla hay que quitarle el rol primero.",
+    "notApproved": "El equipo todavía está revisando tu cuenta. Te va a llegar un correo cuando se pueda reservar.",
+    "ahead": "Alguien se adelantó: esa unidad ya quedó anotada a nombre de otra persona.",
+    "tooManyPledges": "Tenés cinco reservas activas, que es el tope. Cancelá una para anotar otra.",
+    "alreadyGone": "Esa reserva ya no está activa. Recargá la cuenta para ver el estado actual.",
+    "quantityInvalid": "La cantidad tiene que ser un entero positivo.",
     "failed": "No se pudo completar. El detalle quedó en el registro del servidor."
   }
 }

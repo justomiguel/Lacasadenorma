@@ -46,3 +46,26 @@ export class CatalogOversubscribedError extends DomainError {
     this.committed = committed;
   }
 }
+
+/** Alguien se adelantó: el `update` condicional no tocó ninguna fila. */
+export class PledgeUnavailableError extends DomainError {
+  constructor() {
+    super("Alguien se adelantó.");
+    this.name = "PledgeUnavailableError";
+  }
+}
+
+/** La cuenta ya tiene el tope de reservas activas. */
+export class TooManyPledgesError extends DomainError {
+  readonly active: number;
+
+  constructor(active: number) {
+    super(
+      active === 1
+        ? "Tenés 1 reserva activa; cancelá una para anotar otra."
+        : `Tenés ${String(active)} reservas activas; cancelá una para anotar otra.`,
+    );
+    this.name = "TooManyPledgesError";
+    this.active = active;
+  }
+}

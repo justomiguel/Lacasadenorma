@@ -158,39 +158,39 @@ omite con aviso.
 **Prueba independiente**: dos sesiones concurrentes por el último ejemplar; una gana, la otra ve un
 mensaje diseñado, y nunca hay sobreventa.
 
-- [ ] **T040** [P] `src/domain/pledge-status.test.ts` **en rojo**: las cuatro transiciones legales y
+- [x] **T040** [P] `src/domain/pledge-status.test.ts` **en rojo**: las cuatro transiciones legales y
       que desde un estado terminal no se sale.
-- [ ] **T041** [P] `supabase/tests/070-catalogo.sql` **en rojo**: **dos sesiones concurrentes** por
+- [x] **T041** [P] `supabase/tests/070-catalogo.sql` **en rojo**: **dos sesiones concurrentes** por
       la última unidad (SC-202); tope de reservas por cuenta; que un `insert` directo en
       `donation_pledges` falle por falta de privilegio; que el contador coincida con la suma de
       reservas activas después de reservar, cancelar, vencer y entregar.
-- [ ] **T042** [P] `supabase/tests/070-catalogo.sql`: vencimiento **sin cron** (FR-218), llamando
+- [x] **T042** [P] `supabase/tests/070-catalogo.sql`: vencimiento **sin cron** (FR-218), llamando
       `release_expired_holds()` y comprobando que `claim_donation_item()` libera lo vencido del ítem
       que va a tocar.
-- [ ] **T043** Migración `…_donation_pledges.sql`: la tabla con sus restricciones, `pledge_status`,
+- [x] **T043** Migración `…_donation_pledges.sql`: la tabla con sus restricciones, `pledge_status`,
       índices, policies de propiedad, y las cuatro funciones
       (`claim_donation_item`, `cancel_donation_pledge`, `fulfill_donation_pledge`,
       `release_expired_holds`). Sin `grant insert` a nadie.
-- [ ] **T044** [P] `src/domain/entities/donation-pledge.ts`, `src/domain/pledge-status.ts`.
-- [ ] **T045** `src/domain/ports/donations.ts` + `src/infrastructure/supabase/donations-port.ts`.
-- [ ] **T046** `src/application/use-cases/claim-item.ts`: valida con Zod, llama la función, y
+- [x] **T044** [P] `src/domain/entities/donation-pledge.ts`, `src/domain/pledge-status.ts`.
+- [x] **T045** `src/domain/ports/donations.ts` + `src/infrastructure/supabase/donations-port.ts`.
+- [x] **T046** `src/application/use-cases/claim-item.ts`: valida con Zod, llama la función, y
       **después** intenta el correo. El correo nunca está en la transacción.
-- [ ] **T047** [P] `cancel-own-pledge.ts`, `get-own-account.ts`, `update-own-profile.ts`.
-- [ ] **T048** `/cuenta`: mis reservas con su vencimiento, cancelar, nombre público, anonimato,
+- [x] **T047** [P] `cancel-own-pledge.ts`, `get-own-account.ts`, `update-own-profile.ts`.
+- [x] **T048** `/cuenta`: mis reservas con su vencimiento, cancelar, nombre público, anonimato,
       borrar la cuenta.
-- [ ] **T049** El flujo de "pedir donar esto" sin sesión: guarda a dónde volver y **vuelve al mismo
+- [x] **T049** El flujo de "pedir donar esto" sin sesión: guarda a dónde volver y **vuelve al mismo
       ítem** después de ingresar (US1 escenario 6).
-- [ ] **T050** [P] `components/catalog/conflict-notice.tsx`: el estado "alguien se adelantó",
+- [x] **T050** [P] `components/catalog/conflict-notice.tsx`: el estado "alguien se adelantó",
       diseñado, con el catálogo actualizado al lado.
-- [ ] **T051** `/admin/donaciones`: confirmar llegada, cancelar con motivo, ver contacto. Sólo
+- [x] **T051** `/admin/donaciones`: confirmar llegada, cancelar con motivo, ver contacto. Sólo
       `donaciones.leer` / `donaciones.escribir`; `editor` no entra.
-- [ ] **T052** [P] Correos de reserva y aviso al equipo, enganchados a `claim-item.ts`.
-- [ ] **T053** El proceso de recordatorios: `pg_cron` en producción, con `reminded_at` y
+- [x] **T052** [P] Correos de reserva y aviso al equipo, enganchados a `claim-item.ts`.
+- [x] **T053** El proceso de recordatorios: `pg_cron` en producción, con `reminded_at` y
       `email_deliveries` como la deduplicación que sí es permanente (FR-235, SC-210).
-- [ ] **T054** [P] `e2e/con-datos/catalogo.spec.ts`: reservar, conflicto, cancelar, vencimiento.
-- [ ] **T055** [P] Trigger de borrado de cuenta: `is_anonymous = true` y `donor_display_name = null`
+- [x] **T054** [P] `e2e/con-datos/catalogo.spec.ts`: reservar, conflicto, cancelar, vencimiento.
+- [x] **T055** [P] Trigger de borrado de cuenta: `is_anonymous = true` y `donor_display_name = null`
       cuando `user_id` queda nulo (FR-240), con su prueba.
-- [ ] **T056** [P] Prueba de que registrar una donación en especie **no mueve ningún total** de
+- [x] **T056** [P] Prueba de que registrar una donación en especie **no mueve ningún total** de
       dinero (SC-209, ADR-031).
 
 **Punto de control**: el pedido está cumplido. Falta que se vea quién ayudó.

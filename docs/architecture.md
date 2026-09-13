@@ -167,9 +167,11 @@ export const UNAVAILABLE_MESSAGES: Record<UnavailableReason, string> = {
 };
 ```
 
-`src/domain/errors.ts` tiene exactamente dos errores —`DomainError` y `NotAuthorizedError`— y se usan
-para lo que sí es excepcional. Un dato que no está no es excepcional en este sitio: es un estado de
-producto con su propio diseño.
+`src/domain/errors.ts` tiene `DomainError` (y subclases con nombre: `CatalogOversubscribedError`,
+`PledgeUnavailableError`, `TooManyPledgesError`) y `NotAuthorizedError`, que no hereda de
+`DomainError`: una falta de permiso no es un error de programación. Un dato que no está no es
+excepcional en este sitio: es un estado de producto con su propio diseño, y se representa con
+`DataResult`, no con una excepción.
 
 ### Objeto de valor
 

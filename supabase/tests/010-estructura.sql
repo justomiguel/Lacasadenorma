@@ -354,6 +354,9 @@ select results_eq(
     values ('public.budget_items.published_at'),
            ('public.campaigns.published_at'),
            ('public.donation_items.published_at'),
+           -- Las policies de `donation_pledges` filtran por dueño. `user_id` es
+           -- nullable (la cuenta se puede borrar) y tiene índice propio.
+           ('public.donation_pledges.user_id'),
            -- Las policies de `donor_profiles` filtran por propiedad y por estado
            -- de habilitación, no por publicación. `id` es la clave primaria.
            -- `approval_status` está en el `with check` del insert: nacer habilitada
@@ -370,7 +373,7 @@ select results_eq(
            ('public.updates.published_at'),
            ('storage.objects.bucket_id')
   $q$,
-  'las policies filtran exactamente por estas trece columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
+  'las policies filtran exactamente por estas catorce columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
 
 -- Y los índices que data-model.md §4 nombra uno por uno, con su nombre real. La
@@ -586,9 +589,9 @@ select is_empty(
       from information_schema.role_table_grants
      where table_schema = 'public'
        and grantee = 'anon'
-       and table_name in ('contributions', 'expense_receipts', 'user_roles', 'audit_log', 'email_deliveries', 'donor_profiles')
+       and table_name in ('contributions', 'expense_receipts', 'user_roles', 'audit_log', 'email_deliveries', 'donor_profiles', 'donation_pledges')
   $q$,
-  'anon no tiene ningún privilegio sobre aportes, comprobantes, roles, auditoría, envíos ni perfiles de donante (I1, I2)'
+  'anon no tiene ningún privilegio sobre aportes, comprobantes, roles, auditoría, envíos, perfiles ni reservas (I1, I2)'
 );
 
 select * from finish();

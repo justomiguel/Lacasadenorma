@@ -33,6 +33,7 @@ export function TextField({
   required = true,
   defaultValue,
   error,
+  inputMode,
 }: {
   name: string;
   label: string;
@@ -43,6 +44,7 @@ export function TextField({
   defaultValue?: string;
   /** El mensaje ya traducido. Ausente cuando el error no es de este campo. */
   error?: string;
+  inputMode?: "text" | "numeric" | "decimal" | "email";
 }) {
   const id = useId();
   const hintId = `${id}-ayuda`;
@@ -68,7 +70,9 @@ export function TextField({
         // común de "ese correo no parece válido" en una dirección bien escrita.
         {...(type === "email"
           ? { inputMode: "email" as const, autoCapitalize: "none" }
-          : {})}
+          : inputMode === undefined
+            ? {}
+            : { inputMode })}
         {...(required ? { required: true } : {})}
         {...(autoComplete === undefined ? {} : { autoComplete })}
         {...(defaultValue === undefined ? {} : { defaultValue })}

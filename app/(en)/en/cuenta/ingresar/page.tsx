@@ -12,6 +12,13 @@ export default async function SignInPage({
 }) {
   const params = await searchParams;
   const aviso = params["aviso"];
+  const volver = params["volver"];
 
-  return <SignInScreen locale="en" notice={typeof aviso === "string" ? aviso : null} />;
+  return (
+    <SignInScreen
+      locale="en"
+      notice={typeof aviso === "string" ? aviso : null}
+      returnTo={typeof volver === "string" ? volver : null}
+    />
+  );
 }

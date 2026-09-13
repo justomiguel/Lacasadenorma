@@ -29,6 +29,11 @@ export function isCovered(quantities: ItemQuantities): boolean {
   return remaining(quantities) === 0;
 }
 
+/** La interfaz ofrece reservar sólo cuando queda algo. */
+export function canClaim(quantities: ItemQuantities): boolean {
+  return remaining(quantities) > 0;
+}
+
 /**
  * El valor de referencia interno, o nada.
  *

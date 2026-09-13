@@ -25,8 +25,11 @@ const SECCIONES = [
   "/admin/gastos",
   "/admin/aportes",
   "/admin/hitos",
+  "/admin/catalogo",
   "/admin/objetivos",
   "/admin/cuentas",
+  "/admin/donaciones",
+  "/admin/donantes",
   "/admin/auditoria",
 ];
 

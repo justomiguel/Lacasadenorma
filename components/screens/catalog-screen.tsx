@@ -1,6 +1,8 @@
 import { Unavailable } from "@/components/campaign/unavailable";
 import { ogImageFrom } from "@/components/campaign/preview-photo";
+import { CatalogFocus } from "@/components/catalog/focus";
 import { CatalogItem } from "@/components/catalog/item";
+import { ConflictNotice } from "@/components/catalog/conflict-notice";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
@@ -29,8 +31,16 @@ export function catalogMetadata(locale: Locale) {
   });
 }
 
-export async function CatalogScreen({ locale }: { locale: Locale }) {
-  const { catalog, ui } = getContent(locale);
+export async function CatalogScreen({
+  locale,
+  conflictId,
+  focusId,
+}: {
+  locale: Locale;
+  conflictId: string | null;
+  focusId: string | null;
+}) {
+  const { catalog, account, ui } = getContent(locale);
   const result = await getCatalog({ dataLayer: getPublicDataLayer(), logger });
 
   return (
@@ -57,8 +67,16 @@ export async function CatalogScreen({ locale }: { locale: Locale }) {
             </EmptyState>
           ) : (
             <div>
+              {conflictId === null ? null : <ConflictNotice copy={catalog} />}
+              <CatalogFocus itemId={focusId} />
               {result.data.map((item) => (
-                <CatalogItem key={item.id} item={item} copy={catalog} />
+                <CatalogItem
+                  key={item.id}
+                  item={item}
+                  copy={catalog}
+                  account={account}
+                  locale={locale}
+                />
               ))}
             </div>
           )}

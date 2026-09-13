@@ -487,6 +487,7 @@ desde el resumen del banco.
 | Semana | Conciliación (sección 6) | `owner` |
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
 | Semana | Pedidos de cuenta pendientes en `/admin/donantes`. Si no se miran, la persona espera | `admin` |
+| Día | Recordatorios de reservas a tres días del vencimiento: `node scripts/remind-pledges.mjs` (sección 12) | Cron, con `DATABASE_URL` y `RESEND_API_KEY` |
 | Mes | Revisar quién tiene qué rol (sección 5) | `owner` |
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
@@ -508,6 +509,32 @@ El detalle de qué dicen esas páginas y por qué no se indexan está en
 [`content-guide.md`](./content-guide.md#6-el-enlace-de-paypal). Un aporte por PayPal se registra en
 `/admin/aportes` después de conciliarlo, igual que una transferencia: el redirect no es un
 comprobante.
+
+## 12. Reservas: vencimiento y recordatorios
+
+El plazo es de catorce días. Lo estampa `claim_donation_item()` y no se edita después. Liberar lo
+vencido **no depende del cron**: cada reserva llama `release_expired_holds()` sobre el ítem que va a
+tocar, en la misma transacción. Si el cron está caído se muestra menos disponibilidad, nunca más
+(FR-218, ADR-029).
+
+En producción, si el proyecto tiene `pg_cron`, la migración agenda `release-expired-donation-holds`
+una vez por hora. En el Postgres local la extensión no está; las pruebas llaman la función directo.
+
+Los recordatorios —tres días antes, una sola vez— **no salen de la aplicación web**. Un cron del
+entorno corre:
+
+```bash
+DATABASE_URL=… RESEND_API_KEY=… EMAIL_FROM_ADDRESS=… SITE_URL=https://lacasadenorma.org \
+  node scripts/remind-pledges.mjs
+```
+
+La aplicación no usa `SUPABASE_SECRET_KEY` para esto. El script habla con Postgres y con Resend. La
+deduplicación permanente es `reminded_at` más la fila `sent` de `email_deliveries` para
+`pledge.reminder` (FR-235). Un reintento de Resend con la misma `Idempotency-Key` no manda dos
+correos; a las 25 horas esa clave ya no vale, y por eso la fila en la base es la que cuenta.
+
+Sin `RESEND_API_KEY` el script no marca el recordatorio: vuelve a intentar en la corrida siguiente.
+Eso es preferible a sellar `reminded_at` sobre un correo que nunca salió.
 
 ## Documentos relacionados
 
