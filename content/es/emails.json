@@ -1,0 +1,41 @@
+{
+  "pledgeConfirmed": {
+    "subject": "Quedó anotado lo que vas a traer",
+    "body": [
+      "Anotamos que traés {what}. Queda reservado a tu nombre, así que nadie más va a traer lo mismo.",
+      "Si vence el plazo y todavía no pudiste, la reserva se libera sola y el material vuelve a la lista. No hace falta que avises, aunque si sabés que no vas a poder, cancelarla deja lugar para otra persona.",
+      "Para coordinar la entrega, escribinos respondiendo este correo."
+    ],
+    "action": "Ver tu reserva",
+    "why": "Recibís este correo porque reservaste algo en el sitio de la reconstrucción de la casa de Norma."
+  },
+  "pledgeReminder": {
+    "subject": "Tu reserva está por vencer",
+    "body": [
+      "Reservaste {what} y el plazo se termina el {when}.",
+      "Si seguís pudiendo traerlo, no tenés que hacer nada: escribinos cuando lo tengas listo y coordinamos.",
+      "Si ya no podés, cancelalo desde tu cuenta. El material vuelve a la lista y otra persona se puede ofrecer."
+    ],
+    "action": "Ver o cancelar tu reserva",
+    "why": "Recibís este correo porque reservaste algo en el sitio de la reconstrucción de la casa de Norma. Es el único recordatorio que mandamos."
+  },
+  "pledgeFulfilled": {
+    "subject": "Llegó lo que trajiste. Gracias.",
+    "body": [
+      "Confirmamos que recibimos {what}. Ya está en la obra.",
+      "Si elegiste aparecer, tu nombre está en la lista de quienes ayudaron. Si preferiste no aparecer, lo que trajiste se cuenta igual y tu nombre no figura en ninguna parte del sitio. Eso se cambia cuando quieras desde tu cuenta.",
+      "Gracias. La casa se levanta con esto."
+    ],
+    "action": "Ver tu cuenta",
+    "why": "Recibís este correo porque trajiste algo para la reconstrucción de la casa de Norma."
+  },
+  "staffNewPledge": {
+    "subject": "Reserva nueva en el catálogo",
+    "body": [
+      "Alguien se ofreció a traer {what}.",
+      "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
+    ],
+    "action": "Abrir las donaciones",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  }
+}

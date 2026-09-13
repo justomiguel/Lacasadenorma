@@ -1,0 +1,41 @@
+{
+  "pledgeConfirmed": {
+    "subject": "What you're bringing is on the list",
+    "body": [
+      "We've noted that you're bringing {what}. It's reserved under your name, so nobody else will bring the same thing.",
+      "If the deadline passes and you couldn't make it, the reservation is released on its own and the material goes back on the list. You don't need to tell us — though if you already know you can't, cancelling makes room for someone else.",
+      "To arrange the drop-off, reply to this email."
+    ],
+    "action": "See your reservation",
+    "why": "You're getting this because you reserved something on the site for rebuilding Norma's house."
+  },
+  "pledgeReminder": {
+    "subject": "Your reservation is about to expire",
+    "body": [
+      "You reserved {what} and the deadline ends on {when}.",
+      "If you can still bring it, there's nothing to do: write to us when it's ready and we'll arrange it.",
+      "If you can't anymore, cancel it from your account. The material goes back on the list and someone else can step in."
+    ],
+    "action": "See or cancel your reservation",
+    "why": "You're getting this because you reserved something on the site for rebuilding Norma's house. It's the only reminder we send."
+  },
+  "pledgeFulfilled": {
+    "subject": "What you brought arrived. Thank you.",
+    "body": [
+      "We confirm we received {what}. It's already at the site.",
+      "If you chose to appear, your name is on the list of the people who helped. If you preferred not to, what you brought still counts and your name appears nowhere on the site. You can change that whenever you want from your account.",
+      "Thank you. This is what the house is being built with."
+    ],
+    "action": "See your account",
+    "why": "You're getting this because you brought something for rebuilding Norma's house."
+  },
+  "staffNewPledge": {
+    "subject": "Reserva nueva en el catálogo",
+    "body": [
+      "Alguien se ofreció a traer {what}.",
+      "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
+    ],
+    "action": "Abrir las donaciones",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  }
+}

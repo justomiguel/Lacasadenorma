@@ -5,6 +5,8 @@ import { uiPagesSchema } from "./schemas/ui";
 
 export { accountSchema } from "./schemas/account";
 export type { AccountContent } from "./schemas/account";
+export { emailsSchema } from "./schemas/emails";
+export type { EmailsContent } from "./schemas/emails";
 export {
   faqSchema,
   helpSchema,

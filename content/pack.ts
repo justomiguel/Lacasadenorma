@@ -2,6 +2,7 @@ import type { Locale } from "@/src/i18n/locale";
 
 import ayudarEn from "./en/ayudar.json";
 import cuentaEn from "./en/cuenta.json";
+import emailsEn from "./en/emails.json";
 import legadoEn from "./en/legado.json";
 import legalesEn from "./en/legales.json";
 import normaEn from "./en/norma.json";
@@ -13,6 +14,7 @@ import transparenciaEn from "./en/transparencia.json";
 import uiEn from "./en/ui.json";
 import ayudarEs from "./es/ayudar.json";
 import cuentaEs from "./es/cuenta.json";
+import emailsEs from "./es/emails.json";
 import legadoEs from "./es/legado.json";
 import legalesEs from "./es/legales.json";
 import normaEs from "./es/norma.json";
@@ -24,6 +26,7 @@ import transparenciaEs from "./es/transparencia.json";
 import uiEs from "./es/ui.json";
 import {
   accountSchema,
+  emailsSchema,
   faqSchema,
   helpSchema,
   legalSchema,
@@ -65,6 +68,7 @@ function pack(
     preguntas: unknown;
     legales: unknown;
     cuenta: unknown;
+    emails: unknown;
   },
 ) {
   const prefix = `${locale}/`;
@@ -93,6 +97,7 @@ function pack(
     faq: parseContent(faqSchema, files.preguntas, `${prefix}preguntas.json`),
     legal: parseContent(legalSchema, files.legales, `${prefix}legales.json`),
     account: parseContent(accountSchema, files.cuenta, `${prefix}cuenta.json`),
+    emails: parseContent(emailsSchema, files.emails, `${prefix}emails.json`),
   };
 }
 
@@ -109,6 +114,7 @@ const packs = {
     preguntas: preguntasEs,
     legales: legalesEs,
     cuenta: cuentaEs,
+    emails: emailsEs,
   }),
   en: pack("en", {
     site: siteEn,
@@ -122,6 +128,7 @@ const packs = {
     preguntas: preguntasEn,
     legales: legalesEn,
     cuenta: cuentaEn,
+    emails: emailsEn,
   }),
 } as const;
 
