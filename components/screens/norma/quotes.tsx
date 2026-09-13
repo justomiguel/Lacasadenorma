@@ -26,7 +26,7 @@ export function NormaQuotes({
                   «{entry.quote}»
                 </blockquote>
                 <p className="mt-md font-ui text-small text-ink-muted">
-                  {entry.author}
+                  <cite className="not-italic">{entry.author}</cite>
                   <span className="block">{entry.relation}</span>
                 </p>
               </li>
