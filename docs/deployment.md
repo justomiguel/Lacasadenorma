@@ -120,6 +120,11 @@ puede arreglar desde el código, y una compuerta que está roja por defecto es u
 aprende a ignorar. El de producción sí falla en el mismo caso, y a propósito: un merge a `main` que
 no publica nada y no se queja deja creer que el sitio está al día cuando no lo está.
 
+El simulacro de migraciones sigue el mismo criterio que el preview: si todavía no hay
+`SUPABASE_ACCESS_TOKEN` ni `SUPABASE_PROJECT_REF`, explica qué falta y no se pone rojo. El job que
+tiene que ponerse rojo es el de publicar en Vercel, porque ésa es la afirmación que dejó de ser
+verdad —el sitio no se actualizó—.
+
 ---
 
 ## 5. Cómo llegan las migraciones a producción

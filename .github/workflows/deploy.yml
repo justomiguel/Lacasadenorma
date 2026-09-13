@@ -179,12 +179,29 @@ jobs:
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
 
     steps:
+      - name: Avisar si todavía no hay proyecto de Supabase
+        if: env.SUPABASE_ACCESS_TOKEN == '' || env.SUPABASE_PROJECT_REF == ''
+        run: |
+          echo "::notice::Sin simulacro de migraciones: faltan SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF y SUPABASE_DB_PASSWORD."
+          {
+            echo "## Todavía no hay simulacro contra producción"
+            echo ""
+            echo "Faltan los secretos \`SUPABASE_ACCESS_TOKEN\`, \`SUPABASE_PROJECT_REF\` y"
+            echo "\`SUPABASE_DB_PASSWORD\` (Settings → Secrets and variables → Actions)."
+            echo "Cómo obtenerlos está en \`docs/deployment.md\` §3."
+            echo ""
+            echo "Mientras tanto no se aplica ninguna migración. El despliegue del sitio"
+            echo "sigue: si también faltan los de Vercel, ese job es el que se pone rojo."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Traer el commit que ya pasó las compuertas
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Preparar Node 22
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -193,9 +210,15 @@ jobs:
       # El CLI de Supabase es una devDependency fijada en el lockfile: usar esa
       # versión y no la última publicada mantiene CI igual que la máquina local.
       - name: Instalar las dependencias fijadas en el lockfile
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: npm ci
 
+      # Mismo criterio que el preview de Vercel: si todavía no hay proyecto de
+      # producción, el paso de arriba explica qué falta y el job termina en
+      # verde. Fallar con "Access token not provided" no dice nada. El job que
+      # SÍ tiene que ponerse rojo en ese caso es el de publicar en Vercel.
       - name: Enlazar el proyecto de producción
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: npx --no-install supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       # El shim local de Postgres es deliberadamente parcial (ADR-013): no tiene
@@ -203,6 +226,7 @@ jobs:
       # otra cosa en el proyecto real. Este simulacro es la última oportunidad de
       # ver el SQL exacto que se va a ejecutar antes de que sea irreversible.
       - name: Simular el push de migraciones sin tocar nada
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         id: simulacro
         run: |
           salida="$(npx --no-install supabase db push --linked --dry-run 2>&1)"
@@ -311,6 +335,12 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Fallar si falta el token de Vercel
+        if: env.VERCEL_TOKEN == ''
+        run: |
+          echo "::error::Faltan VERCEL_TOKEN, VERCEL_ORG_ID y VERCEL_PROJECT_ID. El sitio no se publicó. Cómo cargarlos está en docs/deployment.md §3."
+          exit 1
 
       - name: Preparar Node 22
         uses: actions/setup-node@v7
