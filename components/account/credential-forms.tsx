@@ -43,8 +43,11 @@ export function SignUpForm({
   // lo que corresponde hacer ahora (contrato de cuentas).
   if (state.phase === "done") {
     return (
+      // Un `h2` y no un párrafo con pinta de título: el formulario desaparece y lo
+      // que queda es el resultado, así que quien recorre la página por encabezados
+      // —que es cómo se navega con un lector de pantalla— tiene que encontrarlo.
       <div className="max-w-measure border-t border-rule pt-lg">
-        <p className="font-ui text-subheading text-ink">{copy.checkInboxTitle}</p>
+        <h2 className="font-ui text-subheading text-ink">{copy.checkInboxTitle}</h2>
         {copy.checkInboxBody.map((text) => (
           <p key={text.slice(0, 32)} className="mt-sm text-body text-ink-muted">
             {text}

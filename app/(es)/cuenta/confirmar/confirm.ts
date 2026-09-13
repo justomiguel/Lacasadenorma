@@ -5,6 +5,36 @@ import { logger } from "@/src/infrastructure/logging/logger";
 import { createServerSupabaseClient } from "@/src/infrastructure/supabase/server-client";
 
 /**
+ * El destino va **sin origen**, y eso es lo que hace que la sesión sobreviva.
+ *
+ * Un `Location` relativo lo resuelve el navegador contra la dirección que tiene en
+ * la barra, así que la respuesta no puede mandar a nadie a otro origen que el que
+ * ya estaba usando. La alternativa —armar una URL absoluta— tiene dos formas y las
+ * dos están mal:
+ *
+ * - Con `request.nextUrl.origin` o `request.url`: en Next 16 **no son la dirección
+ *   que pidió el navegador**, son la del servidor. Medido: un pedido a
+ *   `http://127.0.0.1:3211/…` los devuelve como `http://localhost:3211`. La cookie
+ *   de sesión que `verifyOtp` acaba de escribir es de host, así que el redirect la
+ *   deja atrás y la persona confirma su cuenta y aterriza sin sesión.
+ * - Con la cabecera `Host`: es del cliente, y construir un redirect con ella es
+ *   inyección de host.
+ *
+ * `303` y no `307`: el canje del token ya ocurrió, y lo que sigue es ir a ver el
+ * resultado en otro lado. Es exactamente lo que significa "See Other".
+ *
+ * `no-store` porque la respuesta lleva la cookie de sesión puesta: sin eso, un
+ * intermediario podría guardarla y servírsela a otra persona, que es la misma
+ * falla que `proxy.ts` evita en cada navegación.
+ */
+function goTo(path: string): NextResponse {
+  return new NextResponse(null, {
+    status: 303,
+    headers: { Location: path, "Cache-Control": "no-store" },
+  });
+}
+
+/**
  * El enlace del correo, canjeado por una sesión.
  *
  * Es un route handler y no una página porque su trabajo entero es cambiar un token
@@ -40,18 +70,16 @@ export async function confirmEmailLink(
   const tokenHash = params.get("token_hash");
   const type = params.get("type");
 
-  const expired = new URL(request.nextUrl.origin);
-  expired.pathname = localizeHref("/cuenta/ingresar", locale);
-  expired.searchParams.set("aviso", "linkExpired");
+  const expired = `${localizeHref("/cuenta/ingresar", locale)}?aviso=linkExpired`;
 
   if (tokenHash === null || tokenHash.length === 0 || !isKnownType(type)) {
-    return NextResponse.redirect(expired);
+    return goTo(expired);
   }
 
   const client = await createServerSupabaseClient();
 
   if (client === null) {
-    return NextResponse.redirect(expired);
+    return goTo(expired);
   }
 
   const { error } = await client.auth.verifyOtp({ type, token_hash: tokenHash });
@@ -62,22 +90,10 @@ export async function confirmEmailLink(
     // quien prueba enlaces al azar cuándo acertó la forma.
     logger.warn("Enlace de correo rechazado", { code: error.code });
 
-    return NextResponse.redirect(expired);
+    return goTo(expired);
   }
 
-  const destination = new URL(request.nextUrl.origin);
-  destination.pathname = localizeHref(
-    type === "recovery" ? "/cuenta/clave" : "/cuenta",
-    locale,
-  );
-
   // La cookie de sesión la escribió `verifyOtp` a través del almacén de cookies del
-  // request; el redirect la lleva puesta. `no-store` porque la respuesta acompaña
-  // una credencial: sin eso, un intermediario podría guardarla y servírsela a otra
-  // persona, que es la misma falla que `proxy.ts` evita en cada navegación.
-  const response = NextResponse.redirect(destination);
-
-  response.headers.set("Cache-Control", "no-store");
-
-  return response;
+  // request, y el redirect la lleva puesta.
+  return goTo(localizeHref(type === "recovery" ? "/cuenta/clave" : "/cuenta", locale));
 }

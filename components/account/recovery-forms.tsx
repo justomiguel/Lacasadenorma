@@ -43,7 +43,7 @@ export function RecoverForm({
   if (state.phase === "done") {
     return (
       <div className="max-w-measure border-t border-rule pt-lg">
-        <p className="font-ui text-subheading text-ink">{copy.sentTitle}</p>
+        <h2 className="font-ui text-subheading text-ink">{copy.sentTitle}</h2>
         {copy.sentBody.map((text) => (
           <p key={text.slice(0, 32)} className="mt-sm text-body text-ink-muted">
             {text}

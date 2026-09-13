@@ -19,6 +19,39 @@ import type { Database } from "./database.types";
  */
 export type ServerSupabaseClient = SupabaseClient<Database>;
 
+/**
+ * Ninguna lectura con sesión se memoiza. **Esto arregla un bug, no previene uno.**
+ *
+ * Next memoiza los `fetch` GET idénticos que ocurren dentro de un mismo render y
+ * devuelve la primera respuesta a los siguientes. Es útil cuando dos componentes
+ * piden lo mismo; es incorrecto cuando entre las dos lecturas hubo una escritura,
+ * porque la segunda devuelve lo de antes. Medido: al crear el perfil de una cuenta
+ * nueva, la relectura posterior al `insert` contestaba `null` —la respuesta de
+ * antes de insertar— y la pantalla mostraba "no se pudo completar" sobre una fila
+ * que estaba en la base. La misma consulta con otra URL la traía.
+ *
+ * El `signal` es la salida que documenta Next: hace que las opciones del pedido
+ * sean distintas en cada llamada, y con eso no hay dos que se puedan confundir.
+ * `no-store` es lo otro, y va por separado: la respuesta depende de **quién**
+ * pregunta, así que no puede entrar en ninguna caché compartida.
+ *
+ * Va acá y no en cada consulta porque la propiedad es del cliente, no de la
+ * consulta: cualquier adaptador que lea dos veces alrededor de una escritura tiene
+ * el mismo problema, y no debería tener que saber que existe. El cliente anónimo de
+ * más abajo **no** lleva esto, y es a propósito: ahí la respuesta es la misma para
+ * todo el mundo y compartirla es justamente lo que se quiere.
+ *
+ * La compuerta es `e2e/con-datos/cuenta.spec.ts`, "el alta": recorre el camino
+ * entero de una cuenta nueva y falla exactamente cuando esta lectura se pone rancia.
+ */
+function sinMemoizar(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  return fetch(input, {
+    ...init,
+    cache: "no-store",
+    signal: init?.signal ?? new AbortController().signal,
+  });
+}
+
 export async function createServerSupabaseClient(): Promise<ServerSupabaseClient | null> {
   const config = readSupabaseConfig();
 
@@ -29,6 +62,7 @@ export async function createServerSupabaseClient(): Promise<ServerSupabaseClient
   const cookieStore = await cookies();
 
   return createServerClient<Database>(config.url, config.publishableKey, {
+    global: { fetch: sinMemoizar },
     cookies: {
       getAll() {
         return cookieStore.getAll();

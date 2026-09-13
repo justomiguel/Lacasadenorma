@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
-import { PAGINAS_PUBLICAS, VIEWPORT_MINIMO } from "../soporte/paginas";
+import { PAGINAS_CON_MARCO_PUBLICO, VIEWPORT_MINIMO } from "../soporte/paginas";
 
 /**
  * Accesibilidad automática en todas las páginas públicas, en dos viewports.
@@ -17,7 +17,7 @@ import { PAGINAS_PUBLICAS, VIEWPORT_MINIMO } from "../soporte/paginas";
  */
 
 test.describe("accesibilidad · WCAG 2.2 AA", () => {
-  for (const pagina of PAGINAS_PUBLICAS) {
+  for (const pagina of PAGINAS_CON_MARCO_PUBLICO) {
     test(`${pagina.nombre} no tiene violaciones en el viewport del proyecto`, async ({
       page,
     }) => {
@@ -40,7 +40,7 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
    * orden que sólo se puede verificar tabulando.
    */
   test("la primera tabulación de cada página lleva al contenido", async ({ page }) => {
-    for (const pagina of PAGINAS_PUBLICAS) {
+    for (const pagina of PAGINAS_CON_MARCO_PUBLICO) {
       await page.goto(pagina.path);
       await page.keyboard.press("Tab");
 
@@ -62,7 +62,7 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
   test("cada página tiene un h1 y la jerarquía de encabezados no salta niveles", async ({
     page,
   }) => {
-    for (const pagina of PAGINAS_PUBLICAS) {
+    for (const pagina of PAGINAS_CON_MARCO_PUBLICO) {
       await page.goto(pagina.path);
 
       await expect(
@@ -106,7 +106,7 @@ test.describe("accesibilidad · lo que axe no puede ver", () => {
    * y el estilo no se animan, y son lo que distingue un anillo presente de uno anulado.
    */
   test("el foco se ve en todo lo que lo recibe, recorrido con Tab", async ({ page }) => {
-    for (const pagina of PAGINAS_PUBLICAS) {
+    for (const pagina of PAGINAS_CON_MARCO_PUBLICO) {
       await page.goto(pagina.path);
       await page.keyboard.press("Tab");
 

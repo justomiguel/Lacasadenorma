@@ -76,28 +76,40 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
 
       const userId = await requireUserId();
 
-      const { error } = await client.from("donor_profiles").upsert(
-        {
-          id: userId,
-          locale: fallbackLocale,
-          default_anonymous: ANONYMOUS_BY_DEFAULT,
-        },
-        { onConflict: "id", ignoreDuplicates: true },
-      );
+      const { data, error } = await client
+        .from("donor_profiles")
+        .upsert(
+          {
+            id: userId,
+            locale: fallbackLocale,
+            default_anonymous: ANONYMOUS_BY_DEFAULT,
+          },
+          { onConflict: "id", ignoreDuplicates: true },
+        )
+        .select(PROFILE_COLUMNS)
+        .maybeSingle();
 
       if (error !== null) {
         throw new QueryError("crear el perfil", error);
       }
 
-      const created = await readOwnProfile();
+      if (data !== null) {
+        return mapProfile(data);
+      }
 
-      if (created === null) {
+      // Con `ignoreDuplicates`, no devolver nada significa que no insertó: la fila
+      // la acaba de crear la otra pestaña. Se relee, que es lo correcto —el estado
+      // final es el que se pedía— y es también el único caso en que hace falta una
+      // segunda consulta.
+      const existente = await readOwnProfile();
+
+      if (existente === null) {
         throw new QueryError("crear el perfil", {
           message: "la fila no quedó legible después de crearla",
         });
       }
 
-      return created;
+      return existente;
     },
 
     async saveOwnProfile(next: Omit<DonorProfile, "userId">): Promise<DonorProfile> {

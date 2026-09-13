@@ -81,7 +81,16 @@ const servidores = [
     // igual: `next dev` volvería a leer `.env.local`, que en una máquina de
     // desarrollo tiene la base configurada, y el modo sin datos dejaría de
     // probar lo único que existe para probar.
-    command: `npx next start --port ${String(PUERTO)}`,
+    //
+    // `--hostname` con el mismo host que `baseURL`, y no es cosmético. Sin él,
+    // `next start` escucha en todas las interfaces pero se cree `localhost`, y
+    // `request.nextUrl` de un route handler devuelve ese nombre en lugar del que
+    // pidió el navegador: medido, un pedido a `http://127.0.0.1:3211/…` llega con
+    // `nextUrl.origin === "http://localhost:3211"`. Cualquier respuesta que arme una
+    // URL absoluta manda entonces a **otro origen**, y una cookie de host —la de la
+    // sesión— se queda del lado de acá. Hoy ningún código del proyecto arma esa URL
+    // absoluta, a propósito; esto es para que el harness tampoco lo invite.
+    command: `npx next start --hostname 127.0.0.1 --port ${String(PUERTO)}`,
     url: baseURL,
     // El build lo hizo `scripts/e2e.sh` con el entorno de este modo. Reusar un
     // servidor que ya estaba escuchando sería reusar el build anterior.

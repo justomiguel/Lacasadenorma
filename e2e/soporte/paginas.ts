@@ -29,6 +29,37 @@ export const PAGINAS_PUBLICAS = [
 ] as const;
 
 /**
+ * Las pantallas de identidad, aparte de las públicas y no sumadas a la lista de
+ * arriba.
+ *
+ * No están ahí porque `PAGINAS_PUBLICAS` es también la lista de lo que el sitio
+ * **publica**: la recorren la revisión visual, la de metadatos de compartir y la de
+ * degradación, y las cuatro de cuenta llevan `noIndex`, no van al sitemap y no
+ * tienen tarjeta de compartir. Agregarlas ahí habría hecho fallar tres suites por
+ * la ausencia de algo que a propósito no tienen.
+ *
+ * Lo que sí comparten es el marco del sitio público —`PublicDocument`, el salto al
+ * contenido, la tipografía—, y por eso la accesibilidad las recorre igual.
+ *
+ * Las cuatro se ven sin sesión y sin base de datos: tres son estáticas y
+ * `/cuenta/clave` muestra su estado «este enlace no sirve», que es un estado
+ * diseñado y hay que revisarlo como cualquier otro. `/cuenta` no está: sin sesión
+ * redirige, y lo que habría que medir es la pantalla a la que lleva.
+ */
+export const PAGINAS_DE_CUENTA = [
+  { path: "/cuenta/crear", nombre: "Crear una cuenta" },
+  { path: "/cuenta/ingresar", nombre: "Ingresar" },
+  { path: "/cuenta/recuperar", nombre: "Recuperar el acceso" },
+  { path: "/cuenta/clave", nombre: "Poner una contraseña nueva" },
+] as const;
+
+/** Todo lo que se sirve con el marco público, que es lo que axe tiene que recorrer. */
+export const PAGINAS_CON_MARCO_PUBLICO = [
+  ...PAGINAS_PUBLICAS,
+  ...PAGINAS_DE_CUENTA,
+] as const;
+
+/**
  * El ancho de quien llega desde un WhatsApp reenviado en un teléfono viejo.
  *
  * 360 px no es una elección estética: es el ancho que SC-001 usa para exigir que el
