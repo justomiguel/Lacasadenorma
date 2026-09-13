@@ -1,0 +1,89 @@
+# Contrato — Catálogo, reservas y capacidad de agente
+
+## Lectura pública
+
+Dos vistas, las dos con `security_invoker = true`, las dos legibles por `anon` y por
+`authenticated`. Están definidas en [data-model.md](../data-model.md) §3.
+
+| Vista | Devuelve | No devuelve |
+|---|---|---|
+| `donation_catalog` | Ítems con `remaining_quantity` calculado en la base | El valor estimado (D3) |
+| `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Todo lo demás, por privilegio de columna |
+
+El repositorio de infraestructura consulta **las vistas, nunca las tablas**, y con lista de columnas
+explícita como el resto del proyecto.
+
+## Escritura: tres funciones y ninguna otra puerta
+
+`authenticated` no tiene `insert` sobre `donation_pledges`. Las firmas completas y sus comprobaciones
+están en [data-model.md](../data-model.md) §5; acá está lo que la capa de aplicación tiene que
+traducir.
+
+| Función | Quién | Error | Qué ve la persona |
+|---|---|---|---|
+| `claim_donation_item` | Cuenta con sesión | `sin_sesion` | Se la manda a ingresar, y vuelve al mismo ítem |
+| | | `sin_disponibilidad` | "Alguien se adelantó": estado **diseñado**, con el catálogo actualizado al lado |
+| | | `demasiadas_reservas` | Cuántas tiene y cuáles puede cancelar |
+| | | `cantidad_invalida` | Error asociado al campo |
+| `cancel_donation_pledge` | Su dueña, o `admin`+ | `no_encontrada` | La reserva ya no está activa; se recarga la cuenta |
+| `fulfill_donation_pledge` | `admin`+ | `sin_permiso` | No se le ofrece el control |
+
+Y una traducción que no viene de una excepción nuestra sino del motor: bajar `needed_quantity` por
+debajo de lo comprometido falla con `23514` y el nombre del `check`. La capa de aplicación **tiene que
+convertir eso** en "hay tres unidades comprometidas; cancelalas primero" (US4 escenario 5). Si no lo
+hace, el formulario del backoffice muestra un mensaje de Postgres, que es la definición de estado no
+diseñado.
+
+## Reglas de la capa de aplicación
+
+- **Toda entrada se valida con Zod del lado del servidor**, aunque la función de la base también
+  valide. Un esquema de entrada es una pista para quien llama, no una frontera.
+- `claim-item.ts` llama la función, **y después** intenta el correo. El correo nunca está dentro de la
+  transacción (ADR-028).
+- Toda operación sobre el catálogo o sobre una reserva pasa por `perform()` y escribe el rastro con
+  `record_audit()` (ADR-020, FR-223). Acciones nuevas: `donation_item.created`,
+  `donation_item.updated`, `donation_item.published`, `pledge.claimed`, `pledge.cancelled`,
+  `pledge.fulfilled`.
+- La revalidación es explícita al publicar o al cambiar disponibilidad (ADR-017): `/catalogo`,
+  `/quienes-ayudaron` y sus equivalentes en `/en`. SC-212 —cinco minutos entre confirmar y ver el
+  nombre— se cumple por el ISR de cinco minutos incluso si la invalidación explícita falla.
+
+## Capacidad de agente
+
+Se agrega una sola, de **sólo lectura**, al registro que ya existe (ADR-009), con adaptador REST en
+`/api/public/[capability]` y herramienta WebMCP, como las cinco que ya están.
+
+**`catalogo-de-donaciones`** — qué le falta a la obra.
+
+```json
+{
+  "items": [
+    {
+      "titulo": "Chapas del techo",
+      "descripcion": "Chapa sinusoidal calibre 25, de 3,66 m",
+      "unidad": "unidad",
+      "necesarias": 40,
+      "faltan": 35
+    }
+  ],
+  "actualizado": "2026-09-13T18:00:00.000Z"
+}
+```
+
+Lo que **no** devuelve, y por qué:
+
+| Ausencia | Motivo |
+|---|---|
+| Nombres del muro | FR-242 y FR-031 de la feature 001: ninguna capacidad devuelve datos personales. Que el dato sea público en una página no lo vuelve apto para una API que un agente puede recorrer entero |
+| El valor estimado | No se publica (D3) |
+| Cualquier forma de reservar | Reservar compromete a una persona real frente a una familia. Ninguna herramienta de agente inicia ni facilita eso, por la misma razón por la que ninguna mueve plata |
+
+Corre por el mismo `runCapability()` y por el mismo caso de uso que la página, así que no hay dos
+caminos de código para la misma lectura.
+
+## SEO
+
+`/catalogo` y `/quienes-ayudaron` con metadata propia en los dos idiomas, `hreflang`, y entrada en el
+sitemap. **Sin datos estructurados** de producto ni de oferta: el catálogo no vende nada, y declarar
+`Offer` o `Product` sería afirmar una figura comercial que no existe, que es lo mismo que FR-028
+prohíbe para la personería jurídica.
