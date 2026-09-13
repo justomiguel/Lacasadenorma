@@ -51,6 +51,9 @@ null default now()`, `published_at` nulo = borrador.
 | `display_name` | `text` **nullable** | Nulo hasta que la persona decida aparecer. **No** se deriva del correo (FR-230) |
 | `locale` | `text not null default 'es'` `check (locale in ('es','en'))` | Idioma de los correos (FR-232) |
 | `default_anonymous` | `boolean not null default true` | Preferencia; cada reserva guarda la suya |
+| `approval_status` | `text not null default 'pending'` | `pending` \| `approved` \| `declined`. Confirmar el correo **no** habilita (ADR-033) |
+| `reviewed_at`, `reviewed_by` | | Nulos exactamente cuando el estado es `pending` |
+| `review_note` | `text` nullable | Motivo del rechazo, si alguien lo dejó. No es público |
 | `created_at`, `updated_at` | | |
 
 **Por qué existe y no se usa `auth.users` directo**: `authenticated` no puede leer `auth.users`, y no
@@ -59,6 +62,10 @@ vive en `auth.users` y viaja en el claim `email` del token de su dueño.
 
 **Invariante**: `default_anonymous = false` requiere `display_name` no vacío. Se valida en la
 aplicación y se refuerza en la reserva, que es donde importa.
+
+**Quién escribe el estado.** El `insert` exige `pending`. El `update` de la persona **no incluye**
+`approval_status`: es privilegio de columna, no una policy. La única vía de cambio es
+`public.review_donor_account()`, acotada a `has_min_role('admin')` (ADR-033).
 
 ### `donation_items` — el catálogo
 
@@ -154,9 +161,10 @@ una cancelación con motivo, igual que un aporte mal registrado no se edita.
 | Columna | Tipo | Notas |
 |---|---|---|
 | `id` | `bigint generated always as identity` | |
-| `kind` | `text` `check (kind ~ '^[a-z_]+\.[a-z_]+$')` | `pledge.confirmed`, `pledge.reminder`, `pledge.fulfilled`, `staff.new_pledge` |
-| `pledge_id` | `uuid` nullable → `donation_pledges` | |
-| `recipient` | `text` | **La resuelve la función**, no quien llama (ADR-028) |
+| `kind` | `text` `check (kind ~ '^[a-z_]+\.[a-z_]+$')` | Forma, no lista: `account.*`, `pledge.*`, `staff.*` (ADR-028, ADR-033) |
+| `pledge_id` | `uuid` nullable → `donation_pledges` | Nulo en los correos de cuenta |
+| `about_user_id` | `uuid` nullable → `auth.users` | El sujeto de un correo de cuenta. Nulo en los de reserva |
+| `recipient` | `text` | **La resuelve la función**, no quien llama (ADR-028). Nulo si `kind` es `staff.*` |
 | `status` | `text` `check (status in ('sent','failed','skipped'))` | `skipped` = sin credencial configurada |
 | `provider_id` | `text` nullable | El `id` que devuelve Resend, para cruzar con su consola |
 | `error` | `text` nullable | Sin cuerpo del mensaje, sin token, sin secretos (principio X) |
@@ -204,7 +212,7 @@ leer con atención, porque es la que antes no existía.
 
 | Tabla | `anon` | **`donante`** | `auditor` | `editor` | `admin` | `owner` |
 |---|---|---|---|---|---|---|
-| `donor_profiles` | nada | **su propia fila: leer/escribir** | leer | nada | leer | leer |
+| `donor_profiles` | nada | **su propia fila: leer; escribir nombre, idioma y anonimato. No el estado** | leer | nada | leer + habilitar | leer + habilitar |
 | `donation_items` | leer publicados | leer publicados | leer todo | crear/editar | CRUD | CRUD |
 | `donation_pledges` | **5 columnas de las entregadas no anónimas** | **las propias, completas** | leer todas | **nada** | leer + operar | leer + operar |
 | `email_deliveries` | nada | nada | leer | nada | leer | leer |
@@ -247,7 +255,9 @@ grant select on public.donation_items, public.donation_catalog, public.donation_
   to anon, authenticated;
 
 grant select, insert, update on public.donation_items to authenticated;
-grant select, insert, update, delete on public.donor_profiles to authenticated;
+grant select, insert, delete on public.donor_profiles to authenticated;
+grant update (display_name, locale, default_anonymous) on public.donor_profiles
+  to authenticated;
 grant select on public.email_deliveries to authenticated;
 
 -- El muro: cinco columnas, sólo lectura, y ninguna más (ADR-030).
@@ -269,15 +279,29 @@ column"— es lo que espera la prueba, y está verificado ejecutándolo.
 `donation_pledges(item_id)`, `donation_pledges(user_id)`,
 `donation_pledges(status, expires_at)` — la usa `release_expired_holds()` —,
 `donation_pledges(status, is_anonymous, fulfilled_at desc)` — la usa el muro —,
-`email_deliveries(pledge_id, kind)` — la usa la deduplicación del recordatorio —.
+`email_deliveries(pledge_id, kind)` — la usa la deduplicación del recordatorio —,
+`email_deliveries(kind, about_user_id)` donde `sent` — la de los correos de cuenta —.
 Verificados con `has_index` de pgTAP, como los de la feature 001.
 
 ---
 
 ## 5. Funciones
 
-Las cinco son `security definer`, viven con `set search_path = ''`, y **comprueban autorización en su
-primera línea**. Las tres primeras son el único camino para mover un contador.
+Las de reserva son `security definer`, viven con `set search_path = ''`, y **comprueban autorización
+en su primera línea**. Las tres primeras son el único camino para mover un contador.
+
+Hay dos más, de cuentas, que existen desde la fase B y no mueven material:
+
+### `review_donor_account(user_id, decision, note)`
+
+`grant execute to authenticated`. La primera línea pide `has_min_role('admin')`. Acepta `approved` o
+`declined`. De `pending` se sale a cualquiera de los dos; de `declined` sólo se vuelve a `approved`.
+De `approved` no se sale (ADR-033).
+
+### `donor_contact(user_id) → text`
+
+El correo de `auth.users`, o nulo. `can_read_donors()` por dentro: para el resto es un oráculo mudo,
+no un error que delate que la fila existe.
 
 ### `claim_donation_item(item_id, quantity, is_anonymous, display_name, note) → donation_pledges`
 

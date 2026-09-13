@@ -20,13 +20,14 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(33);
+select plan(41);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
   ('20000000-0000-4000-8000-000000000002', 'quien.tambien.dona@ejemplo.invalid'),
   ('20000000-0000-4000-8000-000000000003', 'quien.se.va@ejemplo.invalid'),
-  ('20000000-0000-4000-8000-000000000005', 'quien.administra@ejemplo.invalid');
+  ('20000000-0000-4000-8000-000000000005', 'quien.administra@ejemplo.invalid'),
+  ('20000000-0000-4000-8000-000000000006', 'quien.pide.cuenta@ejemplo.invalid');
 
 -- El perfil ajeno existe de entrada. El propio **no**: crearlo es el primer caso.
 insert into public.donor_profiles (id, display_name, locale, default_anonymous) values
@@ -51,8 +52,7 @@ select is(
   (
     select confdeltype
       from pg_constraint
-     where conrelid = 'public.donor_profiles'::regclass
-       and contype = 'f'
+     where conname = 'donor_profiles_id_fkey'
   ),
   'c'::"char",
   'la referencia es on delete cascade: borrar la cuenta borra el perfil, y no hay forma de olvidarse (FR-240)'
@@ -501,6 +501,95 @@ select throws_ok(
   null,
   'y un correo a una persona no se anota sin destinatario: un registro de envíos sin a quién no sirve para nada'
 );
+
+-- ── La habilitación, que no es confirmar el correo ──────────────────────────
+
+select is(
+  (
+    select column_default
+      from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'donor_profiles'
+       and column_name = 'approval_status'
+  ),
+  '''pending''::text',
+  'una cuenta nace pendiente: confirmar el correo no habilita la reserva (ADR-033)'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000006", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $s$
+    insert into public.donor_profiles (id, approval_status)
+    values ('20000000-0000-4000-8000-000000000006', 'approved')
+  $s$,
+  '42501',
+  null,
+  'una cuenta no puede nacer habilitada: el insert exige pending (ADR-033)'
+);
+
+insert into public.donor_profiles (id) values ('20000000-0000-4000-8000-000000000006');
+
+select throws_ok(
+  $s$
+    update public.donor_profiles
+       set approval_status = 'approved'
+     where id = '20000000-0000-4000-8000-000000000006'
+  $s$,
+  '42501',
+  null,
+  'y no puede escribirse el estado: el GRANT de update no incluye approval_status'
+);
+
+select throws_ok(
+  $s$ select public.review_donor_account('20000000-0000-4000-8000-000000000006', 'approved') $s$,
+  '42501',
+  null,
+  'una cuenta del público no se habilita a sí misma: review_donor_account pide admin (ADR-033)'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000005", "role": "authenticated",
+    "app_metadata": {"user_role": "owner"}}';
+
+select lives_ok(
+  $s$ select public.review_donor_account('20000000-0000-4000-8000-000000000006', 'approved') $s$,
+  'owner habilita una cuenta pendiente'
+);
+
+select is(
+  (select public.donor_contact('20000000-0000-4000-8000-000000000006')),
+  'quien.pide.cuenta@ejemplo.invalid',
+  'y puede leer el correo de contacto: coordinar una entrega lo necesita'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+select is(
+  (select approval_status from public.donor_profiles where id = '20000000-0000-4000-8000-000000000006'),
+  'approved',
+  'después de la habilitación, la cuenta puede reservar'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000001", "role": "authenticated", "app_metadata": {}}';
+
+select is(
+  (select public.donor_contact('20000000-0000-4000-8000-000000000006')),
+  null::text,
+  'una cuenta del público no lee el correo de otra: donor_contact no es un oráculo'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
 
 select * from finish();
 rollback;

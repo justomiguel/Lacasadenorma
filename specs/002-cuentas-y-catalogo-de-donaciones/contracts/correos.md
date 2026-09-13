@@ -3,7 +3,7 @@
 Dos caminos distintos por una razón que no es de gusto: los tres de identidad llevan un token que
 sólo GoTrue puede emitir, así que salen por SMTP; los del producto los arma la aplicación
 ([ADR-028](../../../docs/adr/028-correo-resend.md),
-[ADR-032](../../../docs/adr/032-aprobacion-de-cuentas.md)).
+[ADR-033](../../../docs/adr/033-aprobacion-de-cuentas.md)).
 
 | Correo | Camino | Disparador | Plantilla |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Los avisos al equipo viajan en el mismo disparador que el correo a la persona, c
 distinto. El cuerpo **no lleva datos de terceros**: el nombre y el correo se leen en el backoffice,
 con sesión.
 
-Qué **no** manda correo, y el motivo: está en ADR-032. Cambiar el perfil, fallar un envío, y los
+Qué **no** manda correo, y el motivo: está en ADR-033. Cambiar el perfil, fallar un envío, y los
 tres de identidad (que salen por SMTP) no duplican aviso.
 
 ## El puerto

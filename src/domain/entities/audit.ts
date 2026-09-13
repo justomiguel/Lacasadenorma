@@ -38,6 +38,8 @@ export const AUDIT_ACTION_LABELS = {
   "payment_method.updated": "editó una cuenta bancaria",
   "payment_method.published": "publicó una cuenta bancaria",
   "payment_method.unpublished": "dejó de publicar una cuenta bancaria",
+  "donor.approved": "habilitó una cuenta del público",
+  "donor.declined": "rechazó una cuenta del público",
 } as const satisfies Record<string, string>;
 
 export type AuditAction = keyof typeof AUDIT_ACTION_LABELS;
@@ -67,6 +69,7 @@ export const AUDIT_ENTITY_LABELS: Record<string, string> = {
   updates: "Novedades",
   milestones: "Hitos",
   payment_methods: "Cuentas",
+  donor_profiles: "Cuentas del público",
 };
 
 export function describeAuditEntity(entityTable: string): string {

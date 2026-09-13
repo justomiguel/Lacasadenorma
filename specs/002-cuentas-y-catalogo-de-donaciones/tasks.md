@@ -40,45 +40,45 @@ eso quede verificado por una compuerta y no por una lectura atenta.
 
 ### Tests en rojo
 
-- [ ] **T004** [P] `supabase/tests/030-matriz-de-permisos.sql`: agregar la persona **`donante`**
+- [x] **T004** [P] `supabase/tests/030-matriz-de-permisos.sql`: agregar la persona **`donante`**
       —autenticada, sin fila en `user_roles`— y probarla contra toda tabla y toda operación de la
       feature 001. Tiene que ver **nada** y escribir **nada** (FR-203, FR-204, SC-203).
-- [ ] **T005** [P] `supabase/tests/080-donantes-y-muro.sql`: `donor_profiles` sólo propio; que una
+- [x] **T005** [P] `supabase/tests/080-donantes-y-muro.sql`: `donor_profiles` sólo propio; que una
       cuenta no pueda leer ni editar el perfil de otra.
-- [ ] **T006** [P] `src/domain/permissions.test.ts`: los tres permisos nuevos y que `editor` **no**
+- [x] **T006** [P] `src/domain/permissions.test.ts`: los tres permisos nuevos y que `editor` **no**
       tenga `donaciones.leer`. Es la lección de `can_read_ledger()` aplicada a datos personales.
 
 ### Implementación
 
-- [ ] **T007** Migración `…_public_accounts.sql`: `donor_profiles` con RLS y policies de propiedad,
+- [x] **T007** Migración `…_public_accounts.sql`: `donor_profiles` con RLS y policies de propiedad,
       `private.can_read_donors()` con `revoke`/`grant` como sus hermanas, índices.
-- [ ] **T008** `supabase/config.toml`: `enable_signup = true`, `enable_confirmations = true`,
+- [x] **T008** `supabase/config.toml`: `enable_signup = true`, `enable_confirmations = true`,
       límites de tasa y bloque SMTP (contrato de cuentas). **`enable_confirmations` no es
       cosmético**: es lo que hace que tener sesión implique correo confirmado.
-- [ ] **T009** [P] `src/domain/permissions.ts`: `catalogo.escribir` (editor+), `donaciones.leer`
+- [x] **T009** [P] `src/domain/permissions.ts`: `catalogo.escribir` (editor+), `donaciones.leer`
       (auditor/admin/owner), `donaciones.escribir` (admin+).
-- [ ] **T010** [P] `src/domain/entities/donor.ts`: `DonorProfile`, preferencia de anonimato e idioma.
-- [ ] **T011** `src/infrastructure/auth/viewer.ts`: distinguir audiencia pública de interna sin
+- [x] **T010** [P] `src/domain/entities/donor.ts`: `DonorProfile`, preferencia de anonimato e idioma.
+- [x] **T011** `src/infrastructure/auth/viewer.ts`: distinguir audiencia pública de interna sin
       inventar una bandera — la ausencia de rol **es** la distinción.
-- [ ] **T012** `proxy.ts`: agregar `/cuenta` al matcher. Sigue sin ser frontera, y el comentario
+- [x] **T012** `proxy.ts`: agregar `/cuenta` al matcher. Sigue sin ser frontera, y el comentario
       sobre copiar los headers de `setAll` sigue siendo obligatorio.
-- [ ] **T013** Pantallas de identidad: `/cuenta/crear`, `/cuenta/ingresar`, `/cuenta/recuperar`,
+- [x] **T013** Pantallas de identidad: `/cuenta/crear`, `/cuenta/ingresar`, `/cuenta/recuperar`,
       `/cuenta/clave`, el route handler `/cuenta/confirmar` y `cuenta/actions.ts`, en los dos
       idiomas. Respuesta indistinguible en recuperación y en inicio de sesión (contrato de cuentas).
-- [ ] **T014** [P] `content/es/cuenta.json` y `content/en/cuenta.json` con su esquema Zod.
-- [ ] **T015** [P] `e2e/con-datos/cuenta.spec.ts`: registro, confirmación, y que una cuenta del
+- [x] **T014** [P] `content/es/cuenta.json` y `content/en/cuenta.json` con su esquema Zod.
+- [x] **T015** [P] `e2e/con-datos/cuenta.spec.ts`: registro, confirmación, y que una cuenta del
       público en `/admin` termine en `/admin/sin-permiso` (FR-206).
-- [ ] **T016** [P] `e2e/comun/accesibilidad.spec.ts`: las cuatro pantallas de cuenta, dos viewports.
+- [x] **T016** [P] `e2e/comun/accesibilidad.spec.ts`: las cuatro pantallas de cuenta, dos viewports.
 
 ### Privacidad: no puede esperar a la fase F
 
-- [ ] **T017** `content/es/legales.json` y `content/en/legales.json`, `docs/privacy.md`: qué se
+- [x] **T017** `content/es/legales.json` y `content/en/legales.json`, `docs/privacy.md`: qué se
       guarda, para qué, cuánto se conserva y cómo se borra. **En el mismo commit que T008**, porque
       la política publicada hoy dice que el sitio no guarda datos personales y desde T008 eso es
       falso (FR-239).
-- [ ] **T018** [P] `docs/security.md`: la amenaza nueva —`authenticated` es el público— con su
+- [x] **T018** [P] `docs/security.md`: la amenaza nueva —`authenticated` es el público— con su
       mitigación, su compuerta y su disparador de revisión. Y el captcha como riesgo aceptado.
-- [ ] **T019** [P] `.env.example`: `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_STAFF_ADDRESS`.
+- [x] **T019** [P] `.env.example`: `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_STAFF_ADDRESS`.
 
 **Punto de control**: el sitio anda igual, se pueden crear cuentas que no pueden hacer nada, y la
 compuerta impide que eso cambie por descuido.
@@ -92,22 +92,25 @@ compuerta impide que eso cambie por descuido.
 **Prueba independiente**: con clave, llega; sin clave, la operación se completa, queda `skipped` y la
 pantalla lo dice.
 
-- [ ] **T020** [P] `src/domain/ports/email.ts`: `EmailSender`, `EmailMessage`, `EmailKind`,
+- [x] **T020** [P] `src/domain/ports/email.ts`: `EmailSender`, `EmailMessage`, `EmailKind`,
       `EmailResult` como unión discriminada de `sent | failed | skipped`. TypeScript puro.
-- [ ] **T021** [P] `src/application/emails/*.test.ts` **en rojo**: armado de cada correo, en los dos
-      idiomas, con la clave de idempotencia `<kind>/<pledge_id>`, y que ningún cuerpo contenga datos
+- [x] **T021** [P] `src/application/emails/*.test.ts` **en rojo**: armado de cada correo, en los dos
+      idiomas, con la clave de idempotencia `<kind>/<subject_id>`, y que ningún cuerpo contenga datos
       de terceros.
-- [ ] **T022** `src/infrastructure/email/resend-sender.ts`: `POST https://api.resend.com/emails`,
+- [x] **T022** `src/infrastructure/email/resend-sender.ts`: `POST https://api.resend.com/emails`,
       `Bearer`, `Idempotency-Key`, `text` **y** `html`. Sin dependencias nuevas.
-- [ ] **T023** [P] `src/infrastructure/email/logging-sender.ts` y `index.ts` con `getEmailSender()`.
-- [ ] **T024** Migración `…_email_deliveries.sql`: la tabla sin `update` ni `delete`, y
+- [x] **T023** [P] `src/infrastructure/email/logging-sender.ts` y `index.ts` con `getEmailSender()`.
+- [x] **T024** Migración `…_email_deliveries.sql`: la tabla sin `update` ni `delete`, y
       `record_email_delivery()` **resolviendo el destinatario por dentro** (ADR-028).
-- [ ] **T025** [P] `content/es/emails.json` y `content/en/emails.json` con su esquema.
-- [ ] **T026** [P] `docs/runbook.md`: verificar el dominio, SPF/DKIM/DMARC, configurar el SMTP en el
+- [x] **T025** [P] `content/es/emails.json` y `content/en/emails.json` con su esquema.
+- [x] **T026** [P] `docs/runbook.md`: verificar el dominio, SPF/DKIM/DMARC, configurar el SMTP en el
       panel, rotar la clave en **dos** lugares, y el texto de los tres correos de identidad para
       poder reponerlo.
-- [ ] **T027** [P] `supabase/tests/080-donantes-y-muro.sql`: que una cuenta del público no pueda
+- [x] **T027** [P] `supabase/tests/080-donantes-y-muro.sql`: que una cuenta del público no pueda
       registrar un envío a una dirección ajena ni leer `email_deliveries`.
+- [x] **T027b** Habilitación a mano (ADR-033): migración `…_account_approval.sql`,
+      `review_donor_account()`, `/admin/donantes`, plantillas HTML del producto, y correos
+      `account.*` / `staff.new_account`. Confirmar el correo no habilita la reserva.
 
 **Punto de control**: el equipo ya puede recuperar su contraseña desde el sitio, que hoy se hace desde
 el panel de Supabase (ADR-003, consecuencias).

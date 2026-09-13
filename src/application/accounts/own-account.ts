@@ -34,6 +34,12 @@ export type AccountSession =
 export interface AccountDeps {
   readonly session: AccountSession;
   readonly logger: Logger;
+  /**
+   * Se dispara una sola vez, cuando el perfil acaba de nacer. El correo al
+   * equipo y a la persona vive acá y **no puede fallar la pantalla**: si el
+   * envío no sale, la cuenta ya está creada (FR-233).
+   */
+  readonly onAccountOpened?: (profile: DonorProfile) => Promise<void>;
 }
 
 const profileInput = z.object({
@@ -99,7 +105,17 @@ export async function getOwnAccount(
   }
 
   try {
-    return accountOk(await port.ensureOwnProfile(fallbackLocale));
+    const { profile, created } = await port.ensureOwnProfile(fallbackLocale);
+
+    if (created && deps.onAccountOpened !== undefined) {
+      try {
+        await deps.onAccountOpened(profile);
+      } catch (error) {
+        deps.logger.error("No se pudo avisar el pedido de cuenta", { error });
+      }
+    }
+
+    return accountOk(profile);
   } catch (error) {
     return describeFailure(deps, "leer tu cuenta", error);
   }

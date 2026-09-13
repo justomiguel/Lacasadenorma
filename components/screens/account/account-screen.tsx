@@ -62,9 +62,29 @@ export async function AccountScreen({ locale }: { locale: Locale }) {
 
   const donor = result.value;
   const name = displayNameOf(donor);
+  const approval =
+    donor.approvalStatus === "pending" ? (
+      <Callout tone="warning" title={copy.pendingTitle}>
+        {copy.pendingBody.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </Callout>
+    ) : donor.approvalStatus === "declined" ? (
+      <Callout tone="warning" title={copy.declinedTitle}>
+        {copy.declinedBody.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </Callout>
+    ) : (
+      <p className="max-w-measure font-ui text-small text-ink-muted">
+        {copy.approvedNote}
+      </p>
+    );
 
   return (
     <AuthShell title={copy.title} lead={copy.lead}>
+      {approval}
+
       <div className="max-w-measure space-y-lg">
         <p className="font-ui text-small text-ink-muted">
           {copy.signedInAs} <span className="text-ink">{viewer?.email ?? "—"}</span>

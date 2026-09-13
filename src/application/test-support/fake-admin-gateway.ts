@@ -88,6 +88,11 @@ export function fakeAdminGateway(
       saveMethod: (input) => record("saveMethod", input, id),
       setMethodPublished: (input) => record("setMethodPublished", input, undefined),
     },
+    donors: {
+      listAccounts: () => record("listAccounts", null, []),
+      reviewAccount: (input) => record("reviewAccount", input, undefined),
+      contactOf: (input) => record("contactOf", input, null),
+    },
     audit: {
       append: (input) => {
         calls.push({ name: "audit.append", input });

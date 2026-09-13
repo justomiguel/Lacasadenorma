@@ -353,10 +353,12 @@ select results_eq(
   $q$
     values ('public.budget_items.published_at'),
            ('public.campaigns.published_at'),
-           -- La primera columna de la lista que no es `published_at`: las policies de
-           -- `donor_profiles` filtran por propiedad y no por publicación. Tiene
-           -- índice porque es la clave primaria, que es otra ventaja de reusar la
-           -- clave de la cuenta en lugar de inventar un identificador.
+           -- Las policies de `donor_profiles` filtran por propiedad y por estado
+           -- de habilitación, no por publicación. `id` es la clave primaria.
+           -- `approval_status` está en el `with check` del insert: nacer habilitada
+           -- es imposible (ADR-033), y tiene índice porque `/admin/donantes` lista
+           -- por estado.
+           ('public.donor_profiles.approval_status'),
            ('public.donor_profiles.id'),
            ('public.expenses.published_at'),
            ('public.expenses.voided_at'),
@@ -367,7 +369,7 @@ select results_eq(
            ('public.updates.published_at'),
            ('storage.objects.bucket_id')
   $q$,
-  'las policies filtran exactamente por estas once columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
+  'las policies filtran exactamente por estas doce columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
 
 -- Y los índices que data-model.md §4 nombra uno por uno, con su nombre real. La

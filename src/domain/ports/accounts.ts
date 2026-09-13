@@ -21,13 +21,18 @@ export interface AccountPort {
   readOwnProfile(): Promise<DonorProfile | null>;
 
   /** El perfil propio, creándolo con los valores por defecto si es la primera vez. */
-  ensureOwnProfile(fallbackLocale: Locale): Promise<DonorProfile>;
+  ensureOwnProfile(fallbackLocale: Locale): Promise<{
+    readonly profile: DonorProfile;
+    readonly created: boolean;
+  }>;
 
   /**
    * Guarda las preferencias. Recibe el perfil entero y no un parche: un parche
    * con `defaultAnonymous` ausente es indistinguible de uno que pide aparecer.
    */
-  saveOwnProfile(profile: Omit<DonorProfile, "userId">): Promise<DonorProfile>;
+  saveOwnProfile(
+    profile: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
+  ): Promise<DonorProfile>;
 
   /** Borra la cuenta de quien pide (FR-208). No hay vuelta atrás y no la finge. */
   deleteOwnAccount(): Promise<void>;

@@ -216,33 +216,46 @@ export type Database = {
       };
       donor_profiles: {
         Row: {
+          approval_status: string;
           created_at: string;
           default_anonymous: boolean;
           display_name: string | null;
           id: string;
           locale: string;
+          review_note: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
           updated_at: string;
         };
         Insert: {
+          approval_status?: string;
           created_at?: string;
           default_anonymous?: boolean;
           display_name?: string | null;
           id: string;
           locale?: string;
+          review_note?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
           updated_at?: string;
         };
         Update: {
+          approval_status?: string;
           created_at?: string;
           default_anonymous?: boolean;
           display_name?: string | null;
           id?: string;
           locale?: string;
+          review_note?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
           updated_at?: string;
         };
         Relationships: [];
       };
       email_deliveries: {
         Row: {
+          about_user_id: string | null;
           error: string | null;
           id: number;
           kind: string;
@@ -253,6 +266,7 @@ export type Database = {
           status: string;
         };
         Insert: {
+          about_user_id?: string | null;
           error?: string | null;
           id?: never;
           kind: string;
@@ -263,6 +277,7 @@ export type Database = {
           status: string;
         };
         Update: {
+          about_user_id?: string | null;
           error?: string | null;
           id?: never;
           kind?: string;
@@ -732,6 +747,7 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
+      donor_contact: { Args: { p_user_id: string }; Returns: string };
       record_audit: {
         Args: {
           p_action: string;
@@ -750,6 +766,10 @@ export type Database = {
           p_status: string;
           p_user_id?: string;
         };
+        Returns: undefined;
+      };
+      review_donor_account: {
+        Args: { p_decision: string; p_note?: string; p_user_id: string };
         Returns: undefined;
       };
     };

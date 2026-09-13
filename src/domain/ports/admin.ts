@@ -3,6 +3,7 @@ import type {
   BudgetItemAdminRecord,
   Campaign,
   ContributionAdminRecord,
+  DonorAccountAdminRecord,
   ExpenseAdminRecord,
   ExpenseCategory,
   ExpenseReceiptRecord,
@@ -161,6 +162,19 @@ export interface AdminPaymentMethodPort {
   setMethodPublished(input: { id: string; publishedAt: string | null }): Promise<void>;
 }
 
+// ── Cuentas del público ─────────────────────────────────────────────────────
+
+export interface AdminDonorPort {
+  listAccounts(): Promise<readonly DonorAccountAdminRecord[]>;
+  reviewAccount(input: {
+    userId: string;
+    decision: "approved" | "declined";
+    note: string | null;
+  }): Promise<void>;
+  /** El correo, o nulo si esta sesión no puede leer donantes. */
+  contactOf(userId: string): Promise<string | null>;
+}
+
 // ── Auditoría ───────────────────────────────────────────────────────────────
 
 export interface AuditEntry {
@@ -215,6 +229,7 @@ export interface AdminGateway {
   readonly updates: AdminUpdatePort;
   readonly milestones: AdminMilestonePort;
   readonly paymentMethods: AdminPaymentMethodPort;
+  readonly donors: AdminDonorPort;
   readonly audit: AuditPort;
   readonly roles: AdminRolePort;
 }

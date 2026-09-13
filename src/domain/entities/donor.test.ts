@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   ANONYMOUS_BY_DEFAULT,
   canAppearNamed,
+  canReserve,
   displayNameOf,
   normalizeDisplayName,
   type DonorProfile,
@@ -14,6 +15,7 @@ function profile(overrides: Partial<DonorProfile> = {}): DonorProfile {
     displayName: null,
     locale: "es",
     defaultAnonymous: true,
+    approvalStatus: "pending",
     ...overrides,
   };
 }
@@ -72,6 +74,17 @@ describe("canAppearNamed", () => {
     expect(canAppearNamed(profile({ displayName: "   ", defaultAnonymous: false }))).toBe(
       false,
     );
+  });
+});
+
+describe("canReserve", () => {
+  it("una cuenta nueva no reserva: confirmar el correo no es habilitación", () => {
+    expect(canReserve(profile())).toBe(false);
+    expect(canReserve(profile({ approvalStatus: "declined" }))).toBe(false);
+  });
+
+  it("sólo la cuenta habilitada por el equipo puede reservar", () => {
+    expect(canReserve(profile({ approvalStatus: "approved" }))).toBe(true);
   });
 });
 

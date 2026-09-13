@@ -3,7 +3,7 @@ import { z } from "zod";
 import { paragraphs, phrase } from "./primitives";
 
 /**
- * El texto de los correos que arma la aplicación (ADR-028, ADR-032).
+ * El texto de los correos que arma la aplicación (ADR-028, ADR-033).
  *
  * Los tres de identidad —confirmar la cuenta, recuperar la contraseña, cambiar de
  * dirección— **no están acá y no pueden estar**: los manda el servidor de Auth

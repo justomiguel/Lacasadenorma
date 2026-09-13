@@ -22,23 +22,37 @@ class FakeAccountPort implements AccountPort {
     return this.profile;
   }
 
-  async ensureOwnProfile(fallbackLocale: "es" | "en"): Promise<DonorProfile> {
+  async ensureOwnProfile(fallbackLocale: "es" | "en"): Promise<{
+    profile: DonorProfile;
+    created: boolean;
+  }> {
     this.raiseIfAsked();
 
-    this.profile ??= {
+    if (this.profile !== null) {
+      return { profile: this.profile, created: false };
+    }
+
+    this.profile = {
       userId: "00000000-0000-4000-8000-000000000001",
       displayName: null,
       locale: fallbackLocale,
       defaultAnonymous: true,
+      approvalStatus: "pending",
     };
 
-    return this.profile;
+    return { profile: this.profile, created: true };
   }
 
-  async saveOwnProfile(next: Omit<DonorProfile, "userId">): Promise<DonorProfile> {
+  async saveOwnProfile(
+    next: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
+  ): Promise<DonorProfile> {
     this.raiseIfAsked();
 
-    this.profile = { userId: "00000000-0000-4000-8000-000000000001", ...next };
+    this.profile = {
+      userId: "00000000-0000-4000-8000-000000000001",
+      approvalStatus: this.profile?.approvalStatus ?? "pending",
+      ...next,
+    };
 
     return this.profile;
   }
@@ -88,6 +102,7 @@ describe("getOwnAccount", () => {
         displayName: null,
         locale: "en",
         defaultAnonymous: true,
+        approvalStatus: "pending",
       },
     });
   });
@@ -111,6 +126,42 @@ describe("getOwnAccount", () => {
 
     expect(result).toEqual({ status: "error", code: "failed", field: null });
   });
+
+  it("al nacer avisa, y si el aviso falla la cuenta igual queda", async () => {
+    const opened: DonorProfile[] = [];
+    const depsConAviso: AccountDeps = {
+      ...deps(),
+      onAccountOpened: async (profile) => {
+        opened.push(profile);
+      },
+    };
+
+    const result = await getOwnAccount(depsConAviso, "es");
+
+    expect(result.status).toBe("ok");
+    expect(opened).toHaveLength(1);
+    expect(opened[0]?.approvalStatus).toBe("pending");
+
+    const segunda = await getOwnAccount(depsConAviso, "es");
+
+    expect(segunda.status).toBe("ok");
+    expect(opened).toHaveLength(1);
+  });
+
+  it("si el aviso falla, la cuenta igual queda", async () => {
+    const result = await getOwnAccount(
+      {
+        ...deps(),
+        onAccountOpened: async () => {
+          throw new Error("resend caído");
+        },
+      },
+      "es",
+    );
+
+    expect(result.status).toBe("ok");
+    expect(port.profile?.approvalStatus).toBe("pending");
+  });
 });
 
 describe("updateOwnProfile", () => {
@@ -128,6 +179,7 @@ describe("updateOwnProfile", () => {
         displayName: "Vecina de la cuadra",
         locale: "es",
         defaultAnonymous: false,
+        approvalStatus: "pending",
       },
     });
   });
@@ -146,6 +198,7 @@ describe("updateOwnProfile", () => {
         displayName: null,
         locale: "es",
         defaultAnonymous: true,
+        approvalStatus: "pending",
       },
     });
   });

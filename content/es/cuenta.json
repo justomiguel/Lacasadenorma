@@ -87,7 +87,18 @@
     "delete": "Borrar la cuenta",
     "deleting": "Borrando…",
     "unavailableTitle": "Esta parte todavía no está conectada",
-    "unavailableBody": "Las cuentas necesitan la base de datos de la campaña, y este despliegue todavía no la tiene configurada. El resto del sitio funciona."
+    "unavailableBody": "Las cuentas necesitan la base de datos de la campaña, y este despliegue todavía no la tiene configurada. El resto del sitio funciona.",
+    "pendingTitle": "El equipo está revisando tu pedido",
+    "pendingBody": [
+      "Confirmaste el correo, y eso alcanzó para crear la cuenta. Reservar materiales espera a que el equipo la habilite: te va a llegar un correo.",
+      "Mientras tanto podés elegir cómo aparecer, o borrar la cuenta si te arrepentís."
+    ],
+    "declinedTitle": "Esta vez no se habilitó la cuenta",
+    "declinedBody": [
+      "El equipo revisó el pedido y esta vez no habilitó la cuenta. No se va a reservar nada a tu nombre.",
+      "Si fue un error, respondé el correo que te mandamos. La cuenta se puede borrar desde acá."
+    ],
+    "approvedNote": "Tu cuenta está habilitada. Cuando el catálogo esté publicado, vas a poder anotar lo que vas a traer."
   },
   "errors": {
     "notConfigured": "Esta parte del sitio todavía no está conectada a la base de la campaña. En cuanto lo esté, se pueden crear cuentas.",

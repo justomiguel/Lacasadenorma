@@ -14,24 +14,22 @@ import type { Locale } from "@/src/i18n/locale";
  * correo.** Convertir `norma.perez@ejemplo.com` en "Norma Pérez" es exactamente
  * el tipo de conveniencia que publica un apellido que nadie pidió publicar.
  */
+export const APPROVAL_STATUSES = ["pending", "approved", "declined"] as const;
+
+export type ApprovalStatus = (typeof APPROVAL_STATUSES)[number];
+
 export interface DonorProfile {
   readonly userId: string;
   readonly displayName: string | null;
   readonly locale: Locale;
   readonly defaultAnonymous: boolean;
+  readonly approvalStatus: ApprovalStatus;
 }
 
-/**
- * El anonimato es el valor por defecto, y está acá como constante para que el
- * default viva en un solo lugar.
- *
- * La columna `default_anonymous` de la base arranca en `true` por la misma
- * razón: si el default fuera "aparecer", una persona que se registra y reserva
- * sin leer ninguna casilla terminaría con su nombre publicado por omisión, y
- * ese consentimiento no es consentimiento (FR-239). Al revés, el costo de
- * equivocarse es que alguien que quería aparecer no aparece hasta que lo pide.
- */
 export const ANONYMOUS_BY_DEFAULT = true;
+
+/** Confirmar el correo no habilita la reserva. Habilitarla es una decisión del equipo (ADR-033). */
+export const PENDING_BY_DEFAULT: ApprovalStatus = "pending";
 
 /**
  * Un nombre son caracteres, no espacios.
@@ -66,4 +64,28 @@ export function displayNameOf(profile: DonorProfile): string | null {
  */
 export function canAppearNamed(profile: DonorProfile): boolean {
   return !profile.defaultAnonymous && displayNameOf(profile) !== null;
+}
+
+/** Reservar material pide una cuenta habilitada, no sólo una sesión. */
+export function canReserve(profile: DonorProfile): boolean {
+  return profile.approvalStatus === "approved";
+}
+
+export function isApprovalStatus(value: unknown): value is ApprovalStatus {
+  return (
+    typeof value === "string" && (APPROVAL_STATUSES as readonly string[]).includes(value)
+  );
+}
+
+/** Lo que el backoffice muestra de una cuenta del público. El correo viene de donor_contact(). */
+export interface DonorAccountAdminRecord {
+  readonly userId: string;
+  readonly email: string | null;
+  readonly displayName: string | null;
+  readonly locale: Locale;
+  readonly defaultAnonymous: boolean;
+  readonly approvalStatus: ApprovalStatus;
+  readonly createdAt: string;
+  readonly reviewedAt: string | null;
+  readonly reviewNote: string | null;
 }

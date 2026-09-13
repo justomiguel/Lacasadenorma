@@ -43,3 +43,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [030](./030-muro-por-privilegio-de-columna.md) | El muro se expone por privilegio de columna, y borrar la cuenta anonimiza | Aceptada |
 | [031](./031-donacion-en-especie-no-es-plata.md) | Una donación en especie no entra en el libro | Aceptada |
 | [032](./032-relato-mobile-editorial.md) | El relato mobile editorial: fotografía, aire y tres familias de acción | Aceptada |
+| [033](./033-aprobacion-de-cuentas.md) | Una cuenta del público no reserva nada hasta que el equipo la habilita | Aceptada |

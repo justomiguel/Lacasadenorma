@@ -1,5 +1,6 @@
 import type { AccountDeps } from "@/src/application/accounts/own-account";
 
+import { notifyAccountOpened } from "./notify";
 import { readViewer } from "../auth/viewer";
 import { logger } from "../logging/logger";
 import { createAccountPort } from "../supabase/accounts-port";
@@ -28,5 +29,9 @@ export async function getAccountDeps(): Promise<AccountDeps> {
     return { session: { status: "anonymous" }, logger };
   }
 
-  return { session: { status: "ready", port: createAccountPort(client) }, logger };
+  return {
+    session: { status: "ready", port: createAccountPort(client) },
+    logger,
+    onAccountOpened: notifyAccountOpened,
+  };
 }

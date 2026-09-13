@@ -53,6 +53,12 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
     description: "Los datos bancarios que se publican para transferir.",
   },
   {
+    href: "/admin/donantes",
+    label: "Donantes",
+    permission: "donaciones.leer",
+    description: "Habilitar cuentas del público y ver quién se ofreció a traer algo.",
+  },
+  {
     href: "/admin/auditoria",
     label: "Auditoría",
     permission: "auditoria.leer",

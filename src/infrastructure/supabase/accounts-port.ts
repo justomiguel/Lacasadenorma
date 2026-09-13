@@ -1,4 +1,8 @@
-import { ANONYMOUS_BY_DEFAULT, type DonorProfile } from "@/src/domain/entities/donor";
+import {
+  ANONYMOUS_BY_DEFAULT,
+  isApprovalStatus,
+  type DonorProfile,
+} from "@/src/domain/entities/donor";
 import type { AccountPort } from "@/src/domain/ports/accounts";
 import { isLocale, type Locale } from "@/src/i18n/locale";
 
@@ -17,7 +21,7 @@ import type { ServerSupabaseClient } from "./server-client";
  * Las policies siguen siendo la frontera. Esto es la capa que hace que la
  * consulta legítima funcione y que un error tenga un mensaje.
  */
-const PROFILE_COLUMNS = "id, display_name, locale, default_anonymous";
+const PROFILE_COLUMNS = "id, display_name, locale, default_anonymous, approval_status";
 
 export function createAccountPort(client: ServerSupabaseClient): AccountPort {
   async function requireUserId(): Promise<string> {
@@ -67,11 +71,13 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
      * `ignoreDuplicates` el choque no es un error, que es lo correcto: el estado
      * final es el mismo que se pedía.
      */
-    async ensureOwnProfile(fallbackLocale: Locale): Promise<DonorProfile> {
+    async ensureOwnProfile(
+      fallbackLocale: Locale,
+    ): Promise<{ profile: DonorProfile; created: boolean }> {
       const existing = await readOwnProfile();
 
       if (existing !== null) {
-        return existing;
+        return { profile: existing, created: false };
       }
 
       const userId = await requireUserId();
@@ -94,13 +100,9 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
       }
 
       if (data !== null) {
-        return mapProfile(data);
+        return { profile: mapProfile(data), created: true };
       }
 
-      // Con `ignoreDuplicates`, no devolver nada significa que no insertó: la fila
-      // la acaba de crear la otra pestaña. Se relee, que es lo correcto —el estado
-      // final es el que se pedía— y es también el único caso en que hace falta una
-      // segunda consulta.
       const existente = await readOwnProfile();
 
       if (existente === null) {
@@ -109,10 +111,12 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
         });
       }
 
-      return existente;
+      return { profile: existente, created: false };
     },
 
-    async saveOwnProfile(next: Omit<DonorProfile, "userId">): Promise<DonorProfile> {
+    async saveOwnProfile(
+      next: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
+    ): Promise<DonorProfile> {
       const userId = await requireUserId();
 
       const { data, error } = await client
@@ -157,6 +161,7 @@ interface ProfileRow {
   display_name: string | null;
   locale: string;
   default_anonymous: boolean;
+  approval_status: string;
 }
 
 /**
@@ -170,5 +175,8 @@ function mapProfile(row: ProfileRow): DonorProfile {
     displayName: row.display_name,
     locale: isLocale(row.locale) ? row.locale : "es",
     defaultAnonymous: row.default_anonymous,
+    approvalStatus: isApprovalStatus(row.approval_status)
+      ? row.approval_status
+      : "pending",
   };
 }

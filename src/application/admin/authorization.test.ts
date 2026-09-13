@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
+import { reviewDonorAccount } from "./donors";
 import { recordExpense } from "./expenses";
 import { savePaymentMethod } from "./payment-methods";
 import { saveUpdate } from "./updates";
@@ -69,6 +70,22 @@ describe("autorización", () => {
     });
 
     expect(result.status).toBe("ok");
+  });
+
+  it("rechaza a un editor que intenta habilitar una cuenta del público", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const result = await reviewDonorAccount(
+      editor,
+      {
+        userId: "20000000-0000-4000-8000-000000000006",
+        decision: "approved",
+        locale: "es",
+      },
+      null,
+    );
+
+    expect(result.status).toBe("rejected");
+    expect(fake.calls).toEqual([]);
   });
 
   it("deja pasar a un editor en contenido", async () => {
