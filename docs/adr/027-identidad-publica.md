@@ -54,6 +54,28 @@ La segunda mitad de la compuerta es la matriz: `supabase/tests/030-matriz-de-per
 tabla y toda operación, igual que a los cuatro roles internos. La matriz ya existe y ya cubre 894
 líneas de combinaciones; agregar la sexta persona es sumarle una columna a algo que ya funciona.
 
+### Lo que la matriz dijo cuando se corrió
+
+La propiedad que queda verificada **no es** "una cuenta del público no ve nada". Es más precisa y hay
+que escribirla bien, porque es la que se va a citar como garantía:
+
+> Sobre todo lo de la feature 001, una cuenta del público ve **exactamente lo mismo** que alguien sin
+> cuenta, y no escribe nada.
+
+Las policies internas están escritas como `published_at is not null or private.has_min_role('auditor')`,
+así que a una cuenta nueva le dan lo publicado —que ya es público— y nada más. La aserción compara la
+columna de `donante` contra la de `anon` **fila por fila** en lugar de repetir a mano una lista que
+puede envejecer: el día que alguien escriba una policy que le dé a `authenticated` algo que `anon` no
+tiene, aparece ahí sin que nadie se haya acordado de agregar una prueba.
+
+Y una lección sobre las compuertas en general. La aserción que verifica que `auth.*()` esté envuelta
+en un subselect existía desde la feature 001 y **nunca se había ejercido**, porque hasta
+`donor_profiles` ninguna policy del proyecto llamaba a `auth.*()` directamente: todas pasaban por
+`private.has_min_role()`. Su patrón estaba incompleto —`pg_policies` devuelve el árbol deparseado y
+Postgres le agrega la etiqueta de la columna, `( SELECT auth.uid() AS uid)`— así que las cuatro
+policies nuevas, escritas de la forma correcta, aparecían como violaciones. Una compuerta que nunca
+vio un caso legítimo no está verificada: está esperando.
+
 ## Alternativas descartadas
 
 | Alternativa | Por qué no |

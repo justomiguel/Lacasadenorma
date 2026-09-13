@@ -377,8 +377,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   nombre en menos de tres minutos, contando el registro y la confirmación del correo.
 - **SC-202**: En ninguna circunstancia quedan comprometidas más unidades que las necesarias,
   verificado con una prueba que ejecuta dos reservas concurrentes sobre el último ejemplar.
-- **SC-203**: Una sesión del público no puede leer ni escribir nada fuera de su propio perfil y sus
-  propias reservas, verificado automáticamente sobre **toda** tabla y **toda** operación.
+- **SC-203**: Una sesión del público no puede escribir nada fuera de su propio perfil y sus propias
+  reservas, y no puede leer nada que un visitante sin sesión no pueda leer, verificado
+  automáticamente sobre **toda** tabla y **toda** operación.
 - **SC-204**: Ninguna página pública contiene el correo ni el identificador de ninguna cuenta,
   verificado sobre el HTML servido.
 - **SC-205**: Una donación anónima no aparece en ninguna respuesta pública, verificado

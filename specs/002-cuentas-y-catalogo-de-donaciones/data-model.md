@@ -210,7 +210,7 @@ leer con atención, porque es la que antes no existía.
 | `email_deliveries` | nada | nada | leer | nada | leer | leer |
 | `donation_catalog` (vista) | leer | leer | leer | leer | leer | leer |
 | `donation_wall` (vista) | leer | leer | leer | leer | leer | leer |
-| Todo lo de la feature 001 | como estaba | **nada** | como estaba | como estaba | como estaba | como estaba |
+| Todo lo de la feature 001 | como estaba | **lo mismo que `anon`, y nada de escritura** | como estaba | como estaba | como estaba | como estaba |
 
 Cuatro decisiones que hay que notar:
 
@@ -221,9 +221,22 @@ Cuatro decisiones que hay que notar:
   **`private.can_read_donors()`**, con la misma forma que `can_read_ledger()` y por la misma razón.
 - **`donante` no ve las reservas de otra gente**, ni siquiera las publicables con sus columnas
   completas: su policy le da las propias, y lo público lo ve por la vista como cualquiera.
-- **`donante` no tiene absolutamente nada** sobre las tablas de la feature 001. Ahí no hace falta
-  policy nueva: las que hay piden rol interno y no lo tiene. Lo que hace falta es **probarlo**, y eso
-  es la persona `donante` agregada a `030-matriz-de-permisos.sql`.
+- **`donante` ve sobre la feature 001 exactamente lo que ve `anon`, y no escribe nada.** Ahí no hace
+  falta policy nueva: las que hay piden rol interno y no lo tiene. Lo que hace falta es **probarlo**,
+  y eso es la persona `donante` agregada a `030-matriz-de-permisos.sql`.
+
+  La frase correcta **no es "nada"**, y la diferencia importa. Las policies internas están escritas
+  como `published_at is not null or private.has_min_role('auditor')`, así que a una cuenta del
+  público le dan lo publicado —que ya es público— y nada más. Decir "nada" sería más lindo y sería
+  falso, y una afirmación falsa en este documento es la clase de cosa que después se cita como
+  garantía. La prueba compara la columna de `donante` contra la de `anon` **fila por fila**, en lugar
+  de repetir a mano una lista que puede envejecer: una policy nueva que le dé a `authenticated` algo
+  que `anon` no tiene aparece ahí sola.
+
+  Las cuatro celdas donde `donante` sí difiere de `anon`: en `contributions`, `expense_receipts`,
+  `user_roles` y `audit_log` el veredicto es `nada` y no `sin privilegio`. El `grant` existe —lo
+  necesita `admin`, que es el mismo rol de base de datos— y lo que filtra es la policy. Es **una sola
+  barrera** donde `anon` tiene dos, y por eso está escrito acá en lugar de pasar desapercibido.
 - El `insert` sobre `donation_pledges` **no existe para nadie**. Las reservas las crea
   `claim_donation_item()`, igual que el rastro lo escribe `record_audit()` (ADR-019).
 
