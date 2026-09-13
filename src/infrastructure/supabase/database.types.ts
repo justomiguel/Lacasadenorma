@@ -241,6 +241,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      email_deliveries: {
+        Row: {
+          error: string | null;
+          id: number;
+          kind: string;
+          occurred_at: string;
+          pledge_id: string | null;
+          provider_id: string | null;
+          recipient: string | null;
+          status: string;
+        };
+        Insert: {
+          error?: string | null;
+          id?: never;
+          kind: string;
+          occurred_at?: string;
+          pledge_id?: string | null;
+          provider_id?: string | null;
+          recipient?: string | null;
+          status: string;
+        };
+        Update: {
+          error?: string | null;
+          id?: never;
+          kind?: string;
+          occurred_at?: string;
+          pledge_id?: string | null;
+          provider_id?: string | null;
+          recipient?: string | null;
+          status?: string;
+        };
+        Relationships: [];
+      };
       expense_receipts: {
         Row: {
           created_at: string;
@@ -705,6 +738,17 @@ export type Database = {
           p_diff: Json;
           p_entity_id: string;
           p_entity_table: string;
+        };
+        Returns: undefined;
+      };
+      record_email_delivery: {
+        Args: {
+          p_error?: string;
+          p_kind: string;
+          p_pledge_id: string;
+          p_provider_id?: string;
+          p_status: string;
+          p_user_id?: string;
         };
         Returns: undefined;
       };

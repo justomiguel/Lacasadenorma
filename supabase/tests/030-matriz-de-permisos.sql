@@ -137,6 +137,14 @@ insert into public.audit_log (action, entity_table, entity_id) values
   ('prueba.publica', 'expenses', 'e0000000-0000-4000-8000-000000000001'),
   ('prueba.reservada', 'expenses', 'e0000000-0000-4000-8000-000000000002');
 
+-- `email_deliveries` tampoco tiene `published_at`: un envío no se publica. Las dos
+-- filas son del equipo, y ninguna es de una cuenta de la matriz, así que el
+-- veredicto de lectura sigue siendo cantidad: 0 = nada, 2 = todo. El `insert` es
+-- de superusuario a propósito: ningún rol de la aplicación puede escribir acá.
+insert into public.email_deliveries (kind, pledge_id, recipient, status) values
+  ('pledge.confirmed', null, 'quien.dona@ejemplo.invalid', 'sent'),
+  ('staff.new_pledge', null, null, 'skipped');
+
 -- ── El ejecutor ─────────────────────────────────────────────────────────────
 -- Cambia de rol, fija el JWT igual que lo hace PostgREST por transacción, corre la
 -- sentencia y revierte. El `raise` con el código ZZ001 es el mecanismo de la
@@ -319,7 +327,12 @@ insert into caso (tabla, operacion, sentencia) values
   ('audit_log', 'lectura', $s$select 1 from public.audit_log$s$),
   ('audit_log', 'inserción', $s$insert into public.audit_log (action, entity_table) values ('prueba.nueva', 'expenses')$s$),
   ('audit_log', 'modificación', $s$update public.audit_log set action = 'prueba.alterada' where action = 'prueba.publica'$s$),
-  ('audit_log', 'borrado', $s$delete from public.audit_log where action = 'prueba.reservada'$s$);
+  ('audit_log', 'borrado', $s$delete from public.audit_log where action = 'prueba.reservada'$s$),
+
+  ('email_deliveries', 'lectura', $s$select 1 from public.email_deliveries$s$),
+  ('email_deliveries', 'inserción', $s$insert into public.email_deliveries (kind, recipient, status) values ('pledge.confirmed', 'inyectado@ejemplo.invalid', 'sent')$s$),
+  ('email_deliveries', 'modificación', $s$update public.email_deliveries set status = 'failed' where kind = 'pledge.confirmed'$s$),
+  ('email_deliveries', 'borrado', $s$delete from public.email_deliveries where kind = 'staff.new_pledge'$s$);
 
 -- `donor_profiles` va aparte porque sus tres escrituras apuntan a filas elegidas y
 -- no a la convención de las demás tablas:
@@ -374,6 +387,9 @@ insert into esperado values
   ('anon', 'payment_methods',  'sólo lo publicado', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'user_roles',       'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('anon', 'audit_log',        'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- El registro de envíos guarda direcciones de correo. `anon` no recibe ni el GRANT
+  -- de lectura, igual que en `audit_log`.
+  ('anon', 'email_deliveries', 'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- Un perfil de donante es un dato personal y no tiene nada de público: `anon` no
   -- recibe ni el GRANT de lectura, igual que en `contributions` (I2).
   ('anon', 'donor_profiles',   'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
@@ -413,6 +429,10 @@ insert into esperado values
   ('donante', 'payment_methods',  'sólo lo publicado', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'user_roles',       'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('donante', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Anota por función y no lee: el GRANT de SELECT existe (lo necesita `auditor`,
+  -- que es el mismo rol de base) y la policy pide `can_read_donors()`. Una sola
+  -- barrera, igual que `audit_log`.
+  ('donante', 'email_deliveries', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- Lo único suyo. El borrado es el propio perfil: irse tiene que poder hacerse sin
   -- pedirle permiso a nadie (FR-208).
   ('donante', 'donor_profiles',   'sólo la propia',    'denegado (RLS)', 'denegado (RLS)', 'permitido');
@@ -442,6 +462,9 @@ insert into esperado values
   -- no por policy, que es la forma más fuerte. Es la garantía de T2, y el agregado por
   -- función se verifica más abajo, en su propia sección.
   ('auditor', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Lee el registro de envíos para que un correo que no salió sea visible. No
+  -- escribe: la única vía es `record_email_delivery()`.
+  ('auditor', 'email_deliveries', 'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- `auditor` lee los perfiles por `private.can_read_donors()` y no escribe ninguno:
   -- verificar quién donó qué es parte de verificar la campaña, y sigue siendo
   -- lectura sin escritura (E2).
@@ -478,6 +501,9 @@ insert into esperado values
   -- policy de select pide `can_read_ledger()`. Escritura sin lectura es la forma
   -- correcta para un rol que no toca plata (ADR-019).
   ('editor', 'audit_log',        'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Misma forma que `donor_profiles`: el GRANT existe y `can_read_donors()` no lo
+  -- incluye. Con `has_min_role('auditor')` esta celda diría 'todo'.
+  ('editor', 'email_deliveries', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- **La celda de esta feature que más importa.** `editor` administra el catálogo
   -- —qué falta, cuánto, con qué foto— y no ve un solo nombre de quien se comprometió
   -- a traerlo. Da 'nada' y no 'sin privilegio' por el mismo motivo que
@@ -506,6 +532,7 @@ insert into esperado values
   ('admin', 'payment_methods',  'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('admin', 'user_roles',       'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   ('admin', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  ('admin', 'email_deliveries', 'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   -- Ni `admin` ni `owner` escriben un perfil ajeno. Un nombre público lo elige su
   -- dueña, y que el equipo pueda leerlo para coordinar una entrega no implica que
   -- pueda cambiarlo: el rol interno no sustituye a la propiedad (FR-230).
@@ -528,6 +555,7 @@ insert into esperado values
   ('owner', 'payment_methods',  'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'user_roles',       'todo', 'permitido', 'permitido',      'permitido'),
   ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  ('owner', 'email_deliveries', 'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('owner', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)');
 
 -- ── Antes de medir: que lo medido sea lo que se cree ────────────────────────
@@ -784,11 +812,11 @@ select is_empty(
       from observado
      where rol = 'editor'
        and operacion = 'lectura'
-       and tabla in ('contributions', 'expense_receipts', 'audit_log')
+       and tabla in ('contributions', 'expense_receipts', 'audit_log', 'email_deliveries')
        and veredicto <> 'nada'
      order by 1
   $q$,
-  'editor no lee ni un aporte, ni un comprobante, ni una línea del registro de auditoría (E1)'
+  'editor no lee ni un aporte, ni un comprobante, ni una línea del registro de auditoría, ni un envío de correo (E1)'
 );
 
 select is_empty(

@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(17);
+select plan(33);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -305,6 +305,202 @@ select throws_ok(
 
 reset role;
 set local "request.jwt.claims" = '';
+
+-- ── El registro de envíos ───────────────────────────────────────────────────
+-- `email_deliveries` guarda a qué dirección se intentó mandar cada correo, y eso
+-- la convierte en un índice de direcciones de correo de gente que donó. Dos cosas
+-- tienen que ser verdad, y las dos se prueban acá porque ninguna se ve leyendo la
+-- migración:
+--
+--   1. **Quien anota no elige el destinatario.** La función lo resuelve por dentro
+--      desde `auth.users` (ADR-028). Si aceptara la dirección por parámetro, el
+--      registro de envíos sería un lugar donde una cuenta del público puede
+--      escribir la dirección de otra persona, o descubrirla por diferencia.
+--   2. **Quien anota no lee.** Una cuenta del público registra su propio envío y no
+--      puede leer ni esa fila. Es la misma forma que `audit_log`: `editor` escribe
+--      en el rastro y no lo lee (ADR-019), acá quien dona anota y no lee.
+
+select has_table(
+  'public', 'email_deliveries',
+  'existe el registro de envíos: un correo que no salió tiene que quedar en algún lado (ADR-028)'
+);
+
+-- Igual que `audit_log`: la ausencia de policy **es** la garantía. Nada de lo que
+-- se intentó mandar se corrige ni se borra después, ni por `owner`.
+select is_empty(
+  $q$
+    select policyname::text
+      from pg_policies
+     where schemaname = 'public'
+       and tablename = 'email_deliveries'
+       and cmd in ('INSERT', 'UPDATE', 'DELETE', 'ALL')
+  $q$,
+  'email_deliveries no tiene policy de insert, update ni delete: se agrega por función y no se corrige nunca'
+);
+
+-- TRUNCATE ignora RLS, así que la lista entera de privilegios dice más que la
+-- ausencia de una policy. Es la misma aserción que protege `audit_log`.
+select table_privs_are(
+  'public', 'email_deliveries', 'authenticated',
+  array['SELECT'],
+  'authenticated sobre email_deliveries tiene exactamente SELECT: la escritura pasa por record_email_delivery()'
+);
+
+select table_privs_are(
+  'public', 'email_deliveries', 'anon',
+  array[]::text[],
+  'anon no tiene ningún privilegio sobre el registro de envíos: sin sesión no hay correo que consultar'
+);
+
+select has_function(
+  'public', 'record_email_delivery',
+  array['text', 'uuid', 'text', 'text', 'text', 'uuid'],
+  'la única vía de escritura del registro de envíos, y no recibe la dirección de destino (ADR-028)'
+);
+
+select function_privs_are(
+  'public', 'record_email_delivery',
+  array['text', 'uuid', 'text', 'text', 'text', 'uuid'],
+  'anon', array[]::text[],
+  'y anon no puede invocarla: Postgres otorga EXECUTE a PUBLIC en toda función nueva y esta migración lo revoca (E3)'
+);
+
+-- ── Anotar lo propio, sin nombrar a nadie ───────────────────────────────────
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000001", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $s$
+    select public.record_email_delivery(
+      'pledge.confirmed', '30000000-0000-4000-8000-000000000001', 'sent', 're_abc123', null
+    )
+  $s$,
+  'una cuenta del público registra el envío de su propia confirmación de reserva'
+);
+
+-- La misma sesión, y ni su propia fila. `email_deliveries` es operativo: quien dona
+-- ve sus reservas en `/cuenta`, no el detalle de qué se le intentó mandar.
+select is_empty(
+  $q$ select id from public.email_deliveries $q$,
+  'y no puede leer ni la fila que acaba de escribir: anota sin leer, como editor en el rastro de auditoría'
+);
+
+select throws_ok(
+  $s$
+    select public.record_email_delivery(
+      'pledge.confirmed', '30000000-0000-4000-8000-000000000002', 'sent', 're_def456', null,
+      '20000000-0000-4000-8000-000000000002'
+    )
+  $s$,
+  '42501',
+  null,
+  'y no puede anotarle un envío a otra cuenta: apuntar a alguien más pide can_read_donors() (ADR-028)'
+);
+
+-- El aviso al equipo no tiene destinatario en la base, y eso es exacto: la
+-- dirección del equipo vive en `EMAIL_STAFF_ADDRESS`, en el entorno del servidor.
+-- Anotar ahí una dirección sería copiar un dato de configuración a una tabla.
+select lives_ok(
+  $s$
+    select public.record_email_delivery(
+      'staff.new_pledge', '30000000-0000-4000-8000-000000000001', 'skipped', null, null
+    )
+  $s$,
+  'el aviso al equipo se anota igual, y sin destinatario: esa dirección es del entorno y no de la base'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+-- La dirección la resolvió la función. Quien llamó nunca la escribió, y esta
+-- aserción es la única forma de comprobarlo: compara lo guardado contra
+-- `auth.users`, que es de donde tenía que salir.
+select results_eq(
+  $q$
+    select d.kind, d.recipient, d.status
+      from public.email_deliveries d
+     where d.pledge_id = '30000000-0000-4000-8000-000000000001'
+     order by d.kind
+  $q$,
+  $q$
+    values ('pledge.confirmed'::text, 'quien.dona@ejemplo.invalid'::text, 'sent'::text),
+           ('staff.new_pledge'::text, null::text, 'skipped'::text)
+  $q$,
+  'la dirección guardada es la de auth.users de quien llamó, y la del aviso al equipo es nula (ADR-028)'
+);
+
+-- La segunda capa de idempotencia, la que no vence. La clave de Resend dura 24
+-- horas y el proceso de recordatorios corre todos los días: a las 25 horas ya no
+-- frenaría nada (FR-235, SC-210). Esto sí.
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000001", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $s$
+    select public.record_email_delivery(
+      'pledge.confirmed', '30000000-0000-4000-8000-000000000001', 'sent', 're_otra_vez', null
+    )
+  $s$,
+  '23505',
+  null,
+  'el mismo correo no se puede anotar dos veces como enviado para la misma reserva: la deduplicación permanente es un índice, no una convención (FR-235)'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+-- Quién sí lee: los tres roles de `can_read_donors()`. Se prueba con `auditor`
+-- porque es el que la función incluye y el rango **no** incluiría: `editor` es
+-- rango 2 y `auditor` rango 1, así que un `has_min_role('auditor')` acá le habría
+-- abierto a `editor` las direcciones de correo de quienes donaron.
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000005", "role": "authenticated",
+    "app_metadata": {"user_role": "auditor"}}';
+
+select is(
+  (select count(*)::int from public.email_deliveries),
+  2,
+  'auditor lee el registro de envíos: para eso existe, para que un correo que no salió sea visible en el backoffice'
+);
+
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000005", "role": "authenticated",
+    "app_metadata": {"user_role": "editor"}}';
+
+select is(
+  (select count(*)::int from public.email_deliveries),
+  0,
+  'y editor no lee ninguna: administra el catálogo y no accede a una dirección de correo (ADR-027)'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
+-- La restricción, atacada desde donde no hay policy que la tape. Un `insert` de
+-- superusuario es el peor caso real: una migración futura, un script de mantenimiento.
+select throws_ok(
+  $s$
+    insert into public.email_deliveries (kind, pledge_id, recipient, status)
+    values ('staff.new_pledge', '30000000-0000-4000-8000-000000000003', 'equipo@ejemplo.invalid', 'sent')
+  $s$,
+  '23514',
+  null,
+  'ni un insert de superusuario puede ponerle destinatario al aviso al equipo: la dirección del equipo no se guarda'
+);
+
+select throws_ok(
+  $s$
+    insert into public.email_deliveries (kind, pledge_id, recipient, status)
+    values ('pledge.reminder', '30000000-0000-4000-8000-000000000003', null, 'sent')
+  $s$,
+  '23514',
+  null,
+  'y un correo a una persona no se anota sin destinatario: un registro de envíos sin a quién no sirve para nada'
+);
 
 select * from finish();
 rollback;
