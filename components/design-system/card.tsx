@@ -3,25 +3,27 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "./cn";
-import type { Photograph } from "./photo";
+import type { Photograph, PhotoRatio } from "./photo";
+
+const CROP_CLASS: Record<PhotoRatio, string> = {
+  portrait: "aspect-portrait",
+  landscape: "aspect-landscape",
+  wide: "aspect-wide",
+  square: "aspect-square",
+  card: "aspect-card",
+};
 
 /**
  * Vista previa de otra página, como tarjeta.
  *
- * Una vista previa es una puerta: tiene que verse **dónde empieza y dónde
- * termina**, y tiene que ser evidente que toda ella lleva a algún lado. Antes las
- * previas del sitio eran prosa suelta con un enlace subrayado al final, y se
- * confundían con el texto que las rodeaba. Ésta es la única tarjeta del sistema
- * con enlace: borde de regla, fondo propio, foto recortada a una proporción fija
- * para que una fila de tarjetas quede pareja, y una línea de acción al pie que
- * dice a dónde va.
+ * Una vista previa es una puerta: se ve dónde empieza y dónde termina, y toda
+ * ella lleva a un solo lugar. El título es un encabezado real porque una lista
+ * de tarjetas es una lista de entradas.
  *
- * Sin sombra: el borde y el cambio de superficie alcanzan para delimitarla, y la
- * sombra difusa es el rasgo que vuelve a cualquier tarjeta un kit de SaaS.
- *
- * El título es un encabezado real —`h2` en un índice, `h3` dentro de una
- * sección— porque una lista de tarjetas es una lista de entradas, y así se
- * navega con un lector de pantalla.
+ * Si hay foto, va recortada a una proporción fija para que una fila quede
+ * pareja. Si no hay —una novedad sin imagen, una página que todavía no eligió
+ * retrato— el hueco se reserva: no se pone stock ni una ilustración. Sin sombra:
+ * el borde y el cambio de superficie alcanzan.
  */
 export function PreviewCard({
   href,
@@ -30,6 +32,8 @@ export function PreviewCard({
   summary,
   action,
   media,
+  crop = "card",
+  layout = "stack",
   sizes = "(min-width: 64rem) 30vw, (min-width: 40rem) 50vw, 100vw",
   as: Heading = "h3",
   lang,
@@ -42,34 +46,59 @@ export function PreviewCard({
   summary?: string;
   action: string;
   media?: Photograph | null;
+  crop?: PhotoRatio;
+  /** `split` pone la foto al lado del texto en escritorio: la previa de Norma. */
+  layout?: "stack" | "split";
   sizes?: string;
   as?: "h2" | "h3";
   lang?: string;
   className?: string;
   children?: ReactNode;
 }) {
+  const split = layout === "split";
+  const photo = media === undefined || media === null ? null : media;
+
   return (
     <Link
       href={href}
       className={cn(
-        "lift-hover group flex min-w-0 flex-col overflow-hidden rounded-md border border-rule bg-paper text-ink transition-colors duration-fast hover:border-forest",
+        "lift-hover group flex min-w-0 overflow-hidden rounded-md border border-rule bg-paper text-ink transition-colors duration-fast hover:border-forest",
+        split ? "flex-col lg:flex-row" : "flex-col",
         className,
       )}
     >
-      {media === undefined || media === null ? null : (
-        <div className="aspect-card w-full overflow-hidden border-b border-rule bg-paper-sunk">
+      {photo === null ? (
+        <div
+          className={cn(
+            "w-full bg-paper-sunk",
+            split
+              ? "aspect-landscape lg:aspect-portrait lg:w-5/12 lg:shrink-0"
+              : CROP_CLASS[crop],
+          )}
+          aria-hidden="true"
+        />
+      ) : (
+        <div
+          className={cn(
+            "relative overflow-hidden bg-paper-sunk",
+            split
+              ? "aspect-landscape w-full lg:aspect-portrait lg:w-5/12 lg:shrink-0"
+              : cn("w-full border-b border-rule", CROP_CLASS[crop]),
+          )}
+        >
           <Image
-            src={media.url}
-            alt={media.alt}
-            width={media.width}
-            height={media.height}
+            src={photo.url}
+            alt={photo.alt}
+            width={photo.width}
+            height={photo.height}
             sizes={sizes}
+            quality={80}
             className="h-full w-full object-cover"
           />
         </div>
       )}
       <div
-        className="flex flex-1 flex-col p-lg"
+        className="flex flex-1 flex-col p-lg lg:p-xl"
         {...(lang === undefined ? {} : { lang })}
       >
         {eyebrow === undefined ? null : (

@@ -1,5 +1,5 @@
+import { ogImageFrom, previewPhotoFor } from "@/components/campaign/preview-photo";
 import { Unavailable } from "@/components/campaign/unavailable";
-import { InlineLink } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { PreviewCard } from "@/components/design-system/card";
 import { Container, Section } from "@/components/design-system/layout";
@@ -18,12 +18,14 @@ export const revalidate = 300;
 
 export function newsIndexMetadata(locale: Locale) {
   const { ui } = getContent(locale);
+  const image = ogImageFrom("/novedades", locale);
 
   return pageMetadata({
     locale,
     title: ui.news.title,
     description: ui.news.seoDescription,
     path: "/novedades",
+    ...(image === undefined ? {} : { image }),
   });
 }
 
@@ -36,24 +38,43 @@ export function newsIndexMetadata(locale: Locale) {
  * eso vale también cuando la campaña está conectada y todavía no publicó nada.
  */
 function QueEsElDiario({ locale }: { locale: Locale }) {
-  const { ui } = getContent(locale);
+  const { help, norma, reconstruction, ui } = getContent(locale);
 
   return (
-    <div className="max-w-measure space-y-md text-body">
-      <p>{ui.news.intro}</p>
-      <p className="text-ink-muted">
-        {ui.news.introLinks}{" "}
-        <InlineLink href={localizedHref("/norma", locale)}>{ui.news.whoWas}</InlineLink>
-        {", "}
-        <InlineLink href={localizedHref("/reconstruccion", locale)}>
-          {ui.news.whatToRebuild}
-        </InlineLink>{" "}
-        {ui.news.introAnd}{" "}
-        <InlineLink href={localizedHref("/ayudar", locale)}>
-          {ui.news.howToHelp}
-        </InlineLink>
-        .
-      </p>
+    <div className="space-y-xl">
+      <div className="max-w-measure space-y-md text-body">
+        <p>{ui.news.intro}</p>
+        <p className="text-ink-muted">{ui.news.introLinks}</p>
+      </div>
+      <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        <li className="flex min-w-0">
+          <PreviewCard
+            className="w-full"
+            href={localizedHref("/norma", locale)}
+            title={norma.knownAs ?? norma.fullName}
+            action={ui.home.seeNorma}
+            media={previewPhotoFor("/norma", locale)}
+          />
+        </li>
+        <li className="flex min-w-0">
+          <PreviewCard
+            className="w-full"
+            href={localizedHref("/reconstruccion", locale)}
+            title={reconstruction.title}
+            action={ui.home.seeWork}
+            media={previewPhotoFor("/reconstruccion", locale)}
+          />
+        </li>
+        <li className="flex min-w-0">
+          <PreviewCard
+            className="w-full"
+            href={localizedHref("/ayudar", locale)}
+            title={help.title}
+            action={ui.helpCta}
+            media={previewPhotoFor("/ayudar", locale)}
+          />
+        </li>
+      </ul>
     </div>
   );
 }

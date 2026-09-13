@@ -19,6 +19,28 @@ describe("pageMetadata", () => {
     });
     expect(es.openGraph?.locale).toBe("es_AR");
     expect(es.openGraph?.alternateLocale).toEqual(["en_US"]);
+    expect(es.openGraph?.images).toEqual([
+      expect.objectContaining({ url: "/fotos/incendio-bomberos-frente-hero.jpg" }),
+    ]);
+  });
+
+  it("si la página elige foto, esa es la de la vista previa", () => {
+    const meta = pageMetadata({
+      locale: "es",
+      title: "El legado",
+      description: "La intención futura, todavía sin organización constituida.",
+      path: "/legado",
+      image: {
+        url: "/fotos/norma-libro-portada.jpg",
+        width: 1054,
+        height: 1492,
+        alt: "Portada del libro",
+      },
+    });
+
+    expect(meta.openGraph?.images).toEqual([
+      expect.objectContaining({ url: "/fotos/norma-libro-portada.jpg" }),
+    ]);
   });
 
   it("noIndex apaga el rastreo sin sacar la canónica", () => {

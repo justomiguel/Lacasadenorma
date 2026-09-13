@@ -87,11 +87,10 @@ export function ChapterHeading({
 }
 
 /**
- * Cierre de capítulo: la única acción con la que termina cada movimiento.
+ * Cierre de capítulo cuando no hay una página para previsualizar.
  *
- * Antes cada capítulo cerraba con algo distinto —un enlace subrayado chico, un
- * botón, nada—, y no había forma de saber cuál era «el paso siguiente». Ahora
- * todos cierran con la misma pieza: un espacio, y adentro una acción secundaria.
+ * Si el capítulo apunta a otra página, cierra con `PreviewCard`. Esta pieza
+ * queda para un cierre que sólo lleva una acción, sin destino que mostrar.
  */
 export function ChapterEnd({
   children,

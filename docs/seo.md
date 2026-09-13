@@ -23,7 +23,7 @@ concretas están en `content/es/preguntas.json` (y su par en `content/en/`), y e
 El relato de la home ya cubre quién fue Norma, qué es la campaña y dónde queda Riacho He Hé. El
 esquema de contenido admite como máximo tres preguntas.
 
-Se renderizan en la home, en una lista de definiciones, **sin acordeón**. Un acordeón esconde las
+Se renderizan en la home como tarjetas con foto (`PreviewCard`), **sin acordeón**. Un acordeón esconde las
 respuestas detrás de un clic, y una respuesta que hay que abrir es una respuesta que no se extracta.
 `e2e/comun/home.spec.ts` verifica que las preguntas y su primer párrafo estén visibles, **incluso con
 JavaScript desactivado**.
@@ -106,18 +106,11 @@ pero no tiene nada que valga indexar.
 La mayoría de la gente va a llegar desde WhatsApp. Esa es la vista previa que más importa, y la que
 tiene las reglas más rígidas.
 
-`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse`:
+`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse` para la home.
 
-Es tipográfica por una razón concreta y no por estilo: la única foto disponible sería una de Norma o
-de la casa, y una foto recortada a 1200×630 por un algoritmo, superpuesta con texto, en la tarjeta
-que va a circular por WhatsApp, es exactamente el tipo de cosa que puede salir mal de una forma
-irreparable. Un texto compuesto con cuidado nunca se ve indigno.
+Las demás páginas públicas declaran `og:image` con una foto real de esa página —el recorte de esa noche en Historia, la limpieza en la obra y en Cómo ayudar, el retrato en Norma, la portada del libro en el legado—. Si una página no eligió foto, `pageMetadata` usa el recorte 16:9 de esa noche, para que WhatsApp nunca arme una tarjeta sin imagen.
 
-No hay imágenes OG por página. Todas heredan la del sitio. Una tarjeta distinta por página sería más
-prolijo y también sería doce oportunidades más de que una salga mal.
-
-`e2e/comun/compartir.spec.ts` verifica que la imagen responda 200 con un `Content-Type` de imagen.
-Una tarjeta con imagen rota es peor que una sin imagen: WhatsApp muestra un rectángulo gris.
+`e2e/comun/compartir.spec.ts` verifica que la imagen responda 200 con un `Content-Type` de imagen, en la home y en las páginas que se reenvían.
 
 ---
 

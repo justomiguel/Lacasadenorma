@@ -38,22 +38,25 @@ concreta:
 
 1. **Cada capítulo abre igual y cierra igual.** Abre con `ChapterHeading`: el
    numeral grande en la serif de display, el nombre del capítulo en la voz de
-   interfaz, sin versales, y el título. Cierra con `ChapterEnd`: una sola acción
-   secundaria hacia su página. Los capítulos alternan superficie —papel, bosque,
-   papel hundido, papel, bosque—; sobre la misma superficie, una regla.
+   interfaz, sin versales, y el título. Si apunta a otra página, cierra con
+   `PreviewCard`: foto real de ese tramo, borde de regla, toda ella enlace. El
+   capítulo de cómo ayudar no cierra con previa: se resuelve en pestañas. Los
+   capítulos alternan superficie —papel, bosque, papel hundido, papel, bosque—;
+   sobre la misma superficie, una regla.
 2. **Índice de capítulos bajo la apertura.** `ChapterNav`: los cinco capítulos con
    su numeral, cada uno un ancla, sobre una banda hundida con reglas. Es el
    sumario de una publicación y a la vez el corte entre la foto de la apertura y
    el relato. En teléfono se desplaza en horizontal.
 3. **Tres clases de acción y no más.** Primaria (píldora bosque o sage): sólo
-   «Ayudar a reconstruir». Secundaria (píldora con borde, tono bosque o papel
-   según la banda): ir a otra página al cierre de un capítulo. Enlace de prosa
-   (subrayado): dentro de un párrafo, en las preguntas y en el pie. Desaparece el
+   «Ayudar a reconstruir». Vista previa (`PreviewCard`): ir a otra página. Enlace
+   de prosa (`InlineLink`): dentro de un párrafo o en el pie. `SecondaryAction`
+   (píldora con borde) queda en la apertura y en pantallas de error. Desaparece el
    «texto chico con flecha» como cierre de sección.
-4. **Las vistas previas son tarjetas.** `PreviewCard`: borde de regla, superficie
-   propia, foto recortada a 3:2, línea de acción al pie; toda la tarjeta es el
-   enlace. Sin sombra. La previa de Norma en la home es una tarjeta grande con el
-   retrato entero en 4:5; el índice de novedades es una grilla de tarjetas.
+4. **Las vistas previas son tarjetas con foto.** `PreviewCard`: borde de regla, superficie
+   propia, foto recortada a 3:2 (o 4:5 en la previa partida de Norma), toda ella enlace.
+   Historia, la obra, Norma, el legado y las tres preguntas de la home. Sin foto se
+   reserva el hueco; no se pone stock. Al compartir, cada página pública declara
+   `og:image` con una foto real de ese tramo.
 5. **Las tres formas de ayudar son pestañas de un solo capítulo.** `HelpTabs`
    sobre `SectionTabs`: «Aportar dinero» (el tablero de donaciones, abierto por
    defecto), «Dar una mano» y «Donar materiales», cada una con su contacto
@@ -90,3 +93,6 @@ concreta:
   hay nada que la necesite en la home.
 - `.cursor/rules/diseno.mdc` se actualiza en el mismo commit: el mockup sigue
   mandando en dirección de arte; en jerarquía, límites y acciones manda este ADR.
+- `previewPhotoFor` elige la foto real de cada destino. El test exige que las
+  preguntas de la home y las previas tengan archivo en `/fotos/`; un `href` nuevo
+  sin foto falla ahí, no como un hueco beige en producción.

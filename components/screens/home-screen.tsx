@@ -1,13 +1,10 @@
 import { FaqSection } from "@/components/campaign/faq-section";
 import { HelpTabs } from "@/components/campaign/help-tabs";
 import { Hero } from "@/components/campaign/hero";
+import { previewPhotoFor } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
-import { SecondaryAction } from "@/components/design-system/actions";
-import {
-  ChapterEnd,
-  ChapterHeading,
-  ChapterNav,
-} from "@/components/design-system/chapter";
+import { PreviewCard } from "@/components/design-system/card";
+import { ChapterHeading, ChapterNav } from "@/components/design-system/chapter";
 import { Band, Container, Section } from "@/components/design-system/layout";
 import { CoverPhoto, Figure } from "@/components/design-system/photo";
 import { ParallaxFrame } from "@/components/motion/parallax-frame";
@@ -29,12 +26,13 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * pérdida → comunidad → cómo ayudar → Norma → lo que viene después.
  *
  * Cada capítulo abre igual (`ChapterHeading`), cambia de superficie respecto
- * del anterior —papel, bosque, papel hundido, papel, bosque— y cierra con una
- * sola acción secundaria hacia su página. Es lo que hace que se vea dónde
- * termina uno y empieza el otro (ADR-026).
+ * del anterior —papel, bosque, papel hundido, papel, bosque— y, si apunta a
+ * otra página, cierra con una `PreviewCard` con foto real. Es lo que hace que
+ * se vea dónde termina uno y empieza el otro (ADR-026).
  */
 export function HomeScreen({ locale }: { locale: Locale }) {
-  const { help, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
+  const { help, legacy, norma, reconstruction, site, ui, whatHappened } =
+    getContent(locale);
   const siteUrl = getSiteUrl();
   const after = whatHappened.photoEssay[1]?.photos ?? [];
   const fireMain = after[1] ?? after[0];
@@ -81,11 +79,14 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 id="lo-que-paso"
               />
               <p className="mt-lg max-w-measure text-body">{ui.home.fireLead}</p>
-              <ChapterEnd>
-                <SecondaryAction href={localizedHref("/que-paso", locale)}>
-                  {ui.home.seeStory}
-                </SecondaryAction>
-              </ChapterEnd>
+              <PreviewCard
+                className="mt-xl"
+                href={localizedHref("/que-paso", locale)}
+                title={whatHappened.lead}
+                action={ui.home.seeStory}
+                media={previewPhotoFor("/que-paso", locale)}
+                sizes="(min-width: 64rem) 32vw, 100vw"
+              />
             </div>
 
             <div className="lg:col-span-7">
@@ -142,14 +143,14 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 <p className="mt-xl max-w-measure whitespace-pre-line font-hand text-hand">
                   {ui.home.communityNote}
                 </p>
-                <ChapterEnd>
-                  <SecondaryAction
-                    href={localizedHref("/reconstruccion", locale)}
-                    tone="paper"
-                  >
-                    {ui.home.seeWork}
-                  </SecondaryAction>
-                </ChapterEnd>
+                <PreviewCard
+                  className="mt-xl"
+                  href={localizedHref("/reconstruccion", locale)}
+                  title={reconstruction.title}
+                  action={ui.home.seeWork}
+                  media={previewPhotoFor("/reconstruccion", locale)}
+                  sizes="(min-width: 64rem) 32vw, (min-width: 40rem) 50vw, 100vw"
+                />
               </div>
               {community.length === 0 ? null : (
                 <div className="grid gap-md sm:grid-cols-2 lg:col-span-7">
@@ -203,39 +204,21 @@ export function HomeScreen({ locale }: { locale: Locale }) {
             title={norma.openingTitle}
             id="norma-en-casa"
           />
-          {/* La vista previa de su página, como tarjeta: se ve dónde empieza y
-              dónde termina, y toda ella lleva a un solo lugar. El retrato va
-              entero en 4:5 —es ella, no se recorta a la altura del texto—, y el
-              texto se centra contra él. */}
-          <div className="mt-2xl grid overflow-hidden rounded-lg border border-rule bg-paper-sunk lg:grid-cols-12">
-            {norma.portrait === null ? null : (
-              <div
-                className="relative aspect-landscape sm:aspect-wide lg:col-span-4 lg:aspect-portrait"
-                data-reveal-photo="wipe"
-              >
-                <CoverPhoto
-                  media={norma.portrait}
-                  quality={70}
-                  sizes="(min-width: 64rem) 30vw, 100vw"
-                  position="center 35%"
-                />
-              </div>
-            )}
-            <div
-              className="flex flex-col justify-center p-lg lg:col-span-8 lg:p-3xl"
-              data-reveal=""
-            >
-              <p className="max-w-measure text-lead">{ui.home.normaLead}</p>
-              <p className="mt-md max-w-measure text-body text-ink-muted">
-                {norma.paragraphs[0]}
-              </p>
-              <ChapterEnd>
-                <SecondaryAction href={localizedHref("/norma", locale)}>
-                  {ui.home.seeNorma}
-                </SecondaryAction>
-              </ChapterEnd>
-            </div>
-          </div>
+          <PreviewCard
+            className="mt-2xl"
+            layout="split"
+            crop="portrait"
+            href={localizedHref("/norma", locale)}
+            title={norma.knownAs ?? norma.fullName}
+            summary={ui.home.normaLead}
+            action={ui.home.seeNorma}
+            media={previewPhotoFor("/norma", locale)}
+            sizes="(min-width: 64rem) 40vw, 100vw"
+          >
+            <p className="mt-sm max-w-measure text-small text-ink-muted">
+              {norma.paragraphs[0]}
+            </p>
+          </PreviewCard>
         </Section>
       </Container>
 
@@ -252,15 +235,18 @@ export function HomeScreen({ locale }: { locale: Locale }) {
                 />
               </div>
               <div className="lg:col-span-5 lg:col-start-8 lg:pt-4xl">
-                <p className="max-w-measure text-body">{ui.home.nextBody}</p>
-                <p className="mt-lg max-w-measure font-hand text-hand">
-                  {ui.home.nextNote}
-                </p>
-                <ChapterEnd>
-                  <SecondaryAction href={localizedHref("/legado", locale)} tone="paper">
-                    {ui.primaryNav["/legado"].label}
-                  </SecondaryAction>
-                </ChapterEnd>
+                <PreviewCard
+                  href={localizedHref("/legado", locale)}
+                  title={legacy.title}
+                  summary={ui.home.nextBody}
+                  action={ui.primaryNav["/legado"].label}
+                  media={previewPhotoFor("/legado", locale)}
+                  sizes="(min-width: 64rem) 32vw, 100vw"
+                >
+                  <p className="mt-sm max-w-measure font-hand text-hand text-olive">
+                    {ui.home.nextNote}
+                  </p>
+                </PreviewCard>
               </div>
             </div>
           </Section>

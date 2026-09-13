@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { previewPhotoFor } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink } from "@/components/design-system/actions";
+import { PreviewCard } from "@/components/design-system/card";
 import { Container, Section } from "@/components/design-system/layout";
 import { PhotoEssay } from "@/components/design-system/photo";
 import { RichText } from "@/components/design-system/rich-text";
@@ -68,6 +70,7 @@ export async function generateNewsMetadata(
   }
 
   const update = result.data;
+  const cover = update.media[0];
 
   return pageMetadata({
     locale,
@@ -75,6 +78,16 @@ export async function generateNewsMetadata(
     description: excerpt(update.body),
     path: `/novedades/${update.slug}`,
     ...(update.publishedAt === null ? {} : { publishedTime: update.publishedAt }),
+    ...(cover === undefined
+      ? {}
+      : {
+          image: {
+            url: cover.url,
+            width: cover.width,
+            height: cover.height,
+            alt: cover.alt,
+          },
+        }),
   });
 }
 
@@ -86,7 +99,7 @@ export async function NewsArticleScreen({
 } & NewsArticleProps) {
   const { slug } = await params;
   const result = await readUpdate(slug);
-  const { site, ui } = getContent(locale);
+  const { help, site, ui } = getContent(locale);
 
   if (result.status === "unavailable") {
     return (
@@ -180,14 +193,20 @@ export async function NewsArticleScreen({
           />
         </div>
 
-        <p className="mt-2xl font-ui text-small text-ink-muted">
-          <InlineLink href={localizedHref("/novedades", locale)}>
-            {ui.news.seeAll}
-          </InlineLink>
-        </p>
-        <p className="mt-sm font-ui text-small text-ink-muted">
-          <InlineLink href={localizedHref("/ayudar", locale)}>{ui.helpCta}</InlineLink>
-        </p>
+        <div className="mt-2xl grid gap-lg sm:grid-cols-2">
+          <PreviewCard
+            href={localizedHref("/novedades", locale)}
+            title={ui.news.title}
+            action={ui.news.seeAll}
+            media={previewPhotoFor("/novedades", locale)}
+          />
+          <PreviewCard
+            href={localizedHref("/ayudar", locale)}
+            title={help.title}
+            action={ui.helpCta}
+            media={previewPhotoFor("/ayudar", locale)}
+          />
+        </div>
       </Section>
     </Container>
   );

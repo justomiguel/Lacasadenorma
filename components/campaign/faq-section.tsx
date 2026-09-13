@@ -1,26 +1,15 @@
-import { InlineLink } from "@/components/design-system/actions";
+import { previewPhotoFor } from "@/components/campaign/preview-photo";
+import { PreviewCard } from "@/components/design-system/card";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 /**
- * Las preguntas de la home.
+ * Las preguntas de la home, como previas con foto.
  *
- * La pregunta es el encabezado y la respuesta va inmediatamente debajo, en prosa,
- * sin acordeón. Un acordeón esconde el contenido de quien busca con Ctrl+F, de un
- * buscador que mide el contenido visible y de un modelo que lee la página.
- *
- * En escritorio van a dos columnas: son entradas cortas e independientes, y en
- * una sola columna la sección medía dos pantallas de texto angosto con dos
- * tercios de la página vacíos. Cada entrada abre con su regla, así que se ve
- * dónde termina una y empieza la otra también cuando quedan lado a lado.
- *
- * El orden es el de `content/{locale}/preguntas.json`.
- *
- * El texto de cada enlace viene del contenido y no de acá. Un "ver más" repetido
- * se escucha, en la lista de enlaces de un lector de pantalla, como la misma frase
- * repetida: no hay forma de elegir uno. Y es un enlace de prosa como cualquier
- * otro del sitio, con el mismo estilo: no hay una tercera clase de enlace.
+ * Cada una es una puerta a la página que responde completo: pregunta, la
+ * primera respuesta, la foto de ese tramo y el enlace con su propio texto. Sin
+ * acordeón: el contenido queda en el HTML. En escritorio van de a tres.
  */
 export function FaqSection({
   locale,
@@ -33,27 +22,51 @@ export function FaqSection({
 
   return (
     <div className={className}>
-      <dl className="grid gap-x-3xl lg:grid-cols-2">
-        {faq.map((item) => (
-          <div key={item.question} className="border-t border-rule py-lg lg:py-xl">
-            <dt>
-              <h3 className="max-w-measure font-display text-card">{item.question}</h3>
-            </dt>
-            {item.answer.map((paragraph) => (
-              <dd key={paragraph.slice(0, 48)} className="mt-sm max-w-measure text-body">
-                {paragraph}
-              </dd>
-            ))}
-            {item.href === null || item.linkLabel === null ? null : (
-              <dd className="mt-md font-ui text-small">
-                <InlineLink href={localizedHref(item.href, locale)}>
-                  {item.linkLabel}
-                </InlineLink>
-              </dd>
-            )}
-          </div>
-        ))}
-      </dl>
+      <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        {faq.map((item) => {
+          const href = item.href;
+          const action = item.linkLabel;
+
+          if (href === null || action === null) {
+            return (
+              <li key={item.question} className="border-t border-rule py-lg">
+                <h3 className="font-display text-card">{item.question}</h3>
+                {item.answer.map((paragraph) => (
+                  <p
+                    key={paragraph.slice(0, 48)}
+                    className="mt-sm max-w-measure text-body"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </li>
+            );
+          }
+
+          return (
+            <li key={item.question} className="flex min-w-0">
+              <PreviewCard
+                className="w-full"
+                href={localizedHref(href, locale)}
+                title={item.question}
+                action={action}
+                media={previewPhotoFor(href, locale)}
+                sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 50vw, 100vw"
+                {...(item.answer[0] === undefined ? {} : { summary: item.answer[0] })}
+              >
+                {item.answer.slice(1).map((paragraph) => (
+                  <p
+                    key={paragraph.slice(0, 48)}
+                    className="mt-sm max-w-measure text-small text-ink-muted"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </PreviewCard>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

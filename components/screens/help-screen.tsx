@@ -1,4 +1,5 @@
 import { HelpTabs } from "@/components/campaign/help-tabs";
+import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { Callout } from "@/components/design-system/callout";
 import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
@@ -13,12 +14,14 @@ export const revalidate = 300;
 
 export function helpMetadata(locale: Locale) {
   const { help, ui } = getContent(locale);
+  const image = ogImageFrom("/ayudar", locale);
 
   return pageMetadata({
     locale,
     title: help.title,
     description: ui.helpPage.seoDescription,
     path: "/ayudar",
+    ...(image === undefined ? {} : { image }),
   });
 }
 

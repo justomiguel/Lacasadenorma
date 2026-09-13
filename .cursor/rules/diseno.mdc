@@ -39,15 +39,17 @@ Norma → legado. Debajo de la apertura va el índice de capítulos (`ChapterNav
 
 ## Jerarquía (ADR-026)
 
-- **Un capítulo abre con `ChapterHeading`** —numeral grande, nombre sin versales, título— y
-  **cierra con `ChapterEnd`**: una sola acción secundaria hacia su página. Los capítulos alternan
-  superficie (papel / bosque / papel hundido); sobre la misma superficie, una regla.
+- **Un capítulo abre con `ChapterHeading`** —numeral grande, nombre sin versales, título— y, si
+  apunta a otra página, **cierra con `PreviewCard`**: foto real, borde de regla, toda ella enlace.
+  Los capítulos alternan superficie (papel / bosque / papel hundido); sobre la misma superficie,
+  una regla.
 - **Tres clases de acción, ninguna más.** Primaria (`PrimaryAction`, `HelpCta`): sólo «Ayudar a
-  reconstruir». Secundaria (`SecondaryAction`, con `tone` según la banda): ir a otra página.
-  Enlace de prosa (`InlineLink`): dentro de un párrafo. No existe el «texto chico con flecha»
-  como cierre de sección.
+  reconstruir». Vista previa (`PreviewCard`): ir a otra página. Enlace de prosa (`InlineLink`):
+  dentro de un párrafo. `SecondaryAction` (píldora con borde, `tone` según la banda) queda en la
+  apertura y en pantallas de error. No existe el «texto chico con flecha» como cierre de sección.
 - **Una vista previa de otra página es una tarjeta** (`PreviewCard`): borde de regla, superficie
-  propia, foto a 3:2, toda ella enlace. Sin sombra.
+  propia, foto a 3:2, toda ella enlace. Sin sombra. Si el tramo todavía no tiene foto, se reserva
+  el hueco; no se pone stock. `previewPhotoFor` elige la foto real de cada destino.
 - **Las tres formas de ayudar son pestañas** (`HelpTabs` sobre `SectionTabs`), en la home y en
   `/ayudar`. Primer nivel: regla con la pestaña marcada. Segundo nivel (canales): píldoras.
   Sin JavaScript se apilan.

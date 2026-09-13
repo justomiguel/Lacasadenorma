@@ -56,20 +56,25 @@ test.describe("flujo 6 · compartir la campaña", () => {
     });
   }
 
-  test("la imagen de la vista previa resuelve y es una imagen de verdad", async ({
+  test("las páginas públicas llevan imagen en la vista previa al compartir", async ({
     page,
     request,
   }) => {
-    await page.goto("/");
+    for (const pagina of PAGINAS_PUBLICAS) {
+      await page.goto(pagina.path);
 
-    const imagen = await contenidoDeMeta(page, "og:image");
+      const imagen = await contenidoDeMeta(page, "og:image");
 
-    expect(imagen, "la home necesita og:image").toBeTruthy();
+      expect(imagen, `${pagina.path} necesita og:image`).toBeTruthy();
 
-    const respuesta = await request.get(imagen ?? "");
+      const respuesta = await request.get(imagen ?? "");
 
-    expect(respuesta.status(), `og:image apunta a ${imagen ?? ""}`).toBe(200);
-    expect(respuesta.headers()["content-type"]).toContain("image/");
+      expect(
+        respuesta.status(),
+        `${pagina.path}: og:image apunta a ${imagen ?? ""}`,
+      ).toBe(200);
+      expect(respuesta.headers()["content-type"]).toMatch(/image\//);
+    }
   });
 
   test("los enlaces para compartir existen en el HTML, sin depender de JavaScript", async ({
