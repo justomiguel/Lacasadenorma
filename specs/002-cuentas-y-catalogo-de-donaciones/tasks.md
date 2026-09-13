@@ -223,17 +223,17 @@ HTML servido.
 
 ## Fase F — Cierre
 
-- [ ] **T064** [P] Capacidad de agente `catalogo-de-donaciones`: registro, adaptador REST y
+- [x] **T064** [P] Capacidad de agente `catalogo-de-donaciones`: registro, adaptador REST y
       herramienta WebMCP. **Sin nombres y sin reservar** (FR-242).
-- [ ] **T065** [P] Su prueba: que no devuelva ningún dato personal ni el valor estimado.
-- [ ] **T066** [P] `docs/architecture.md` y `docs/webmcp.md` al día.
-- [ ] **T067** [P] Revisar que la política de privacidad de T017 siga describiendo lo que el sistema
+- [x] **T065** [P] Su prueba: que no devuelva ningún dato personal ni el valor estimado.
+- [x] **T066** [P] `docs/architecture.md` y `docs/webmcp.md` al día.
+- [x] **T067** [P] Revisar que la política de privacidad de T017 siga describiendo lo que el sistema
       hace de verdad, ahora que hace más.
-- [ ] **T068** [P] `docs/testing.md`: la persona `donante` y la prueba de concurrencia.
-- [ ] **T069** [P] `lighthouserc.json`: las dos páginas nuevas en los presupuestos existentes.
-- [ ] **T070** [P] `supabase/fixtures/dev.sql`: ítems, reservas en cada estado, una anónima y una con
+- [x] **T068** [P] `docs/testing.md`: la persona `donante` y la prueba de concurrencia.
+- [x] **T069** [P] `lighthouserc.json`: las dos páginas nuevas en los presupuestos existentes.
+- [x] **T070** [P] `supabase/fixtures/dev.sql`: ítems, reservas en cada estado, una anónima y una con
       nombre.
-- [ ] **T071** Revisión visual en 360 px y 1440 px de las tres páginas nuevas, con capturas, hasta
+- [x] **T071** Revisión visual en 360 px y 1440 px de las tres páginas nuevas, con capturas, hasta
       que el resultado sea genuinamente bueno (constitución § Loop de revisión visual).
 
 ---

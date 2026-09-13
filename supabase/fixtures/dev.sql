@@ -26,6 +26,10 @@ delete from public.milestones;
 delete from public.budget_items;
 delete from public.payment_methods;
 delete from public.media;
+delete from public.email_deliveries;
+delete from public.donation_pledges;
+delete from public.donation_items;
+delete from public.donor_profiles;
 delete from public.campaigns where slug = 'casa-de-norma-desarrollo';
 
 -- `audit_log` **no** se borra. Es append-only por diseño —no tiene policy de DELETE
@@ -288,5 +292,71 @@ values
    'Borrador que no tiene que aparecer',
    'Si esta novedad se ve en la página pública, hay un error en las policies.',
    null);
+
+-- ── Catálogo y reservas ─────────────────────────────────────────────────────
+-- Inventado, y se lee inventado: el título lo dice. Hay un ítem publicado sin
+-- foto —el hueco lo cuenta `revision-visual.spec.ts`— y reservas en cada estado,
+-- una con nombre y una anónima, para poder ver el muro y el backoffice locales.
+
+insert into auth.users (id, email, encrypted_password, email_confirmed_at) values
+  ('cccccccc-0000-4000-8000-000000000001', 'donante.con.nombre@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now()),
+  ('cccccccc-0000-4000-8000-000000000002', 'donante.anonimo@ejemplo.invalid',
+   extensions.crypt('clave-local-de-prueba', extensions.gen_salt('bf')), now());
+
+insert into public.donor_profiles (
+  id, display_name, locale, default_anonymous,
+  approval_status, reviewed_at, reviewed_by
+) values
+  ('cccccccc-0000-4000-8000-000000000001', 'Nombre de prueba — no es una persona real',
+   'es', false, 'approved', now(), 'bbbbbbbb-0000-4000-8000-000000000001'),
+  ('cccccccc-0000-4000-8000-000000000002', null,
+   'es', true, 'approved', now(), 'bbbbbbbb-0000-4000-8000-000000000001');
+
+insert into public.donation_items (
+  id, campaign_id, title, description, unit,
+  needed_quantity, reserved_quantity, fulfilled_quantity,
+  estimated_unit_amount_minor, currency, sort_order, published_at
+) values (
+  'dddddddd-0000-4000-8000-000000000001',
+  'aaaaaaaa-0000-4000-8000-000000000001',
+  'Chapas del techo (datos de desarrollo)',
+  'Ítem de prueba. No hace falta de verdad.',
+  'unidad',
+  10, 1, 2,
+  15000000, 'ARS', 10, now()
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, is_anonymous, donor_display_name,
+  donor_note, expires_at, fulfilled_at, cancelled_at, cancel_reason
+) values
+  ('eeeeeeee-0000-4000-8000-000000000001',
+   'dddddddd-0000-4000-8000-000000000001',
+   'cccccccc-0000-4000-8000-000000000001',
+   1, 'reserved', false, 'Nombre de prueba — no es una persona real',
+   'Nota privada de prueba. No se publica.',
+   now() + interval '10 days', null, null, null),
+  ('eeeeeeee-0000-4000-8000-000000000002',
+   'dddddddd-0000-4000-8000-000000000001',
+   'cccccccc-0000-4000-8000-000000000001',
+   1, 'fulfilled', false, 'Nombre de prueba — no es una persona real',
+   null, now() + interval '14 days', now() - interval '2 days', null, null),
+  ('eeeeeeee-0000-4000-8000-000000000003',
+   'dddddddd-0000-4000-8000-000000000001',
+   'cccccccc-0000-4000-8000-000000000002',
+   1, 'fulfilled', true, null,
+   null, now() + interval '14 days', now() - interval '3 days', null, null),
+  ('eeeeeeee-0000-4000-8000-000000000004',
+   'dddddddd-0000-4000-8000-000000000001',
+   'cccccccc-0000-4000-8000-000000000002',
+   1, 'cancelled', true, null,
+   null, now() + interval '14 days', null, now() - interval '1 day',
+   'Cancelada de prueba: no se va a traer.'),
+  ('eeeeeeee-0000-4000-8000-000000000005',
+   'dddddddd-0000-4000-8000-000000000001',
+   'cccccccc-0000-4000-8000-000000000001',
+   1, 'expired', false, 'Nombre de prueba — no es una persona real',
+   null, now() - interval '1 day', null, null, null);
 
 commit;

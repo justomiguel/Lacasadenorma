@@ -53,20 +53,24 @@ diseñado.
 Se agrega una sola, de **sólo lectura**, al registro que ya existe (ADR-009), con adaptador REST en
 `/api/public/[capability]` y herramienta WebMCP, como las cinco que ya están.
 
-**`catalogo-de-donaciones`** — qué le falta a la obra.
+El nombre para una persona es «catálogo de donaciones». El identificador registrado es
+`get_donation_catalog` (slug REST `donation-catalog`): el registro existente exige el prefijo
+`get_` y los campos en inglés (ADR-014).
+
+**`get_donation_catalog`** — qué le falta a la obra.
 
 ```json
 {
   "items": [
     {
-      "titulo": "Chapas del techo",
-      "descripcion": "Chapa sinusoidal calibre 25, de 3,66 m",
-      "unidad": "unidad",
-      "necesarias": 40,
-      "faltan": 35
+      "title": "Chapas del techo",
+      "description": "Chapa sinusoidal calibre 25, de 3,66 m",
+      "unit": "unidad",
+      "needed": 40,
+      "remaining": 35
     }
   ],
-  "actualizado": "2026-09-13T18:00:00.000Z"
+  "updatedAt": "2026-09-13T18:00:00.000Z"
 }
 ```
 

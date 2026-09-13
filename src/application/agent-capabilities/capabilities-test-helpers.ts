@@ -1,5 +1,7 @@
 import type {
   BudgetItem,
+  DonationItem,
+  DonationWallEntry,
   ExpenseRecord,
   MilestoneRecord,
   PaymentMethod,
@@ -12,7 +14,7 @@ import { capabilities } from "./registry";
 import type { CapabilityContext, CapabilityResult } from "./types";
 
 /**
- * Las cinco capacidades, probadas por donde las llama un agente: `runCapability`.
+ * Las seis capacidades, probadas por donde las llama un agente: `runCapability`.
  *
  * Dos preguntas ordenan el archivo, y son las dos del modelo de amenazas:
  *
@@ -134,6 +136,33 @@ const metodos: PaymentMethod[] = [
   },
 ];
 
+const catalogo: DonationItem[] = [
+  {
+    id: "item-privado-1",
+    campaignId: "11111111-1111-4111-8111-111111111111",
+    budgetItemId: null,
+    title: "Chapas del techo",
+    description: "Chapa sinusoidal calibre 25, de 3,66 m",
+    unit: "unidad",
+    neededQuantity: 40,
+    remainingQuantity: 35,
+    fulfilledQuantity: 5,
+    photo: null,
+    sortOrder: 1,
+  },
+];
+
+const muro: DonationWallEntry[] = [
+  {
+    id: "wall-1",
+    itemId: "item-privado-1",
+    itemTitle: "Chapas del techo",
+    quantity: 5,
+    donorDisplayName: SENTINELS.contributorName,
+    fulfilledAt: "2026-09-10T00:00:00.000Z",
+  },
+];
+
 export function sembrada(): DataLayer {
   return fakeSupabaseLayer({
     received: [money(TOTAL_RECIBIDO, "ARS")],
@@ -141,6 +170,8 @@ export function sembrada(): DataLayer {
     milestones: hitos,
     budgetItems: rubros,
     paymentMethods: metodos,
+    catalog: catalogo,
+    wall: muro,
   });
 }
 
@@ -207,14 +238,16 @@ export const CONTRATO: Record<string, readonly string[]> = {
     "reconciledAt",
     "detailUrl",
   ],
+  get_donation_catalog: ["items", "updatedAt"],
 };
 
-/** Las cuatro que leen de la base. `get_norma_story` no está: lee del repositorio. */
+/** Las cinco que leen de la base. `get_norma_story` no está: lee del repositorio. */
 export const CAPACIDADES_CON_BASE = [
   "get_campaign_status",
   "get_donation_methods",
   "get_reconstruction_progress",
   "get_transparency_summary",
+  "get_donation_catalog",
 ] as const;
 
 export const NOMBRES = capabilities.map((capability) => capability.name);

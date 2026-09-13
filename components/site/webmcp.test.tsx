@@ -149,7 +149,7 @@ describe("las herramientas declaradas son las capacidades registradas", () => {
 });
 
 describe("el registro en el navegador", () => {
-  it("registra las cinco como sólo lectura", () => {
+  it("registra las seis como sólo lectura", () => {
     const registradas = conModelContext();
 
     render(<WebMcpTools />);

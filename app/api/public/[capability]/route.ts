@@ -8,11 +8,11 @@ import { logger } from "@/src/infrastructure/logging/logger";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 
 /**
- * La API pública: una ruta que expone las cinco capacidades.
+ * La API pública: una ruta que expone las seis capacidades.
  *
- * Es un solo archivo y no cinco porque los cinco endpoints hacen exactamente lo
+ * Es un solo archivo y no seis porque los seis endpoints hacen exactamente lo
  * mismo —validar, ejecutar, serializar— y la única diferencia es qué capacidad
- * corren. Cinco archivos idénticos serían cinco lugares donde olvidarse del límite
+ * corren. Seis archivos idénticos serían seis lugares donde olvidarse del límite
  * de tasa o de la cabecera de caché.
  *
  * Esta ruta **no la usa la interfaz**. Las páginas llaman los casos de uso

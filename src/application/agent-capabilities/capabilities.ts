@@ -1,4 +1,5 @@
 import { getCampaignStatus } from "./campaign-status";
+import { getDonationCatalogCapability } from "./donation-catalog";
 import { getDonationMethodsCapability } from "./donation-methods";
 import { getNormaStoryCapability } from "./norma-story";
 import { getReconstructionProgressCapability } from "./reconstruction-progress";
@@ -7,7 +8,7 @@ import { defineCapability } from "./types";
 import type { CapabilityDescriptor } from "./types";
 
 /**
- * Las cinco capacidades del contrato, todas de sólo lectura.
+ * Las seis capacidades del contrato, todas de sólo lectura.
  *
  * Cada una llama **el mismo caso de uso que usa la página**. No hay una consulta
  * paralela para agentes: la especificación de WebMCP nombra explícitamente la
@@ -22,4 +23,5 @@ export const capabilityDescriptors: readonly CapabilityDescriptor[] = [
   defineCapability(getReconstructionProgressCapability),
   defineCapability(getNormaStoryCapability),
   defineCapability(getTransparencySummary),
+  defineCapability(getDonationCatalogCapability),
 ];

@@ -169,6 +169,21 @@ nombre público lo elige su dueña.
 haya donado se conserva sin su nombre (FR-240), porque el historial de lo que efectivamente llegó a la
 obra no es un dato personal.
 
+**Qué guarda una reserva.** Anotarse para traer un material agrega filas en `donation_pledges`. No
+viven en `donor_profiles`, y por eso esta tabla no las cubría: son el motivo por el que una cuenta
+existe.
+
+| Dato | Dónde vive | Se publica |
+|---|---|---|
+| Cuánto, de qué ítem, estado y vencimiento | `donation_pledges` | **No.** Lo que se publica, si llega y la persona eligió aparecer, es una línea en `/quienes-ayudaron`: nombre, qué trajo, cuándo |
+| Nota para la familia (`donor_note`) | `donation_pledges` | **Nunca.** Privilegio de columna: `anon` no puede nombrar el campo |
+| Si aparece con nombre (`is_anonymous`) | `donation_pledges` | No. Lo que se publica es su efecto, y sólo en entregas cumplidas |
+| `user_id` | `donation_pledges` | **No.** Privilegio de columna |
+
+Los correos del sistema sobre una reserva —que quedó anotada, que se acerca el vencimiento, que llegó
+o que se canceló— son sobre esa reserva, no difusión. Borrar la cuenta deja las entregas cumplidas
+como un hecho sobre la obra, sin correo y sin nombre.
+
 ---
 
 ## 4. Datos personales en la base
@@ -258,7 +273,8 @@ Desde ADR-027 hay personas registradas, así que los pedidos habituales sí tien
 los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta`.
 
 - **Acceso.** Lo que el sistema guarda de una cuenta es lo que su dueña ve en `/cuenta`: no hay un
-  segundo lugar con más. La tabla de la sección 3.bis es la lista completa.
+  segundo lugar con más. Las tablas de la sección 3.bis —el perfil y las reservas— son la lista
+  completa.
 - **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
   cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
 - **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo

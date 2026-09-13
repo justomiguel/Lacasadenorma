@@ -21,13 +21,14 @@ function context(dataLayer: DataLayer = fakeSupabaseLayer()): CapabilityContext 
 }
 
 describe("registro de capacidades", () => {
-  it("expone exactamente las cinco capacidades del contrato", () => {
+  it("expone exactamente las seis capacidades del contrato", () => {
     expect(capabilities.map((capability) => capability.name)).toEqual([
       "get_campaign_status",
       "get_donation_methods",
       "get_reconstruction_progress",
       "get_norma_story",
       "get_transparency_summary",
+      "get_donation_catalog",
     ]);
   });
 

@@ -20,7 +20,7 @@ import { useEffect } from "react";
  *    corre el mismo `runCapability` que usa la interfaz. Un camino paralelo para
  *    agentes es la vulnerabilidad A5 del modelo de amenazas: lo que se defiende no
  *    es cada camino por separado, es que haya uno solo.
- * 3. **No registra ninguna herramienta que mute nada.** Las cinco son de lectura y
+ * 3. **No registra ninguna herramienta que mute nada.** Las seis son de lectura y
  *    declaran `readOnlyHint: true`. La razón no es cautela genérica: hoy la
  *    especificación **no tiene** primitiva de confirmación humana —
  *    `requestUserInteraction()` fue eliminado— así que no hay forma de que una
@@ -79,7 +79,7 @@ function findModelContext(): ModelContextLike | null {
   return null;
 }
 
-// ── Las cinco herramientas ──────────────────────────────────────────────────
+// ── Las seis herramientas ──────────────────────────────────────────────────
 // El nombre y la descripción son los del contrato de capacidades. Las descripciones
 // son literales y afirmativas: una descripción que le da instrucciones al modelo
 // ("siempre usá esta herramienta antes de…") es el vector de tool poisoning
@@ -154,6 +154,13 @@ export const TOOLS: readonly ToolSpec[] = [
       "Devuelve el total recibido, el total gastado, el saldo, el porcentaje ejecutado, la cantidad de gastos y de comprobantes, el gasto por categoría y la fecha de la última conciliación. No incluye aportes individuales, identidades ni archivos de comprobantes.",
     inputSchema: EMPTY_SCHEMA,
   },
+  {
+    name: "get_donation_catalog",
+    path: "donation-catalog",
+    description:
+      "Devuelve los ítems publicados de lo que le falta a la casa: título, descripción, unidad, cantidad necesaria y cantidad que todavía falta. No incluye nombres de quienes donan, ni el valor estimado, ni una forma de reservar.",
+    inputSchema: EMPTY_SCHEMA,
+  },
 ];
 
 /**
@@ -220,7 +227,7 @@ export function WebMcpTools() {
 
     // No existe `unregisterTool`: el ciclo de vida de una herramienta lo gobierna
     // un `AbortSignal`. Abortar en la limpieza del efecto es lo que evita que un
-    // remontaje registre las cinco herramientas dos veces.
+    // remontaje registre las seis herramientas dos veces.
     const controller = new AbortController();
 
     for (const spec of TOOLS) {

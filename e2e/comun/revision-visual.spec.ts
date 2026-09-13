@@ -50,12 +50,18 @@ const MAX_ACENTOS = 3;
  *
  * Las páginas que no están acá no reservan ningún hueco.
  */
-const ESPACIOS_RESERVADOS = new Map<string, number>([
-  // Vacío desde ADR-024, y el mapa se queda: es el lugar donde se anota un hueco
-  // nuevo, y que esté vacío es la afirmación de que no hay ninguno. Los dos que
-  // había esperaban la foto de Norma en la radio, que `content-guide.md` §3 marca
-  // como «si existe»; un hueco es honesto como estado transitorio, no como layout.
-]);
+const ESPACIOS_RESERVADOS = new Map<string, number>(
+  process.env.E2E_MODO === "con-datos"
+    ? [
+        // Un ítem del fixture se publica sin foto a propósito: el hueco es
+        // honesto, y este número exacto obliga a bajarlo cuando esa foto exista.
+        ["/catalogo", 1],
+      ]
+    : [
+        // Vacío: sin base no hay ítems, y el mapa se queda para anotar un hueco
+        // nuevo. Que esté vacío es la afirmación de que no hay ninguno.
+      ],
+);
 
 type Medicion = {
   desborde: number;

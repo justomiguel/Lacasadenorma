@@ -1,6 +1,6 @@
 # Contrato — Capacidades para agentes
 
-Cinco capacidades, **todas de sólo lectura**. Se declaran una vez en
+Seis capacidades, **todas de sólo lectura**. Se declaran una vez en
 `src/application/agent-capabilities/` y las consumen cuatro adaptadores: la UI, el endpoint REST
 público, WebMCP, y en el futuro un servidor MCP.
 
@@ -116,6 +116,19 @@ Resumen de la rendición.
 | `detailUrl` | Enlace a la página pública, para que el agente pueda citarla |
 
 **No** devuelve rutas de comprobantes, ni aportes individuales, ni identidades.
+
+---
+
+## `get_donation_catalog`
+
+Qué le falta a la casa, en especie.
+
+**Entrada**: ninguna.
+
+**Salida**: `{ items: [{ title, description, unit, needed, remaining }], updatedAt }`.
+
+No incluye nombres de donantes, ni el valor estimado, ni una forma de reservar (FR-242). Corre el
+mismo caso de uso que `/catalogo`.
 
 ---
 

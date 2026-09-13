@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GET } from "@/app/api/public/[capability]/route";
-import type { BudgetItem, MilestoneRecord, PaymentMethod } from "@/src/domain/entities";
+import type {
+  BudgetItem,
+  DonationItem,
+  MilestoneRecord,
+  PaymentMethod,
+} from "@/src/domain/entities";
 import { money } from "@/src/domain/money";
 
 import type { DataLayer } from "../data-layer";
@@ -39,21 +44,23 @@ vi.mock("@/src/infrastructure/data-layer", () => ({
   getPublicDataLayer: () => capa.current,
 }));
 
-/** Los cinco recursos publicados. La lista se compara contra el registro. */
+/** Los seis recursos publicados. La lista se compara contra el registro. */
 const SLUGS = [
   "campaign-status",
   "donation-methods",
   "reconstruction-progress",
   "norma-story",
   "transparency-summary",
+  "donation-catalog",
 ] as const;
 
-/** Los cuatro que leen de la base. `norma-story` sale del contenido versionado. */
+/** Los que leen de la base. `norma-story` sale del contenido versionado. */
 const SLUGS_CON_BASE = [
   "campaign-status",
   "donation-methods",
   "reconstruction-progress",
   "transparency-summary",
+  "donation-catalog",
 ] as const;
 
 /**
@@ -113,6 +120,22 @@ const metodos: PaymentMethod[] = [
   },
 ];
 
+const catalogo: DonationItem[] = [
+  {
+    id: "item-1",
+    campaignId: "11111111-1111-4111-8111-111111111111",
+    budgetItemId: null,
+    title: "Chapas del techo",
+    description: "Chapa sinusoidal calibre 25, de 3,66 m",
+    unit: "unidad",
+    neededQuantity: 40,
+    remainingQuantity: 35,
+    fulfilledQuantity: 5,
+    photo: null,
+    sortOrder: 1,
+  },
+];
+
 function sembrada(): DataLayer {
   return fakeSupabaseLayer({
     received: [money(24_000_000, "ARS")],
@@ -132,6 +155,7 @@ function sembrada(): DataLayer {
     milestones: hitos,
     budgetItems: rubros,
     paymentMethods: metodos,
+    catalog: catalogo,
   });
 }
 

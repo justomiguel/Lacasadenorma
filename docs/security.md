@@ -361,7 +361,7 @@ servidor."`
 
 ## 9. La API pública y los agentes
 
-Las cinco capacidades son de **sólo lectura** y ninguna mueve dinero (FR-030, amenaza A1). El detalle
+Las seis capacidades son de **sólo lectura** y ninguna mueve dinero (FR-030, amenaza A1). El detalle
 está en [`docs/webmcp.md`](./webmcp.md); lo que corresponde a este documento:
 
 - **Límite de tasa por IP** en `/api/public/*`: ventana fija de 60 pedidos por minuto, en memoria

@@ -183,7 +183,7 @@ sabemos".
 
 ### Registro
 
-`src/application/agent-capabilities/registry.ts` guarda las cinco capacidades y expone
+`src/application/agent-capabilities/registry.ts` guarda las seis capacidades y expone
 `findCapability(name)` y `runCapability(name, rawInput, context)`. Existe porque hay cuatro
 consumidores del mismo conjunto —la interfaz, la ruta REST, WebMCP y un eventual servidor MCP— y una
 lista central es la forma de que no puedan divergir. Está en
@@ -323,7 +323,7 @@ cambia seguido ya tiene un backoffice. Está en [`docs/content-guide.md`](./cont
 
 ## 8. Un caso de uso, cuatro puertas
 
-Las cinco capacidades de lectura se declaran una vez y se consumen desde cuatro lados. Es lo que hace
+Las seis capacidades de lectura se declaran una vez y se consumen desde cuatro lados. Es lo que hace
 verificable la promesa de que un agente y una persona ven lo mismo (FR-032, amenaza A5):
 
 ```
@@ -344,7 +344,7 @@ privilegiado que se pueda quedar desactualizado. El detalle está en [`docs/webm
 | Ruta | Estrategia | Por qué |
 | --- | --- | --- |
 | `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estática | No dependen de la base |
-| `/`, `/reconstruccion`, `/catalogo`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
+| `/`, `/reconstruccion`, `/catalogo`, `/quienes-ayudaron`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
 | `/llms.txt` | `force-static` | Es un resumen del sitio, no un dato |
 | `/api/public/*` | `public, max-age=60, stale-while-revalidate=300` | Respuestas chicas y cacheables en el borde |
 | `/api/health` | `force-dynamic`, `no-store` | Un diagnóstico cacheado no es un diagnóstico |

@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { CAPABILITY_LIMITS, capabilities, runCapability } from "./registry";
 import { CONTRATO, NOMBRES, context, esperarOk } from "./capabilities-test-helpers";
 
-describe("las cinco capacidades", () => {
+describe("las seis capacidades", () => {
   it("el contrato del test cubre exactamente las capacidades registradas", () => {
-    // Sin esto, agregar una capacidad sexta pasaría por acá sin que nada la
+    // Sin esto, agregar una capacidad séptima pasaría por acá sin que nada la
     // revise: los `it.each` de abajo recorren el registro, no una lista fija.
     expect(NOMBRES.toSorted()).toEqual(Object.keys(CONTRATO).toSorted());
   });

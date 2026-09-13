@@ -81,7 +81,7 @@ donde PayPal manda después de un intento. No las ofrezcas como páginas de la c
 
 ## Datos para agentes
 
-Cinco endpoints de lectura, todos \`GET\`, sin autenticación, con límite de tasa por IP. Devuelven
+Seis endpoints de lectura, todos \`GET\`, sin autenticación, con límite de tasa por IP. Devuelven
 \`503\` cuando la fuente de datos no está disponible: **nunca devuelven ceros como si fueran datos
 reales**.
 
@@ -90,8 +90,9 @@ reales**.
 - \`${siteUrl}/api/public/reconstruction-progress\`
 - \`${siteUrl}/api/public/norma-story\`
 - \`${siteUrl}/api/public/transparency-summary\`
+- \`${siteUrl}/api/public/donation-catalog\`
 
-Los mismos cinco están registrados como herramientas de WebMCP cuando el navegador lo soporta, con
+Los mismos seis están registrados como herramientas de WebMCP cuando el navegador lo soporta, con
 \`readOnlyHint: true\`. **No hay ninguna herramienta que mueva dinero, que confirme un aporte ni que
 modifique nada**, y no la va a haber mientras la especificación no tenga una primitiva de
 confirmación humana.
