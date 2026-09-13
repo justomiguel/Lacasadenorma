@@ -59,8 +59,8 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 
 - [Inicio](${siteUrl}/): el relato: el fuego, la comunidad, cómo ayudar, las donaciones, lo que viene.
 - [La historia de Norma](${siteUrl}/norma): quién fue, con la obra conmemorativa para leer o descargar.
-- [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada y
-  qué se necesita ahora.
+- [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada,
+  lo que cubrió la prensa y qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.
 - [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
   Chile.

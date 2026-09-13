@@ -165,23 +165,4 @@ test.describe("flujo 4 · elegir el método de aporte", () => {
       seccion.getByRole("button", { name: /^copiar$/i }).first(),
     ).toBeVisible();
   });
-
-  test("la advertencia sobre sitios falsos está antes de los datos", async ({ page }) => {
-    await page.goto("/ayudar");
-
-    const advertencia = page.getByText(/verificá que estés en el dominio correcto/i);
-    const primerDato = page.getByRole("tabpanel").locator("[data-figure]").first();
-
-    await expect(advertencia).toBeVisible();
-
-    const cajaAdvertencia = await advertencia.boundingBox();
-    const cajaDato = await primerDato.boundingBox();
-
-    expect(cajaAdvertencia).not.toBeNull();
-    expect(cajaDato).not.toBeNull();
-    expect(
-      cajaAdvertencia?.y ?? 0,
-      "la advertencia tiene que leerse antes del primer dato bancario",
-    ).toBeLessThan(cajaDato?.y ?? 0);
-  });
 });

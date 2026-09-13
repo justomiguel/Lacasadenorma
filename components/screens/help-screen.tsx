@@ -1,8 +1,7 @@
 import { DonationBoard } from "@/components/campaign/donation-board";
 import { HelpWays } from "@/components/campaign/help-ways";
 import { ShareBlock } from "@/components/campaign/share-block";
-import { Callout } from "@/components/design-system/callout";
-import { Container, Editorial, Section } from "@/components/design-system/layout";
+import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
@@ -32,15 +31,7 @@ export function HelpScreen({ locale }: { locale: Locale }) {
 
       <Container>
         <Section>
-          <Editorial
-            aside={
-              <Callout tone="warning" title={ui.helpPage.beforeTransferTitle}>
-                <p>{ui.helpPage.beforeTransfer}</p>
-              </Callout>
-            }
-          >
-            <Paragraphs items={help.paragraphs} />
-          </Editorial>
+          <Paragraphs items={help.paragraphs} />
         </Section>
       </Container>
 

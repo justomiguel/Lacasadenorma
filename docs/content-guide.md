@@ -29,15 +29,16 @@ mismo. Un campo faltante en inglés rompe el build igual que en castellano: no h
 silencioso al original.
 
 Las fotografías no se duplican. El archivo vive una vez en `public/fotos/`; lo que cambia por idioma
-es el `alt`, el epígrafe y el título del tramo. `npm run check:fotos` recorre los JSON de los dos
-directorios.
+es el `alt`, el epígrafe y el título del tramo. Las vistas previas de la prensa viven en
+`public/medios/`. `npm run check:fotos` recorre los JSON de los dos directorios y comprueba las dos
+carpetas.
 
 | Archivo | Alimenta | Notas |
 |---|---|---|
 | `site.json` | Nombre, bajada, lugar, descripciones, estado | `shortDescription` es la meta description: máximo 160 caracteres, y el esquema lo exige |
 | `ui.json` | Chrome: navegación, botones, cifras, textos de conexión, y las dos páginas de retorno de PayPal | Un componente de cliente **no** lo importa: lo recibe por props o por `UiProvider` |
 | `norma.json` | `/norma` y `/en/norma`, el capítulo de Norma en la home, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null`. Los capítulos y hasta tres testimonios salen de la obra conmemorativa. El PDF vive en `public/documentos/` y no se modifica |
-| `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow` |
+| `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
@@ -165,7 +166,7 @@ Las fotos de Norma las elige **la familia**, y esa decisión no la toma nadie m�
 
 | Campo | Estado | Quién lo completa |
 |---|---|---|
-| `norma.fullName` | Publicado como **«Norma Edith Bedoya»**, que es lo que dice el material de la familia y la nota biográfica de junio de 2026. Pero la crónica policial de esos días la nombra **«Bedolla»**, y no hay forma de saber desde acá cuál de las dos grafías es la del documento. Se deja como está —el apellido de una persona lo dice su familia, no un parte de prensa— y queda anotado por una razón concreta: **no se enlaza ni se cita prensa desde el sitio hasta resolverlo**, porque enlazar una nota que la nombra distinto sembraría la duda de si es la misma persona | La familia |
+| `norma.fullName` | Publicado como **«Norma Edith Bedoya»**, que es lo que dice el material de la familia y la nota biográfica de junio de 2026. La crónica policial de esos días la nombra **«Bedolla»**, y un medio ubicó el incendio en Laguna Blanca. El apellido de una persona lo dice su familia, no un parte de prensa. Las notas **sí se enlazan** desde `/que-paso`; los títulos los escribimos nosotros, con Bedoya y Riacho He Hé, y no se copia el de la crónica | La familia |
 | `norma.roleLabel` | Publicado como **«una de las primeras comunicadoras sociales de Riacho He Hé»**. El documento familiar se titula *Pionera de la Comunicación*; ese título se usa como capítulo, no como etiqueta de oficio. ADR-024 sigue valiendo para no convertir «pionera» en un adjetivo nuestro | La familia |
 | `norma.bornOn`, `norma.diedOn` | `null`. **No se estiman ni se sacan de una noticia** | La familia, si decide publicarlas |
 | `reconstruccion.scope` | Lista vacía: el relevamiento de la obra está en curso | La familia con gente del pueblo, a medida que cada parte se cotiza |

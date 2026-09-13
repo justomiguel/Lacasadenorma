@@ -70,6 +70,168 @@
       ]
     }
   ],
+  "press": [
+    {
+      "url": "https://www.guauformosa.com.ar/noticias/2026/09/10/40085-riacho-he-he-despide-a-norma-edith-bedoya-historica-periodista-de-la-localidad",
+      "source": "GuauFormosa",
+      "title": "Riacho He Hé bids farewell to Norma Edith Bedoya, historic journalist of the town",
+      "kind": "memorial",
+      "image": {
+        "url": "/medios/guauformosa-despedida.jpg",
+        "alt": "Norma Edith Bedoya, in a pink blouse, in an archive photograph.",
+        "width": 1200,
+        "height": 759
+      }
+    },
+    {
+      "url": "https://www.diarioformosa.net/una-mujer-fallecio-durante-el-incendio-de-su-vivienda-y-su-pareja-fue-trasladado-al-hospital",
+      "source": "Diario Formosa",
+      "title": "Diario Formosa: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/diario-formosa.jpg",
+        "alt": "Two firefighters at the door of the house: one holds the hose and the other stands against the fire.",
+        "width": 800,
+        "height": 600
+      }
+    },
+    {
+      "url": "https://radiolavoz.com.ar/riacho-he-he-mujer-fallecio-en-incendio-de-su-vivienda-y-su-pareja-fue-trasladado-al-hospital/",
+      "source": "Radio La Voz",
+      "title": "Radio La Voz: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/radio-la-voz.jpg",
+        "alt": "Two firefighters at the door of the house at night: one aims the hose and the other stands against the glow of the fire.",
+        "width": 640,
+        "height": 556
+      }
+    },
+    {
+      "url": "https://www.guauformosa.com.ar/noticias/2026/09/07/39974-una-mujer-fallecio-durante-el-incendio-de-su-vivienda-y-su-pareja-fue-trasladado-al-hospital",
+      "source": "GuauFormosa",
+      "title": "GuauFormosa: the fire of 7 September",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/guauformosa-incendio.jpg",
+        "alt": "A firefighter in a yellow helmet aims the hose at the door at night: the glow of the fire is visible inside.",
+        "width": 1200,
+        "height": 556
+      }
+    },
+    {
+      "url": "https://formosa28.com.ar/notas/49303/trgico-incendio-en-riacho-he-h",
+      "source": "Formosa28",
+      "title": "Formosa28: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": null
+    },
+    {
+      "url": "https://www.siempreformosa.com/2026/09/riacho-he-he-mujer-fallecio-en-incendio.html",
+      "source": "Siempre Formosa",
+      "title": "Siempre Formosa: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": null
+    },
+    {
+      "url": "https://formosahoy.com/2026/09/08/mujer-fallecio-incendio-vivienda-laguna-blanca/",
+      "source": "Formosa Hoy",
+      "title": "Formosa Hoy: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/formosa-hoy.jpg",
+        "alt": "Two firefighters at the door of the house at night, with the hose laid out against the fire.",
+        "width": 800,
+        "height": 600
+      }
+    },
+    {
+      "url": "https://eldiariodeloeste.com/provinciales/una-mujer-fallecio-durante-el-incendio-de-su-vivienda-y-su-pareja-fue-trasladado-al-hospital/",
+      "source": "El Diario del Oeste",
+      "title": "El Diario del Oeste: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/diario-del-oeste.jpg",
+        "alt": "A firefighter in a red helmet among twisted metal, by day, in what was left of the house.",
+        "width": 800,
+        "height": 1067
+      }
+    },
+    {
+      "url": "https://diarioahora.com.ar/index.php/2026/09/08/una-mujer-de-71-anos-fallecio-durante-el-incendio-de-su-vivienda-su-pareja-sobrevivio-al-ser-trasladado-de-urgencia-al-hospital/",
+      "source": "Diario Ahora Litoral",
+      "title": "Diario Ahora Litoral: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": null
+    },
+    {
+      "url": "https://naineckprensadigital.com/riacho-he-he-una-mujer-fallecio-durante-el-incendio-de-su-vivienda-y-su-pareja-fue-trasladada-al-hospital/",
+      "source": "Naineck",
+      "title": "Naineck: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/naineck.jpg",
+        "alt": "Three photographs of the fire: the flames at night, the firefighters with the hose, and the debris by day.",
+        "width": 696,
+        "height": 631
+      }
+    },
+    {
+      "url": "https://fliphtml5.com/elcomercial/08-09-26/15/",
+      "source": "El Comercial",
+      "title": "El Comercial, 8 September, page 15",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/el-comercial.jpg",
+        "alt": "Front page of El Comercial of 8 September. The note on the fire is on page 15, not on the cover.",
+        "width": 363,
+        "height": 480
+      }
+    },
+    {
+      "url": "https://www.expresdiario.com.ar/una-mujer-fallecio-durante-el-incendio-de-su-vivienda-y-su-pareja-fue-trasladado-al-hospital/",
+      "source": "Diario Exprés",
+      "title": "Diario Exprés: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/diario-expres.jpg",
+        "alt": "Two firefighters at the door of the house at night: one holds the hose against the fire.",
+        "width": 919,
+        "height": 798
+      }
+    },
+    {
+      "url": "https://lapioneradeclorinda.com/una-mujer-murio-durante-un-incendio-en-su-vivienda-y-su-pareja-fue-hospitalizada/",
+      "source": "La Pionera de Clorinda",
+      "title": "La Pionera de Clorinda: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": {
+        "url": "/medios/la-pionera.jpg",
+        "alt": "A firefighter in a red helmet among the debris, by day.",
+        "width": 900,
+        "height": 540
+      }
+    },
+    {
+      "url": "https://www.examedia.com.ar/portada/post/87824585",
+      "source": "Examedia",
+      "title": "Examedia: the fire in Riacho He Hé",
+      "kind": "coverage",
+      "image": null
+    },
+    {
+      "url": "https://es.linkedin.com/posts/justomiguel_norma-edith-bedoya-la-mujer-que-hizo-del-activity-7483611059979923456-0SZB",
+      "source": "LinkedIn",
+      "title": "Norma Edith Bedoya, the living memory of Riacho He Hé",
+      "kind": "context",
+      "image": {
+        "url": "/medios/linkedin-norma.jpg",
+        "alt": "Poster of the commemorative work: a portrait of Norma Edith Bedoya beside the obelisk of Riacho He Hé.",
+        "width": 800,
+        "height": 1073
+      }
+    }
+  ],
   "needNow": {
     "title": "What is needed now",
     "paragraphs": [

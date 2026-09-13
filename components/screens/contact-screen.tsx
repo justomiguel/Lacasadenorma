@@ -34,6 +34,7 @@ export function ContactScreen({ locale }: { locale: Locale }) {
         <Section>
           <ContactActions
             name={help.contact.name}
+            photo={help.contact.photo}
             phoneDisplay={help.contact.phoneDisplay}
             phoneTel={help.contact.phoneTel}
             email={help.contact.email}

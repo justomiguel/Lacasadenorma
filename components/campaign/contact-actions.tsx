@@ -1,10 +1,14 @@
 "use client";
 
+import Image from "next/image";
+
 import { BrandLabel } from "@/components/design-system/brand-mark";
+import type { Photograph } from "@/components/design-system/photo";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 export function ContactActions({
   name,
+  photo,
   phoneDisplay,
   phoneTel,
   email,
@@ -16,6 +20,7 @@ export function ContactActions({
   origen,
 }: {
   name: string;
+  photo: Photograph;
   phoneDisplay: string;
   phoneTel: string;
   email: string;
@@ -34,8 +39,20 @@ export function ContactActions({
 
   return (
     <div>
-      <p className="font-ui text-small text-ink-muted">{name}</p>
-      <p className="mt-3xs font-ui text-subheading font-medium">{phoneDisplay}</p>
+      <div className="flex items-center gap-md">
+        <Image
+          src={photo.url}
+          alt={photo.alt}
+          width={photo.width}
+          height={photo.height}
+          sizes="80px"
+          className="size-20 shrink-0 rounded-full object-cover object-top"
+        />
+        <div>
+          <p className="font-ui text-small text-ink-muted">{name}</p>
+          <p className="mt-3xs font-ui text-subheading font-medium">{phoneDisplay}</p>
+        </div>
+      </div>
       <div className="mt-md flex flex-wrap gap-sm">
         <a
           href={whatsapp}

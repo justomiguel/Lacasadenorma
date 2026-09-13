@@ -14,7 +14,16 @@
     "phoneDisplay": "+56 9 6578 9862",
     "phoneTel": "+56965789862",
     "email": "justomiguelvargas@gmail.com",
-    "instagram": "justomiguelv"
+    "instagram": "justomiguelv",
+    "photo": {
+      "url": "/fotos/justo-miguel.jpg",
+      "alt": "Portrait of Justo Miguel Vargas in a pink shirt, against a dark background.",
+      "caption": null,
+      "credit": null,
+      "width": 1220,
+      "height": 1454,
+      "takenOn": null
+    }
   },
   "accounts": {
     "AR": {

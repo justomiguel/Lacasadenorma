@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-import { isoDate, optionalParagraphs, paragraphs, photoGroupSchema } from "./primitives";
+import {
+  isoDate,
+  optionalParagraphs,
+  paragraphs,
+  photoGroupSchema,
+  photoSchema,
+  pressItemSchema,
+} from "./primitives";
 
 export const pageSchema = z.object({
   title: z.string().min(1),
@@ -39,6 +46,11 @@ export const whatHappenedSchema = pageSchema.extend({
    * la página se lee igual sin él.
    */
   photoEssay: z.array(photoGroupSchema),
+  /**
+   * Notas de prensa de esos días. Vacío se omite. Los títulos son nuestros: no
+   * se copia una crónica que nombra Laguna Blanca o un apellido distinto.
+   */
+  press: z.array(pressItemSchema),
 });
 
 export const reconstructionSchema = pageSchema.extend({
@@ -73,6 +85,7 @@ export const helpSchema = pageSchema.extend({
     email: z.string().email(),
     /** Usuario de Instagram, sin @. */
     instagram: z.string().regex(/^[A-Za-z0-9._]{1,30}$/),
+    photo: photoSchema,
   }),
   accounts: z.object({
     AR: z.object({

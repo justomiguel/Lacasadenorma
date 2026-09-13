@@ -264,6 +264,9 @@
     "lostLabel": "Qué se perdió",
     "lostValue": "Gran parte de la vivienda y todo lo que había adentro",
     "photosHeading": "Las fotos del incendio",
+    "pressHeading": "Lo que cubrió la prensa",
+    "pressLead": "Las notas de esos días, y la despedida que publicó GuauFormosa.",
+    "pressContextHeading": "Antes del incendio",
     "seeBefore": "Si querés ver antes en qué se va a usar la plata, está todo en",
     "rebuildLink": "la reconstrucción",
     "and": "y en",
@@ -285,8 +288,6 @@
   },
   "helpPage": {
     "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Justo y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
-    "beforeTransferTitle": "Antes de transferir",
-    "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",
     "afterHeading": "Qué pasa cuando transferís",
     "afterLinkLead": "Cómo se lleva la cuenta está explicado en",

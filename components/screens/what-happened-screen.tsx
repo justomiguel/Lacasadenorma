@@ -1,4 +1,5 @@
 import { HelpCta } from "@/components/campaign/help-cta";
+import { PressClippings } from "@/components/campaign/press-clippings";
 import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
 import { PhotoSequence } from "@/components/design-system/photo";
 import {
@@ -110,6 +111,20 @@ export function WhatHappenedScreen({ locale }: { locale: Locale }) {
             </Section>
           </Container>
         </Band>
+      )}
+
+      {whatHappened.press.length === 0 ? null : (
+        <Container>
+          <Section labelledBy="la-prensa">
+            <PressClippings
+              items={whatHappened.press}
+              heading={ui.whatHappenedPage.pressHeading}
+              lead={ui.whatHappenedPage.pressLead}
+              contextHeading={ui.whatHappenedPage.pressContextHeading}
+              headingId="la-prensa"
+            />
+          </Section>
+        </Container>
       )}
 
       <Container>

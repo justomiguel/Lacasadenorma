@@ -76,5 +76,35 @@ export const photoGroupSchema = z.object({
   photos: z.array(photoSchema).min(1),
 });
 
+/**
+ * Vista previa de una nota de prensa. Vive en `public/medios/`, no en
+ * `public/fotos/`: no es material de la familia, y `check:fotos` las trata
+ * aparte para no mezclar un recorte de un diario con el retrato de Norma.
+ */
+export const pressPreviewSchema = z.object({
+  url: z
+    .string()
+    .startsWith("/medios/", "La vista previa tiene que vivir en public/medios/"),
+  alt: z.string().min(1),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+});
+
+/**
+ * Una nota de prensa enlazada. El título lo escribimos nosotros: no se copia
+ * el de la crónica si nombra mal el lugar o el apellido.
+ *
+ * `kind` ordena la página: la despedida primero, las coberturas del incendio
+ * después, el contexto de antes al final.
+ */
+export const pressItemSchema = z.object({
+  url: z.string().url(),
+  source: z.string().min(1),
+  title: z.string().min(1),
+  kind: z.enum(["memorial", "coverage", "context"]),
+  image: pressPreviewSchema.nullable(),
+});
+
 export type Photo = z.infer<typeof photoSchema>;
 export type PhotoGroup = z.infer<typeof photoGroupSchema>;
+export type PressItem = z.infer<typeof pressItemSchema>;

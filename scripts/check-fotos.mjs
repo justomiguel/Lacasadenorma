@@ -11,9 +11,10 @@
  * Zod no puede comprobar esto: valida que el número sea un entero positivo, no
  * que sea *ese* entero. Así que se comprueba acá, leyendo el encabezado del JPEG.
  *
- * También avisa de las fotos que están en `public/fotos/` y nadie declara. Un
- * archivo que no se muestra en ninguna página es peso muerto en el repositorio,
- * y si es una foto de una persona, es peso muerto que no debería estar guardado.
+ * También avisa de las fotos que están en `public/fotos/` o `public/medios/` y
+ * nadie declara. Un archivo que no se muestra en ninguna página es peso muerto
+ * en el repositorio, y si es una foto de una persona, es peso muerto que no
+ * debería estar guardado.
  *
  * Corre en `npm run verify` y en CI.
  */
@@ -23,8 +24,14 @@ import path from "node:path";
 import process from "node:process";
 
 const CONTENT_DIR = "content";
-const PHOTO_DIR = path.join("public", "fotos");
-const PUBLIC_PREFIX = "/fotos/";
+const MEDIA_DIRS = [
+  { dir: path.join("public", "fotos"), prefix: "/fotos/" },
+  { dir: path.join("public", "medios"), prefix: "/medios/" },
+];
+
+function isMediaUrl(url) {
+  return MEDIA_DIRS.some((entry) => url.startsWith(entry.prefix));
+}
 
 /**
  * Dimensiones reales de un JPEG, leídas de su primer marcador SOF.
@@ -79,7 +86,7 @@ function declaredPhotos(value) {
 
   const nested = Object.values(value).flatMap(declaredPhotos);
 
-  return typeof value.url === "string" && value.url.startsWith(PUBLIC_PREFIX)
+  return typeof value.url === "string" && isMediaUrl(value.url)
     ? [value, ...nested]
     : nested;
 }
@@ -137,12 +144,18 @@ for (const file of jsonFiles) {
   }
 }
 
-for (const name of await readdir(PHOTO_DIR)) {
-  if (!declared.has(`${PUBLIC_PREFIX}${name}`)) {
-    problems.push(
-      `${path.join(PHOTO_DIR, name)}: está en el repositorio y ningún contenido ` +
-        `la declara. Publicala o borrala.`,
-    );
+for (const { dir, prefix } of MEDIA_DIRS) {
+  for (const name of await readdir(dir)) {
+    if (!name.endsWith(".jpg") && !name.endsWith(".jpeg")) {
+      continue;
+    }
+
+    if (!declared.has(`${prefix}${name}`)) {
+      problems.push(
+        `${path.join(dir, name)}: está en el repositorio y ningún contenido ` +
+          `la declara. Publicala o borrala.`,
+      );
+    }
   }
 }
 

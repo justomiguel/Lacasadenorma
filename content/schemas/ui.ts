@@ -122,6 +122,9 @@ export const uiPagesSchema = z.object({
     lostLabel: phrase,
     lostValue: phrase,
     photosHeading: phrase,
+    pressHeading: phrase,
+    pressLead: phrase,
+    pressContextHeading: phrase,
     seeBefore: phrase,
     rebuildLink: phrase,
     and: phrase,
@@ -143,8 +146,6 @@ export const uiPagesSchema = z.object({
   }),
   helpPage: z.object({
     seoDescription: phrase,
-    beforeTransferTitle: phrase,
-    beforeTransfer: phrase,
     accountsHeading: phrase,
     afterHeading: phrase,
     afterLinkLead: phrase,

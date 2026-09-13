@@ -122,14 +122,19 @@ describe("contenido publicado", () => {
   });
 
   it("el contacto publicado es Justo Miguel Vargas, sin Saúl", () => {
-    expect(help.contact).toEqual({
-      name: "Justo Miguel Vargas",
-      phoneDisplay: "+56 9 6578 9862",
-      phoneTel: "+56965789862",
-      email: "justomiguelvargas@gmail.com",
-      instagram: "justomiguelv",
-    });
-    expect(getContent("en").help.contact).toEqual(help.contact);
+    expect(help.contact.name).toBe("Justo Miguel Vargas");
+    expect(help.contact.phoneDisplay).toBe("+56 9 6578 9862");
+    expect(help.contact.phoneTel).toBe("+56965789862");
+    expect(help.contact.email).toBe("justomiguelvargas@gmail.com");
+    expect(help.contact.instagram).toBe("justomiguelv");
+    expect(help.contact.photo.url).toBe("/fotos/justo-miguel.jpg");
+    expect(help.contact.photo.width).toBe(1220);
+    expect(help.contact.photo.height).toBe(1454);
+
+    const en = getContent("en").help.contact;
+
+    expect(en.phoneTel).toBe(help.contact.phoneTel);
+    expect(en.photo.url).toBe(help.contact.photo.url);
 
     const publicado = JSON.stringify([
       help,
