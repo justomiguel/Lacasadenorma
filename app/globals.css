@@ -245,6 +245,19 @@
   --color-rule: color-mix(in oklab, var(--color-paper) 22%, transparent);
 }
 
+/*
+ * Isla de papel dentro de una banda oscura. Sin esto, `text-ink` en una
+ * PreviewCard sobre bosque se vuelve beige sobre beige: la inversión de
+ * `--color-ink` gotea al interior. Los hex son los mismos de `@theme`.
+ */
+[data-tone="paper"] {
+  --color-ink: #1c1c1c;
+  --color-ink-muted: #5c5f56;
+  --color-ink-faint: #585c54;
+  --color-aqua: #153a2e;
+  --color-rule: #d4cfc0;
+}
+
 [data-tone="ink"] a:not(.bg-sage):not(.bg-paper),
 [data-tone="forest"] a:not(.bg-sage):not(.bg-paper) {
   color: var(--color-paper);

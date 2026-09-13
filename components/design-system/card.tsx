@@ -23,7 +23,8 @@ const CROP_CLASS: Record<PhotoRatio, string> = {
  * Si hay foto, va recortada a una proporción fija para que una fila quede
  * pareja. Si no hay —una novedad sin imagen, una página que todavía no eligió
  * retrato— el hueco se reserva: no se pone stock ni una ilustración. Sin sombra:
- * el borde y el cambio de superficie alcanzan.
+ * el borde y el cambio de superficie alcanzan. `data-tone="paper"` aísla la
+ * tinta: sobre una banda bosque, sin eso `text-ink` se volvía beige sobre beige.
  */
 export function PreviewCard({
   href,
@@ -61,6 +62,7 @@ export function PreviewCard({
   return (
     <Link
       href={href}
+      data-tone="paper"
       className={cn(
         "lift-hover group flex min-w-0 overflow-hidden rounded-md border border-rule bg-paper text-ink transition-colors duration-fast hover:border-forest",
         split ? "flex-col lg:flex-row" : "flex-col",
