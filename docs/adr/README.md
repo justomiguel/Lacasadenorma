@@ -37,3 +37,8 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [024](./024-tercera-direccion-visual.md) | El color sale de la casa: tercera dirección visual y limpieza de contenido | Reemplazada por ADR-025 para la dirección de arte |
 | [025](./025-mockup-aprobado.md) | El mockup aprobado es la fuente de verdad visual | Aceptada |
 | [026](./026-jerarquia-y-capitulos.md) | Capítulos visibles, una sola clase de acción y las tres formas de ayudar en pestañas | Aceptada |
+| [027](./027-identidad-publica.md) | Una identidad, dos audiencias: `authenticated` deja de significar «de confianza» | Aceptada |
+| [028](./028-correo-resend.md) | Correos de identidad por SMTP de Resend; los del producto, por un puerto propio | Aceptada |
+| [029](./029-reserva-sin-sobreventa.md) | La reserva se decide con un contador y un CHECK, no leyendo antes de escribir | Aceptada |
+| [030](./030-muro-por-privilegio-de-columna.md) | El muro se expone por privilegio de columna, y borrar la cuenta anonimiza | Aceptada |
+| [031](./031-donacion-en-especie-no-es-plata.md) | Una donación en especie no entra en el libro | Aceptada |
