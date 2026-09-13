@@ -1,0 +1,106 @@
+{
+  "fields": {
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "Eight characters or more.",
+    "newPassword": "New password",
+    "confirmPassword": "Type it again",
+    "displayName": "Name to show",
+    "displayNameHint": "How you want to appear in the list of people who helped. It can be your name, a nickname, or whatever you go by.",
+    "anonymous": "I'd rather not appear",
+    "anonymousHint": "If this stays checked, whatever you bring still counts, but your name doesn't appear anywhere on the site.",
+    "language": "Language for emails",
+    "languageEs": "Spanish",
+    "languageEn": "English"
+  },
+  "signUp": {
+    "title": "Create an account",
+    "lead": "It's for one thing only: offering to bring something from the list of what's missing, and having it written down under your name so two people don't bring the same thing.",
+    "seoDescription": "Create an account on the site for rebuilding Norma's house, to offer to bring something from the list of what's missing.",
+    "submit": "Create the account",
+    "submitting": "Creating…",
+    "privacyLead": "We store your email and whatever you choose to show. It's all written out in",
+    "privacyLink": "the privacy policy",
+    "privacyTail": ", and you can delete the account from the site whenever you want.",
+    "haveAccount": "Already have an account?",
+    "haveAccountLink": "Sign in",
+    "checkInboxTitle": "Check your email",
+    "checkInboxBody": [
+      "We sent a link to the address you typed. You have to open it for the account to become active; until then it isn't created.",
+      "If it doesn't arrive within a few minutes, look in your spam folder."
+    ]
+  },
+  "signIn": {
+    "title": "Sign in",
+    "lead": "With the account you created on this site.",
+    "seoDescription": "Sign in to your account on the site for rebuilding Norma's house.",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "noAccount": "Don't have an account yet?",
+    "noAccountLink": "Create one",
+    "forgot": "I forgot my password"
+  },
+  "recover": {
+    "title": "Recover access",
+    "lead": "Type your email and we'll send you a link to set a new password.",
+    "seoDescription": "Recover access to your account on the site for rebuilding Norma's house.",
+    "submit": "Send the link",
+    "submitting": "Sending…",
+    "sentTitle": "Done",
+    "sentBody": [
+      "If that address has an account on this site, a link to set a new password just arrived in its inbox.",
+      "We say «if it has» on purpose: answering differently depending on whether the account exists would turn this form into a way of finding out who is registered here."
+    ],
+    "back": "Back to signing in"
+  },
+  "password": {
+    "title": "Set a new password",
+    "lead": "This is the last step: the password you type here replaces the previous one.",
+    "seoDescription": "Set a new password for your account on the site for rebuilding Norma's house.",
+    "submit": "Save the password",
+    "submitting": "Saving…",
+    "noSessionTitle": "This link doesn't work for this",
+    "noSessionBody": [
+      "This screen opens from the link that arrives by email, and that link expires. The one you used has expired, or it was opened in a different browser.",
+      "Ask for a new one and try again."
+    ],
+    "request": "Ask for a new link"
+  },
+  "profile": {
+    "title": "Your account",
+    "lead": "Everything the site stores about you is here, and this is where you change it or delete it.",
+    "seoDescription": "Your own account on the site for rebuilding Norma's house: how to appear, which language to write in, and how to delete it.",
+    "signedInAs": "Signed in as",
+    "appearanceHeading": "How you want to appear",
+    "appearanceLead": "When you offer to bring something, you can appear in the list of people who helped, or not appear. You can change this at any time, and the change also applies to what you already offered.",
+    "appearsAs": "Right now you would appear as",
+    "appearsAnonymous": "Right now you would not appear: whatever you bring is counted without your name.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "signOut": "Sign out",
+    "signingOut": "Signing out…",
+    "deleteHeading": "Delete the account",
+    "deleteLead": "Your email, your name and your preferences go, and it can't be undone. Anything you brought stays counted, without your name, because it's part of the public accounting of the work.",
+    "deleteWord": "DELETE",
+    "deleteConfirmLabel": "To confirm, type",
+    "delete": "Delete the account",
+    "deleting": "Deleting…",
+    "unavailableTitle": "This part isn't connected yet",
+    "unavailableBody": "Accounts need the campaign's database, and this deployment doesn't have it configured yet. The rest of the site works."
+  },
+  "errors": {
+    "notConfigured": "This part of the site isn't connected to the campaign's database yet. As soon as it is, accounts can be created.",
+    "noSession": "Your session expired. Sign in again.",
+    "emailInvalid": "That email doesn't look valid.",
+    "passwordShort": "The password has to be eight characters or more.",
+    "passwordMismatch": "The two passwords don't match.",
+    "credentials": "Those details don't match any account.",
+    "rateLimited": "Too many attempts in a row. Wait a while and try again.",
+    "displayNameRequired": "Type the name you want to appear under, or leave it checked that you'd rather not appear.",
+    "noRecoverySession": "This link doesn't open a recovery session. Ask for a new one.",
+    "linkExpired": "That link has expired or has already been used. Ask for a new one.",
+    "internalRole": "This account has a backoffice role. To delete it, the role has to be removed first.",
+    "failed": "Couldn't complete that. The details are in the server log."
+  }
+}

@@ -3,6 +3,8 @@ import type { z } from "zod";
 import { uiChromeSchema } from "./schemas/ui-chrome";
 import { uiPagesSchema } from "./schemas/ui";
 
+export { accountSchema } from "./schemas/account";
+export type { AccountContent } from "./schemas/account";
 export {
   faqSchema,
   helpSchema,

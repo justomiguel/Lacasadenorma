@@ -1,0 +1,106 @@
+{
+  "fields": {
+    "email": "Correo",
+    "password": "Contraseña",
+    "passwordHint": "Ocho caracteres o más.",
+    "newPassword": "Contraseña nueva",
+    "confirmPassword": "Repetila",
+    "displayName": "Nombre para mostrar",
+    "displayNameHint": "Cómo querés que aparezca en la lista de quienes ayudaron. Puede ser tu nombre, tu apodo, o cómo te conocen en el barrio.",
+    "anonymous": "Prefiero no aparecer",
+    "anonymousHint": "Si queda marcado, lo que traigas se cuenta igual pero tu nombre no aparece en ninguna parte del sitio.",
+    "language": "Idioma de los correos",
+    "languageEs": "Castellano",
+    "languageEn": "Inglés"
+  },
+  "signUp": {
+    "title": "Crear una cuenta",
+    "lead": "Sirve para una sola cosa: ofrecerte a traer algo de lo que falta y que quede anotado a tu nombre, para que no lo traigan dos personas.",
+    "seoDescription": "Crear una cuenta en el sitio de la reconstrucción de la casa de Norma, para ofrecerse a traer algo de lo que falta.",
+    "submit": "Crear la cuenta",
+    "submitting": "Creando…",
+    "privacyLead": "Se guarda tu correo y lo que elijas mostrar. Está escrito en",
+    "privacyLink": "la política de privacidad",
+    "privacyTail": ", y la cuenta se borra desde el sitio cuando quieras.",
+    "haveAccount": "¿Ya tenés cuenta?",
+    "haveAccountLink": "Ingresá",
+    "checkInboxTitle": "Revisá tu correo",
+    "checkInboxBody": [
+      "Mandamos un enlace a la dirección que escribiste. Hay que abrirlo para que la cuenta quede activa; hasta entonces no está creada.",
+      "Si no llega en unos minutos, mirá en el correo no deseado."
+    ]
+  },
+  "signIn": {
+    "title": "Ingresar",
+    "lead": "Con la cuenta que creaste en este sitio.",
+    "seoDescription": "Ingresar a la cuenta del sitio de la reconstrucción de la casa de Norma.",
+    "submit": "Ingresar",
+    "submitting": "Ingresando…",
+    "noAccount": "¿Todavía no tenés cuenta?",
+    "noAccountLink": "Creá una",
+    "forgot": "Olvidé mi contraseña"
+  },
+  "recover": {
+    "title": "Recuperar el acceso",
+    "lead": "Escribí tu correo y te mandamos un enlace para poner una contraseña nueva.",
+    "seoDescription": "Recuperar el acceso a la cuenta del sitio de la reconstrucción de la casa de Norma.",
+    "submit": "Mandar el enlace",
+    "submitting": "Mandando…",
+    "sentTitle": "Listo",
+    "sentBody": [
+      "Si esa dirección tiene una cuenta en este sitio, le acaba de llegar un enlace para poner una contraseña nueva.",
+      "Decimos «si la tiene» a propósito: contestar distinto según exista o no la cuenta convertiría este formulario en una manera de averiguar quién está registrado acá."
+    ],
+    "back": "Volver a ingresar"
+  },
+  "password": {
+    "title": "Poner una contraseña nueva",
+    "lead": "Este es el último paso: la contraseña que escribas acá reemplaza a la anterior.",
+    "seoDescription": "Fijar una contraseña nueva en la cuenta del sitio de la reconstrucción de la casa de Norma.",
+    "submit": "Guardar la contraseña",
+    "submitting": "Guardando…",
+    "noSessionTitle": "Este enlace no sirve para esto",
+    "noSessionBody": [
+      "Esta pantalla se abre desde el enlace que llega por correo, y ese enlace vence. El que usaste ya venció, o se abrió en otro navegador.",
+      "Pedí uno nuevo y volvé a intentar."
+    ],
+    "request": "Pedir un enlace nuevo"
+  },
+  "profile": {
+    "title": "Tu cuenta",
+    "lead": "Acá está todo lo que el sitio guarda de vos, y desde acá se cambia o se borra.",
+    "seoDescription": "La cuenta propia en el sitio de la reconstrucción de la casa de Norma: cómo aparecer, en qué idioma escribir y cómo borrarla.",
+    "signedInAs": "Sesión abierta como",
+    "appearanceHeading": "Cómo querés aparecer",
+    "appearanceLead": "Cuando ofrezcas traer algo, podés aparecer en la lista de quienes ayudaron o no aparecer. Se puede cambiar en cualquier momento, y el cambio se aplica también a lo que ya ofreciste.",
+    "appearsAs": "Ahora mismo aparecerías como",
+    "appearsAnonymous": "Ahora mismo no aparecerías: lo que traigas se cuenta sin tu nombre.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado.",
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando…",
+    "deleteHeading": "Borrar la cuenta",
+    "deleteLead": "Se van tu correo, tu nombre y tus preferencias, y no se puede deshacer. Lo que hayas traído queda contado, sin tu nombre, porque es parte de la rendición de cuentas de la obra.",
+    "deleteWord": "BORRAR",
+    "deleteConfirmLabel": "Para confirmar, escribí",
+    "delete": "Borrar la cuenta",
+    "deleting": "Borrando…",
+    "unavailableTitle": "Esta parte todavía no está conectada",
+    "unavailableBody": "Las cuentas necesitan la base de datos de la campaña, y este despliegue todavía no la tiene configurada. El resto del sitio funciona."
+  },
+  "errors": {
+    "notConfigured": "Esta parte del sitio todavía no está conectada a la base de la campaña. En cuanto lo esté, se pueden crear cuentas.",
+    "noSession": "Tu sesión venció. Volvé a ingresar.",
+    "emailInvalid": "Ese correo no parece válido.",
+    "passwordShort": "La contraseña tiene que tener ocho caracteres o más.",
+    "passwordMismatch": "Las dos contraseñas no coinciden.",
+    "credentials": "Esos datos no coinciden con ninguna cuenta.",
+    "rateLimited": "Hubo demasiados intentos seguidos. Esperá un rato y probá de nuevo.",
+    "displayNameRequired": "Escribí con qué nombre querés aparecer, o dejá marcado que preferís no aparecer.",
+    "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",
+    "linkExpired": "Ese enlace ya venció o ya se usó. Pedí uno nuevo.",
+    "internalRole": "Esta cuenta tiene un rol del backoffice. Para borrarla hay que quitarle el rol primero.",
+    "failed": "No se pudo completar. El detalle quedó en el registro del servidor."
+  }
+}

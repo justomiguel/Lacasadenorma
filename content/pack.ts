@@ -1,6 +1,7 @@
 import type { Locale } from "@/src/i18n/locale";
 
 import ayudarEn from "./en/ayudar.json";
+import cuentaEn from "./en/cuenta.json";
 import legadoEn from "./en/legado.json";
 import legalesEn from "./en/legales.json";
 import normaEn from "./en/norma.json";
@@ -11,6 +12,7 @@ import siteEn from "./en/site.json";
 import transparenciaEn from "./en/transparencia.json";
 import uiEn from "./en/ui.json";
 import ayudarEs from "./es/ayudar.json";
+import cuentaEs from "./es/cuenta.json";
 import legadoEs from "./es/legado.json";
 import legalesEs from "./es/legales.json";
 import normaEs from "./es/norma.json";
@@ -21,6 +23,7 @@ import siteEs from "./es/site.json";
 import transparenciaEs from "./es/transparencia.json";
 import uiEs from "./es/ui.json";
 import {
+  accountSchema,
   faqSchema,
   helpSchema,
   legalSchema,
@@ -61,6 +64,7 @@ function pack(
     legado: unknown;
     preguntas: unknown;
     legales: unknown;
+    cuenta: unknown;
   },
 ) {
   const prefix = `${locale}/`;
@@ -88,6 +92,7 @@ function pack(
     legacy: parseContent(pageSchema, files.legado, `${prefix}legado.json`),
     faq: parseContent(faqSchema, files.preguntas, `${prefix}preguntas.json`),
     legal: parseContent(legalSchema, files.legales, `${prefix}legales.json`),
+    account: parseContent(accountSchema, files.cuenta, `${prefix}cuenta.json`),
   };
 }
 
@@ -103,6 +108,7 @@ const packs = {
     legado: legadoEs,
     preguntas: preguntasEs,
     legales: legalesEs,
+    cuenta: cuentaEs,
   }),
   en: pack("en", {
     site: siteEn,
@@ -115,6 +121,7 @@ const packs = {
     legado: legadoEn,
     preguntas: preguntasEn,
     legales: legalesEn,
+    cuenta: cuentaEn,
   }),
 } as const;
 
