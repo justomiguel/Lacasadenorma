@@ -16,15 +16,21 @@ Vale empezar por acá porque es la mayor parte de la respuesta.
 
 | No existe | Consecuencia |
 |---|---|
-| Ningún formulario público | No hay nada que una visita pueda escribir y que quede guardado |
-| Registro, cuentas, newsletter | Nadie deja un correo electrónico |
+| Ningún formulario público **que no sea el de la cuenta** | Fuera de registrarse, no hay nada que una visita pueda escribir y que quede guardado |
+| Newsletter, lista de correo, envíos masivos | Un correo del sistema es siempre sobre la propia cuenta o sobre algo que esa persona ofreció traer |
 | Procesamiento de pagos en el sitio | La transferencia se hace en el homebanking de cada uno; el sitio nunca ve un número de tarjeta, un CBU ajeno ni un monto |
 | Cookies de publicidad, píxeles sociales, servicios de perfilado | No hay `<script>` de terceros más que el de analítica, y sólo si se configura |
 | Trackers de sesión, mapas de calor, grabación de pantalla | No se instalaron y no están previstos |
-| Consentimiento de cookies | No hace falta: las únicas cookies son de sesión en `/admin`, y son estrictamente necesarias |
+| Consentimiento de cookies | No hace falta: las únicas cookies son de sesión, y son estrictamente necesarias |
 
 No hay banner de cookies porque no hay cookies que consentir. Un banner que pide permiso para nada
 es peor que no tenerlo: entrena a la gente a aceptar sin leer.
+
+**Lo que cambió el 13 de septiembre de 2026.** Hasta ese día esta tabla decía "registro, cuentas,
+newsletter: nadie deja un correo electrónico", y la página pública prometía que el sitio no pedía
+ningún dato. Con el registro del público abierto ([ADR-027](./adr/027-identidad-publica.md)) eso dejó
+de ser cierto y las dos cosas se corrigieron **en el mismo commit** que abrió el registro, no después.
+La sección 3.bis es la que describe lo que ahora sí se guarda.
 
 ---
 
@@ -110,20 +116,67 @@ Las únicas cookies del proyecto son las de sesión de Supabase Auth, y sólo ap
 
 | Cookie | Quién la escribe | Alcance | Para qué |
 |---|---|---|---|
-| `sb-*-auth-token` (y su par de refresh) | Supabase Auth, vía `proxy.ts` y `src/infrastructure/supabase/server-client.ts` | Primera parte, `HttpOnly`, `Secure` en producción | Mantener la sesión de quien administra |
+| `sb-*-auth-token` (y su par de refresh) | Supabase Auth, vía `proxy.ts` y `src/infrastructure/supabase/server-client.ts` | Primera parte, `HttpOnly`, `Secure` en producción | Mantener la sesión de quien administra y, desde ADR-027, la de quien se registró |
 
 Las páginas públicas **no leen ninguna cookie**. `createAnonSupabaseClient()` se construye con un
 almacén de cookies vacío a propósito: sin eso, una lectura pública podría acabar dependiendo de la
 sesión de quien está mirando, y una página que cambia según quién la abre no se puede cachear ni
 razonar. Es también lo que hace que el HTML público sea idéntico para todo el mundo.
 
+Las páginas de `/cuenta` son la excepción y no debilitan nada: dependen de la sesión por definición y
+por eso no se cachean.
+
+---
+
+## 3.bis Cuentas del público (ADR-027)
+
+Crear una cuenta es opcional y sirve para una sola cosa: poder ofrecerse a traer algo y que quede
+anotado a nombre de esa persona.
+
+| Dato | Dónde vive | Quién lo escribe | Se publica |
+|---|---|---|---|
+| Correo | `auth.users`, que gestiona Supabase Auth | La persona al registrarse | **No.** Ninguna vista pública lo alcanza, y hay un privilegio de columna que lo hace imposible, no una consulta que se acuerda de omitirlo |
+| Hash de la contraseña | `auth.users.encrypted_password` | Supabase Auth | No. No es reversible |
+| Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, y sólo si decide aparecer | Sí, y sólo si además marca una donación como no anónima |
+| Idioma | `donor_profiles.locale` | La persona | No |
+| Preferencia de anonimato | `donor_profiles.default_anonymous`, `default true` | La persona | No. Lo que se publica es su efecto |
+| Sesiones e inicios de sesión, con IP y user-agent | `auth.sessions` y `auth.audit_log_entries` | Supabase Auth | No |
+
+Cuatro cosas de esta tabla que son decisiones:
+
+1. **El correo no se copia a `public`.** Vive en `auth.users`, que el rol `authenticated` no puede
+   leer, y viaja en el claim `email` del token de su dueña. Una copia sería un segundo lugar del que
+   se puede filtrar y un segundo lugar del que hay que acordarse de borrar.
+2. **`donor_profiles.display_name` es nullable y nunca se deriva del correo** (FR-230). "juanperez"
+   no es un nombre que alguien eligió publicar. Nulo significa "todavía no decidí aparecer", y hay un
+   `check` que impide guardar una cadena de espacios, que significaría lo mismo y se publicaría como
+   un renglón vacío.
+3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, y lo que
+   se afirma en las pruebas es el default de la columna: lo que importa es qué pasa cuando la
+   aplicación **no** manda el campo.
+4. **La IP y el user-agent los guarda el proveedor de identidad, no la aplicación.** Esto es lo único
+   de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
+   una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.
+
+**Quién puede leer un perfil.** Su dueña, y los roles `auditor`, `admin` y `owner`. `editor` **no**:
+administra el catálogo y no accede a un solo nombre. Lo impone `private.can_read_donors()` en la base
+y el permiso `donaciones.leer` en la interfaz, y lo verifica la persona `donante` de
+`supabase/tests/030-matriz-de-permisos.sql`. Ningún rol interno puede **escribir** un perfil ajeno: un
+nombre público lo elige su dueña.
+
+**Cómo se borra.** La persona borra su cuenta desde `/cuenta`. El perfil se va con ella por
+`on delete cascade`, así que no hay una segunda operación de la que alguien se pueda olvidar. Lo que
+haya donado se conserva sin su nombre (FR-240), porque el historial de lo que efectivamente llegó a la
+obra no es un dato personal.
+
 ---
 
 ## 4. Datos personales en la base
 
-El proyecto **no tiene** ninguna columna de correo electrónico, dirección IP ni user-agent. Se puede
-verificar leyendo `supabase/migrations/`: no aparecen. Los correos de quienes administran existen
-sólo en `auth.users`, que lo gestiona Supabase y a lo que la aplicación nunca escribe.
+Fuera de `donor_profiles`, el proyecto **no tiene** ninguna columna de correo electrónico, dirección
+IP ni user-agent. Se puede verificar leyendo `supabase/migrations/`: no aparecen. Los correos —de
+quienes administran y de quienes se registran— existen sólo en `auth.users`, que lo gestiona Supabase
+y a lo que la aplicación nunca escribe.
 
 Lo único identificable que la aplicación guarda es lo que una persona del equipo escribe a mano en
 el backoffice:
@@ -188,7 +241,8 @@ que el proyecto no eligió recolectar pero tampoco puede negar.
 |---|---|
 | Aportes, gastos, comprobantes, hitos, novedades | Mientras la campaña esté abierta y por el plazo que exija la rendición de cuentas |
 | `audit_log` | Igual que lo anterior: es lo que permite reconstruir quién hizo qué |
-| Sesiones de `/admin` | Hasta que caducan o quien administra cierra sesión |
+| **Cuenta del público y su perfil** | Hasta que su dueña la borre. No hay caducidad automática: una cuenta inactiva no molesta a nadie y borrarla sola sería una decisión que nadie pidió |
+| Sesiones de `/admin` y de `/cuenta` | Hasta que caducan o la persona cierra sesión |
 | Eventos de analítica | Hoy, cero segundos: no salen del navegador. Con proveedor configurado, lo que retenga el proveedor, y eso hay que escribirlo en la página pública |
 
 Cuando la campaña cierre, la decisión de qué se archiva y qué se borra es de la familia, no técnica.
@@ -200,9 +254,15 @@ archivos de un bucket.
 
 ## 8. Derechos de las personas
 
-No hay usuarios registrados, así que la mayoría de los pedidos habituales no tienen a qué aplicarse.
-Los dos que sí:
+Desde ADR-027 hay personas registradas, así que los pedidos habituales sí tienen a qué aplicarse, y
+los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta`.
 
+- **Acceso.** Lo que el sistema guarda de una cuenta es lo que su dueña ve en `/cuenta`: no hay un
+  segundo lugar con más. La tabla de la sección 3.bis es la lista completa.
+- **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
+  cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
+- **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo
+  y el nombre; lo que haya donado queda como donación anónima (FR-240).
 - **Quien aportó y no quiere figurar en el registro interno.** Hoy ya no figura: los aportes se
   registran anónimos y el nombre no se guarda. Lo único que queda de la operación es la referencia
   de conciliación con el banco, que es lo que permite cuadrar el total.
@@ -219,6 +279,9 @@ forma de ejercerla está incompleta.
 ## 9. Qué revisar antes de cada despliegue
 
 - ¿Se agregó un formulario público? Entonces hay datos personales nuevos y esta página cambia.
+- ¿Se agregó una columna a `donor_profiles` o una tabla que referencie `auth.users`? Va a la tabla de
+  la sección 3.bis **y** a la página pública, en los dos idiomas, en el mismo commit. La regla vale
+  también en la dirección contraria: un dato que se deja de guardar se saca de las dos.
 - ¿Se agregó un evento de analítica? Tiene que estar en el tipo `AnalyticsEvent`, en la tabla de la
   sección 2 y en la página pública.
 - ¿Se configuró un proveedor? Nombrarlo en `/legales/privacidad` con su retención.

@@ -22,7 +22,55 @@ major_version = 17
 schema_paths = []
 
 [auth]
-enable_signup = false
+# Abierto al público desde ADR-027. **Habilita el registro para todo el proyecto**,
+# incluido el endpoint de Auth: no hay forma de abrirlo "sólo para donantes". Lo que
+# frena las cuentas basura es la confirmación de correo y el límite de tasa de abajo,
+# no una lista de invitación.
+#
+# La condición para que esto sea seguro no está en este archivo: está en que ninguna
+# policy le dé nada a `authenticated` sin comprobar rol o propiedad. Lo verifica
+# `npm run check:rls` en cada commit y la persona `donante` de la matriz de pgTAP.
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+
+# **No es cosmético.** Es lo que hace que tener sesión implique correo confirmado, y
+# de eso depende que `claim_donation_item()` no tenga que verificar el correo por su
+# cuenta. El campo que parecería servir para eso vive en `user_metadata`, que la
+# propia persona puede escribir con una llamada a `updateUser` (amenaza S3).
+enable_confirmations = true
+
+# Entre dos correos al mismo destinatario. El default de GoTrue es un minuto y sirve;
+# se escribe explícito porque es la defensa contra usar el formulario de recuperación
+# para inundar una casilla ajena.
+max_frequency = "1m"
+
+# El relay SMTP de Resend, para los tres correos de identidad —confirmación,
+# recuperación y cambio de correo—, que los emite GoTrue y no la aplicación
+# (ADR-028). Sin esto, esos correos saldrían por el remitente compartido de Supabase,
+# que está pensado para desarrollo y limita a unos pocos por hora: el registro
+# funcionaría los primeros minutos y después no, sin que nada lo explique.
+#
+# `pass` es la **misma** clave que usa el adaptador de los correos del producto, así
+# que rotarla es rotarla en dos lugares. Está escrito en `docs/runbook.md` porque es
+# la clase de cosa que se descubre cuando los correos dejan de salir.
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 587
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "env(EMAIL_FROM_ADDRESS)"
+sender_name = "La Casa de Norma"
+
+[auth.rate_limit]
+# El default de GoTrue son 2 correos por hora **para todo el proyecto**, que se agota
+# con dos registros y deja al tercero sin poder confirmar su cuenta sin que nada lo
+# explique. Con el registro abierto eso pasa de improbable a garantizado.
+email_sent = 30
+sign_in_sign_ups = 30
+token_verifications = 30
 
 [auth.hook.custom_access_token]
 # El rol viaja en el token como claim de `app_metadata`, que sólo el servidor de

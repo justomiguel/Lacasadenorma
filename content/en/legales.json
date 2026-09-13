@@ -4,15 +4,26 @@
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
     "paragraphs": [
-      "The short version: this site does not ask you for any data, does not use third-party cookies and does not follow you across other pages."
+      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and nothing beyond that. We do not use third-party cookies and we do not follow you across other pages."
     ],
     "sections": [
       {
         "heading": "What we do not do",
         "paragraphs": [
-          "There are no contact forms, no sign-up and no newsletter. The site does not ask for your name, your email, your phone or your payment details.",
+          "You do not need an account to browse the site, and browsing asks for nothing. There are no contact forms and no newsletter, and the site never asks for your phone or your payment details.",
           "Payments are not processed on the site: you make the transfer from your bank, and that operation is between your bank and ours.",
           "We do not use advertising cookies, social-media pixels or services that build a profile of you."
+        ]
+      },
+      {
+        "heading": "If you create an account",
+        "paragraphs": [
+          "Creating an account is optional and serves one purpose: to be able to say \"I am bringing this one\" and have it written down as yours.",
+          "From you we keep your email and, only if you write them down, the name you want shown and the language you prefer to be written in. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password.",
+          "The name shown is the one you choose, and it is never derived from your email. If you write none, there is none.",
+          "Your email is not published on any page, is not shared with anyone, and is not used to send you anything other than messages about your account or about something you offered to bring.",
+          "The service that runs the accounts also records when you sign in, with the IP address and the browser you sign in from. It is there to detect attempts to get into other people's accounts. The family does not use that information for anything else.",
+          "Your account is kept until you delete it. You can delete it yourself from your account, without asking us and without giving reasons: your email and your name are deleted right away."
         ]
       },
       {

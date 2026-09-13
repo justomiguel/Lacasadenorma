@@ -67,32 +67,66 @@ leer. La migración existe porque el hook fallaba con `permission denied for sch
 invocaba ese rol: ninguna sesión se habría podido emitir. Lo cubren una aserción de
 `050-roles-y-token.sql` y el flujo 9 de la suite E2E.
 
+### `authenticated` dejó de significar "de confianza"
+
+Esto es lo más importante que cambió en el modelo de seguridad desde que el proyecto existe, y hay que
+leerlo antes de escribir una policy.
+
+Hasta el 13 de septiembre de 2026 el sitio tenía **una sola audiencia con sesión**: entre dos y cinco
+personas de confianza. Toda la seguridad de la base se escribió sobre esa premisa. Con el registro del
+público abierto ([ADR-027](./adr/027-identidad-publica.md)), `authenticated` pasó a significar
+**cualquiera con un correo**, y una policy `to authenticated` sin predicado dejó de ser una comodidad
+para volverse acceso público.
+
+| | Qué es |
+| --- | --- |
+| **Amenaza** | Una cuenta creada por cualquiera en el formulario público alcanza datos o escrituras que sólo el equipo debería. El vector no es un exploit: es una policy escrita con la premisa vieja |
+| **Por qué no se ve** | Una policy `to authenticated using (true)` se lee como correcta y lo era. Nada cambia en su texto el día que el registro se abre: lo que cambia es quién es `authenticated` |
+| **Mitigación 1, mecánica** | `npm run check:rls`, en `verify` y en los dos workflows de CI. Falla el build si una policy alcanza a `authenticated` sin nombrar `has_min_role`, `can_read_ledger`, `can_read_donors` ni un predicado sobre `auth.uid()`; si usa `for all`; si una función `security definer` no fija `search_path`; o si una vista no declara `security_invoker`. Las aperturas deliberadas se declaran con su motivo en `scripts/check-rls.mjs`, que es un diff visible en un archivo de seguridad |
+| **Mitigación 2, ejecutada** | La persona **`donante`** de `030-matriz-de-permisos.sql`: token válido, `app_metadata` vacío, probada contra toda tabla y toda operación. 336 celdas |
+| **Lo que queda garantizado** | Sobre todo lo de la feature 001, una cuenta del público ve **exactamente lo mismo** que alguien sin cuenta, y no escribe nada. La aserción compara las dos columnas fila por fila, así que una policy nueva que le dé algo de más aparece sola |
+| **Riesgo residual** | El público y el equipo comparten el rol `authenticated` de Postgres. Los `grant` de escritura siguen otorgados a los dos y lo único que separa a una cuenta nueva de la tabla de aportes es que ninguna policy la admita. Es una sola capa en ese punto |
+| **Disparador de revisión** | Cualquier policy nueva sobre una tabla con datos personales; cualquier entrada nueva en `ALLOWED_OPEN_POLICIES`; el día que aparezca una segunda razón para pasar todas las escrituras del backoffice a funciones `security definer` |
+
+La consecuencia de producto: una cuenta del público que intente entrar al backoffice **pasa el proxy**
+—porque el proxy sólo mira si hay sesión— y la negativa llega recién en la página, en
+`/admin/sin-permiso`. Es el diseño que ADR-003 ya había elegido; lo que cambió es que el caso pasó de
+teórico a cotidiano.
+
 ### La matriz de permisos
 
 `src/domain/permissions.ts` es un **espejo** de la matriz de RLS, no la frontera. Existe para que el
 backoffice no le muestre a un editor un botón que la base va a rechazar: un formulario que falla al
 enviarse es peor que un formulario que no aparece.
 
-| Permiso | auditor | editor | admin | owner |
-| --- | :-: | :-: | :-: | :-: |
-| `backoffice.acceder` | ✓ | ✓ | ✓ | ✓ |
-| `finanzas.leer` | ✓ | · | ✓ | ✓ |
-| `finanzas.escribir` | · | · | ✓ | ✓ |
-| `contenido.escribir` | · | ✓ | ✓ | ✓ |
-| `hitos.escribir` | · | ✓ | ✓ | ✓ |
-| `campana.escribir` | · | · | ✓ | ✓ |
-| `cuentas.escribir` | · | · | · | ✓ |
-| `auditoria.leer` | ✓ | · | ✓ | ✓ |
-| `roles.escribir` | · | · | · | ✓ |
+| Permiso | donante | auditor | editor | admin | owner |
+| --- | :-: | :-: | :-: | :-: | :-: |
+| `backoffice.acceder` | · | ✓ | ✓ | ✓ | ✓ |
+| `finanzas.leer` | · | ✓ | · | ✓ | ✓ |
+| `finanzas.escribir` | · | · | · | ✓ | ✓ |
+| `contenido.escribir` | · | · | ✓ | ✓ | ✓ |
+| `hitos.escribir` | · | · | ✓ | ✓ | ✓ |
+| `campana.escribir` | · | · | · | ✓ | ✓ |
+| `cuentas.escribir` | · | · | · | · | ✓ |
+| `auditoria.leer` | · | ✓ | · | ✓ | ✓ |
+| `roles.escribir` | · | · | · | · | ✓ |
+| `catalogo.escribir` | · | · | ✓ | ✓ | ✓ |
+| `donaciones.leer` | · | ✓ | · | ✓ | ✓ |
+| `donaciones.escribir` | · | · | · | ✓ | ✓ |
 
-`can(null, cualquierCosa)` es siempre `false`.
+La columna `donante` está entera en `·` y no es decorativa: una cuenta del público **no tiene rol**, y
+`can(null, cualquierCosa)` es siempre `false`. La columna existe para que se vea que el caso está
+contemplado, en lugar de deducirse.
 
-Dos filas explican la forma de toda la tabla. **`cuentas.escribir` es sólo de `owner`**: quien pueda
+Tres filas explican la forma de toda la tabla. **`cuentas.escribir` es sólo de `owner`**: quien pueda
 cambiar un CBU puede desviar todos los aportes, y no hay ninguna razón para que un `admin` lo pueda
-hacer (amenaza T1). Y **`auditor` es lectura total sin ninguna escritura**, que es el motivo de que los
+hacer (amenaza T1). **`auditor` es lectura total sin ninguna escritura**, que es el motivo de que los
 permisos se declaren uno por uno en lugar de derivarse de la jerarquía numérica: con
 `hasMinRole('auditor')` a secas, un auditor pasaría cualquier comprobación de "al menos auditor",
-incluidas las de escritura.
+incluidas las de escritura. Y **`donaciones.leer` deja a `editor` afuera** con la misma forma que
+`finanzas.leer`: `editor` administra el catálogo —qué falta, cuánto, con qué foto— y no accede a un solo
+nombre, correo ni nota privada de quien se comprometió a traerlo. Es la lección de `can_read_ledger()`
+aplicada a datos personales, y su espejo en la base es `private.can_read_donors()`.
 
 `roles.escribir` existe en la tabla y **no tiene pantalla**. Los roles se otorgan con SQL contra la
 tabla `user_roles`, y está en [`docs/runbook.md`](./runbook.md#5-dar-y-quitar-acceso). Es deliberado:
@@ -103,7 +137,7 @@ ataque que ahorro de trabajo.
 
 ## 3. RLS: la frontera de verdad
 
-RLS habilitado en las trece tablas, y `010-estructura.sql` falla si alguien agrega una tabla sin
+RLS habilitado en las catorce tablas, y `010-estructura.sql` falla si alguien agrega una tabla sin
 habilitarlo. Los patrones que se repiten:
 
 | Patrón | Cómo se ve | Por qué |
@@ -114,7 +148,8 @@ habilitarlo. Los patrones que se repiten:
 | Nada financiero se borra | `contributions` y `expenses` no tienen policy de `DELETE` | Se anulan con `voided_at` y `void_reason` (FR-015) |
 | `audit_log` append-only, y sólo por función | `authenticated` tiene **sólo `SELECT`** sobre la tabla; se escribe llamando a `public.record_audit(…)`, que es `security definer` | Un rastro que se puede editar no es un rastro (amenaza T2), y el rol que hace una operación auditada no siempre es el rol que puede leer el rastro ([ADR-019](./adr/019-auditoria-por-funcion.md)) |
 | Vistas con `security_invoker` | `campaign_totals` | Una vista bypasea RLS por defecto: sin esto, expondría el detalle que la tabla niega (amenaza I3) |
-| Funciones en el esquema `private` | `has_min_role`, `can_read_ledger`, `role_rank` | Postgres otorga `EXECUTE` a `PUBLIC` por defecto; llevan `set search_path = ''` y `revoke execute … from public, anon, authenticated` (amenaza E3) |
+| **Propiedad en lugar de rol** | `donor_profiles`: las cuatro policies preguntan `id = (select auth.uid())` | Es el patrón que ADR-027 introduce para los datos de una persona, y el que copian las reservas. El subselect no es opcional: `auth.uid()` suelto se evalúa una vez por fila |
+| Funciones en el esquema `private` | `has_min_role`, `can_read_ledger`, `can_read_donors`, `role_rank` | Postgres otorga `EXECUTE` a `PUBLIC` por defecto; llevan `set search_path = ''` y `revoke execute … from public, anon, authenticated` (amenaza E3) |
 | Lo `security definer` verifica el rol en su primera línea | `public.record_audit` | Una función `security definer` corre con los privilegios de su dueño: sin esa comprobación sería una escalada (amenaza E3). Y el `grant execute` va a `authenticated`, nunca a `anon` |
 | Grants explícitos | Al final de `20260909120400` | `anon` no tiene `SELECT` sobre `contributions`, `expense_receipts`, `user_roles` ni `audit_log` |
 
@@ -359,6 +394,9 @@ lo primero que hay que revisar cuando el contexto cambie:
 | La mutación y su entrada de auditoría no son atómicas | Son dos viajes a la base, y desde [ADR-020](./adr/020-rastro-obligatorio.md) son los quince, no sólo los financieros. Si el segundo falla, el cambio queda sin rastro y la pantalla informa el error, no lo esconde. Cerrar la ventana pediría una función SQL por operación, o sea el dominio duplicado en PL/pgSQL ([ADR-019](./adr/019-auditoria-por-funcion.md)) | Si el rastro pasa a ser un requisito legal y no operativo |
 | Sin límite de tasa en el borde | Vercel provee protección básica | Si aparece abuso real |
 | Sin 2FA obligatorio en las cuentas de administración | Depende del proveedor de identidad, no del código | Antes de dar acceso a más personas |
+| **El público y el equipo comparten el rol `authenticated` de Postgres** | Separarlos es pasar las quince operaciones del backoffice a funciones `security definer`: más seguro y una reescritura de lo que hoy funciona y está probado. La compuerta verifica en cada commit que ninguna policy le dé nada a `authenticated` sin comprobar rol o propiedad ([ADR-027](./adr/027-identidad-publica.md)) | Cuando aparezca una segunda razón para dar ese paso |
+| **Sin captcha en el registro** | La confirmación de correo y el límite de tasa de `config.toml` son la defensa. Un captcha agrega un tercero al que hay que confiarle tráfico y un obstáculo a gente que quiere ayudar | La primera cuenta creada de mala fe, o la primera reserva que bloquea algo sin intención de traerlo |
+| **Sin 2FA para las cuentas del público** | Una cuenta del público no da acceso a nada más que a su propio perfil y sus propias reservas, así que el daño de un robo de credencial es acotado | Si una cuenta del público llegara a poder ver datos de otra persona |
 | Un sitio clonado que copie el diseño y cambie el CBU | Está fuera del control técnico | Se mitiga por producto: dominio único comunicado en todos los canales, y los datos bancarios publicados también fuera del sitio |
 
 El último es el que más importa y el que menos se puede resolver con código, y por eso vale escribirlo
