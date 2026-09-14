@@ -26,4 +26,22 @@ describe("keepStaleOnError", () => {
     // hace que la revalidación conserve la última versión con datos.
     expect(() => keepStaleOnError(unavailable("error"))).toThrow(/lectura viva/i);
   });
+
+  it("en el build pinta el cascarón: no hay página previa que conservar", () => {
+    const previous = process.env["NEXT_PHASE"];
+    process.env["NEXT_PHASE"] = "phase-production-build";
+
+    try {
+      expect(keepStaleOnError(unavailable("error"))).toEqual({
+        status: "unavailable",
+        reason: "error",
+      });
+    } finally {
+      if (previous === undefined) {
+        delete process.env["NEXT_PHASE"];
+      } else {
+        process.env["NEXT_PHASE"] = previous;
+      }
+    }
+  });
 });

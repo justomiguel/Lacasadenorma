@@ -36,13 +36,18 @@ export function unavailable<T>(reason: UnavailableReason): DataResult<T> {
  * como éxito y reemplaza la página buena durante `revalidate` segundos. En una
  * corrida de e2e de quince minutos, `/reconstruccion` perdía la novedad del
  * fixture apenas se vencían los 300 s: `listUpdates` devolvía `error` (el pool
- * de PostgREST saturado) y la revalidación publicaba la página sin el relato.
+ * de PostgREST saturado, o una columna que el esquema en caché todavía no ve)
+ * y la revalidación publicaba la página sin el relato.
  *
- * `not-configured` y `not-published` sí son estados estables y se pintan.
+ * Durante `next build` no se tira: no hay página previa que conservar, y FR-034
+ * pide pintar el cascarón editorial. `not-configured` y `not-published` sí son
+ * estados estables y se pintan siempre.
  */
 export function keepStaleOnError<T>(result: DataResult<T>): DataResult<T> {
   if (result.status === "unavailable" && result.reason === "error") {
-    throw new Error("lectura viva falló: no reemplazar la página en caché");
+    if (process.env["NEXT_PHASE"] !== "phase-production-build") {
+      throw new Error("lectura viva falló: no reemplazar la página en caché");
+    }
   }
 
   return result;
