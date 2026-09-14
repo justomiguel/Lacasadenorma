@@ -1,14 +1,14 @@
-import { ogImageFrom, previewPhotoFor } from "@/components/campaign/preview-photo";
+import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { Unavailable } from "@/components/campaign/unavailable";
+import { InlineLink } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
-import { PreviewCard } from "@/components/design-system/card";
 import { Container, Section } from "@/components/design-system/layout";
 import { NewsFeed, NewsFeedItem } from "@/components/design-system/news-feed";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
-import { excerpt } from "@/src/domain/rich-text";
 import { isPhoto } from "@/src/domain/entities";
+import { excerpt } from "@/src/domain/rich-text";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -34,51 +34,30 @@ export function newsIndexMetadata(locale: Locale) {
  * Lo que el índice explica de sí mismo cuando no tiene entradas para mostrar.
  *
  * Es el único lugar del sitio donde toda la página depende de la base, así que sin
- * datos quedaría un título y un cartel: una pared. Esto no es relleno para llenar
- * la pantalla —dice qué va a haber acá y hacia dónde seguir mientras tanto—, y por
- * eso vale también cuando la campaña está conectada y todavía no publicó nada.
+ * datos quedaría un título y un cartel: una pared. La historia se apunta con
+ * enlaces en el texto —para eso están `whoWas`, `whatToRebuild`, `howToHelp` e
+ * `introAnd`—, no con una grilla de previas. Tres fotos de otras páginas
+ * competían por el LCP y dejaban `/novedades` en 3 000 ms contra el presupuesto
+ * de 2 500 (ADR-022, SC-304).
  */
 function QueEsElDiario({ locale }: { locale: Locale }) {
-  const { help, norma, reconstruction, ui } = getContent(locale);
+  const { ui } = getContent(locale);
 
   return (
-    <div className="space-y-xl">
-      <div className="max-w-measure space-y-md text-body">
-        <p>{ui.news.intro}</p>
-        <p className="text-ink-muted">{ui.news.introLinks}</p>
-      </div>
-      <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
-        <li className="flex min-w-0">
-          <PreviewCard
-            as="h2"
-            className="w-full"
-            href={localizedHref("/norma", locale)}
-            title={norma.knownAs ?? norma.fullName}
-            action={ui.home.seeNorma}
-            media={previewPhotoFor("/norma", locale)}
-          />
-        </li>
-        <li className="flex min-w-0">
-          <PreviewCard
-            as="h2"
-            className="w-full"
-            href={localizedHref("/reconstruccion", locale)}
-            title={reconstruction.title}
-            action={ui.home.seeWork}
-            media={previewPhotoFor("/reconstruccion", locale)}
-          />
-        </li>
-        <li className="flex min-w-0">
-          <PreviewCard
-            as="h2"
-            className="w-full"
-            href={localizedHref("/ayudar", locale)}
-            title={help.title}
-            action={ui.helpCta}
-            media={previewPhotoFor("/ayudar", locale)}
-          />
-        </li>
-      </ul>
+    <div className="max-w-measure space-y-md text-body">
+      <p>{ui.news.intro}</p>
+      <p className="text-ink-muted">
+        {ui.news.introLinks}{" "}
+        <InlineLink href={localizedHref("/norma", locale)}>{ui.news.whoWas}</InlineLink>
+        {", "}
+        <InlineLink href={localizedHref("/reconstruccion", locale)}>
+          {ui.news.whatToRebuild}
+        </InlineLink>{" "}
+        {ui.news.introAnd}{" "}
+        <InlineLink href={localizedHref("/ayudar", locale)}>
+          {ui.news.howToHelp}.
+        </InlineLink>
+      </p>
     </div>
   );
 }

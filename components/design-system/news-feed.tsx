@@ -45,16 +45,16 @@ export function NewsFeedItem({
     <li className="py-xl first:pt-0">
       <Link
         href={href}
-        className="arrow-link group flex flex-col gap-lg text-ink no-underline sm:flex-row sm:items-start sm:gap-xl"
+        className="arrow-link group flex flex-row items-start gap-md text-ink no-underline sm:gap-xl"
       >
         {cover === null ? null : (
-          <div className="relative aspect-landscape w-full overflow-hidden bg-paper-sunk sm:aspect-square sm:w-6xl sm:shrink-0">
+          <div className="relative aspect-square w-5xl shrink-0 overflow-hidden bg-paper-sunk sm:w-6xl">
             <Image
               src={cover.url}
               alt={cover.alt}
               width={cover.width}
               height={cover.height}
-              sizes="(min-width: 40rem) 120px, 100vw"
+              sizes="120px"
               quality={80}
               className="h-full w-full object-cover"
             />
