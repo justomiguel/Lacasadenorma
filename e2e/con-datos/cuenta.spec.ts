@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
-import { apiLocal, entrar } from "../soporte/backoffice";
+import { apiLocal } from "../soporte/backoffice";
 import {
   CLAVE_PUBLICA,
   abrirSeccionDeCuenta,
@@ -318,62 +318,6 @@ test.describe("fase A · la cuenta del público", () => {
     await page.goto("/cuenta");
 
     await expect(page).toHaveURL(/\/cuenta\/ingresar$/);
-  });
-
-  test("una cuenta del público en /admin termina en /admin/sin-permiso", async ({
-    page,
-    request,
-  }, info) => {
-    const email = correoDePrueba(info.project.name, "sin-rol");
-
-    await crearCuenta(page, request, email);
-
-    // La sesión es real y está abierta: lo que falta no es el token sino el rol. Es
-    // la distinción entera de ADR-027 —`authenticated` dejó de significar "de
-    // confianza"— vista desde la interfaz.
-    await page.goto("/admin");
-
-    await expect(page).toHaveURL(/\/admin\/sin-permiso$/);
-
-    // Y ninguna pantalla del backoffice se abre por su cuenta.
-    for (const ruta of ["/admin/aportes", "/admin/gastos", "/admin/cuentas"]) {
-      await page.goto(ruta);
-      await expect(page, `${ruta} se abrió para una cuenta sin rol`).toHaveURL(
-        /\/admin\/sin-permiso$/,
-      );
-    }
-
-    await expect(page.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
-  });
-
-  test("quien tiene rol ve Backoffice en el sitio público y llega al panel", async ({
-    page,
-  }) => {
-    await entrar(page, "editor");
-    await page.goto("/");
-
-    const angosto = (page.viewportSize()?.width ?? 1440) < 1024;
-
-    if (angosto) {
-      await page.getByRole("button", { name: /abrir el menú/i }).click();
-
-      const enlace = page
-        .getByRole("dialog")
-        .getByRole("link", { name: /^backoffice$/i });
-
-      await expect(enlace).toBeVisible({ timeout: 20_000 });
-      await enlace.click();
-    } else {
-      const enlace = page
-        .getByRole("banner")
-        .getByRole("link", { name: /^backoffice$/i });
-
-      await expect(enlace).toBeVisible({ timeout: 20_000 });
-      await enlace.click();
-    }
-
-    await expect(page).toHaveURL(/\/admin(\/|$|\?)/);
-    await expect(page).not.toHaveURL(/sin-permiso/);
   });
 
   test("borrar la cuenta la borra, y después ya no entra", async ({

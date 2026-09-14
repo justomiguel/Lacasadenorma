@@ -45,10 +45,12 @@ Agregar o cambiar la foto, cambiar la contraseña y borrar la cuenta siguen en
 
 **4. El backoffice se nombra en el chrome público sólo si hay rol.** El snapshot
 de `/cuenta/sesion` incluye `staff`. Quien dona no lo ve; quien carga el catálogo
-o las novedades ve «Backoffice» en el encabezado y en el menú, y un enlace en
-`/cuenta` que no espera a hidratar. En el encabezado de escritorio no se suma
-«Cerrar sesión»: un tercer enlace recorta la acción de ayudar. El pie no lo
-muestra. En `/admin` el chrome público sigue sin personalizarse. La prosa
+o las novedades ve «Backoffice» en el encabezado de escritorio y en el menú del
+teléfono, y un enlace en `/cuenta` que no espera a hidratar. En el menú, la cuenta
+—y Backoffice— van **arriba** de las cinco secciones: en 360×640 esas secciones
+llenan la pantalla y un enlace debajo no se ve. En el encabezado de escritorio no
+se suma «Cerrar sesión»: un tercer enlace recorta la acción de ayudar. El pie no
+lo muestra. En `/admin` el chrome público sigue sin personalizarse. La prosa
 editorial del sitio **no** se edita desde ahí: sigue en `content/*.json`
 (ADR-007).
 
@@ -81,7 +83,9 @@ que el perfil: propiedad, no rol. Borrar la cuenta borra el archivo.
   también está en `/admin`. El chrome de cuenta **no** se personaliza ahí: el
   panel ya tiene su propia salida, y la pública manda a `/cuenta/ingresar`.
 - «Backoffice» en el encabezado público aparece después de hidratar, igual que
-  el nombre. En `/cuenta`, que ya es dinámica, el enlace del equipo está en el
-  HTML. Una cuenta creada en `/cuenta/crear` no lo ve: no tiene rol.
+  el nombre. En el menú del teléfono va arriba de las secciones, porque debajo
+  de las cinco de display no entra en 360×640. En `/cuenta`, que ya es dinámica,
+  el enlace del equipo está en el HTML. Una cuenta creada en `/cuenta/crear` no
+  lo ve: no tiene rol.
 - `FR-238` se amplía: el mínimo ahora admite una foto optativa, que no se publica.
   La política de privacidad se actualiza en el mismo cambio.
