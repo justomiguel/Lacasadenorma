@@ -27,4 +27,9 @@ export type { ReviewAccountMail } from "./donors";
 export { cancelPledge, fulfillPledge } from "./pledges";
 export type { PledgeMail } from "./pledges";
 export { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
-export { addUpdatePhoto, saveUpdate, setUpdatePublished } from "./updates";
+export {
+  addUpdateMedia,
+  addUpdatePhoto,
+  saveUpdate,
+  setUpdatePublished,
+} from "./updates";

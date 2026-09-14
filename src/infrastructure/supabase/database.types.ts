@@ -579,11 +579,13 @@ export type Database = {
       media: {
         Row: {
           alt_text: string;
+          bucket_id: string;
           caption: string | null;
           created_at: string;
           credit: string | null;
           height: number;
           id: string;
+          kind: Database["public"]["Enums"]["media_kind"];
           storage_path: string;
           taken_on: string | null;
           updated_at: string;
@@ -592,11 +594,13 @@ export type Database = {
         };
         Insert: {
           alt_text: string;
+          bucket_id?: string;
           caption?: string | null;
           created_at?: string;
           credit?: string | null;
           height: number;
           id?: string;
+          kind?: Database["public"]["Enums"]["media_kind"];
           storage_path: string;
           taken_on?: string | null;
           updated_at?: string;
@@ -605,11 +609,13 @@ export type Database = {
         };
         Update: {
           alt_text?: string;
+          bucket_id?: string;
           caption?: string | null;
           created_at?: string;
           credit?: string | null;
           height?: number;
           id?: string;
+          kind?: Database["public"]["Enums"]["media_kind"];
           storage_path?: string;
           taken_on?: string | null;
           updated_at?: string;
@@ -1105,6 +1111,7 @@ export type Database = {
         | "transporte"
         | "herramientas"
         | "otros";
+      media_kind: "photo" | "video";
       milestone_status: "pendiente" | "en_curso" | "completado";
       payment_method_kind: "bank_transfer" | "mercado_pago" | "stripe" | "paypal";
       pledge_status: "reserved" | "fulfilled" | "cancelled" | "expired";
@@ -1242,6 +1249,7 @@ export const Constants = {
         "herramientas",
         "otros",
       ],
+      media_kind: ["photo", "video"],
       milestone_status: ["pendiente", "en_curso", "completado"],
       payment_method_kind: ["bank_transfer", "mercado_pago", "stripe", "paypal"],
       pledge_status: ["reserved", "fulfilled", "cancelled", "expired"],

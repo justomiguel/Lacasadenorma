@@ -32,6 +32,7 @@ export const AUDIT_ACTION_LABELS = {
   "update.created": "escribió una novedad",
   "update.updated": "editó una novedad",
   "update.photo_added": "agregó una foto a una novedad",
+  "update.video_added": "agregó un video a una novedad",
   "update.published": "publicó una novedad",
   "update.unpublished": "despublicó una novedad",
   "payment_method.created": "cargó una cuenta bancaria",

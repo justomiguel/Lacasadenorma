@@ -1,10 +1,11 @@
 import type { MediaAsset, UpdateRecord } from "@/src/domain/entities";
 import type { AdminUpdatePort } from "@/src/domain/ports/admin";
 
-import { inspectImage, storageKeyFor, UnsupportedFileError } from "../../files/image";
+import { UnsupportedFileError } from "../../files/image";
+import { inspectUpload } from "../../files/inspect-upload";
 import { mapMedia, type MediaRow } from "../mappers";
 import type { ServerSupabaseClient } from "../server-client";
-import { MEDIA_COLUMNS, PHOTO_BUCKET, UPDATE_COLUMNS } from "./columns";
+import { MEDIA_COLUMNS, UPDATE_COLUMNS } from "./columns";
 import { QueryError } from "./query";
 
 interface UpdateRow {
@@ -17,8 +18,8 @@ interface UpdateRow {
 }
 
 export function createUpdatesPort(client: ServerSupabaseClient): AdminUpdatePort {
-  const publicUrlFor = (storagePath: string): string =>
-    client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+  const publicUrlFor = (bucketId: string, storagePath: string): string =>
+    client.storage.from(bucketId).getPublicUrl(storagePath).data.publicUrl;
 
   function mapUpdate(row: UpdateRow): UpdateRecord {
     return {
@@ -103,44 +104,43 @@ export function createUpdatesPort(client: ServerSupabaseClient): AdminUpdatePort
     /**
      * El orden importa: primero se valida el archivo por contenido, después se
      * sube, y sólo entonces se crea la fila. Si la fila se creara primero, un
-     * fallo de subida dejaría una foto registrada que no existe, y la galería
+     * fallo de subida dejaría un medio registrado que no existe, y el artículo
      * mostraría un hueco roto.
      */
     async createMedia(input): Promise<MediaAsset> {
-      const info = await inspectImage(input.file);
-      const key = storageKeyFor(info.mimeType);
+      const placed = await inspectUpload(input.file);
 
       const { error: uploadError } = await client.storage
-        .from(PHOTO_BUCKET)
-        .upload(key, input.file, {
-          contentType: info.mimeType,
-          // Sin `upsert`: la clave la genera el servidor y es única, así que un
-          // upsert sólo podría pisar el archivo de otra persona.
+        .from(placed.bucketId)
+        .upload(placed.key, input.file, {
+          contentType: placed.mimeType,
           upsert: false,
         });
 
       if (uploadError !== null) {
         throw new UnsupportedFileError(
-          `No pudimos subir la foto: ${uploadError.message}`,
+          `No pudimos subir el archivo: ${uploadError.message}`,
         );
       }
 
       const { data, error } = await client
         .from("media")
         .insert({
-          storage_path: key,
+          kind: placed.kind,
+          bucket_id: placed.bucketId,
+          storage_path: placed.key,
           alt_text: input.alt,
           caption: input.caption,
           credit: input.credit,
-          width: info.width,
-          height: info.height,
+          width: placed.width,
+          height: placed.height,
           taken_on: input.takenOn,
         })
         .select(MEDIA_COLUMNS)
         .single();
 
       if (error !== null) {
-        throw new QueryError("registrar la foto", error);
+        throw new QueryError("registrar el archivo", error);
       }
 
       return mapMedia(data, publicUrlFor);

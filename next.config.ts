@@ -59,6 +59,7 @@ const contentSecurityPolicy = [
   "frame-ancestors 'none'",
   "object-src 'none'",
   `img-src 'self' data: blob:${allow(supabaseOrigin)}`,
+  `media-src 'self'${allow(supabaseOrigin)}`,
   "font-src 'self'",
   // Next inyecta estilos en línea; eliminar 'unsafe-inline' exigiría una
   // arquitectura de nonces para estilos. Declarado como deuda conocida en

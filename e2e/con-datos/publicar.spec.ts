@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
 import {
@@ -8,6 +8,16 @@ import {
   sufijoUnico,
   tokenDe,
 } from "../soporte/backoffice";
+
+/**
+ * El editor visual pinta un contenteditable y esconde el textarea. El POST sigue
+ * leyendo `textarea[name=body]`: se espera a que el editor esté listo y se llena
+ * el campo que viaja, para no depender de que ProseMirror sincronice un `fill`.
+ */
+async function escribirCuerpo(page: Page, texto: string): Promise<void> {
+  await expect(page.getByRole("toolbar", { name: /formato del texto/i })).toBeVisible();
+  await page.locator('textarea[name="body"]').fill(texto, { force: true });
+}
 
 /**
  * Flujo crítico 9: publicar una actualización.
@@ -58,9 +68,9 @@ test.describe("flujo 9 · publicar una novedad", () => {
     // ── Escribir el borrador ──────────────────────────────────────────────────
     await page.goto("/admin/novedades");
 
-    await page.getByLabel("Título").fill(titulo);
+    await page.getByLabel("Título", { exact: true }).fill(titulo);
     await page.getByLabel(/dirección web/i).fill(slug);
-    await page.getByLabel("Texto").fill(texto);
+    await escribirCuerpo(page, texto);
     await page.getByRole("button", { name: /guardar borrador/i }).click();
 
     // Guardar lleva a la pantalla de la novedad, que es la mitad de SC-009: quien
@@ -93,6 +103,8 @@ test.describe("flujo 9 · publicar una novedad", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
     await expect(page.getByText(/falta el revoque/i)).toBeVisible();
+    await expect(page.locator("time")).toBeVisible();
+    await esperarSinViolaciones(page, `/novedades/${slug}`);
 
     const canonica = await page
       .locator('link[rel="canonical"]')
@@ -106,6 +118,8 @@ test.describe("flujo 9 · publicar una novedad", () => {
     // donde la gente la busca.
     await page.goto("/novedades");
     await expect(page.getByRole("link", { name: new RegExp(sufijo) })).toBeVisible();
+    await expect(page.locator("time").first()).toBeVisible();
+    await esperarSinViolaciones(page, "/novedades");
 
     // El sitemap es la otra invalidación de ADR-017, y la que nadie mira: si quedara
     // cacheado, la novedad sería invisible para los buscadores hasta la próxima
@@ -149,11 +163,9 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await entrar(page, "editor");
     await page.goto("/admin/novedades");
 
-    await page.getByLabel("Título").fill(`Llegó el agua a la casa (${sufijo})`);
+    await page.getByLabel("Título", { exact: true }).fill(`Llegó el agua a la casa (${sufijo})`);
     await page.getByLabel(/dirección web/i).fill(slug);
-    await page
-      .getByLabel("Texto")
-      .fill("Se conectó la cañería nueva y el tanque quedó cargado.");
+    await escribirCuerpo(page, "Se conectó la cañería nueva y el tanque quedó cargado.");
     await page.getByRole("button", { name: /guardar borrador/i }).click();
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

@@ -42,6 +42,11 @@ const ALLOWED_OPEN_POLICIES = new Map([
       "ocultar la fila no ocultaría nada y fingir lo contrario sería peor.",
   ],
   [
+    "videos_select",
+    "El bucket `videos` es público por el mismo motivo que `fotos`: el archivo se " +
+      "sirve por URL sin sesión (ADR-034). Ocultar la fila no ocultaría el video.",
+  ],
+  [
     "media_select_internal",
     "Mismo motivo: `media` describe archivos de un bucket público. La fila no dice " +
       "nada que el archivo no diga, y el `alt` es contenido publicado.",

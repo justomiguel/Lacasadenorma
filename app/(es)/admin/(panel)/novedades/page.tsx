@@ -4,9 +4,9 @@ import {
   ActionForm,
   HiddenValue,
   SubmitButton,
-  TextAreaField,
   TextField,
 } from "@/components/admin/form";
+import { NewsBodyField } from "@/components/admin/news-body-field";
 import { NoRecords, Record, RecordList } from "@/components/admin/records";
 import { AdminHeading, Panel, SinDatos } from "@/components/admin/shell";
 import { getAdminScope } from "@/src/infrastructure/admin/context";
@@ -55,7 +55,7 @@ export default async function AdminNovedadesPage() {
         id="nueva"
         title="Escribir una novedad"
         tone="sunk"
-        description="Se guarda como borrador. Las fotos y la publicación son el paso siguiente."
+        description="Se guarda como borrador. Las fotos, los videos y la publicación son el paso siguiente."
       >
         <ActionForm action={saveUpdateAction}>
           <HiddenValue name="campaignId" value={campaign.id} />
@@ -73,12 +73,12 @@ export default async function AdminNovedadesPage() {
             hint="Va a quedar como /novedades/lo-que-escribas. Minúsculas, números y guiones."
             placeholder="empezo-el-techo"
           />
-          <TextAreaField
+          <NewsBodyField
             name="body"
             label="Texto"
             required
-            rows={10}
-            hint="Se acepta **negrita**, _cursiva_, listas con guiones, > para citar y ### para un subtítulo. No se acepta HTML."
+            defaultValue=""
+            hint="Se ve como va a quedar. Sin JavaScript se escribe en texto. Las fotos y los videos se intercalan después de guardar."
           />
           <SubmitButton pendingLabel="Guardando…">Guardar borrador</SubmitButton>
         </ActionForm>
@@ -130,7 +130,7 @@ export default async function AdminNovedadesPage() {
                     href={`/admin/novedades/${update.id}`}
                     className="font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 hover:text-ink"
                   >
-                    Editar y fotos
+                    Editar
                     {update.media.length === 0 ? "" : ` (${String(update.media.length)})`}
                   </Link>
 

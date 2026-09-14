@@ -123,18 +123,20 @@ obtener el archivo. La UI pública lee un contador derivado, no las filas.
 | Columna | Tipo | Notas |
 |---|---|---|
 | `slug` | `citext unique` | Para compartir la novedad sola (FR-027) |
-| `title`, `body` | `text` | `body` en Markdown restringido, sin HTML crudo |
+| `title`, `body` | `text` | `body` en Markdown restringido, sin HTML crudo. Desde [ADR-034](../../docs/adr/034-editor-novedades.md) también admite bloques `![alt](media:<uuid>)` y `![alt](video:<uuid>)` |
 | `published_at` | `timestamptz` nullable | |
 | `author_id` | `uuid` | |
 
 `update_media` relaciona `update_id` con `media_id` y aporta `sort_order`.
 
-### `media` — fotografías
+### `media` — fotografías y videos de la obra
 
 | Columna | Tipo | Notas |
 |---|---|---|
-| `storage_path` | `text` | Bucket **público** `fotos` |
-| `alt_text` | `text not null` | **Obligatorio a nivel de esquema** (FR-024). No puede quedar vacío |
+| `kind` | enum `media_kind` | `photo` \| `video`. Default `photo` |
+| `bucket_id` | `text` | `fotos` o `videos`; un `check` obliga a que coincida con `kind` |
+| `storage_path` | `text` | Clave dentro de ese bucket |
+| `alt_text` | `text not null` | **Obligatorio a nivel de esquema** (FR-024), también para un video |
 | `caption`, `credit` | `text` nullable | |
 | `width`, `height` | `int` | Necesarios para evitar CLS (principio VII) |
 | `taken_on` | `date` nullable | |
@@ -142,9 +144,9 @@ obtener el archivo. La UI pública lee un contador derivado, no las filas.
 **Invariante**: `length(btrim(alt_text)) > 0`. Un `alt` vacío se rechaza en la base, no sólo en el
 formulario, porque el formulario puede cambiar.
 
-**Sobre `media` y el contenido versionado**: `media` guarda las fotografías porque una foto se sube
-desde un teléfono y no puede requerir un despliegue. La prosa, en cambio, vive en `content/`. La
-frontera exacta está más abajo, en la sección 8.
+**Sobre `media` y el contenido versionado**: `media` guarda las fotografías y los videos de la
+obra porque se suben desde un teléfono y no pueden requerir un despliegue (ADR-034). La prosa
+fija, en cambio, vive en `content/`. La frontera exacta está más abajo, en la sección 8.
 
 ### `payment_methods` — cómo colaborar
 
@@ -311,6 +313,7 @@ Toda columna que filtre una policy necesita índice propio liderando un btree:
 | Bucket | Público | Contenido | Policies |
 |---|---|---|---|
 | `fotos` | **sí** | Fotografías del avance y retratos | Lectura para todos; escritura sólo `editor`+ |
+| `videos` | **sí** | Videos cortos de la obra, adjuntos a una novedad | Igual que `fotos`; MIME y tamaño distintos (ADR-034) |
 | `comprobantes` | **no** | Facturas y recibos | Ninguna lectura pública. `auditor`+ obtiene URL firmada de corta duración |
 
 Para el bucket público hay que usar los helpers de operación (`storage.allow_only_operation()`), o

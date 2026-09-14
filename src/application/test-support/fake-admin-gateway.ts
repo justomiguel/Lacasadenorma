@@ -66,17 +66,24 @@ export function fakeAdminGateway(
       findUpdate: () => record("findUpdate", null, null),
       saveUpdate: (input) => record("saveUpdate", input, id),
       setUpdatePublished: (input) => record("setUpdatePublished", input, undefined),
-      createMedia: (input) =>
-        record("createMedia", input, {
+      createMedia: (input) => {
+        const isVideo = input.file.type.startsWith("video/");
+
+        return record("createMedia", input, {
           id: "33333333-3333-4333-8333-333333333333",
-          url: "https://ejemplo.test/foto.jpg",
+          kind: isVideo ? "video" : "photo",
+          bucketId: isVideo ? "videos" : "fotos",
+          url: isVideo
+            ? "https://ejemplo.test/obra.mp4"
+            : "https://ejemplo.test/foto.jpg",
           alt: input.alt,
           caption: input.caption,
           credit: input.credit,
-          width: 1600,
-          height: 1200,
+          width: isVideo ? 1920 : 1600,
+          height: isVideo ? 1080 : 1200,
           takenOn: input.takenOn,
-        }),
+        });
+      },
       attachMediaToUpdate: (input) => record("attachMediaToUpdate", input, undefined),
     },
     milestones: {

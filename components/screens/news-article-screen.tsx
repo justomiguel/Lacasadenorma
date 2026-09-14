@@ -13,7 +13,8 @@ import { Byline } from "@/components/design-system/typography";
 import { StructuredData } from "@/components/site/structured-data";
 import { getContent } from "@/content";
 import { findUpdate } from "@/src/application/use-cases/get-updates";
-import { excerpt } from "@/src/domain/rich-text";
+import { isPhoto, isVideo } from "@/src/domain/entities";
+import { excerpt, referencedMediaIds } from "@/src/domain/rich-text";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -120,6 +121,10 @@ export async function NewsArticleScreen({
   const summary = excerpt(update.body);
   const path = `/novedades/${update.slug}`;
   const href = localizedHref(path, locale);
+  const referenced = new Set(referencedMediaIds(update.body));
+  const leftoverVideos = update.media.filter(
+    (item) => isVideo(item) && !referenced.has(item.id),
+  );
 
   const cmsBody = (
     <>
@@ -134,9 +139,33 @@ export async function NewsArticleScreen({
         />
       )}
 
-      <RichText body={update.body} className="mt-2xl" />
+      <RichText body={update.body} media={update.media} className="mt-2xl" />
 
-      <PhotoEssay media={update.media} className="mt-3xl" />
+      <PhotoEssay
+        media={update.media.filter((item) => isPhoto(item) && !referenced.has(item.id))}
+        className="mt-3xl"
+      />
+      {leftoverVideos.length === 0 ? null : (
+        <ul className="mt-xl max-w-measure space-y-lg">
+          {leftoverVideos.map((item) => (
+            <li key={item.id}>
+              <video
+                controls
+                preload="metadata"
+                width={item.width}
+                height={item.height}
+                className="aspect-wide w-full bg-paper-sunk"
+                aria-label={item.alt}
+              >
+                <source
+                  src={item.url}
+                  type={item.url.endsWith(".webm") ? "video/webm" : "video/mp4"}
+                />
+              </video>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 

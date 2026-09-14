@@ -397,7 +397,7 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
 | `/reconstruccion` | Qué se perdió, qué hay que reparar, presupuesto por rubro, hitos, fotos del avance |
 | `/ayudar` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |
-| `/novedades` y `/novedades/[slug]` | Actualizaciones fechadas; cada una compartible con su propia vista previa |
+| `/novedades` y `/novedades/[slug]` | Diario de la obra: feed cronológico con fecha; cada entrada compartible con su propia vista previa (ADR-034) |
 | `/legado` | Fundación Norma: qué se propone, en qué estado está, y que todavía no existe como organización |
 | `/legales/privacidad`, `/legales/terminos` | Qué se recolecta, para qué, cuánto se conserva |
 
@@ -447,7 +447,7 @@ Viene por dos caminos, siguiendo la misma división por frecuencia de cambio que
 | Fuente | Qué fotos | Cómo se edita |
 |---|---|---|
 | `public/fotos/`, declaradas en `content/*.json` | Las editoriales: el retrato de Norma, el frente, el interior, el garage, la limpieza. Se eligen una vez | Commit y pull request |
-| Supabase Storage vía `/admin` | Las del avance de la obra, adjuntas a cada novedad y fechadas | Backoffice, sin despliegue |
+| Supabase Storage vía `/admin` | Las del avance de la obra —fotos y videos—, intercaladas en cada novedad y fechadas | Backoffice, sin despliegue |
 
 Las editoriales no van a la base porque son parte del relato, no un dato operativo, y tienen que estar
 en pantalla también cuando la base no responde. Una foto **no es una cifra** —no afirma un número—, así

@@ -122,19 +122,19 @@ export async function setUpdatePublished(
 }
 
 /**
- * Subir una foto y asociarla a una novedad, en una sola operación.
+ * Subir una foto o un video y asociarlo a una novedad, en una sola operación.
  *
  * `alt` es obligatorio y no hay forma de eludirlo: FR-024 lo pide, la base lo exige
  * con un `check` que además rechaza que el alt sea el nombre del archivo, y el
  * esquema de acá pide al menos diez caracteres. Tres barreras para la misma regla,
- * porque una foto sin descripción es contenido que una persona ciega no puede leer y
- * ninguna de las tres se puede desactivar por apuro.
+ * porque un medio sin descripción es contenido que una persona ciega no puede leer
+ * y ninguna de las tres se puede desactivar por apuro.
  */
-const photoSchema = z.object({
+const mediaSchema = z.object({
   updateId: z.string().min(1, "Falta la novedad."),
-  file: z.instanceof(File, { error: "Elegí una foto." }),
+  file: z.instanceof(File, { error: "Elegí un archivo." }),
   alt: z
-    .string({ error: "Falta la descripción de la foto." })
+    .string({ error: "Falta la descripción." })
     .trim()
     .min(10, "La descripción tiene que decir qué se ve: al menos diez caracteres.")
     .max(300, "La descripción no puede pasar de 300 caracteres."),
@@ -144,15 +144,23 @@ const photoSchema = z.object({
   sortOrder: z.coerce.number().int().min(0).max(99).catch(0),
 });
 
-export async function addUpdatePhoto(
+export async function addUpdateMedia(
   deps: AdminDeps,
   input: unknown,
-): Promise<AdminResult<{ mediaId: string }>> {
+): Promise<
+  AdminResult<{
+    mediaId: string;
+    kind: "photo" | "video";
+    url: string;
+    width: number;
+    height: number;
+  }>
+> {
   return perform({
     deps,
     permission: "contenido.escribir",
-    describe: "subir la foto",
-    schema: photoSchema,
+    describe: "subir el archivo",
+    schema: mediaSchema,
     input,
     run: async (data) => {
       const media = await deps.gateway.updates.createMedia({
@@ -169,16 +177,23 @@ export async function addUpdatePhoto(
         sortOrder: data.sortOrder,
       });
 
-      return { mediaId: media.id };
+      return {
+        mediaId: media.id,
+        kind: media.kind,
+        url: media.url,
+        width: media.width,
+        height: media.height,
+      };
     },
-    success: () => "Foto agregada.",
+    success: (output) => (output.kind === "video" ? "Video agregado." : "Foto agregada."),
     audit: (data, output) => ({
-      action: "update.photo_added",
-      // La entidad es la novedad y no la foto: quien lee el registro busca "qué le
-      // pasó a esta novedad", y el identificador de la fila de `media` no le dice nada.
+      action: output.kind === "video" ? "update.video_added" : "update.photo_added",
       entityTable: "updates",
       entityId: data.updateId,
       diff: { media: output.mediaId, alt: data.alt },
     }),
   });
 }
+
+/** Nombre anterior: las fotos siguen entrando por el mismo caso de uso. */
+export const addUpdatePhoto = addUpdateMedia;

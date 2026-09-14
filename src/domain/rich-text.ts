@@ -22,6 +22,9 @@
  * - Listas con `- `.
  * - Citas con `> `.
  * - En línea: `**fuerte**`, `_énfasis_` y `[texto](url)`.
+ * - Foto o video intercalados, cada uno en su propio bloque:
+ *   `![qué se ve](media:<uuid>)` y `![qué se ve](video:<uuid>)`. Ningún otro
+ *   esquema produce un nodo de media: un `https:` queda texto (ADR-034).
  *
  * Todo lo demás es texto. Una sintaxis que no se reconoce no es un error: se
  * publica tal como se escribió, que es lo que quien escribió esperaba ver.
@@ -33,11 +36,16 @@ export type InlineNode =
   | { readonly kind: "emphasis"; readonly value: string }
   | { readonly kind: "link"; readonly value: string; readonly href: string };
 
+export type MediaBlockNode =
+  | { readonly kind: "figure"; readonly mediaId: string; readonly alt: string }
+  | { readonly kind: "video"; readonly mediaId: string; readonly alt: string };
+
 export type BlockNode =
   | { readonly kind: "paragraph"; readonly content: readonly InlineNode[] }
   | { readonly kind: "heading"; readonly content: readonly InlineNode[] }
   | { readonly kind: "quote"; readonly content: readonly InlineNode[] }
-  | { readonly kind: "list"; readonly items: readonly (readonly InlineNode[])[] };
+  | { readonly kind: "list"; readonly items: readonly (readonly InlineNode[])[] }
+  | MediaBlockNode;
 
 /**
  * Sólo `https:`, `mailto:` y rutas internas.
@@ -61,7 +69,12 @@ function isPublishableHref(href: string): boolean {
   }
 }
 
-const INLINE_PATTERN = /\*\*(.+?)\*\*|_(.+?)_|\[([^\]]+)\]\(([^\s)]+)\)/g;
+// `(?<!!)` evita que `![alt](url)` se lea como enlace: la foto intercalada es un
+// bloque, y una imagen con otro esquema queda texto, no un click.
+const INLINE_PATTERN = /\*\*(.+?)\*\*|_(.+?)_|(?<!!)\[([^\]]+)\]\(([^\s)]+)\)/g;
+
+const MEDIA_LINE =
+  /^!\[([^\]]+)\]\((media|video):([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)$/i;
 
 function parseInline(source: string): readonly InlineNode[] {
   const nodes: InlineNode[] = [];
@@ -96,6 +109,26 @@ function parseInline(source: string): readonly InlineNode[] {
   return nodes;
 }
 
+function parseMediaBlock(line: string): MediaBlockNode | null {
+  const match = MEDIA_LINE.exec(line);
+
+  if (match === null) {
+    return null;
+  }
+
+  const alt = match[1];
+  const scheme = match[2];
+  const mediaId = match[3];
+
+  if (alt === undefined || scheme === undefined || mediaId === undefined) {
+    return null;
+  }
+
+  return scheme === "video"
+    ? { kind: "video", mediaId: mediaId.toLowerCase(), alt }
+    : { kind: "figure", mediaId: mediaId.toLowerCase(), alt };
+}
+
 /**
  * Convierte el cuerpo de una novedad en bloques.
  *
@@ -112,6 +145,13 @@ export function parseRichText(source: string): readonly BlockNode[] {
       .filter((line) => line.length > 0);
 
     if (lines.length === 0) {
+      continue;
+    }
+
+    const media = lines.length === 1 ? parseMediaBlock(lines[0] ?? "") : null;
+
+    if (media !== null) {
+      blocks.push(media);
       continue;
     }
 
@@ -150,28 +190,98 @@ export function parseRichText(source: string): readonly BlockNode[] {
   return blocks;
 }
 
+function inlineToPlainText(nodes: readonly InlineNode[]): string {
+  return nodes.map((node) => node.value).join("");
+}
+
+function inlineToMarkdown(nodes: readonly InlineNode[]): string {
+  return nodes
+    .map((node) => {
+      switch (node.kind) {
+        case "text":
+          return node.value;
+        case "strong":
+          return `**${node.value}**`;
+        case "emphasis":
+          return `_${node.value}_`;
+        case "link":
+          return `[${node.value}](${node.href})`;
+      }
+    })
+    .join("");
+}
+
+function blockToMarkdown(block: BlockNode): string {
+  switch (block.kind) {
+    case "paragraph":
+      return inlineToMarkdown(block.content);
+    case "heading":
+      return `### ${inlineToMarkdown(block.content)}`;
+    case "quote":
+      return `> ${inlineToMarkdown(block.content)}`;
+    case "list":
+      return block.items.map((item) => `- ${inlineToMarkdown(item)}`).join("\n");
+    case "figure":
+      return `![${block.alt}](media:${block.mediaId})`;
+    case "video":
+      return `![${block.alt}](video:${block.mediaId})`;
+  }
+}
+
+/** El Markdown canónico de un árbol ya parseado. El editor serializa por acá. */
+export function serializeRichText(blocks: readonly BlockNode[]): string {
+  return blocks.map(blockToMarkdown).join("\n\n");
+}
+
+/**
+ * Los uuid de foto y video que el cuerpo nombra, en el orden en que aparecen,
+ * una sola vez. Sirve para no repetir al final los que ya se intercalaron.
+ */
+export function referencedMediaIds(source: string): readonly string[] {
+  const seen = new Set<string>();
+  const ids: string[] = [];
+
+  for (const block of parseRichText(source)) {
+    if (block.kind !== "figure" && block.kind !== "video") {
+      continue;
+    }
+
+    if (seen.has(block.mediaId)) {
+      continue;
+    }
+
+    seen.add(block.mediaId);
+    ids.push(block.mediaId);
+  }
+
+  return ids;
+}
+
 /**
  * El texto plano de un cuerpo, para la `description` de la metadata y para la
  * salida de las capacidades de agentes.
  *
  * Se deriva del árbol ya parseado en lugar de borrar símbolos con expresiones
  * regulares: así el resumen no puede contener marcado que la página sí interpretó,
- * ni al revés.
+ * ni al revés. El `alt` de una foto o un video no entra: describe el medio, no
+ * el relato.
  */
 export function richTextToPlainText(source: string): string {
   return parseRichText(source)
-    .map((block) =>
-      block.kind === "list"
-        ? block.items.map(inlineToPlainText).join(" ")
-        : inlineToPlainText(block.content),
-    )
+    .flatMap((block) => {
+      if (block.kind === "figure" || block.kind === "video") {
+        return [];
+      }
+
+      return [
+        block.kind === "list"
+          ? block.items.map(inlineToPlainText).join(" ")
+          : inlineToPlainText(block.content),
+      ];
+    })
     .join(" ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function inlineToPlainText(nodes: readonly InlineNode[]): string {
-  return nodes.map((node) => node.value).join("");
 }
 
 /** Recorta en un límite de palabra, para una `description` de metadata. */

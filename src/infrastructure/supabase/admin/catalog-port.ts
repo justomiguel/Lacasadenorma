@@ -6,7 +6,6 @@ import type { AdminCatalogPort } from "@/src/domain/ports/admin";
 import { loadPhotos } from "../catalog-repository";
 import type { Database } from "../database.types";
 import type { ServerSupabaseClient } from "../server-client";
-import { PHOTO_BUCKET } from "./columns";
 import { QueryError } from "./query";
 
 const ITEM_COLUMNS =
@@ -31,8 +30,8 @@ type ItemRow = Pick<
 >;
 
 export function createCatalogPort(client: ServerSupabaseClient): AdminCatalogPort {
-  const publicUrlFor = (storagePath: string): string =>
-    client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+  const publicUrlFor = (bucketId: string, storagePath: string): string =>
+    client.storage.from(bucketId).getPublicUrl(storagePath).data.publicUrl;
 
   async function mapRows(rows: ItemRow[]): Promise<DonationItemAdminRecord[]> {
     const photos = await loadPhotos(

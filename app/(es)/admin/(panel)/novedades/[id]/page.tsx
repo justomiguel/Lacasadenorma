@@ -4,29 +4,28 @@ import { notFound } from "next/navigation";
 
 import {
   ActionForm,
-  FileField,
   HiddenValue,
   SubmitButton,
-  TextAreaField,
   TextField,
 } from "@/components/admin/form";
+import { NewsBodyField } from "@/components/admin/news-body-field";
 import { AdminColumns, AdminHeading, Panel } from "@/components/admin/shell";
-import { ALLOWED_IMAGE_TYPES } from "@/src/infrastructure/files/image";
+import { isPhoto } from "@/src/domain/entities";
 import { getAdminContext } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
 
-import { addPhotoAction, saveUpdateAction, setUpdatePublishedAction } from "../actions";
+import {
+  saveUpdateAction,
+  setUpdatePublishedAction,
+  uploadUpdateMediaAction,
+} from "../actions";
 
 /**
- * Una novedad: editarla, agregarle fotos, publicarla.
+ * Una novedad: editarla, intercalarle fotos y videos, publicarla.
  *
- * El orden de la pantalla es el orden del trabajo real: el texto ya está escrito
- * —viene de la pantalla anterior— así que arriba a la derecha está lo que falta, que
- * es la foto. Publicar está al final, después de haber visto todo.
- *
- * `alt` es obligatorio en el formulario de la foto, y no hay ninguna forma de subir
- * una sin él: FR-024 lo pide, el caso de uso lo valida y la base lo exige con un
- * `check` que además rechaza que la descripción sea el nombre del archivo.
+ * El texto ya está escrito —viene de la pantalla anterior—. Arriba va el editor,
+ * donde se intercalan los medios. Publicar está al final, después de haber visto
+ * todo. `alt` es obligatorio al insertar un medio: FR-024, el caso de uso y la base.
  */
 export default async function AdminNovedadPage({
   params,
@@ -58,61 +57,6 @@ export default async function AdminNovedadPage({
 
       <AdminColumns>
         <div>
-          <Panel
-            id="fotos"
-            title="Fotos"
-            tone="sunk"
-            description="Cada foto necesita una descripción de lo que se ve. Sin eso no se puede publicar."
-          >
-            <ActionForm action={addPhotoAction} resetOnSuccess>
-              <HiddenValue name="updateId" value={update.id} />
-              <HiddenValue name="slug" value={update.slug} />
-              <FileField
-                name="file"
-                label="Foto"
-                required
-                accept={ALLOWED_IMAGE_TYPES.join(",")}
-                hint="JPEG, PNG o WebP, hasta 8 MB."
-              />
-              <TextField
-                name="alt"
-                label="Qué se ve"
-                required
-                maxLength={300}
-                placeholder="Cabriadas de madera apoyadas sobre los muros"
-                hint="Es lo que escucha quien no puede ver la foto. No repitas el título."
-              />
-              <TextField name="caption" label="Epígrafe" maxLength={300} />
-              <TextField name="credit" label="Quién la sacó" maxLength={120} />
-              <TextField name="takenOn" label="Cuándo" type="date" />
-              <SubmitButton pendingLabel="Subiendo…">Agregar foto</SubmitButton>
-            </ActionForm>
-
-            {update.media.length === 0 ? (
-              <p className="mt-lg font-ui text-small text-ink-muted">
-                Todavía no tiene fotos. Una novedad sin foto se publica igual, pero una
-                foto de obra cuenta más que tres párrafos.
-              </p>
-            ) : (
-              <ul className="mt-lg space-y-md">
-                {update.media.map((photo) => (
-                  <li key={photo.id} className="flex gap-sm">
-                    <Image
-                      src={photo.url}
-                      alt={photo.alt}
-                      width={96}
-                      height={72}
-                      className="h-auto w-4xl rounded-sm object-cover"
-                    />
-                    <p className="font-ui text-small text-ink-muted">{photo.alt}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Panel>
-        </div>
-
-        <div>
           <Panel id="texto" title="Texto">
             <ActionForm action={saveUpdateAction}>
               <HiddenValue name="campaignId" value={context.campaign.id} />
@@ -135,12 +79,17 @@ export default async function AdminNovedadPage({
                     : "Cambiarla rompe los enlaces que ya se compartieron."
                 }
               />
-              <TextAreaField
+              <NewsBodyField
                 name="body"
                 label="Texto"
                 required
-                rows={14}
                 defaultValue={update.body}
+                allowMedia
+                updateId={update.id}
+                slug={update.slug}
+                media={update.media}
+                uploadMedia={uploadUpdateMediaAction}
+                hint="Foto y video se intercalan acá. Cada uno pide qué se ve antes de subir."
               />
               <SubmitButton pendingLabel="Guardando…">Guardar cambios</SubmitButton>
             </ActionForm>
@@ -178,6 +127,40 @@ export default async function AdminNovedadPage({
                 Volver a la lista
               </Link>
             </div>
+          </Panel>
+        </div>
+
+        <div>
+          <Panel
+            id="medios"
+            title="Fotos y videos"
+            description="Los que están intercalados en el texto y los que todavía no."
+          >
+            {update.media.length === 0 ? (
+              <p className="font-ui text-small text-ink-muted">
+                Todavía no tiene medios. Se agregan desde el editor, con una descripción
+                de lo que se ve.
+              </p>
+            ) : (
+              <ul className="space-y-md">
+                {update.media.map((item) => (
+                  <li key={item.id} className="flex gap-sm">
+                    {isPhoto(item) ? (
+                      <Image
+                        src={item.url}
+                        alt={item.alt}
+                        width={96}
+                        height={72}
+                        className="h-auto w-4xl rounded-sm object-cover"
+                      />
+                    ) : (
+                      <p className="font-ui text-small text-ink-muted">Video</p>
+                    )}
+                    <p className="font-ui text-small text-ink-muted">{item.alt}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Panel>
         </div>
       </AdminColumns>
