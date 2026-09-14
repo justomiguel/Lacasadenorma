@@ -214,4 +214,12 @@ test.describe("fase D · reservas", () => {
       page.getByRole("heading", { level: 1, name: /no es para tu rol/i }),
     ).toBeVisible();
   });
+
+  test("la palanca de revalidar no acepta una URL absoluta", async ({ request }) => {
+    const respuesta = await request.post("/e2e/revalidar", {
+      data: { paths: ["https://evil.example/"] },
+    });
+
+    expect(respuesta.status()).toBe(400);
+  });
 });

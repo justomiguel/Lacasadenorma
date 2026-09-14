@@ -6,6 +6,10 @@ const { ui } = getContent("es");
 
 /**
  * El progreso público no son cifras: es el relato y las fotos del trabajo.
+ *
+ * `/reconstruccion` muestra la última novedad publicada. El título del fixture
+ * tiene que seguir siendo ésa: las pruebas que publican otra (flujo 9) la
+ * despublican al terminar.
  */
 
 test.describe("flujo 3 · ver el trabajo", () => {

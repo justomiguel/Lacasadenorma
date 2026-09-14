@@ -92,12 +92,15 @@ test.describe("flujo 8 · la pantalla de acceso", () => {
     const archivo = await request.get("/robots.txt");
 
     expect(await archivo.text()).toContain("/admin");
+    expect(await archivo.text()).toContain("/e2e");
+    expect((await request.get("/e2e/revalidar")).status()).toBe(404);
   });
 
   test("no aparece en el sitemap", async ({ request }) => {
     const sitemap = await request.get("/sitemap.xml");
 
     expect(await sitemap.text()).not.toContain("/admin");
+    expect(await sitemap.text()).not.toContain("/e2e");
   });
 
   test("el formulario tiene etiquetas asociadas y se recorre con teclado", async ({

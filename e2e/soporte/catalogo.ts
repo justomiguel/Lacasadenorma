@@ -1,6 +1,7 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
 import { apiLocal, CUENTAS, entrar, primeraFila, tokenDe } from "./backoffice";
+import { revalidar } from "./revalidar";
 
 /**
  * Cargar un ítem publicado desde el backoffice, como lo haría el equipo.
@@ -48,7 +49,7 @@ export async function idDeItem(
   return id;
 }
 
-/** Lo saca de `/catalogo` para no dejar un hueco de foto en la revisión visual. */
+/** Lo saca de `/catalogo` y tira la caché de ISR para no dejar un hueco de foto. */
 export async function ocultarItem(
   request: APIRequestContext,
   itemId: string,
@@ -66,6 +67,7 @@ export async function ocultarItem(
   );
 
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
+  await revalidar(request, ["/catalogo", "/en/catalogo"]);
 }
 
 /**

@@ -186,6 +186,9 @@ Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
   tres invalidaciones de ADR-017—. Y después despublicarlo y comprobar que vuelve a dar 404: publicar
   por error tiene que ser reversible de verdad, no sólo desaparecer de la lista.
 - La publicación queda en el registro de auditoría, escrita con un rol y leída con otro.
+  Después se despublica: `/reconstruccion` muestra sólo la última novedad, y si ésta
+  quedara publicada el flujo 3 del proyecto siguiente (móvil, Safari) deja de ver el
+  título del fixture.
 - Un `auditor` no publica: la pantalla lo manda al aviso de permiso insuficiente, y la base rechaza el
   `update` **aunque se le hable directamente con su sesión real**, salteando la interfaz entera. Que un
   botón no aparezca no prueba que la operación esté prohibida.
@@ -331,6 +334,11 @@ Detalles que parecen menores y no lo son:
   con-datos de quince minutos, `/reconstruccion` perdía la novedad del fixture a los cinco: el pool
   de PostgREST (4) se saturaba, `listUpdates` devolvía `error` y la revalidación horneaba la página
   sin el relato. `keepStaleOnError` tira para conservar el HTML del build; el pool local pasó a 12.
+- **Una escritura por REST no invalida ISR.** El cleanup del catálogo despublica contra PostgREST
+  porque el browser ya se pudo haber cerrado; sin `revalidatePath`, `/catalogo` sigue mostrando el
+  ítem y `revision-visual` cuenta un hueco de foto de más. `POST /e2e/revalidar` existe sólo con
+  `E2E_MODO=con-datos` y es el lado Next del harness: el de `scripts/local-api` no puede tocar esa
+  caché. Fuera de ese modo contesta 404.
 - **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
   comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
   cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
@@ -431,6 +439,8 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
+| `/reconstruccion` sin "Empezó el montaje del techo" en móvil/Safari, escritorio verde | Una prueba del proyecto anterior dejó una novedad publicada más nueva. El flujo 9 de auditoría tiene que despublicar: la página muestra sólo la última |
+| `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba se despublicó por REST y la caché de ISR no se invalidó. `ocultarItem` tiene que pegarle a `/e2e/revalidar` |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |

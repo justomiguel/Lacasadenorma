@@ -20,6 +20,28 @@ async function escribirCuerpo(page: Page, texto: string): Promise<void> {
 }
 
 /**
+ * `/reconstruccion` muestra sólo la última novedad. Si esta queda publicada,
+ * el flujo 3 del proyecto siguiente deja de ver el título del fixture.
+ */
+async function volverABorrador(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+
+  if (/\/admin\/login/.test(page.url())) {
+    await entrar(page, "admin");
+    await page.goto(url);
+  }
+
+  const despublicar = page.getByRole("button", { name: /^despublicar$/i });
+
+  if (!(await despublicar.isVisible())) {
+    return;
+  }
+
+  await despublicar.click();
+  await expect(page.getByRole("status")).toContainText(/volvió a borrador/i);
+}
+
+/**
  * Flujo crítico 9: publicar una actualización.
  *
  * Es el último de los nueve y el que faltaba automatizar. La razón por la que faltaba
@@ -38,7 +60,9 @@ async function escribirCuerpo(page: Page, texto: string): Promise<void> {
  *
  * Los tres proyectos de Playwright corren en paralelo contra la misma base, así que
  * cada prueba trabaja sobre una novedad con su propio `slug`. Ninguna toca las filas
- * del fixture que las otras suites afirman.
+ * del fixture que las otras suites afirman, y ninguna deja una novedad publicada más
+ * nueva: `/reconstruccion` muestra sólo la última, y el flujo 3 afirma el título del
+ * fixture.
  */
 
 test.describe("flujo 9 · publicar una novedad", () => {
@@ -159,6 +183,7 @@ test.describe("flujo 9 · publicar una novedad", () => {
   test("la publicación queda en el registro de auditoría", async ({ page }, info) => {
     const sufijo = sufijoUnico(`auditoria-${info.project.name}`);
     const slug = `llego-el-agua-${sufijo}`;
+    let pantallaDeLaNovedad = "";
 
     await entrar(page, "editor");
     await page.goto("/admin/novedades");
@@ -171,24 +196,33 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await page.getByRole("button", { name: /guardar borrador/i }).click();
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await page.getByRole("button", { name: /publicar ahora/i }).click();
-    await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
+    pantallaDeLaNovedad = page.url();
 
-    await page
-      .locator("#contenido")
-      .getByRole("button", { name: /cerrar sesión/i })
-      .click();
-    await expect(page).toHaveURL(/\/admin\/login/);
+    try {
+      await page.getByRole("button", { name: /publicar ahora/i }).click();
+      await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
 
-    await entrar(page, "admin");
-    await page.goto("/admin/auditoria");
+      await page
+        .locator("#contenido")
+        .getByRole("button", { name: /cerrar sesión/i })
+        .click();
+      await expect(page).toHaveURL(/\/admin\/login/);
 
-    // "Otra persona del equipo" y no un correo: la pantalla muestra el rol de quien
-    // hizo el cambio a propósito, para no poner los correos del equipo a circular.
-    const registro = page.getByRole("list").filter({ hasText: /publicó una novedad/i });
+      await entrar(page, "admin");
+      await page.goto("/admin/auditoria");
 
-    await expect(registro.first()).toBeVisible();
-    await expect(page.getByText(/publicó una novedad/i).first()).toBeVisible();
+      // "Otra persona del equipo" y no un correo: la pantalla muestra el rol de quien
+      // hizo el cambio a propósito, para no poner los correos del equipo a circular.
+      const registro = page.getByRole("list").filter({ hasText: /publicó una novedad/i });
+
+      await expect(registro.first()).toBeVisible();
+      await expect(page.getByText(/publicó una novedad/i).first()).toBeVisible();
+    } finally {
+      await volverABorrador(page, pantallaDeLaNovedad);
+    }
+
+    await page.goto("/reconstruccion");
+    await expect(page.getByText(/empezó el montaje del techo/i)).toBeVisible();
   });
 
   /**
