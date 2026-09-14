@@ -60,6 +60,18 @@
   --color-focus: #3d6b9a;
   --color-focus-on-ink: #d4e4c8;
 
+  /*
+   * Colores de marcas de pago, no de la campaña. Viven acá para que el botón
+   * de «Continuar con …» se reconozca como PayPal o Mercado Pago sin escribir un
+   * hex en el componente. El celeste de Mercado Pago no llega a 4.5:1 con
+   * blanco, así que el texto de ese botón es tinta (`mercadopago-ink`).
+   */
+  --color-paypal: #003087;
+  --color-paypal-strong: #001c55;
+  --color-mercadopago: #009ee3;
+  --color-mercadopago-strong: #0088c8;
+  --color-mercadopago-ink: #1c1c1c;
+
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -358,10 +370,23 @@
   --color-rule: #d4cfc0;
 }
 
-[data-tone="ink"] a:not(.bg-sage):not(.bg-paper),
-[data-tone="forest"] a:not(.bg-sage):not(.bg-paper) {
+[data-tone="ink"] a:not(.bg-sage):not(.bg-paper):not([data-brand]),
+[data-tone="forest"] a:not(.bg-sage):not(.bg-paper):not([data-brand]) {
   color: var(--color-paper);
   text-decoration-color: var(--color-paper-muted);
+}
+
+/*
+ * El logo de PayPal llega como SVG en un `img`, así que `currentColor` no hereda.
+ * Sobre el azul de marca el pictograma tiene que ser papel, no tinta.
+ */
+[data-brand="paypal"] img {
+  filter: brightness(0) invert(1);
+}
+
+/* La franja blanca de la bandera no se come el botón: un filo de tinta la recorta. */
+[data-flag] {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-ink) 25%, transparent);
 }
 
 [data-tone="ink"] a:hover,

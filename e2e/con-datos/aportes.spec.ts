@@ -102,6 +102,8 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await paises.getByRole("tab", { name: ui.countries.AR }).click();
     await expect(ar).toBeVisible();
     await expect(cl).toHaveCount(0);
+    await expect(ar).toHaveAttribute("data-brand", "mercadopago");
+    await expect(ar.locator("[data-flag=AR]")).toBeVisible();
     await expect(panel.getByText(ui.home.mercadoPagoLead)).toBeVisible();
     await expect(
       panel
@@ -114,6 +116,8 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await paises.getByRole("tab", { name: ui.countries.CL }).click();
     await expect(cl).toBeVisible();
     await expect(ar).toHaveCount(0);
+    await expect(cl.locator("[data-flag=CL]")).toBeVisible();
+    await expect(cl.locator("[data-flag=AR]")).toHaveCount(0);
 
     await paises.getByRole("tab", { name: ui.home.international }).click();
 
@@ -121,6 +125,8 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
 
     await expect(paypal).toBeVisible();
     await expect(paypal).toHaveAttribute("href", paypalHref ?? "");
+    await expect(paypal).toHaveAttribute("data-brand", "paypal");
+    await expect(paypal.locator("[data-flag]")).toHaveCount(0);
     await expect(
       panel.getByText(ui.home.paypal, { exact: true }).locator("xpath=..").locator("img"),
       "PayPal lleva su logo al lado del nombre",

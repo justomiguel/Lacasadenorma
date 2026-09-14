@@ -80,7 +80,8 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
    de banco y título, Mercado Pago con su logo al lado del nombre. Adentro de la
    primera, `CopyField` —etiqueta chica, dato grande y tabular, icono de copiar que
    pasa a un tilde con «Copiado» durante 1,5 s—. La segunda es `ExternalPayment`: la
-   marca, una línea, «Continuar con … →». PayPal es la misma pieza para el resto del
+   marca, una línea, y un botón con los colores de esa marca. Mercado Pago lleva la
+   banderita de Argentina o de Chile; PayPal es la misma pieza para el resto del
    mundo. Sin JavaScript los tres países se apilan con su título y se transfiere igual.
 
 10. **Las vistas previas dejan de ser tarjetas.** `PreviewCard` conserva el nombre

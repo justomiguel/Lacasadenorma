@@ -1,18 +1,28 @@
 "use client";
 
 import { PaymentMethodCard } from "@/components/campaign/payment-method-card";
-import { secondaryActionClass } from "@/components/design-system/actions";
-import { BrandLabel } from "@/components/design-system/brand-mark";
-import { ArrowIcon } from "@/components/design-system/icons";
+import { BrandLabel, BrandMark } from "@/components/design-system/brand-mark";
+import { cn } from "@/components/design-system/cn";
+import { CountryFlag } from "@/components/design-system/flags";
 import type { BrandId } from "@/content/brands";
 import { track } from "@/src/infrastructure/analytics/browser";
+
+const BUTTON_BASE =
+  "mt-sm inline-flex min-h-cta w-full items-center justify-center gap-sm rounded-md px-md no-underline font-ui text-body font-medium transition-colors duration-fast ease-editorial active:translate-y-px";
+
+const BUTTON_BRAND = {
+  mercadopago: "bg-mercadopago text-mercadopago-ink hover:bg-mercadopago-strong",
+  paypal: "bg-paypal text-paper hover:bg-paypal-strong",
+} as const;
 
 /**
  * Un medio de pago externo, como método y no como banner (ADR-032).
  *
- * La marca con su logo es el título de la card, una línea dice qué es, y el
- * enlace lleva al medio. El sitio no cobra ni procesa nada: te lleva y nada más.
- * El enlace sólo existe si hay URL real; sin URL, la fila no se dibuja.
+ * La marca con su logo es el título de la card. El botón lleva los colores de
+ * esa marca —azul PayPal, celeste Mercado Pago— para que se reconozca el
+ * destino. En Mercado Pago, la banderita dice si el link es de Argentina o de
+ * Chile. El sitio no cobra ni procesa nada: te lleva y nada más. El enlace
+ * sólo existe si hay URL real; sin URL, la fila no se dibuja.
  */
 export function ExternalPayment({
   brand,
@@ -20,6 +30,7 @@ export function ExternalPayment({
   lead,
   cta,
   context,
+  country,
   url,
 }: {
   brand: BrandId & ("mercadopago" | "paypal");
@@ -32,6 +43,8 @@ export function ExternalPayment({
    * serían indistinguibles para un lector de pantalla.
    */
   context?: string;
+  /** Argentina o Chile: dibuja la banderita en el botón de Mercado Pago. */
+  country?: "AR" | "CL";
   url: string | null;
 }) {
   if (url === null) {
@@ -45,16 +58,20 @@ export function ExternalPayment({
         href={url}
         rel="noopener noreferrer"
         target="_blank"
-        className={secondaryActionClass("forest", "mt-xs")}
+        data-brand={brand}
+        className={cn(BUTTON_BASE, BUTTON_BRAND[brand])}
         onClick={() => {
           track({ name: "medio_externo_click", props: { medio: brand } });
         }}
       >
+        <BrandMark id={brand} />
         <span>
           {cta}
           {context === undefined ? null : <span className="sr-only"> · {context}</span>}
         </span>
-        <ArrowIcon />
+        {country !== undefined && brand === "mercadopago" ? (
+          <CountryFlag country={country} />
+        ) : null}
       </a>
     </PaymentMethodCard>
   );

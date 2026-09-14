@@ -87,6 +87,7 @@ export function DonationSelector({
           lead={ui.home.mercadoPagoLead}
           cta={ui.home.mercadoPagoCta}
           context={ui.countries.AR}
+          country="AR"
           url={help.mercadoPagoUrl.AR}
         />
       </div>
@@ -104,6 +105,7 @@ export function DonationSelector({
           lead={ui.home.mercadoPagoLead}
           cta={ui.home.mercadoPagoCta}
           context={ui.countries.CL}
+          country="CL"
           url={help.mercadoPagoUrl.CL}
         />
       </div>
