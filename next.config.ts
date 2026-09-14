@@ -103,6 +103,16 @@ const nextConfig: NextConfig = {
   // cacheComponents queda deshabilitado a propósito. Ver docs/adr/011.
   typedRoutes: true,
 
+  experimental: {
+    /**
+     * Hay dos root layouts (ADR-023). Una URL que no calza ninguno no entra a
+     * `not-found.tsx` y Next sirve su 404 gris. `global-not-found` es la
+     * convención para ese caso. Un catch-all en la raíz castellana haría
+     * `/${string}` una ruta tipada y apagaría `typedRoutes`.
+     */
+    globalNotFound: true,
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [70, 80],

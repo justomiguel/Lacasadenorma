@@ -43,6 +43,16 @@ const SURFACES = [
     why: "el 404",
   },
   {
+    file: "app/global-not-found.tsx",
+    needle: "NotFoundScreen",
+    why: "el 404 de una URL que no calza",
+  },
+  {
+    file: "app/(en)/en/[...unmatched]/page.tsx",
+    needle: "notFound()",
+    why: "el 404 en inglés",
+  },
+  {
     file: "components/site/page-header.tsx",
     needle: "SiteMark",
     why: "el membrete de página",

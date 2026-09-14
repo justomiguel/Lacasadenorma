@@ -75,3 +75,8 @@ desmentían la identidad que la lámina acaba de fijar.
   nombre sigue en una línea: se revisó.
 - `public/marca/` es el catálogo de la marca propia. `public/marcas/` sigue
   siendo el de terceros. Las dos carpetas no se mezclan.
+- Hay dos root layouts (ADR-023), así que una URL que no calza ninguno no entra
+  a `not-found.tsx`. El 404 propio —con el círculo— vive en
+  `app/global-not-found.tsx` (castellano) y en un catch-all bajo `/en` que
+  dispara `notFound()`. Un catch-all en la raíz castellana haría `/${string}`
+  una ruta tipada y apagaría `typedRoutes`.

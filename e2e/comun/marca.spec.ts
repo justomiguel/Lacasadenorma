@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { esperarSinViolaciones } from "../soporte/axe";
+
 /**
  * El círculo 01 ORIGINAL tiene que verse donde la gente aterriza sin el relato
  * fotográfico: el encabezado, el login, la cuenta y las legales.
@@ -30,4 +32,34 @@ test.describe("el símbolo en las pantallas de identidad", () => {
       ).toBeVisible();
     });
   }
+});
+
+/**
+ * Hay dos root layouts (ADR-023). Una URL que no calza ninguno no entra a
+ * `not-found.tsx` y Next sirve su 404 gris. Estos tests existen para que eso
+ * no vuelva: el 404 propio, con el círculo, es el que tiene que responder.
+ */
+test.describe("el 404 de una URL que no existe", () => {
+  test("en castellano es la pantalla del sitio, no el 404 de Next", async ({ page }) => {
+    const respuesta = await page.goto("/esta-pagina-no-existe");
+
+    expect(respuesta?.status(), "tiene que ser un 404 de verdad").toBe(404);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /esta página no está/i }),
+    ).toBeVisible();
+    await expect(page.locator('img[src*="simbolo.png"]').first()).toBeVisible();
+    await expect(page.getByText(/^404$/)).toHaveCount(0);
+    await esperarSinViolaciones(page, "/esta-pagina-no-existe");
+  });
+
+  test("en inglés también, y en inglés", async ({ page }) => {
+    const respuesta = await page.goto("/en/esta-pagina-no-existe");
+
+    expect(respuesta?.status(), "tiene que ser un 404 de verdad").toBe(404);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /this page is not here/i }),
+    ).toBeVisible();
+    await expect(page.locator('img[src*="simbolo.png"]').first()).toBeVisible();
+    await esperarSinViolaciones(page, "/en/esta-pagina-no-existe");
+  });
 });
