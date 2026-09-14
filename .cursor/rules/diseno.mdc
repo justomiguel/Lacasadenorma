@@ -25,10 +25,10 @@ estar igual en una fintech o en un panel, no va acá.
 - Paleta: verde bosque `#153A2E`, oliva, sage, beige/blanco roto, carbón. El verde se usa poco.
 - Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas de la familia.
 - Fotos reales de `public/fotos/`, sin radio ni borde. Prohibido stock, IA y placeholders.
-- **Marcas de terceros.** PayPal, Mercado Pago, WhatsApp y cualquier otra marca que aparezca como
-  tab, botón, encabezado de canal o enlace lleva **su logo al lado del nombre**. Catálogo en
-  `content/brands.ts`; SVG en `public/marcas/` con `fill="currentColor"`. Compuerta:
-  `npm run check:marcas`.
+- **Marcas de terceros.** PayPal, Mercado Pago, Brubank, Scotiabank, WhatsApp y cualquier otra
+  marca que aparezca como tab, botón, encabezado de canal o enlace lleva **su logo al lado del
+  nombre**. Catálogo en `content/brands.ts`; SVG en `public/marcas/` con `fill="currentColor"`.
+  Compuerta: `npm run check:marcas`.
 
 ## Se diseña a 390 px primero
 

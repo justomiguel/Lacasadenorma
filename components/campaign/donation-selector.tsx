@@ -30,9 +30,9 @@ function useHydrated(): boolean {
  *
  * Una sola decisión —Argentina, Chile o cualquier otro país— y debajo sólo lo
  * que sirve para esa respuesta: la transferencia y Mercado Pago en cards
- * distintas (Brubank con su logo frente a Mercado Pago), o PayPal para el resto
- * del mundo. Antes eran dos niveles de píldoras (canal y país) que mostraban
- * todo a la vez.
+ * distintas (Brubank o Scotiabank con su logo frente a Mercado Pago), o PayPal
+ * para el resto del mundo. Antes eran dos niveles de píldoras (canal y país)
+ * que mostraban todo a la vez.
  *
  * Mejora progresiva de verdad: el HTML servido trae los tres países apilados con
  * su título. Si el JavaScript no llega, quien entró igual ve los datos y puede
@@ -90,11 +90,7 @@ export function DonationSelector({
     ),
     CL: (
       <div className="grid gap-md">
-        <ChileTransfer
-          account={help.accounts.CL}
-          heading={ui.home.transfer}
-          onCopied={onCopied}
-        />
+        <ChileTransfer account={help.accounts.CL} onCopied={onCopied} />
         <ExternalPayment
           brand="mercadopago"
           name={ui.home.mercadoPago}

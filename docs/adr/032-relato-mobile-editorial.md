@@ -34,8 +34,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
    «Ayudar a reconstruir». `SecondaryAction`: texto y flecha, sin caja, sin fondo,
    sin borde; la flecha se mueve 3 px al pasar el puntero. Utilitaria (`ICON_ACTION`):
    un icono de 44 px para copiar, cerrar, abrir el menú. Los iconos son una sola
-   familia (`icons.tsx`): trazo 1.5, sin iconos de relleno. El de banco entra
-   al lado del título de la transferencia para distinguirla de Mercado Pago.
+   familia (`icons.tsx`): trazo 1.5, sin iconos de relleno. El logo del banco
+   (Brubank o Scotiabank) entra al lado del nombre para distinguir la
+   transferencia de Mercado Pago.
 
 3. **El encabezado es el nombre y el menú.** 60 px, transparente sobre la foto de la
    apertura, papel con un desenfoque de 6 px y una regla casi imperceptible al
@@ -76,9 +77,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 
 9. **Aportar es una decisión: desde dónde.** `DonationSelector` reemplaza al tablero:
    `CountrySelector` (Argentina, Chile, Internacional; tabs con teclado y una regla bajo
-   el elegido) y, en Argentina y en Chile, dos cards: transferencia (en Argentina,
-   Brubank con su logo; en Chile, icono de banco y título) y Mercado Pago con su
-   logo al lado del nombre. Adentro de la primera, `CopyField` —etiqueta chica,
+   el elegido) y, en Argentina y en Chile, dos cards: transferencia (Brubank
+   o Scotiabank, cada uno con su logo) y Mercado Pago con su logo al lado del
+   nombre. Adentro de la primera, `CopyField` —etiqueta chica,
    dato grande y tabular, icono de copiar que pasa a un tilde con «Copiado»
    durante 1,5 s—. La segunda es `ExternalPayment`: la marca, una línea, y un
    botón con los colores de esa marca y letra papel. Mercado Pago lleva la

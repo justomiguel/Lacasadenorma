@@ -32,6 +32,12 @@ export const BRANDS = {
     width: 24,
     height: 24,
   },
+  scotiabank: {
+    name: "Scotiabank",
+    src: "/marcas/scotiabank.svg",
+    width: 24,
+    height: 24,
+  },
   instagram: {
     name: "Instagram",
     src: "/marcas/instagram.svg",

@@ -6,8 +6,8 @@ import { cn } from "@/components/design-system/cn";
  * Un método de aporte, como caja propia.
  *
  * Transferencia y Mercado Pago conviven en el mismo país: sin esta pieza se
- * leen como una sola lista. El logo o el icono van al lado del título, no como
- * adorno: son lo que distingue un canal del otro.
+ * leen como una sola lista. El logo del banco o de Mercado Pago va al lado del
+ * título, no como adorno: es lo que distingue un canal del otro.
  */
 export function PaymentMethodCard({
   title,

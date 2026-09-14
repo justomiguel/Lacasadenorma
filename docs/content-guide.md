@@ -307,8 +307,9 @@ URLs a pegar en PayPal son:
 Las inglesas existen para el conmutador de idioma (`/en/ayudar/paypal/completada` y
 `/en/ayudar/paypal/cancelada`). Un solo enlace de PayPal usa las castellanas, que son la canónica.
 
-El logo de PayPal (y el de Mercado Pago, WhatsApp y el resto) va al lado del nombre en tabs, botones
-y encabezados de canal. El catálogo es `content/brands.ts`; `npm run check:marcas` lo exige.
+El logo de PayPal (y el de Mercado Pago, Brubank, Scotiabank, WhatsApp y el resto) va al lado del
+nombre en tabs, botones y encabezados de canal. El catálogo es `content/brands.ts`;
+`npm run check:marcas` lo exige.
 
 Esas páginas no van al menú ni al sitemap, y declaran `noindex`: no se buscan, se llega desde PayPal.
 No publican el monto ni el identificador que PayPal a veces pone en la query: un redirect no es un

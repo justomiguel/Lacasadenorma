@@ -80,11 +80,26 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await expect(panel.getByText(help.accounts.AR.holder, { exact: true })).toBeVisible();
     await expect(
       panel
-        .getByText(help.accounts.AR.bank, { exact: true })
-        .locator("xpath=..")
+        .getByRole("heading", { name: help.accounts.AR.bank, exact: true })
         .locator("img"),
       "Brubank lleva su logo al lado del nombre",
     ).toHaveAttribute("src", /brubank/);
+  });
+
+  test("Chile muestra Scotiabank con su logo", async ({ page }) => {
+    await page.goto("/ayudar");
+
+    const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
+    const panel = page.getByRole("tabpanel");
+
+    await paises.getByRole("tab", { name: ui.countries.CL }).click();
+
+    await expect(
+      panel
+        .getByRole("heading", { name: help.accounts.CL.bank, exact: true })
+        .locator("img"),
+      "Scotiabank lleva su logo al lado del nombre",
+    ).toHaveAttribute("src", /scotiabank/);
   });
 
   test("Mercado Pago distingue Argentina y Chile, y PayPal tiene su enlace", async ({

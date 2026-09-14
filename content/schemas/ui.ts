@@ -66,7 +66,6 @@ export const uiPagesSchema = z.object({
     donateTitle: phrase,
     donateLead: phrase,
     international: phrase,
-    transfer: phrase,
     mercadoPago: phrase,
     mercadoPagoLead: phrase,
     mercadoPagoCta: phrase,

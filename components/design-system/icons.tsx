@@ -4,9 +4,9 @@ import type { ReactNode, SVGProps } from "react";
  * Una sola familia de iconos: trazo de 1.5, esquinas redondas, 20 px.
  *
  * Son pocos a propósito. Un icono entra cuando aclara una acción (copiar,
- * cerrar), reduce texto (la flecha del enlace), mejora el barrido (el menú) o
- * identifica un método de aporte (el banco frente al logo de una marca).
- * No hay iconos de relleno.
+ * cerrar), reduce texto (la flecha del enlace) o mejora el barrido (el menú).
+ * Los bancos de la transferencia son marcas, no pictogramas: van en
+ * `content/brands.ts`. No hay iconos de relleno.
  */
 
 type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };
@@ -68,19 +68,6 @@ export function CloseIcon(props: IconProps) {
     <Svg {...props}>
       <path d="m6 6 12 12" />
       <path d="M18 6 6 18" />
-    </Svg>
-  );
-}
-
-export function BankIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M4 9 12 4l8 5" />
-      <path d="M5 10v8" />
-      <path d="M9.5 10v8" />
-      <path d="M14.5 10v8" />
-      <path d="M19 10v8" />
-      <path d="M3 20h18" />
     </Svg>
   );
 }

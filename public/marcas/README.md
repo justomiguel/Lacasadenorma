@@ -1,11 +1,12 @@
 # Marcas
 
 Logos de terceros que el sitio muestra **al lado del nombre** (PayPal, Mercado
-Pago, Brubank, WhatsApp, Instagram, Facebook, LinkedIn, X).
+Pago, Brubank, Scotiabank, WhatsApp, Instagram, Facebook, LinkedIn, X).
 
-Fuente: [Simple Icons](https://simpleicons.org/), CC0. El `fill` se cambió a
-`currentColor` para que hereden la tinta de la superficie y no un color de marca
-que se pierde sobre el verde bosque.
+Fuente: [Simple Icons](https://simpleicons.org/), CC0, salvo Scotiabank, que no
+está ahí: la S sale del logo del encabezado de [Scotiabank Chile](https://www.scotiabankchile.cl/).
+El `fill` se cambió a `currentColor` para que hereden la tinta de la superficie y
+no un color de marca que se pierde sobre el verde bosque.
 
 No se usan como fotografías: no van en `content/*.json` ni las cubre
 `check:fotos`. La compuerta es `npm run check:marcas`.
