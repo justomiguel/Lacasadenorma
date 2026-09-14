@@ -29,11 +29,14 @@ describe("downloadTrustedPortrait", () => {
   });
 
   it("devuelve un File cuando el CDN entrega un PNG", async () => {
-    const png = pngBytes();
+    const bytes = pngBytes();
+    const copy = new ArrayBuffer(bytes.byteLength);
+    new Uint8Array(copy).set(bytes);
+
     const file = await downloadTrustedPortrait(
       "https://lh3.googleusercontent.com/a/foto",
       async () =>
-        new Response(png, {
+        new Response(copy, {
           status: 200,
           headers: { "Content-Type": "image/png" },
         }),
