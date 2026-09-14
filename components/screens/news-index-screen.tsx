@@ -5,6 +5,7 @@ import { Container, Section } from "@/components/design-system/layout";
 import { NewsFeed, NewsFeedItem } from "@/components/design-system/news-feed";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
+import { keepStaleOnError } from "@/src/application/result";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
 import { coverPhoto } from "@/src/domain/entities";
 import { excerpt } from "@/src/domain/rich-text";
@@ -86,7 +87,9 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
  */
 export async function NewsIndexScreen({ locale }: { locale: Locale }) {
   const { ui } = getContent(locale);
-  const updates = await listUpdates({ dataLayer: getPublicDataLayer(), logger });
+  const updates = keepStaleOnError(
+    await listUpdates({ dataLayer: getPublicDataLayer(), logger }),
+  );
 
   return (
     <>

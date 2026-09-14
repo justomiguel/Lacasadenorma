@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
+import { keepStaleOnError } from "@/src/application/result";
 import { getCatalog } from "@/src/application/use-cases/get-catalog";
 import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
 import { localizedHref } from "@/src/i18n/href";
@@ -41,8 +42,8 @@ export async function CatalogScreen({
   const { catalog, account, ui } = getContent(locale);
   const dataLayer = getPublicDataLayer();
   const [result, wall] = await Promise.all([
-    getCatalog({ dataLayer, logger }),
-    getDonationWall({ dataLayer, logger }),
+    getCatalog({ dataLayer, logger }).then(keepStaleOnError),
+    getDonationWall({ dataLayer, logger }).then(keepStaleOnError),
   ]);
   const wallEntries = wall.status === "ok" ? wall.data : [];
 

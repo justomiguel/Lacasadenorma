@@ -30,6 +30,25 @@ export function unavailable<T>(reason: UnavailableReason): DataResult<T> {
 }
 
 /**
+ * Un fallo de lectura no puede hornearse en la caché de ISR.
+ *
+ * Next trata un render que termina —aunque sea con el aviso de "no disponible"—
+ * como éxito y reemplaza la página buena durante `revalidate` segundos. En una
+ * corrida de e2e de quince minutos, `/reconstruccion` perdía la novedad del
+ * fixture apenas se vencían los 300 s: `listUpdates` devolvía `error` (el pool
+ * de PostgREST saturado) y la revalidación publicaba la página sin el relato.
+ *
+ * `not-configured` y `not-published` sí son estados estables y se pintan.
+ */
+export function keepStaleOnError<T>(result: DataResult<T>): DataResult<T> {
+  if (result.status === "unavailable" && result.reason === "error") {
+    throw new Error("lectura viva falló: no reemplazar la página en caché");
+  }
+
+  return result;
+}
+
+/**
  * Mensaje para la persona que está leyendo. Nunca detalle técnico (amenaza I6).
  *
  * Sin sustantivo propio a propósito: el mismo texto acompaña a las cifras de la

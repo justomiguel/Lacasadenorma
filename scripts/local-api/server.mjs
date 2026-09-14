@@ -60,7 +60,9 @@ async function writeConfig() {
       `jwt-secret = "${JWT_SECRET}"`,
       `server-port = ${String(POSTGREST_PORT)}`,
       'server-host = "127.0.0.1"',
-      "db-pool = 4",
+      // ISR revalida muchas páginas a la vez; con 4 conexiones listUpdates
+      // fallaba a los 5 min y Next horneaba /reconstruccion sin la novedad.
+      "db-pool = 12",
       // Sin esto, PostgREST cachea el esquema y una migración nueva no se ve.
       "db-channel-enabled = true",
       "",

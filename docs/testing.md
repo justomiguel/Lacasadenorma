@@ -326,6 +326,11 @@ Detalles que parecen menores y no lo son:
   porque Vercel restaura la caché de build entre despliegues: un deploy puede prerenderizar cifras
   leídas hasta cinco minutos antes. Para el sitio es inocuo —la página revalida sola—, pero explica una
   cifra que llega vieja a un despliegue recién hecho.
+- **Un fallo de lectura durante la revalidación no puede pintarse.** Next toma un render que termina
+  —aunque sea con el aviso de "no disponible"— como éxito y reemplaza la página buena. En una corrida
+  con-datos de quince minutos, `/reconstruccion` perdía la novedad del fixture a los cinco: el pool
+  de PostgREST (4) se saturaba, `listUpdates` devolvía `error` y la revalidación horneaba la página
+  sin el relato. `keepStaleOnError` tira para conservar el HTML del build; el pool local pasó a 12.
 - **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
   comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
   cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
