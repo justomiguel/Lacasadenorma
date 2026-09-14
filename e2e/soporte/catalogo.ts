@@ -68,6 +68,30 @@ export async function ocultarItem(
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
 }
 
+/**
+ * Publica un ítem, corre el cuerpo y lo despublica siempre.
+ *
+ * El id se resuelve **antes** del cuerpo: si la prueba se queda sin tiempo, el
+ * `finally` todavía tiene con qué pegarle a PostgREST. El `request` de Playwright
+ * no depende del browser, así que esto sigue andando con el contexto ya cerrado.
+ */
+export async function conItemPublicado(
+  request: APIRequestContext,
+  staffPage: Page,
+  titulo: string,
+  cantidad: number,
+  cuerpo: (itemId: string) => Promise<void>,
+): Promise<void> {
+  await cargarItemPublicado(staffPage, titulo, cantidad);
+  const itemId = await idDeItem(request, titulo);
+
+  try {
+    await cuerpo(itemId);
+  } finally {
+    await ocultarItem(request, itemId);
+  }
+}
+
 /** El renglón del catálogo, acotado al contenido: en WebKit a veces hay un nodo extra. */
 export function articuloDelCatalogo(page: Page, titulo: string) {
   return page
