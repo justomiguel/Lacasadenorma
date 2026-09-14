@@ -29,6 +29,9 @@ test.describe("fase D · reservas", () => {
     request,
     browser,
   }, info) => {
+    // Alta, salida, catálogo e ingreso: 45 s cortaba en CI con el formulario
+    // de redes debajo, y el ítem sin foto quedaba publicado para la revisión visual.
+    test.setTimeout(90_000);
     const sufijo = sufijoUnico(info.project.name);
     const titulo = `Chapas para volver (${sufijo})`;
     const email = correoDePrueba(info.project.name, "volver");
