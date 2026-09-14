@@ -40,7 +40,13 @@ export function asGoTrueUser(row) {
     identities:
       row.email_confirmed_at === null
         ? []
-        : [{ id: row.id, user_id: row.id, provider: "email" }],
+        : [
+            {
+              id: row.id,
+              user_id: row.id,
+              provider: row.app_metadata?.provider ?? "email",
+            },
+          ],
     created_at: row.created_at,
     updated_at: row.created_at,
     is_anonymous: false,

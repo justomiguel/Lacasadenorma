@@ -49,3 +49,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [036](./036-tarjeta-de-compartir.md) | Al compartir se ve el símbolo y el texto de esa página | Aceptada; enmendada por ADR-038 para el artículo con portada |
 | [037](./037-chrome-de-cuenta.md) | El chrome de cuenta no personaliza las páginas públicas | Aceptada |
 | [038](./038-portada-de-novedad.md) | La portada de una novedad es el primer visual, también al compartir | Aceptada |
+| [039](./039-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |

@@ -32,6 +32,12 @@ import { defineConfig, devices } from "@playwright/test";
 
 const MODO = process.env.E2E_MODO === "con-datos" ? "con-datos" : "sin-datos";
 
+if (MODO === "con-datos") {
+  // Runtime, no build: no lleva NEXT_PUBLIC_. El harness emula Google; el hop
+  // real se prueba a mano (ADR-039).
+  process.env.AUTH_SOCIAL_PROVIDERS ||= "google";
+}
+
 const PUERTO = Number(process.env.PORT ?? (MODO === "con-datos" ? 3211 : 3210));
 const baseURL = `http://127.0.0.1:${String(PUERTO)}`;
 

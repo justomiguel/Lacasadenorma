@@ -44,6 +44,8 @@ const errors = z.object({
   displayNameRequired: phrase,
   noRecoverySession: phrase,
   linkExpired: phrase,
+  oauthFailed: phrase,
+  oauthNoEmail: phrase,
   internalRole: phrase,
   notApproved: phrase,
   ahead: phrase,
@@ -88,6 +90,13 @@ export const accountSchema = z.object({
     noAccount: phrase,
     noAccountLink: phrase,
     forgot: phrase,
+  }),
+
+  social: z.object({
+    or: phrase,
+    /** `{name}` es la marca: Google, Apple, X. No se traduce. */
+    continueWith: phrase,
+    continuing: phrase,
   }),
 
   recover: screen.extend({

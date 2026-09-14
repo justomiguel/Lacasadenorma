@@ -287,7 +287,7 @@ A ──▶ B ──▶ D ──▶ E ──▶ F
 
 ## Lo que queda fuera, escrito para que no se descubra como olvido
 
-Captcha · OAuth · doble factor para el público · que el público proponga ítems · logística de entrega ·
+Captcha · doble factor para el público · que el público proponga ítems · logística de entrega ·
 webhooks de rebotes · notificaciones que no sean por correo · valor estimado publicado (D3) ·
 aprobación de reservas por la familia (D1). Cada uno tiene su motivo en `spec.md` § Assumptions o en
 § Decisiones pendientes.

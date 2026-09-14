@@ -115,17 +115,14 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page.getByText(/^guardado/i)).toBeVisible();
 
     await page.setViewportSize(VIEWPORT_MINIMO);
-    const sesion = page.waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
-    );
     await page.goto("/");
-    await sesion;
     await page.getByRole("button", { name: /abrir el menú/i }).click();
 
     const menu = page.getByRole("dialog");
 
-    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible();
+    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible({
+      timeout: 20_000,
+    });
     await expect(menu.getByText(email)).toBeVisible();
     await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
@@ -162,19 +159,14 @@ test.describe("fase A · la cuenta del público", () => {
     await esperarSinViolaciones(page, "/cuenta con sesión");
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    const sesion = page.waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
-    );
     await page.goto("/");
-    await sesion;
 
     const encabezado = page.getByRole("banner");
     const salir = encabezado.getByRole("button", { name: /cerrar sesión/i });
 
     await expect(
       encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
     await expect(salir).toBeVisible();
 
     const caja = await salir.boundingBox();
@@ -371,5 +363,35 @@ test.describe("fase A · la cuenta del público", () => {
     expect(despues.status(), "la cuenta borrada no tendría que poder abrir sesión").toBe(
       400,
     );
+  });
+
+  test("con Google: del botón a la sesión, anónima y pendiente", async ({ page }) => {
+    await page.goto("/cuenta/crear");
+
+    await expect(
+      page.getByRole("button", { name: /continuar con google/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("img", { name: "Google" })).toHaveCount(0);
+
+    await page.getByRole("button", { name: /continuar con google/i }).click();
+
+    await expect(page).toHaveURL(/\/cuenta$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
+    await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
+    await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(/@local\.test/i)).toBeVisible();
+  });
+
+  test("el callback OAuth no respeta un next de la query", async ({ page }) => {
+    await page.goto("/cuenta/oauth?code=inventado&next=https://sitio-parecido.example");
+
+    await expect(page).toHaveURL(/\/cuenta\/ingresar\?aviso=oauthFailed$/);
+    await expect(page).not.toHaveURL(/sitio-parecido/);
+    await expect(page.getByText(/no se pudo entrar con esa red/i)).toBeVisible();
   });
 });

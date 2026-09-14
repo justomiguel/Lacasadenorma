@@ -1,6 +1,7 @@
 import { findUserById, findUserByPassword } from "./db.mjs";
 import { authError, json, readBearer, readBody } from "./http.mjs";
 import { verifyAccessToken } from "./jwt.mjs";
+import { handleOauth, exchangeOauthCode } from "./oauth.mjs";
 import { handleRegistro } from "./registro.mjs";
 import { asGoTrueUser, issueSession, refreshTokens } from "./sesion.mjs";
 
@@ -12,6 +13,10 @@ export async function handleAuth(incoming, outgoing, url) {
   // la contraseña. Viven aparte porque llegaron con el registro abierto y porque
   // las cuatro tienen una decisión de seguridad adentro que conviene leer junta.
   if (await handleRegistro(incoming, outgoing, ruta)) {
+    return;
+  }
+
+  if (await handleOauth(incoming, outgoing, ruta, parametros)) {
     return;
   }
 
@@ -82,11 +87,16 @@ export async function handleAuth(incoming, outgoing, url) {
       return;
     }
 
+    if (grant === "pkce") {
+      await exchangeOauthCode(incoming, outgoing);
+      return;
+    }
+
     authError(
       outgoing,
       400,
       "unsupported_grant_type",
-      `La API local sólo emite tokens por contraseña y por refresh. Pediste: ${grant ?? "nada"}.`,
+      `La API local sólo emite tokens por contraseña, por refresh y por PKCE. Pediste: ${grant ?? "nada"}.`,
     );
     return;
   }

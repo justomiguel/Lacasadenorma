@@ -159,6 +159,32 @@ export async function createUnconfirmedUser(email, password, token) {
   return findUserByEmail(email);
 }
 
+/** Una cuenta que nació por OAuth: correo ya confirmado, sin contraseña. */
+export async function createConfirmedOauthUser(email, provider) {
+  if (!/^[a-z][a-z0-9_]*$/.test(provider)) {
+    throw new Error(`Proveedor OAuth inesperado: ${provider}`);
+  }
+
+  await query(
+    `
+      insert into auth.users
+        (email, raw_app_meta_data, email_confirmed_at)
+      values (
+        lower(:'email'),
+        json_build_object(
+          'provider', :'provider',
+          'providers', jsonb_build_array(:'provider')
+        ),
+        now()
+      );
+      select 'null'::json;
+    `,
+    { email, provider },
+  );
+
+  return findUserByEmail(email);
+}
+
 export async function setRecoveryToken(email, token) {
   await query(
     `

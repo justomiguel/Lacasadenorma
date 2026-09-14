@@ -45,9 +45,10 @@
  * proceso en lugar de en `auth.refresh_tokens`). Es transporte; no es donde se
  * decide una autorización.
  *
- * Lo que sigue sin existir: registro, recuperación de contraseña, OAuth, MFA,
- * Storage y Realtime. Cualquier otra ruta de `/auth/v1` responde 501 con un mensaje
- * explícito en lugar de fallar raro.
+ * Lo que sigue sin existir: recuperación de contraseña más allá de lo emulado,
+ * MFA, Storage y Realtime. OAuth está emulado en `/authorize` y el canje PKCE:
+ * no hay hop a Google. Cualquier otra ruta de `/auth/v1` responde 501 con un
+ * mensaje explícito en lugar de fallar raro.
  *
  * ## Sobre las credenciales de este archivo
  *

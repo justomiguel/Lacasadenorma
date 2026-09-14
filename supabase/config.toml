@@ -32,6 +32,11 @@ schema_paths = []
 # `npm run check:rls` en cada commit y la persona `donante` de la matriz de pgTAP.
 enable_signup = true
 
+# Los callbacks de OAuth (ADR-039) y los enlaces del correo tienen que estar en
+# `additional_redirect_urls` del proyecto hospedado, incluidas las preview de
+# Vercel. Acá no se listan: este archivo no es el que atiende Auth en local
+# (`scripts/local-api` emula el canje). El procedimiento está en docs/runbook.md.
+
 [auth.email]
 enable_signup = true
 

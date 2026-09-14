@@ -139,8 +139,9 @@ anotado a nombre de esa persona.
 
 | Dato | Dónde vive | Quién lo escribe | Se publica |
 |---|---|---|---|
-| Correo | `auth.users`, que gestiona Supabase Auth | La persona al registrarse | **No.** Ninguna vista pública lo alcanza, y hay un privilegio de columna que lo hace imposible, no una consulta que se acuerda de omitirlo |
-| Hash de la contraseña | `auth.users.encrypted_password` | Supabase Auth | No. No es reversible |
+| Correo | `auth.users`, que gestiona Supabase Auth | La persona al registrarse, o el proveedor social si entra con una red (ADR-039) | **No.** Ninguna vista pública lo alcanza, y hay un privilegio de columna que lo hace imposible, no una consulta que se acuerda de omitirlo |
+| Hash de la contraseña | `auth.users.encrypted_password` | Supabase Auth, si hay contraseña. Una cuenta que nació por OAuth puede no tenerla | No. No es reversible |
+| Identidad del proveedor social | `auth.identities` | Supabase Auth, si la persona eligió una red | No. El sitio no publica con qué red se creó la cuenta |
 | Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, y sólo si decide aparecer | Sí, y sólo si además marca una donación como no anónima |
 | Idioma | `donor_profiles.locale` | La persona | No |
 | Preferencia de anonimato | `donor_profiles.default_anonymous`, `default true` | La persona | No. Lo que se publica es su efecto |
@@ -162,6 +163,11 @@ Cuatro cosas de esta tabla que son decisiones:
 4. **La IP y el user-agent los guarda el proveedor de identidad, no la aplicación.** Esto es lo único
    de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
    una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.
+5. **El nombre y la foto de Google (o de cualquier otra red) no se copian al perfil** (ADR-039).
+   Entrar con Gmail demuestra el correo; no es consentimiento para publicar cómo te llama Google ni
+   para usar su avatar. El perfil nace anónimo, y el retrato es el que se sube en `/cuenta`.
+6. **Si se habilita una red, esa red se entera de que la persona usa este sitio.** Es el trueque de
+   OAuth. La página pública lo nombra; no se habilita un proveedor sin decirlo.
 
 **Quién puede leer un perfil.** Su dueña, y los roles `auditor`, `admin` y `owner`. `editor` **no**:
 administra el catálogo y no accede a un solo nombre. Lo impone `private.can_read_donors()` en la base

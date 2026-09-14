@@ -373,6 +373,17 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-248**: Una persona con sesión MUST poder cambiar su contraseña desde `/cuenta`, sin pasar por
   el correo de recuperación.
 
+**Alta con redes sociales (ADR-039)**
+
+- **FR-249**: El sistema MUST permitir crear una cuenta e ingresar con los proveedores sociales
+  nativos de Supabase Auth que estén habilitados. Sin ninguno habilitado, MUST NOT mostrar el
+  control. MUST NOT inventar un proveedor ni mostrar uno «próximamente».
+- **FR-250**: El alta por una red social MUST nacer anónima y `pending`, igual que el alta por
+  correo. MUST NOT copiar el nombre ni la foto de la red al perfil (FR-230, ADR-037). MUST NOT
+  saltear la habilitación del equipo (ADR-033).
+- **FR-251**: El callback MUST canjear el código en el servidor, MUST NOT respetar un `next` de la
+  query, y MUST fallar con un estado diseñado si el proveedor no entrega un correo.
+
 ### Key Entities
 
 - **Cuenta del público**: alguien que se registró para poder reservar. Tiene correo confirmado,
@@ -421,6 +432,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   no supera los cinco minutos sin intervención manual.
 - **SC-213**: El HTML servido de las páginas públicas no cambia según haya sesión o no, verificado
   sobre el documento inicial; el nombre, el correo y el retrato aparecen después, en el menú.
+- **SC-214**: Con un proveedor social habilitado, una persona puede crear la cuenta desde el botón
+  de esa red y aterrizar en `/cuenta` con sesión, sin nombre público y con la cuenta `pending`,
+  verificado en el harness local.
 
 ---
 
@@ -459,9 +473,9 @@ Cambiar de automática a con aprobación después es agregar un estado: barato.
 
 ## Assumptions
 
-- El correo es el único método de identidad de esta versión. Sin OAuth de Google ni de nadie: agrega
-  un tercero al que hay que confiarle identidad y un logo más en la interfaz, y no resuelve nada que
-  el correo no resuelva para este público.
+- El correo con contraseña sigue siendo el método que no depende de un tercero. OAuth es una
+  alternativa, no un reemplazo: el catálogo cerrado, los botones sólo si están habilitados y la
+  prohibición de copiar nombre o foto de la red están en [ADR-039](../../docs/adr/039-oauth-nativo.md).
 - Sin doble factor para el público, igual que hoy para el equipo. Una cuenta del público no da acceso
   a nada más que a sus propias reservas, así que el daño de un robo de credencial es acotado.
 - Sin captcha en esta versión. La confirmación de correo más el tope de reservas activas son la

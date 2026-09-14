@@ -31,6 +31,10 @@ export const ACCOUNT_ERROR_CODES = [
   "noRecoverySession",
   /** El enlace del correo venció o ya se usó. */
   "linkExpired",
+  /** El salto a la red falló o se canceló. Un solo código: no se filtra el error del proveedor. */
+  "oauthFailed",
+  /** El proveedor no entregó un correo, y sin correo no hay cuenta. */
+  "oauthNoEmail",
   /** Una cuenta con rol interno no se borra desde el sitio público. */
   "internalRole",
   /** Confirmó el correo y todavía no está habilitada (ADR-033). */

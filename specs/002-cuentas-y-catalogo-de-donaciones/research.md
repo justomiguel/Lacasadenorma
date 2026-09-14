@@ -180,7 +180,7 @@ era la duda que justificaba mirar `SERIALIZABLE`.
 | Tema | Por qué no |
 |---|---|
 | Proveedores de captcha | Fuera de alcance de esta versión; agregar uno sumaría un tercero, un logo obligatorio por la regla de marcas, y una decisión de privacidad. Riesgo aceptado con disparador de revisión |
-| OAuth con Google | El correo resuelve la identidad de este público. Un proveedor externo agrega dependencia y superficie sin resolver nada nuevo |
+| OAuth con Google | Revisitado: el pedido llegó después. La decisión está en [ADR-039](../../docs/adr/039-oauth-nativo.md). No se investigó un SDK propio: Auth ya habla OAuth |
 | `react-email` y motores de plantillas | Seis correos de párrafos. Ver ADR-028 |
 | Webhooks de Resend (rebotes, quejas) | Útil con volumen. Con decenas de correos por semana, `email_deliveries` más la consola del proveedor alcanzan. Anotado como el paso siguiente si aparecen rebotes |
 | Colas y workers | Ver ADR-028: infraestructura para un problema que este sitio no tiene |

@@ -43,6 +43,11 @@
     "noAccountLink": "Creá una",
     "forgot": "Olvidé mi contraseña"
   },
+  "social": {
+    "or": "o",
+    "continueWith": "Continuar con {name}",
+    "continuing": "Redirigiendo…"
+  },
   "recover": {
     "title": "Recuperar el acceso",
     "lead": "Escribí tu correo y te mandamos un enlace para poner una contraseña nueva.",
@@ -132,6 +137,8 @@
     "displayNameRequired": "Escribí con qué nombre querés aparecer, o dejá marcado que preferís no aparecer.",
     "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",
     "linkExpired": "Ese enlace ya venció o ya se usó. Pedí uno nuevo.",
+    "oauthFailed": "No se pudo entrar con esa red. Probá de nuevo o usá el correo.",
+    "oauthNoEmail": "Esa red no nos dio un correo, y sin correo no se puede crear la cuenta.",
     "internalRole": "Esta cuenta tiene un rol del backoffice. Para borrarla hay que quitarle el rol primero.",
     "notApproved": "El equipo todavía está revisando tu cuenta. Te va a llegar un correo cuando se pueda reservar.",
     "ahead": "Alguien se adelantó: esa unidad ya quedó anotada a nombre de otra persona.",
