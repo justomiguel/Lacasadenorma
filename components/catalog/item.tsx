@@ -17,11 +17,13 @@ export function CatalogItem({
   copy,
   account,
   locale,
+  priority = false,
 }: {
   item: DonationItem;
   copy: CatalogContent;
   account: AccountContent;
   locale: Locale;
+  priority?: boolean;
 }) {
   const quantities = {
     needed: item.neededQuantity,
@@ -45,7 +47,12 @@ export function CatalogItem({
           description={fill(copy.reservedPhoto, { title: item.title })}
         />
       ) : (
-        <EditorialImage media={item.photo} variant="documentary" caption={false} />
+        <EditorialImage
+          media={item.photo}
+          variant="documentary"
+          caption={false}
+          priority={priority}
+        />
       )}
       <h2 className="mt-lg font-display text-heading">{item.title}</h2>
       {item.description === null ? null : (

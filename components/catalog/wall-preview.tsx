@@ -29,6 +29,7 @@ export function WallPreview({
       action={wall.previewAction}
       media={previewPhotoFor("/quienes-ayudaron", locale)}
       as="h2"
+      priority
       {...(preview.length === 0 ? { summary: wall.previewSummary } : {})}
     >
       {preview.length === 0 ? null : (

@@ -40,6 +40,7 @@ export function PreviewCard({
   lang,
   className,
   children,
+  priority = false,
 }: {
   href: ComponentProps<typeof Link>["href"];
   title: string;
@@ -55,6 +56,8 @@ export function PreviewCard({
   lang?: string;
   className?: string;
   children?: ReactNode;
+  /** La foto de una previa que queda arriba de todo (LCP de `/catalogo` sin ítems). */
+  priority?: boolean;
 }) {
   const split = layout === "split";
   const photo = media === undefined || media === null ? null : media;
@@ -85,6 +88,7 @@ export function PreviewCard({
             height={photo.height}
             sizes={sizes}
             quality={80}
+            priority={priority}
             className="h-full w-full object-cover"
           />
         )}

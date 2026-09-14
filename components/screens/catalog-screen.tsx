@@ -66,13 +66,14 @@ export async function CatalogScreen({
             <div>
               {conflictId === null ? null : <ConflictNotice copy={catalog} />}
               <CatalogFocus itemId={focusId} />
-              {result.data.map((item) => (
+              {result.data.map((item, index) => (
                 <CatalogItem
                   key={item.id}
                   item={item}
                   copy={catalog}
                   account={account}
                   locale={locale}
+                  priority={index === 0}
                 />
               ))}
             </div>
