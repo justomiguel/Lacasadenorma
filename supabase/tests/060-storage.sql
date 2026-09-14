@@ -11,7 +11,7 @@
 -- tamaño y qué tipos acepta un bucket es configuración, no una decisión de
 -- permisos, y en el proyecto real esa tabla la administra la plataforma.
 --
--- `storage.objects` es **una sola tabla** para los dos buckets, así que todas las
+-- `storage.objects` es **una sola tabla** para los cuatro buckets, así que todas las
 -- policies conviven ahí y lo único que las separa es el `bucket_id`. Por eso cada
 -- aserción nombra el bucket: es el discriminante real.
 
