@@ -4,6 +4,7 @@ import { InlineLink } from "@/components/design-system/actions";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
+import { enabledSocialProviders } from "@/src/application/accounts/social-providers";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 /**
@@ -30,7 +31,8 @@ export function signUpMetadata(locale: Locale) {
 
 export function SignUpScreen({ locale }: { locale: Locale }) {
   const { account } = getContent(locale);
-  const { signUp, fields, errors } = account;
+  const { signUp, fields, errors, social } = account;
+  const providers = enabledSocialProviders();
 
   return (
     <AuthShell
@@ -54,7 +56,14 @@ export function SignUpScreen({ locale }: { locale: Locale }) {
         </>
       }
     >
-      <SignUpForm copy={signUp} errors={errors} fields={fields} locale={locale} />
+      <SignUpForm
+        copy={signUp}
+        errors={errors}
+        fields={fields}
+        locale={locale}
+        providers={providers}
+        social={social}
+      />
     </AuthShell>
   );
 }
@@ -83,7 +92,8 @@ export function SignInScreen({
   returnTo?: string | null;
 }) {
   const { account } = getContent(locale);
-  const { signIn, fields, errors } = account;
+  const { signIn, fields, errors, social } = account;
+  const providers = enabledSocialProviders();
 
   // El aviso llega por la query desde `/cuenta/confirmar`, así que llega del
   // navegador y no se muestra tal cual: se busca en la tabla de mensajes, y una
@@ -118,7 +128,9 @@ export function SignInScreen({
         fields={fields}
         locale={locale}
         notice={aviso}
+        providers={providers}
         returnTo={returnTo ?? null}
+        social={social}
       />
     </AuthShell>
   );

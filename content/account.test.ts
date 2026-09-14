@@ -57,4 +57,9 @@ describe("los mensajes de la cuenta", () => {
     expect(getContent("es").account.profile.deleteWord).toBe("BORRAR");
     expect(getContent("en").account.profile.deleteWord).toBe("DELETE");
   });
+
+  it("el botón de la red lleva el nombre de la marca, no un hueco", () => {
+    expect(getContent("es").account.social.continueWith).toContain("{name}");
+    expect(getContent("en").account.social.continueWith).toContain("{name}");
+  });
 });

@@ -5,10 +5,12 @@ import { useActionState } from "react";
 import { signIn, signUp } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
 import type { AccountContent } from "@/content/schema";
+import type { SocialProviderId } from "@/src/domain/auth/social-providers";
 import type { Locale } from "@/src/i18n/locale";
 
 import { fieldError, generalError } from "./error-text";
 import { FormError, LocaleField, SubmitButton, TextField } from "./fields";
+import { SocialAuth } from "./social-auth";
 
 /**
  * Los dos formularios de credenciales.
@@ -30,11 +32,15 @@ export function SignUpForm({
   errors,
   fields,
   locale,
+  providers,
+  social,
 }: {
   copy: AccountContent["signUp"];
   errors: AccountContent["errors"];
   fields: AccountContent["fields"];
   locale: Locale;
+  providers: readonly SocialProviderId[];
+  social: AccountContent["social"];
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(signUp, IDLE);
 
@@ -60,30 +66,33 @@ export function SignUpForm({
   const general = generalError(state, errors);
 
   return (
-    <form action={formAction} className="max-w-measure space-y-lg">
-      <LocaleField locale={locale} />
+    <>
+      <form action={formAction} className="max-w-measure space-y-lg">
+        <LocaleField locale={locale} />
 
-      <TextField
-        name="email"
-        type="email"
-        label={fields.email}
-        autoComplete="username"
-        {...optional(fieldError(state, errors, "email"))}
-      />
+        <TextField
+          name="email"
+          type="email"
+          label={fields.email}
+          autoComplete="username"
+          {...optional(fieldError(state, errors, "email"))}
+        />
 
-      <TextField
-        name="password"
-        type="password"
-        label={fields.password}
-        hint={fields.passwordHint}
-        autoComplete="new-password"
-        {...optional(fieldError(state, errors, "password"))}
-      />
+        <TextField
+          name="password"
+          type="password"
+          label={fields.password}
+          hint={fields.passwordHint}
+          autoComplete="new-password"
+          {...optional(fieldError(state, errors, "password"))}
+        />
 
-      {general === null ? null : <FormError>{general}</FormError>}
+        {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
-    </form>
+        <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+      </form>
+      <SocialAuth copy={social} errors={errors} locale={locale} providers={providers} />
+    </>
   );
 }
 
@@ -93,7 +102,9 @@ export function SignInForm({
   fields,
   locale,
   notice,
+  providers,
   returnTo,
+  social,
 }: {
   copy: AccountContent["signIn"];
   errors: AccountContent["errors"];
@@ -101,40 +112,51 @@ export function SignInForm({
   locale: Locale;
   /** El aviso con el que llega quien vino de un enlace vencido. */
   notice: string | null;
+  providers: readonly SocialProviderId[];
   /** Destino post-ingreso. Vacío cae en `/cuenta`. */
   returnTo?: string | null;
+  social: AccountContent["social"];
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(signIn, IDLE);
 
   const general = generalError(state, errors) ?? (state.phase === "idle" ? notice : null);
 
   return (
-    <form action={formAction} className="max-w-measure space-y-lg">
-      <LocaleField locale={locale} />
-      {returnTo === null || returnTo === undefined || returnTo.length === 0 ? null : (
-        <input type="hidden" name="volver" value={returnTo} />
-      )}
+    <>
+      <form action={formAction} className="max-w-measure space-y-lg">
+        <LocaleField locale={locale} />
+        {returnTo === null || returnTo === undefined || returnTo.length === 0 ? null : (
+          <input type="hidden" name="volver" value={returnTo} />
+        )}
 
-      <TextField
-        name="email"
-        type="email"
-        label={fields.email}
-        autoComplete="username"
-        {...optional(fieldError(state, errors, "email"))}
+        <TextField
+          name="email"
+          type="email"
+          label={fields.email}
+          autoComplete="username"
+          {...optional(fieldError(state, errors, "email"))}
+        />
+
+        <TextField
+          name="password"
+          type="password"
+          label={fields.password}
+          autoComplete="current-password"
+          {...optional(fieldError(state, errors, "password"))}
+        />
+
+        {general === null ? null : <FormError>{general}</FormError>}
+
+        <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+      </form>
+      <SocialAuth
+        copy={social}
+        errors={errors}
+        locale={locale}
+        providers={providers}
+        returnTo={returnTo ?? null}
       />
-
-      <TextField
-        name="password"
-        type="password"
-        label={fields.password}
-        autoComplete="current-password"
-        {...optional(fieldError(state, errors, "password"))}
-      />
-
-      {general === null ? null : <FormError>{general}</FormError>}
-
-      <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
-    </form>
+    </>
   );
 }
 

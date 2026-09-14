@@ -43,6 +43,11 @@
     "noAccountLink": "Create one",
     "forgot": "I forgot my password"
   },
+  "social": {
+    "or": "or",
+    "continueWith": "Continue with {name}",
+    "continuing": "Redirecting…"
+  },
   "recover": {
     "title": "Recover access",
     "lead": "Type your email and we'll send you a link to set a new password.",
@@ -106,8 +111,8 @@
     "unavailableBody": "Accounts need the campaign's database, and this deployment doesn't have it configured yet. The rest of the site works.",
     "pendingTitle": "The team is reviewing your request",
     "pendingBody": [
-      "You confirmed the email, and that was enough to create the account. Reserving materials waits until the team approves it: you'll get an email.",
-      "In the meantime you can choose how you appear, or delete the account if you change your mind."
+      "Your email is now tied to this account. Reserving materials waits until the team enables it: you will get an email.",
+      "In the meantime you can choose how you appear, or delete the account if you have changed your mind."
     ],
     "declinedTitle": "The account wasn't approved this time",
     "declinedBody": [
@@ -137,6 +142,8 @@
     "displayNameRequired": "Type the name you want to appear under, or leave it checked that you'd rather not appear.",
     "noRecoverySession": "This link doesn't open a recovery session. Ask for a new one.",
     "linkExpired": "That link has expired or has already been used. Ask for a new one.",
+    "oauthFailed": "Couldn't sign in with that network. Try again or use your email.",
+    "oauthNoEmail": "That network didn't give us an email, and without an email the account can't be created.",
     "internalRole": "This account has a backoffice role. To delete it, the role has to be removed first.",
     "notApproved": "The team is still reviewing your account. You'll get an email when you can reserve.",
     "ahead": "Someone got there first: that unit is already reserved under someone else's name.",

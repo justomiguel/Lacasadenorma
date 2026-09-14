@@ -83,6 +83,12 @@ fi
 # Sin fijarlo, las afirmaciones del flujo 6 medirían la URL de otra máquina.
 export NEXT_PUBLIC_SITE_URL="http://127.0.0.1:${PORT}"
 
+if [[ "$modo" == "con-datos" ]]; then
+  # Runtime: el botón de Google aparece en crear/ingresar. El harness emula el
+  # salto; no habla con Google (ADR-038).
+  export AUTH_SOCIAL_PROVIDERS="${AUTH_SOCIAL_PROVIDERS:-google}"
+fi
+
 # El build lleva su entorno adentro: `NEXT_PUBLIC_*` se reemplaza por su valor al
 # construir. Se deja anotado cuál se usó para que reusarlo no sea a ciegas: un build
 # del otro modo pasa la mayoría de los tests y falla los tres que miran las URL

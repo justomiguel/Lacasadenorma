@@ -370,4 +370,36 @@ test.describe("fase A · la cuenta del público", () => {
       400,
     );
   });
+
+  test("con Google: del botón a la sesión, anónima y pendiente", async ({ page }) => {
+    await page.goto("/cuenta/crear");
+
+    await expect(
+      page.getByRole("button", { name: /continuar con google/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("img", { name: "Google" })).toHaveCount(0);
+
+    await page.getByRole("button", { name: /continuar con google/i }).click();
+
+    await expect(page).toHaveURL(/\/cuenta$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /el equipo está revisando/i }),
+    ).toBeVisible();
+    await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
+    await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(/@local\.test/i)).toBeVisible();
+  });
+
+  test("el callback OAuth no respeta un next de la query", async ({ page }) => {
+    await page.goto("/cuenta/oauth?code=inventado&next=https://sitio-parecido.example");
+
+    await expect(page).toHaveURL(/\/cuenta\/ingresar\?aviso=oauthFailed$/);
+    await expect(page).not.toHaveURL(/sitio-parecido/);
+    await expect(page.getByText(/no se pudo entrar con esa red/i)).toBeVisible();
+  });
 });

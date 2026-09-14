@@ -43,6 +43,11 @@
     "noAccountLink": "Creá una",
     "forgot": "Olvidé mi contraseña"
   },
+  "social": {
+    "or": "o",
+    "continueWith": "Continuar con {name}",
+    "continuing": "Redirigiendo…"
+  },
   "recover": {
     "title": "Recuperar el acceso",
     "lead": "Escribí tu correo y te mandamos un enlace para poner una contraseña nueva.",
@@ -106,7 +111,7 @@
     "unavailableBody": "Las cuentas necesitan la base de datos de la campaña, y este despliegue todavía no la tiene configurada. El resto del sitio funciona.",
     "pendingTitle": "El equipo está revisando tu pedido",
     "pendingBody": [
-      "Confirmaste el correo, y eso alcanzó para crear la cuenta. Reservar materiales espera a que el equipo la habilite: te va a llegar un correo.",
+      "Tu correo quedó asociado a esta cuenta. Reservar materiales espera a que el equipo la habilite: te va a llegar un correo.",
       "Mientras tanto podés elegir cómo aparecer, o borrar la cuenta si te arrepentís."
     ],
     "declinedTitle": "Esta vez no se habilitó la cuenta",
@@ -137,6 +142,8 @@
     "displayNameRequired": "Escribí con qué nombre querés aparecer, o dejá marcado que preferís no aparecer.",
     "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",
     "linkExpired": "Ese enlace ya venció o ya se usó. Pedí uno nuevo.",
+    "oauthFailed": "No se pudo entrar con esa red. Probá de nuevo o usá el correo.",
+    "oauthNoEmail": "Esa red no nos dio un correo, y sin correo no se puede crear la cuenta.",
     "internalRole": "Esta cuenta tiene un rol del backoffice. Para borrarla hay que quitarle el rol primero.",
     "notApproved": "El equipo todavía está revisando tu cuenta. Te va a llegar un correo cuando se pueda reservar.",
     "ahead": "Alguien se adelantó: esa unidad ya quedó anotada a nombre de otra persona.",

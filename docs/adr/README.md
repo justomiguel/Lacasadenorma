@@ -48,3 +48,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [035](./035-simbolo-de-la-marca.md) | El símbolo de la marca es el círculo 01 ORIGINAL | Aceptada |
 | [036](./036-tarjeta-de-compartir.md) | Al compartir se ve el símbolo y el texto de esa página | Aceptada |
 | [037](./037-chrome-de-cuenta.md) | El chrome de cuenta no personaliza las páginas públicas | Aceptada |
+| [038](./038-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |

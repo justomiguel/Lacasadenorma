@@ -68,6 +68,48 @@ export const BRANDS = {
     width: 24,
     height: 24,
   },
+  google: {
+    name: "Google",
+    src: "/marcas/google.svg",
+    width: 24,
+    height: 24,
+  },
+  apple: {
+    name: "Apple",
+    src: "/marcas/apple.svg",
+    width: 24,
+    height: 24,
+  },
+  github: {
+    name: "GitHub",
+    src: "/marcas/github.svg",
+    width: 24,
+    height: 24,
+  },
+  gitlab: {
+    name: "GitLab",
+    src: "/marcas/gitlab.svg",
+    width: 24,
+    height: 24,
+  },
+  discord: {
+    name: "Discord",
+    src: "/marcas/discord.svg",
+    width: 24,
+    height: 24,
+  },
+  twitch: {
+    name: "Twitch",
+    src: "/marcas/twitch.svg",
+    width: 24,
+    height: 24,
+  },
+  spotify: {
+    name: "Spotify",
+    src: "/marcas/spotify.svg",
+    width: 24,
+    height: 24,
+  },
 } as const;
 
 export type BrandId = keyof typeof BRANDS;

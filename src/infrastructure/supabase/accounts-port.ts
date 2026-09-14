@@ -75,6 +75,11 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
      * inserts simultáneos, y el segundo chocaría con la clave primaria. Con
      * `ignoreDuplicates` el choque no es un error, que es lo correcto: el estado
      * final es el mismo que se pedía.
+     *
+     * No se lee `user_metadata`. El nombre y la foto que Google (o cualquiera)
+     * manda viven ahí, y copiarlos al perfil publicaría un nombre que nadie
+     * eligió mostrar y un avatar que no es el retrato de este sitio (FR-230,
+     * ADR-038). El perfil nace anónimo, con el idioma de la pantalla.
      */
     async ensureOwnProfile(
       fallbackLocale: Locale,

@@ -227,6 +227,37 @@ Si no fuiste vos, ignorá este correo. La contraseña no cambia hasta que alguie
 el enlace y escriba una nueva.
 ```
 
+### Redes sociales (ADR-038)
+
+El botón no aparece porque Auth tenga el proveedor configurado. Aparece porque `AUTH_SOCIAL_PROVIDERS`
+lo nombra. Los dos pasos hacen falta, y en este orden:
+
+1. En el panel de Supabase, **Authentication → Providers**, habilitar la red (Google, para Gmail).
+   Cada una pide su propio par de credenciales; la guía vigente está en
+   [Social login](https://supabase.com/docs/guides/auth/social-login). Para Google: un cliente OAuth
+   en Google Cloud, tipo Web, con el callback `https://<ref>.supabase.co/auth/v1/callback`.
+2. En **URL Configuration**, sumar a Redirect URLs:
+   - `https://lacasadenorma.com/cuenta/oauth`
+   - `https://lacasadenorma.com/en/cuenta/oauth`
+   - las de preview de Vercel, con el mismo path.
+   Sin esto, el salto vuelve a la home y la persona no entiende por qué no quedó ingresada. Es la
+   misma trampa que los enlaces del correo.
+3. En Vercel, `AUTH_SOCIAL_PROVIDERS=google` (o la lista que se ofrezca, separada por comas, sin
+   espacios obligatorios). **Sin `NEXT_PUBLIC_`.** Vacía: ningún botón.
+4. Probar a mano, una vez, el hop real: `/cuenta/crear` → Continuar con Google → autorizar →
+   aterrizar en `/cuenta` sin nombre público y con la cuenta pendiente de habilitación. El e2e no
+   habla con Google: emula el canje en la API local.
+
+Si el proveedor no entrega un correo (Apple con correo oculto), la pantalla de ingresar dice que sin
+correo no se puede crear la cuenta. No se inventa uno.
+
+Quitar una red: sacarla de `AUTH_SOCIAL_PROVIDERS`. El botón desaparece. Las cuentas que ya entraron
+por esa red siguen existiendo; para entrar de nuevo hace falta la contraseña, si la pusieron, o
+volver a habilitar la red.
+
+**Rotar las credenciales de Google** es en Google Cloud y en el panel de Supabase. El sitio no las
+guarda: Auth es quien habla con Google.
+
 **Cambio de dirección.** Asunto: `Confirmá el correo nuevo — La Casa de Norma`.
 
 ```
@@ -364,6 +395,7 @@ Storage o las policies. Requiere el entorno de la sección 3.
 | 2 | Que el rol aparezca en el marco del backoffice | Confirma que el hook está **habilitado en el panel** y no sólo creado en el esquema. Si dice que no hay permisos, mirar la sección 3 antes que cualquier otra cosa |
 | 3 | **Subir una foto a una novedad**, con su descripción | No hay Storage local: el shim no tiene `storage.objects` funcional ni URLs firmadas |
 | 3b | **Subir un retrato desde `/cuenta`** y verlo en el menú | Ídem: el bucket `avatares` es privado y se sirve por URL firmada (ADR-037) |
+| 3c | **Crear una cuenta con Google de verdad** | El harness emula `/authorize` y el canje PKCE; no habla con Google. El procedimiento está más arriba, en Redes sociales |
 | 4 | **Abrir un comprobante desde `/admin/transparencia`** | Ídem: el enlace firmado y su vencimiento sólo existen en el proyecto real |
 | 5 | **Publicar y ver la vista previa al compartir.** Pegar el enlace en un chat de WhatsApp con uno mismo: título, descripción e imagen | La suite verifica las etiquetas y que la imagen sea una imagen; cómo las renderiza WhatsApp no es verificable desde un test |
 | 6 | Que `/sitemap.xml` en el dominio real incluya la novedad | La suite lo verifica contra la API local. Acá lo que se prueba es la caché de Vercel, no la invalidación de Next |

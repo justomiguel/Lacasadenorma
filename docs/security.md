@@ -45,7 +45,8 @@ dos:
 
 ## 2. Identidad y rol
 
-Autenticación por correo y contraseña con Supabase Auth ([ADR-003](./adr/003-autenticacion.md)). Dos
+Autenticación por correo y contraseña con Supabase Auth ([ADR-003](./adr/003-autenticacion.md)), y
+por las redes sociales nativas que estén habilitadas ([ADR-038](./adr/038-oauth-nativo.md)). Dos
 decisiones que hacen la diferencia:
 
 **`getClaims()`, nunca `getSession()`.** El segundo devuelve lo que hay en la cookie sin validar nada;

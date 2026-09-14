@@ -130,4 +130,17 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
     expect(respuesta.status()).toBe(200);
     expect(cuerpo.dataSource).toBe("content-only");
   });
+
+  test("sin proveedores habilitados no se inventa el botón de Google", async ({
+    page,
+  }) => {
+    await page.goto("/cuenta/crear");
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: /crear una cuenta/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /continuar con google/i })).toHaveCount(
+      0,
+    );
+  });
 });
