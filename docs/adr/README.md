@@ -44,3 +44,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [031](./031-donacion-en-especie-no-es-plata.md) | Una donación en especie no entra en el libro | Aceptada |
 | [032](./032-relato-mobile-editorial.md) | El relato mobile editorial: fotografía, aire y tres familias de acción | Aceptada |
 | [033](./033-aprobacion-de-cuentas.md) | Una cuenta del público no reserva nada hasta que el equipo la habilita | Aceptada |
+| [034](./034-editor-novedades.md) | El cuerpo de una novedad se edita a ojo y se guarda como árbol, no como HTML | Aceptada |
