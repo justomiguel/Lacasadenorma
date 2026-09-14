@@ -111,6 +111,11 @@ const nextConfig: NextConfig = {
      * `/${string}` una ruta tipada y apagaría `typedRoutes`.
      */
     globalNotFound: true,
+    // El retrato pesa hasta 2 MiB; multipart suma unos KB. Sin esto Next corta
+    // en 1 MB y el tope del bucket nunca llega a aplicarse (ADR-037).
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
   },
 
   images: {
@@ -146,6 +151,22 @@ const nextConfig: NextConfig = {
       {
         // Las rutas autenticadas nunca se cachean en un intermediario.
         source: "/admin/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/cuenta",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/cuenta/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/en/cuenta",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/en/cuenta/:path*",
         headers: [{ key: "Cache-Control", value: "private, no-store" }],
       },
     ];

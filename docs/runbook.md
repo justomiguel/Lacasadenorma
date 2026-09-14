@@ -363,6 +363,7 @@ Storage o las policies. Requiere el entorno de la sección 3.
 | 1 | **Iniciar sesión con GoTrue de verdad**, con una cuenta `editor` creada desde el panel | La API local emite los tokens; GoTrue tiene su propia validación de contraseña, sus límites de tasa y sus mensajes |
 | 2 | Que el rol aparezca en el marco del backoffice | Confirma que el hook está **habilitado en el panel** y no sólo creado en el esquema. Si dice que no hay permisos, mirar la sección 3 antes que cualquier otra cosa |
 | 3 | **Subir una foto a una novedad**, con su descripción | No hay Storage local: el shim no tiene `storage.objects` funcional ni URLs firmadas |
+| 3b | **Subir un retrato desde `/cuenta`** y verlo en el menú | Ídem: el bucket `avatares` es privado y se sirve por URL firmada (ADR-037) |
 | 4 | **Abrir un comprobante desde `/admin/transparencia`** | Ídem: el enlace firmado y su vencimiento sólo existen en el proyecto real |
 | 5 | **Publicar y ver la vista previa al compartir.** Pegar el enlace en un chat de WhatsApp con uno mismo: título, descripción e imagen | La suite verifica las etiquetas y que la imagen sea una imagen; cómo las renderiza WhatsApp no es verificable desde un test |
 | 6 | Que `/sitemap.xml` en el dominio real incluya la novedad | La suite lo verifica contra la API local. Acá lo que se prueba es la caché de Vercel, no la invalidación de Next |

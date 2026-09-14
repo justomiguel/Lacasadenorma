@@ -13,7 +13,7 @@ sin equipo de infraestructura.
 
 Supabase: PostgreSQL 16, Auth, Storage. RLS habilitada en **todas** las tablas de esquemas
 expuestos, con policies explícitas. Migraciones imperativas versionadas en `supabase/migrations/`.
-Dos buckets: `fotos` público, `comprobantes` privado.
+Cuatro buckets: `fotos` y `videos` públicos; `comprobantes` y `avatares` privados.
 
 Realtime **no** se usa: no hay ningún caso donde alguien necesite ver un cambio en vivo.
 

@@ -268,3 +268,39 @@ export async function setPassword(
 
   redirect(localizeHref("/cuenta", locale));
 }
+
+export async function changePassword(
+  _state: AccountFormState,
+  formData: FormData,
+): Promise<AccountFormState> {
+  const password = textOf(formData, "password");
+  const confirmation = textOf(formData, "confirmacion");
+
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { phase: "error", code: "passwordShort", field: "password" };
+  }
+
+  if (password !== confirmation) {
+    return { phase: "error", code: "passwordMismatch", field: "confirmPassword" };
+  }
+
+  const client = await createServerSupabaseClient();
+
+  if (client === null) {
+    return { phase: "error", code: "notConfigured", field: null };
+  }
+
+  const { data } = await client.auth.getClaims();
+
+  if (typeof data?.claims.sub !== "string") {
+    return { phase: "error", code: "noSession", field: null };
+  }
+
+  const { error } = await client.auth.updateUser({ password });
+
+  if (error !== null) {
+    return authFailure("cambiar la contraseña", error, "failed");
+  }
+
+  return { phase: "done" };
+}

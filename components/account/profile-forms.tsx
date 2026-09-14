@@ -22,10 +22,10 @@ import {
 /**
  * Lo que una persona puede hacer con su propia cuenta desde el sitio.
  *
- * Los tres formularios están en el mismo archivo porque comparten pantalla y
- * ninguno tiene sentido sin los otros: el que decide cómo aparecer, el que cierra
- * la sesión y el que se va del todo. Separarlos en tres archivos escondería que la
- * pantalla es una sola decisión con tres salidas.
+ * Los tres formularios están en el mismo archivo porque pertenecen a la misma
+ * cuenta: el que decide cómo aparecer, el que cierra la sesión y el que se va del
+ * todo. En la pantalla viven en pestañas distintas; acá se lee que son tres
+ * salidas de una sola decisión.
  */
 
 function optional(error: string | undefined): { error?: string } {

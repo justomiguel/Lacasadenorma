@@ -24,6 +24,8 @@ export interface DonorProfile {
   readonly locale: Locale;
   readonly defaultAnonymous: boolean;
   readonly approvalStatus: ApprovalStatus;
+  /** Ruta en el bucket privado `avatares`. Nulo = no subió foto. No se publica. */
+  readonly portraitPath: string | null;
 }
 
 export const ANONYMOUS_BY_DEFAULT = true;
@@ -75,6 +77,49 @@ export function isApprovalStatus(value: unknown): value is ApprovalStatus {
   return (
     typeof value === "string" && (APPROVAL_STATUSES as readonly string[]).includes(value)
   );
+}
+
+/**
+ * Los únicos tipos que el bucket de retratos acepta. Sin AVIF: este proyecto no
+ * lee sus medidas, y un retrato sin ancho y alto no se puede reservar en el
+ * layout (principio VII).
+ */
+export const PORTRAIT_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+
+export type PortraitMimeType = (typeof PORTRAIT_MIME_TYPES)[number];
+
+export const PORTRAIT_BUCKET = "avatares";
+
+const PORTRAIT_EXTENSION: Record<PortraitMimeType, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
+/** La ruta propia: `{userId}/retrato.{ext}`. No se conserva el nombre original. */
+export function portraitPathFor(userId: string, mimeType: PortraitMimeType): string {
+  return `${userId}/retrato.${PORTRAIT_EXTENSION[mimeType]}`;
+}
+
+export function isPortraitMimeType(value: unknown): value is PortraitMimeType {
+  return (
+    typeof value === "string" &&
+    (PORTRAIT_MIME_TYPES as readonly string[]).includes(value)
+  );
+}
+
+/**
+ * Si esa ruta es el retrato de esta persona, y no el de otra ni un path libre.
+ *
+ * Es la misma invariante que el `check` de la columna: una cuenta no puede
+ * apuntar su perfil al archivo de otra.
+ */
+export function isOwnPortraitPath(userId: string, path: string | null): boolean {
+  if (path === null) {
+    return false;
+  }
+
+  return PORTRAIT_MIME_TYPES.some((mime) => portraitPathFor(userId, mime) === path);
 }
 
 /** Lo que el backoffice muestra de una cuenta del público. El correo viene de donor_contact(). */

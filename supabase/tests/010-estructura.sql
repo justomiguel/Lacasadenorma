@@ -310,6 +310,15 @@ select is_empty(
         where i.indrelid = cf.relid
           and i.indkey[0] = cf.attnum
      )
+       -- `storage.foldername(name)` en las policies de `avatares`. El planificador
+       -- no puede usar un btree sobre `name` para resolver esa expresión, y en el
+       -- proyecto real `postgres` no es dueño de `storage.objects` (no se puede
+       -- crear el índice). Declararlo acá es la alternativa a fingir uno.
+       and not (
+         cf.schemaname = 'storage'
+         and cf.tablename = 'objects'
+         and cf.columna = 'name'
+       )
      order by 1
   $q$,
   'toda columna que filtra una policy tiene un índice que la lidera (T050)'
@@ -371,7 +380,10 @@ select results_eq(
            ('public.people.published_at'),
            ('public.update_media.update_id'),
            ('public.updates.published_at'),
-           ('storage.objects.bucket_id')
+           ('storage.objects.bucket_id'),
+           -- `name` entra por `storage.foldername(name)` en `avatares`. No tiene
+           -- índice líder: ver la exclusión del test de arriba (ADR-037).
+           ('storage.objects.name')
   $q$,
   'las policies filtran exactamente por estas columnas: una policy que filtre por otra tiene que pasar por esta prueba (T050)'
 );
@@ -551,9 +563,9 @@ select is_empty(
 -- Dos policies permisivas para la misma tabla, comando y rol se evalúan las dos en
 -- cada fila. Es el aviso `multiple_permissive_policies` y un costo real.
 --
--- `storage.objects` queda fuera a propósito: es **una** tabla que sirve los dos
--- buckets, así que `fotos_insert` y `comprobantes_insert` conviven por definición
--- y lo que las separa es el `bucket_id`.
+-- `storage.objects` queda fuera a propósito: es **una** tabla que sirve los cuatro
+-- buckets, así que `fotos_insert`, `videos_insert`, `comprobantes_insert` y
+-- `avatares_insert` conviven por definición y lo que las separa es el `bucket_id`.
 select is_empty(
   $q$
     with expandido as (

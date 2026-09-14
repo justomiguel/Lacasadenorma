@@ -11,7 +11,10 @@
     "anonymousHint": "Si queda marcado, lo que traigas se cuenta igual pero tu nombre no aparece en ninguna parte del sitio.",
     "language": "Idioma de los correos",
     "languageEs": "Castellano",
-    "languageEn": "Inglés"
+    "languageEn": "Inglés",
+    "portrait": "Tu foto",
+    "portraitHint": "JPEG, PNG o WebP, hasta 2 MB. Te identifica cuando estás ingresada. No se publica en el sitio.",
+    "portraitEmpty": "Todavía no hay foto. El espacio queda reservado hasta que subas una."
   },
   "signUp": {
     "title": "Crear una cuenta",
@@ -70,6 +73,11 @@
     "title": "Tu cuenta",
     "lead": "Acá está todo lo que el sitio guarda de vos, y desde acá se cambia o se borra.",
     "seoDescription": "La cuenta propia en el sitio de la reconstrucción de la casa de Norma: cómo aparecer, en qué idioma escribir y cómo borrarla.",
+    "tabsLabel": "Secciones de tu cuenta",
+    "tabPledges": "Reservas",
+    "tabAppearance": "Cómo aparecer",
+    "tabAccess": "Acceso",
+    "tabDelete": "Borrar",
     "signedInAs": "Sesión abierta como",
     "appearanceHeading": "Cómo querés aparecer",
     "appearanceLead": "Cuando ofrezcas traer algo, podés aparecer en la lista de quienes ayudaron o no aparecer. Se puede cambiar en cualquier momento, y el cambio se aplica también a lo que ya ofreciste.",
@@ -80,6 +88,14 @@
     "saved": "Guardado.",
     "signOut": "Cerrar sesión",
     "signingOut": "Cerrando…",
+    "portraitHeading": "Tu foto",
+    "portraitLead": "Te identifica en el menú cuando estás ingresada. No aparece en Quiénes ayudaron ni en ninguna página pública.",
+    "portraitAdd": "Subir una foto",
+    "portraitChange": "Cambiar la foto",
+    "portraitRemove": "Quitar la foto",
+    "portraitRemoving": "Quitando…",
+    "passwordHeading": "Contraseña",
+    "passwordLead": "La que uses de ahora en más para entrar. Ocho caracteres o más.",
     "deleteHeading": "Borrar la cuenta",
     "deleteLead": "Se van tu correo, tu nombre y tus preferencias, y no se puede deshacer. Lo que hayas traído queda contado, sin tu nombre, porque es parte de la rendición de cuentas de la obra.",
     "deleteWord": "BORRAR",
@@ -127,6 +143,7 @@
     "tooManyPledges": "Tenés cinco reservas activas, que es el tope. Cancelá una para anotar otra.",
     "alreadyGone": "Esa reserva ya no está activa. Recargá la cuenta para ver el estado actual.",
     "quantityInvalid": "La cantidad tiene que ser un entero positivo.",
-    "failed": "No se pudo completar. El detalle quedó en el registro del servidor."
+    "failed": "No se pudo completar. El detalle quedó en el registro del servidor.",
+    "portraitInvalid": "Esa foto no se pudo usar. Se aceptan JPEG, PNG y WebP de hasta 2 MB."
   }
 }

@@ -54,6 +54,7 @@ null default now()`, `published_at` nulo = borrador.
 | `approval_status` | `text not null default 'pending'` | `pending` \| `approved` \| `declined`. Confirmar el correo **no** habilita (ADR-033) |
 | `reviewed_at`, `reviewed_by` | | Nulos exactamente cuando el estado es `pending` |
 | `review_note` | `text` nullable | Motivo del rechazo, si alguien lo dejó. No es público |
+| `portrait_path` | `text` **nullable** | Ruta en el bucket privado `avatares`. Nulo = no subió foto. **No se publica** (ADR-037, FR-246) |
 | `created_at`, `updated_at` | | |
 
 **Por qué existe y no se usa `auth.users` directo**: `authenticated` no puede leer `auth.users`, y no
@@ -270,7 +271,7 @@ grant update (
 ) on public.donation_items to authenticated;
 grant delete on public.donation_items to authenticated;
 grant select, insert, delete on public.donor_profiles to authenticated;
-grant update (display_name, locale, default_anonymous) on public.donor_profiles
+grant update (display_name, locale, default_anonymous, portrait_path) on public.donor_profiles
   to authenticated;
 grant select on public.email_deliveries to authenticated;
 

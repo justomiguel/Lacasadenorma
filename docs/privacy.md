@@ -112,19 +112,23 @@ después corregir.
 
 ## 3. Cookies
 
-Las únicas cookies del proyecto son las de sesión de Supabase Auth, y sólo aparecen en `/admin`.
+Las únicas cookies del proyecto son las de sesión de Supabase Auth. Aparecen en `/admin` y, desde
+ADR-027, también cuando alguien del público entra a su cuenta.
 
 | Cookie | Quién la escribe | Alcance | Para qué |
 |---|---|---|---|
 | `sb-*-auth-token` (y su par de refresh) | Supabase Auth, vía `proxy.ts` y `src/infrastructure/supabase/server-client.ts` | Primera parte, `HttpOnly`, `Secure` en producción | Mantener la sesión de quien administra y, desde ADR-027, la de quien se registró |
 
-Las páginas públicas **no leen ninguna cookie**. `createAnonSupabaseClient()` se construye con un
-almacén de cookies vacío a propósito: sin eso, una lectura pública podría acabar dependiendo de la
-sesión de quien está mirando, y una página que cambia según quién la abre no se puede cachear ni
-razonar. Es también lo que hace que el HTML público sea idéntico para todo el mundo.
+Las páginas públicas **no leen ninguna cookie al renderizar**. `createAnonSupabaseClient()` se
+construye con un almacén de cookies vacío a propósito: sin eso, una lectura pública podría acabar
+dependiendo de la sesión de quien está mirando, y una página que cambia según quién la abre no se
+puede cachear ni razonar. Es también lo que hace que el HTML público sea idéntico para todo el mundo
+(SC-204, ADR-037).
 
-Las páginas de `/cuenta` son la excepción y no debilitan nada: dependen de la sesión por definición y
-por eso no se cachean.
+El menú, después de hidratar, pide un snapshot privado a `/cuenta/sesion`. Esa petición sí lleva la
+cookie, y por eso el nombre y el retrato aparecen en el drawer de quien ya entró, no en el HTML que
+se cachea. Las páginas de `/cuenta` son la otra excepción y no debilitan nada: dependen de la sesión
+por definición y por eso no se cachean.
 
 ---
 
@@ -140,6 +144,7 @@ anotado a nombre de esa persona.
 | Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, y sólo si decide aparecer | Sí, y sólo si además marca una donación como no anónima |
 | Idioma | `donor_profiles.locale` | La persona | No |
 | Preferencia de anonimato | `donor_profiles.default_anonymous`, `default true` | La persona | No. Lo que se publica es su efecto |
+| Retrato | bucket privado `avatares`, ruta en `donor_profiles.portrait_path` | La persona, si sube una foto | **No.** Ni el muro ni ninguna página pública la nombran. El archivo se sirve por `/cuenta/retrato` a su dueña |
 | Sesiones e inicios de sesión, con IP y user-agent | `auth.sessions` y `auth.audit_log_entries` | Supabase Auth | No |
 
 Cuatro cosas de esta tabla que son decisiones:
@@ -165,9 +170,9 @@ y el permiso `donaciones.leer` en la interfaz, y lo verifica la persona `donante
 nombre público lo elige su dueña.
 
 **Cómo se borra.** La persona borra su cuenta desde `/cuenta`. El perfil se va con ella por
-`on delete cascade`, así que no hay una segunda operación de la que alguien se pueda olvidar. Lo que
-haya donado se conserva sin su nombre (FR-240), porque el historial de lo que efectivamente llegó a la
-obra no es un dato personal.
+`on delete cascade`, y el retrato se borra del bucket antes, así que no hay una segunda operación
+de la que alguien se pueda olvidar. Lo que haya donado se conserva sin su nombre (FR-240), porque el
+historial de lo que efectivamente llegó a la obra no es un dato personal.
 
 **Qué guarda una reserva.** Anotarse para traer un material agrega filas en `donation_pledges`. No
 viven en `donor_profiles`, y por eso esta tabla no las cubría: son el motivo por el que una cuenta
@@ -274,7 +279,8 @@ los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta
 
 - **Acceso.** Lo que el sistema guarda de una cuenta es lo que su dueña ve en `/cuenta`: no hay un
   segundo lugar con más. Las tablas de la sección 3.bis —el perfil y las reservas— son la lista
-  completa.
+  completa. En la pantalla está partido en pestañas (reservas, cómo aparecer, acceso, borrar) para
+  no apilar los formularios; el contenido es el mismo.
 - **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
   cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
 - **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo

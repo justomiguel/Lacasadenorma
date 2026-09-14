@@ -1,15 +1,15 @@
-import { OwnPledges } from "@/components/account/own-pledges";
-import { AuthShell } from "@/components/account/auth-shell";
 import {
-  DeleteAccountForm,
-  ProfileForm,
-  SignOutForm,
-} from "@/components/account/profile-forms";
+  AccessPanel,
+  AppearancePanel,
+  DeletePanel,
+  PledgesPanel,
+} from "@/components/account/account-panels";
+import { resolveAccountSection } from "@/components/account/account-section";
+import { AccountTabs } from "@/components/account/account-tabs";
+import { AuthShell } from "@/components/account/auth-shell";
 import { Callout } from "@/components/design-system/callout";
-import { SectionHeading } from "@/components/design-system/typography";
 import { getContent } from "@/content";
 import { getOwnAccount } from "@/src/application/accounts/own-account";
-import { canAppearNamed, displayNameOf } from "@/src/domain/entities/donor";
 import type { Locale } from "@/src/i18n/locale";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { readViewer } from "@/src/infrastructure/auth/viewer";
@@ -19,12 +19,13 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  * La propia cuenta.
  *
  * Muestra exactamente lo que el sistema guarda de una persona —el correo, el
- * nombre que eligió, si quiere aparecer, en qué idioma se le escribe— y nada más,
- * porque eso es lo que `docs/privacy.md` promete que se puede ver desde acá. Si
- * algún día se guardara un dato más, tiene que aparecer en esta pantalla o la
- * política pasa a ser falsa.
+ * retrato, el nombre que eligió, si quiere aparecer, en qué idioma se le escribe—
+ * y nada más, porque eso es lo que `docs/privacy.md` promete que se puede ver
+ * desde acá. Si algún día se guardara un dato más, tiene que aparecer en esta
+ * pantalla o la política pasa a ser falsa.
  *
- * Lo que todavía **no** está: el muro. Llega en la fase E.
+ * El índice son pestañas editoriales (`SectionTabs`): reservas, cómo aparecer,
+ * acceso y borrar. Sin JavaScript se apilan.
  */
 
 export function accountMetadata(locale: Locale) {
@@ -42,9 +43,11 @@ export function accountMetadata(locale: Locale) {
 export async function AccountScreen({
   locale,
   notice,
+  section,
 }: {
   locale: Locale;
   notice: string | null;
+  section: string | null;
 }) {
   const { account, catalog } = getContent(locale);
   const { profile: copy, fields, errors } = account;
@@ -66,7 +69,6 @@ export async function AccountScreen({
 
   const donor = result.value.profile;
   const pledges = result.value.pledges;
-  const name = displayNameOf(donor);
   const aviso =
     notice !== null && notice in errors ? errors[notice as keyof typeof errors] : null;
   const approval =
@@ -87,6 +89,7 @@ export async function AccountScreen({
         {copy.approvedNote}
       </p>
     );
+  const initial = resolveAccountSection(section, pledges.length > 0);
 
   return (
     <AuthShell title={copy.title} lead={copy.lead}>
@@ -97,45 +100,57 @@ export async function AccountScreen({
       )}
       {approval}
 
-      <div className="max-w-measure space-y-lg">
-        <p className="font-ui text-small text-ink-muted">
-          {copy.signedInAs} <span className="text-ink">{viewer?.email ?? "—"}</span>
-        </p>
-        <SignOutForm copy={copy} locale={locale} />
-      </div>
-
       <div className="mt-3xl">
-        <SectionHeading title={copy.pledgesHeading} />
-        <p className="mb-xl max-w-measure text-body text-ink-muted">{copy.pledgesLead}</p>
-        <OwnPledges pledges={pledges} copy={copy} catalog={catalog} locale={locale} />
-      </div>
-
-      <div className="mt-3xl">
-        <SectionHeading title={copy.appearanceHeading} />
-        <p className="mb-xl max-w-measure text-body text-ink-muted">
-          {copy.appearanceLead}
-        </p>
-
-        {/* El resumen se calcula con la misma función que decide el muro
-            (`canAppearNamed`), así que no puede prometer algo distinto de lo que la
-            base va a publicar. */}
-        <p className="mb-xl max-w-measure font-ui text-small text-ink">
-          {canAppearNamed(donor) ? `${copy.appearsAs} ${name}` : copy.appearsAnonymous}
-        </p>
-
-        <ProfileForm
-          copy={copy}
-          errors={errors}
-          fields={fields}
-          locale={locale}
-          profile={donor}
+        <AccountTabs
+          label={copy.tabsLabel}
+          initial={initial}
+          items={[
+            {
+              id: "reservas",
+              label: copy.tabPledges,
+              content: (
+                <PledgesPanel
+                  copy={copy}
+                  catalog={catalog}
+                  locale={locale}
+                  pledges={pledges}
+                />
+              ),
+            },
+            {
+              id: "aparecer",
+              label: copy.tabAppearance,
+              content: (
+                <AppearancePanel
+                  copy={copy}
+                  errors={errors}
+                  fields={fields}
+                  locale={locale}
+                  profile={donor}
+                />
+              ),
+            },
+            {
+              id: "acceso",
+              label: copy.tabAccess,
+              content: (
+                <AccessPanel
+                  copy={copy}
+                  errors={errors}
+                  fields={fields}
+                  locale={locale}
+                  email={viewer?.email ?? "—"}
+                  password={account.password}
+                />
+              ),
+            },
+            {
+              id: "borrar",
+              label: copy.tabDelete,
+              content: <DeletePanel copy={copy} errors={errors} locale={locale} />,
+            },
+          ]}
         />
-      </div>
-
-      <div className="mt-3xl border-t border-rule pt-2xl">
-        <SectionHeading title={copy.deleteHeading} rule={false} />
-        <p className="mb-xl max-w-measure text-body text-ink-muted">{copy.deleteLead}</p>
-        <DeleteAccountForm copy={copy} errors={errors} locale={locale} />
       </div>
     </AuthShell>
   );

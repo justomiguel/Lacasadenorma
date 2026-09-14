@@ -1,13 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+import { esperarSinViolaciones } from "../soporte/axe";
 import { apiLocal } from "../soporte/backoffice";
 import {
   CLAVE_PUBLICA,
+  abrirSeccionDeCuenta,
   correoDePrueba,
   crearCuenta,
   enlacePendiente,
   urlDelEnlace,
 } from "../soporte/cuentas";
+import { VIEWPORT_MINIMO } from "../soporte/paginas";
 
 /**
  * El alta de una cuenta del público, de punta a punta (fase A de la feature 002).
@@ -69,12 +72,116 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
     ).toBeVisible();
-    await expect(page.getByText(email)).toBeVisible();
+
+    // El índice hidrata a pestañas: sin esperar el tablist, los cuatro paneles
+    // siguen apilados un instante y las aserciones de «no se ve» mienten.
+    await expect(
+      page.getByRole("tablist", { name: /secciones de tu cuenta/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("tab", { name: /cómo aparecer/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
 
     // El anonimato es el valor por defecto y la casilla lo refleja. Una casilla que
     // **concede** algo no puede venir marcada; ésta niega, y por eso sí (FR-225).
     await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /tu foto/i })).toBeVisible();
+    await expect(page.getByLabel(/subir una foto/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^contraseña$/i })).toHaveCount(0);
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(email)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^contraseña$/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /guardar la contraseña/i }),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/seccion=acceso/);
+  });
+
+  test("con sesión, el menú muestra la cuenta y cómo salir", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "menu");
+
+    await crearCuenta(page, request, email);
+    await page.getByLabel(/nombre para mostrar/i).fill("Vecina de la cuadra");
+    await page.getByLabel(/prefiero no aparecer/i).uncheck();
+    await page.getByRole("button", { name: /^guardar$/i }).click();
+    await expect(page.getByText(/^guardado/i)).toBeVisible();
+
+    await page.setViewportSize(VIEWPORT_MINIMO);
+    const sesion = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
+    );
+    await page.goto("/");
+    await sesion;
+    await page.getByRole("button", { name: /abrir el menú/i }).click();
+
+    const menu = page.getByRole("dialog");
+
+    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible();
+    await expect(menu.getByText(email)).toBeVisible();
+    await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
+    await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
+    await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
+
+    // Axe del overlay abierto no: el menú es `fixed` dentro del encabezado, y
+    // el muestreo de contraste toma la fotografía de la home que queda detrás.
+    // `/cuenta` con sesión se revisa en la prueba del encabezado.
+
+    await menu.getByRole("button", { name: /cerrar sesión/i }).click();
+    await expect(page).toHaveURL(/\/cuenta\/ingresar/);
+
+    await page.setViewportSize(VIEWPORT_MINIMO);
+    await page.getByRole("button", { name: /abrir el menú/i }).click();
+    await expect(
+      page.getByRole("dialog").getByRole("link", { name: /^ingresar$/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
+    ).toHaveCount(0);
+  });
+
+  test("con sesión, el encabezado de escritorio muestra el nombre y cómo salir", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "encabezado");
+
+    await crearCuenta(page, request, email);
+    await page.getByLabel(/nombre para mostrar/i).fill("Vecina de la cuadra");
+    await page.getByLabel(/prefiero no aparecer/i).uncheck();
+    await page.getByRole("button", { name: /^guardar$/i }).click();
+    await expect(page.getByText(/^guardado/i)).toBeVisible();
+    await esperarSinViolaciones(page, "/cuenta con sesión");
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const sesion = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
+    );
+    await page.goto("/");
+    await sesion;
+
+    const encabezado = page.getByRole("banner");
+    const salir = encabezado.getByRole("button", { name: /cerrar sesión/i });
+
+    await expect(
+      encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
+    ).toBeVisible();
+    await expect(salir).toBeVisible();
+
+    const caja = await salir.boundingBox();
+
+    expect(caja, "cerrar sesión tiene que estar en el encabezado").not.toBeNull();
+    expect(
+      caja?.height ?? 0,
+      "cerrar sesión no puede partirse en dos líneas",
+    ).toBeLessThan(48);
   });
 
   test("el mismo enlace no sirve dos veces", async ({ page, request }, info) => {
@@ -248,6 +355,7 @@ test.describe("fase A · la cuenta del público", () => {
 
     await crearCuenta(page, request, email);
 
+    await abrirSeccionDeCuenta(page, /^borrar$/i);
     await page.getByLabel(/para confirmar, escribí/i).fill("BORRAR");
     await page.getByRole("button", { name: /^borrar la cuenta$/i }).click();
 

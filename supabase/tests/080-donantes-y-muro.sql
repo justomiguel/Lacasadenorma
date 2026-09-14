@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(55);
+select plan(56);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -161,15 +161,35 @@ update public.donor_profiles
    set display_name = 'Quien dona', default_anonymous = false, locale = 'en'
  where id = '20000000-0000-4000-8000-000000000001';
 
+update public.donor_profiles
+   set portrait_path = '20000000-0000-4000-8000-000000000001/retrato.jpg'
+ where id = '20000000-0000-4000-8000-000000000001';
+
+select throws_ok(
+  $q$
+    update public.donor_profiles
+       set portrait_path = '20000000-0000-4000-8000-000000000002/retrato.jpg'
+     where id = '20000000-0000-4000-8000-000000000001'
+  $q$,
+  '23514',
+  null,
+  'el retrato no puede apuntar a la carpeta de otra persona (ADR-037)'
+);
+
 reset role;
 
 select results_eq(
   $q$
-    select display_name, locale, default_anonymous
+    select display_name, locale, default_anonymous, portrait_path
       from public.donor_profiles
      where id = '20000000-0000-4000-8000-000000000001'
   $q$,
-  $q$ values ('Quien dona'::text, 'en'::text, false) $q$,
+  $q$ values (
+    'Quien dona'::text,
+    'en'::text,
+    false,
+    '20000000-0000-4000-8000-000000000001/retrato.jpg'::text
+  ) $q$,
   'una cuenta del público crea su perfil y elige su nombre público, su idioma y su anonimato (FR-208, FR-230, FR-232)'
 );
 

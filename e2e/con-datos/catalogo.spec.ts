@@ -2,13 +2,19 @@ import { expect, test } from "@playwright/test";
 
 import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
+  articuloDelCatalogo,
   cargarItemPublicado,
   habilitarCuenta,
   idDeItem,
   ocultarItem,
   vencerReserva,
 } from "../soporte/catalogo";
-import { CLAVE_PUBLICA, correoDePrueba, crearCuenta } from "../soporte/cuentas";
+import {
+  CLAVE_PUBLICA,
+  correoDePrueba,
+  crearCuenta,
+  cerrarSesion,
+} from "../soporte/cuentas";
 
 /**
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).
@@ -39,12 +45,13 @@ test.describe("fase D · reservas", () => {
 
       try {
         await crearCuenta(donantePage, request, email);
-        await donantePage.getByRole("button", { name: /cerrar sesión/i }).click();
+        await cerrarSesion(donantePage);
         await expect(donantePage).toHaveURL(/\/cuenta\/ingresar/);
 
         await donantePage.goto("/catalogo");
-        const articulo = donantePage.locator("article").filter({ hasText: titulo });
+        const articulo = articuloDelCatalogo(donantePage, titulo);
 
+        await expect(articulo).toHaveCount(1);
         await expect(articulo).toBeVisible();
         await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
 
@@ -103,15 +110,22 @@ test.describe("fase D · reservas", () => {
         await paginaA.goto("/catalogo");
         await paginaB.goto("/catalogo");
 
-        const articuloA = paginaA.locator("article").filter({ hasText: titulo });
-        const articuloB = paginaB.locator("article").filter({ hasText: titulo });
+        const articuloA = articuloDelCatalogo(paginaA, titulo);
+        const articuloB = articuloDelCatalogo(paginaB, titulo);
         const reservar = /anotarme para traer esto/i;
+
+        await expect(articuloA).toHaveCount(1);
+        await expect(articuloB).toHaveCount(1);
 
         await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
         await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
 
         await articuloA.getByRole("button", { name: reservar }).click();
         await expect(paginaA).toHaveURL(/\/cuenta$/);
+        await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
+          "aria-selected",
+          "true",
+        );
         await expect(
           paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
         ).toBeVisible();
@@ -157,12 +171,14 @@ test.describe("fase D · reservas", () => {
         await habilitarCuenta(staffPage, email);
 
         await donantePage.goto("/catalogo");
-        await donantePage
-          .locator("article")
-          .filter({ hasText: titulo })
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        const articulo = articuloDelCatalogo(donantePage, titulo);
+        await expect(articulo).toHaveCount(1);
+        await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
         await expect(donantePage).toHaveURL(/\/cuenta$/);
+        await expect(donantePage.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
+          "aria-selected",
+          "true",
+        );
 
         const pledgeId = await donantePage.locator('input[name="pledgeId"]').inputValue();
 
@@ -172,11 +188,9 @@ test.describe("fase D · reservas", () => {
         await expect(donantePage.getByText(/venció el/i)).toBeVisible();
 
         await donantePage.goto("/catalogo");
+        await expect(articuloDelCatalogo(donantePage, titulo)).toHaveCount(1);
         await expect(
-          donantePage
-            .locator("article")
-            .filter({ hasText: titulo })
-            .getByText(/faltan 1/i),
+          articuloDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
         ).toBeVisible();
       } finally {
         await donante.close();

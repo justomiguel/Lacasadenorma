@@ -174,7 +174,10 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await page.getByRole("button", { name: /publicar ahora/i }).click();
     await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
 
-    await page.getByRole("button", { name: /cerrar sesión/i }).click();
+    await page
+      .locator("#contenido")
+      .getByRole("button", { name: /cerrar sesión/i })
+      .click();
     await expect(page).toHaveURL(/\/admin\/login/);
 
     await entrar(page, "admin");

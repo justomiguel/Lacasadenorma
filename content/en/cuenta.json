@@ -11,7 +11,10 @@
     "anonymousHint": "If this stays checked, whatever you bring still counts, but your name doesn't appear anywhere on the site.",
     "language": "Language for emails",
     "languageEs": "Spanish",
-    "languageEn": "English"
+    "languageEn": "English",
+    "portrait": "Your photo",
+    "portraitHint": "JPEG, PNG or WebP, up to 2 MB. It identifies you while you are signed in. It is not published on the site.",
+    "portraitEmpty": "There is no photo yet. The space stays reserved until you upload one."
   },
   "signUp": {
     "title": "Create an account",
@@ -70,6 +73,11 @@
     "title": "Your account",
     "lead": "Everything the site stores about you is here, and this is where you change it or delete it.",
     "seoDescription": "Your own account on the site for rebuilding Norma's house: how to appear, which language to write in, and how to delete it.",
+    "tabsLabel": "Account sections",
+    "tabPledges": "Reservations",
+    "tabAppearance": "How you appear",
+    "tabAccess": "Access",
+    "tabDelete": "Delete",
     "signedInAs": "Signed in as",
     "appearanceHeading": "How you want to appear",
     "appearanceLead": "When you offer to bring something, you can appear in the list of people who helped, or not appear. You can change this at any time, and the change also applies to what you already offered.",
@@ -80,6 +88,14 @@
     "saved": "Saved.",
     "signOut": "Sign out",
     "signingOut": "Signing out…",
+    "portraitHeading": "Your photo",
+    "portraitLead": "It identifies you in the menu while you are signed in. It does not appear in Who helped or on any public page.",
+    "portraitAdd": "Upload a photo",
+    "portraitChange": "Change the photo",
+    "portraitRemove": "Remove the photo",
+    "portraitRemoving": "Removing…",
+    "passwordHeading": "Password",
+    "passwordLead": "The one you'll use from now on to sign in. Eight characters or more.",
     "deleteHeading": "Delete the account",
     "deleteLead": "Your email, your name and your preferences go, and it can't be undone. Anything you brought stays counted, without your name, because it's part of the public accounting of the work.",
     "deleteWord": "DELETE",
@@ -127,6 +143,7 @@
     "tooManyPledges": "You have five active reservations, which is the limit. Cancel one to note another.",
     "alreadyGone": "That reservation is no longer active. Reload the account to see the current state.",
     "quantityInvalid": "The quantity has to be a positive integer.",
-    "failed": "Couldn't complete that. The details are in the server log."
+    "failed": "Couldn't complete that. The details are in the server log.",
+    "portraitInvalid": "That photo couldn't be used. JPEG, PNG and WebP up to 2 MB are accepted."
   }
 }

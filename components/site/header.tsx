@@ -18,16 +18,18 @@ import {
 } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
+import { AccountChrome } from "./account-chrome";
 import { SiteMark } from "./mark";
 import { MobileMenu } from "./mobile-menu";
-import { ACCOUNT_HREF, PRIMARY_NAV } from "./navigation";
+import { PRIMARY_NAV } from "./navigation";
 
 const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
 
 /**
  * Encabezado editorial (ADR-032, ADR-035): 60 px, el símbolo y el nombre a la
- * izquierda, el menú a la derecha, y nada más en teléfono. El idioma, ingresar y
- * la acción de ayudar viven dentro del menú.
+ * izquierda, el menú a la derecha, y nada más en teléfono. El idioma, la cuenta
+ * —ingresar, o el nombre y cerrar sesión— y la acción de ayudar viven dentro del
+ * menú (ADR-037).
  *
  * En la home arranca transparente sobre la fotografía; al desplazarse gana un
  * fondo de papel con un desenfoque muy leve y una regla casi imperceptible. En
@@ -48,14 +50,11 @@ export function SiteHeader({
   const canonical = stripLocalePrefix(pathname);
   const overlay = canonical === "/";
   const onHelpPage = canonical === "/ayudar" || canonical.startsWith("/ayudar/");
-  const onAccount =
-    canonical === ACCOUNT_HREF || canonical.startsWith(`${ACCOUNT_HREF}/`);
   const other = otherLocale(locale);
   const switchHref = switchLocaleHref(pathname, other);
   const helpHref = `${localizedHref("/ayudar", locale)}#donaciones`;
-  const accountHref = localizedHref(ACCOUNT_HREF, locale);
   const chromeLink =
-    "inline-flex min-h-touch shrink-0 items-center font-ui text-small text-current opacity-75 hover:opacity-100";
+    "inline-flex min-h-touch shrink-0 items-center whitespace-nowrap font-ui text-small text-current opacity-75 hover:opacity-100";
   const menuId = useId();
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [compact, setCompact] = useState(false);
@@ -150,13 +149,12 @@ export function SiteHeader({
               va en el envoltorio y no en cada enlace, porque `secondaryActionClass`
               ya trae `inline-flex` y las dos utilidades de display compiten. */}
           <div className="hidden items-center gap-lg lg:flex">
-            <Link
-              href={accountHref}
-              {...(onAccount ? { "aria-current": "page" as const } : {})}
+            <AccountChrome
+              locale={locale}
+              ui={ui}
+              variant="header"
               className={chromeLink}
-            >
-              {ui.signIn}
-            </Link>
+            />
 
             <Link
               href={switchHref}

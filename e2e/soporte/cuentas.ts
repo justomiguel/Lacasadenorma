@@ -94,3 +94,39 @@ export async function crearCuenta(
     "abrir el enlace de confirmación tenía que dejar la sesión abierta en /cuenta",
   ).toHaveURL(/\/cuenta$/);
 }
+
+/**
+ * Abre una pestaña de `/cuenta`.
+ *
+ * Con JavaScript la pantalla es un índice: el formulario de la foto no está en
+ * el DOM al mismo tiempo que el de borrar. Las pruebas que llenan un campo de
+ * otra sección tienen que pedirla antes.
+ */
+export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise<void> {
+  await expect(page.getByRole("tablist")).toBeVisible();
+
+  const tab = page.getByRole("tab", { name: seccion });
+
+  await expect(tab).toBeVisible();
+  await tab.click();
+  await expect(tab).toHaveAttribute("aria-selected", "true");
+}
+
+/**
+ * Cierra la sesión del público.
+ *
+ * En escritorio hay un «Cerrar sesión» en el encabezado y, si la pestaña Acceso
+ * está abierta, otro en el perfil. Sin acotar, Playwright se niega a hacer click.
+ */
+export async function cerrarSesion(page: Page): Promise<void> {
+  const enElEncabezado = page
+    .getByRole("banner")
+    .getByRole("button", { name: /cerrar sesión/i });
+
+  if (await enElEncabezado.isVisible()) {
+    await enElEncabezado.click();
+    return;
+  }
+
+  await page.getByRole("button", { name: /cerrar sesión/i }).click();
+}

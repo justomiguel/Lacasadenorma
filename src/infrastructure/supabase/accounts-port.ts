@@ -1,11 +1,15 @@
 import {
   ANONYMOUS_BY_DEFAULT,
   isApprovalStatus,
+  isOwnPortraitPath,
+  portraitPathFor,
+  PORTRAIT_BUCKET,
   type DonorProfile,
 } from "@/src/domain/entities/donor";
 import type { AccountPort } from "@/src/domain/ports/accounts";
 import { isLocale, type Locale } from "@/src/i18n/locale";
 
+import { inspectPortrait } from "../files/portrait";
 import { QueryError } from "./admin/query";
 import type { ServerSupabaseClient } from "./server-client";
 
@@ -21,7 +25,8 @@ import type { ServerSupabaseClient } from "./server-client";
  * Las policies siguen siendo la frontera. Esto es la capa que hace que la
  * consulta legítima funcione y que un error tenga un mensaje.
  */
-const PROFILE_COLUMNS = "id, display_name, locale, default_anonymous, approval_status";
+const PROFILE_COLUMNS =
+  "id, display_name, locale, default_anonymous, approval_status, portrait_path";
 
 export function createAccountPort(client: ServerSupabaseClient): AccountPort {
   async function requireUserId(): Promise<string> {
@@ -146,7 +151,81 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
       return mapProfile(data);
     },
 
+    async saveOwnPortrait(file: File): Promise<DonorProfile> {
+      const userId = await requireUserId();
+      const info = await inspectPortrait(file);
+      const path = portraitPathFor(userId, info.mimeType);
+      const current = await readOwnProfile();
+      const previous = current?.portraitPath ?? null;
+
+      const { error: uploadError } = await client.storage
+        .from(PORTRAIT_BUCKET)
+        .upload(path, file, { contentType: info.mimeType, upsert: true });
+
+      if (uploadError !== null) {
+        throw new QueryError("subir el retrato", uploadError);
+      }
+
+      if (previous !== null && previous !== path) {
+        await client.storage.from(PORTRAIT_BUCKET).remove([previous]);
+      }
+
+      return writePortraitPath(userId, path);
+    },
+
+    async removeOwnPortrait(): Promise<DonorProfile> {
+      const userId = await requireUserId();
+      const current = await readOwnProfile();
+      const previous = current?.portraitPath ?? null;
+
+      if (previous !== null && isOwnPortraitPath(userId, previous)) {
+        await client.storage.from(PORTRAIT_BUCKET).remove([previous]);
+      }
+
+      return writePortraitPath(userId, null);
+    },
+
+    async readOwnPortraitFile(): Promise<{
+      bytes: ArrayBuffer;
+      mimeType: string;
+    } | null> {
+      const current = await readOwnProfile();
+      const path = current?.portraitPath ?? null;
+      const userId = await requireUserId();
+
+      if (path === null || !isOwnPortraitPath(userId, path)) {
+        return null;
+      }
+
+      const { data, error } = await client.storage
+        .from(PORTRAIT_BUCKET)
+        .createSignedUrl(path, 60);
+
+      if (error !== null || data === null) {
+        throw new QueryError("firmar el retrato", error ?? { message: "sin url" });
+      }
+
+      const file = await fetch(data.signedUrl);
+
+      if (!file.ok) {
+        throw new QueryError("bajar el retrato", { message: String(file.status) });
+      }
+
+      return {
+        bytes: await file.arrayBuffer(),
+        mimeType: file.headers.get("content-type") ?? "image/jpeg",
+      };
+    },
+
     async deleteOwnAccount(): Promise<void> {
+      const current = await readOwnProfile();
+      const previous = current?.portraitPath ?? null;
+      const userId = await requireUserId();
+
+      if (previous !== null && isOwnPortraitPath(userId, previous)) {
+        await client.storage.from(PORTRAIT_BUCKET).remove([previous]);
+      }
+
       const { error } = await client.rpc("delete_own_account");
 
       if (error !== null) {
@@ -154,6 +233,30 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
       }
     },
   };
+
+  async function writePortraitPath(
+    userId: string,
+    portraitPath: string | null,
+  ): Promise<DonorProfile> {
+    const { data, error } = await client
+      .from("donor_profiles")
+      .update({ portrait_path: portraitPath })
+      .eq("id", userId)
+      .select(PROFILE_COLUMNS)
+      .maybeSingle();
+
+    if (error !== null) {
+      throw new QueryError("guardar el retrato", error);
+    }
+
+    if (data === null) {
+      throw new QueryError("guardar el retrato", {
+        message: "la fila no existe o la sesión no es su dueña",
+      });
+    }
+
+    return mapProfile(data);
+  }
 }
 
 interface ProfileRow {
@@ -162,6 +265,7 @@ interface ProfileRow {
   locale: string;
   default_anonymous: boolean;
   approval_status: string;
+  portrait_path: string | null;
 }
 
 /**
@@ -178,5 +282,6 @@ function mapProfile(row: ProfileRow): DonorProfile {
     approvalStatus: isApprovalStatus(row.approval_status)
       ? row.approval_status
       : "pending",
+    portraitPath: row.portrait_path,
   };
 }

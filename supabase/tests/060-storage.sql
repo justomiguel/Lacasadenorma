@@ -1,9 +1,9 @@
--- Los dos buckets y sus policies.
+-- Los buckets y sus policies.
 --
 -- La asimetría es la misma que gobierna el resto del modelo: `fotos` es público
--- porque esconder la fila no escondería el archivo del CDN, y `comprobantes` es
--- privado porque una factura suele traer el nombre y el domicilio de un proveedor,
--- que es un dato de un tercero (FR-013, amenaza I1).
+-- porque esconder la fila no escondería el archivo del CDN, y `comprobantes` y
+-- `avatares` son privados porque son datos de un tercero o de una persona
+-- (FR-013, FR-246, amenaza I1).
 --
 -- Un detalle del entorno local que conviene tener presente: el shim habilita RLS
 -- sobre `storage.buckets` y no crea policies, así que la configuración de los
@@ -11,12 +11,12 @@
 -- tamaño y qué tipos acepta un bucket es configuración, no una decisión de
 -- permisos, y en el proyecto real esa tabla la administra la plataforma.
 --
--- `storage.objects` es **una sola tabla** para los dos buckets, así que todas las
+-- `storage.objects` es **una sola tabla** para los cuatro buckets, así que todas las
 -- policies conviven ahí y lo único que las separa es el `bucket_id`. Por eso cada
 -- aserción nombra el bucket: es el discriminante real.
 
 begin;
-select plan(19);
+select plan(27);
 
 -- ── Configuración de los buckets ────────────────────────────────────────────
 
@@ -59,6 +59,19 @@ select results_eq(
   'el bucket comprobantes no es público, con 20 MiB de límite y PDF permitido'
 );
 
+select results_eq(
+  $q$
+    select id, public, file_size_limit, allowed_mime_types
+      from storage.buckets
+     where id = 'avatares'
+  $q$,
+  $q$
+    values ('avatares', false, 2097152::bigint,
+            array['image/jpeg', 'image/png', 'image/webp'])
+  $q$,
+  'el bucket avatares no es público, con 2 MiB de límite y sólo retratos (ADR-037)'
+);
+
 -- Un SVG es un documento con scripts. Servido desde el mismo origen sería un XSS
 -- almacenado, así que no entra en ningún bucket, ni siquiera en el privado.
 select is_empty(
@@ -76,12 +89,19 @@ insert into auth.users (id, email) values
   ('10000000-0000-4000-8000-000000000001', 'auditoria@ejemplo.test'),
   ('10000000-0000-4000-8000-000000000002', 'edicion@ejemplo.test'),
   ('10000000-0000-4000-8000-000000000003', 'administracion@ejemplo.test'),
-  ('10000000-0000-4000-8000-000000000004', 'propiedad@ejemplo.test');
+  ('10000000-0000-4000-8000-000000000004', 'propiedad@ejemplo.test'),
+  ('10000000-0000-4000-8000-000000000005', 'quien.dona@ejemplo.invalid'),
+  ('10000000-0000-4000-8000-000000000006', 'quien.tambien.dona@ejemplo.invalid');
 
 insert into storage.objects (id, bucket_id, name) values
   ('b0000000-0000-4000-8000-000000000001', 'fotos', 'obra/techo.jpg'),
   ('b0000000-0000-4000-8000-000000000002', 'comprobantes', '2026/08/chapas.pdf'),
-  ('b0000000-0000-4000-8000-000000000003', 'videos', 'obra/colada.mp4');
+  ('b0000000-0000-4000-8000-000000000003', 'videos', 'obra/colada.mp4'),
+  (
+    'b0000000-0000-4000-8000-000000000004',
+    'avatares',
+    '10000000-0000-4000-8000-000000000005/retrato.jpg'
+  );
 
 -- ── anon ────────────────────────────────────────────────────────────────────
 
@@ -106,6 +126,12 @@ select is(
   (select count(*) from storage.objects where bucket_id = 'comprobantes')::int,
   0,
   'anon no ve ningún comprobante en el storage (I1)'
+);
+
+select is(
+  (select count(*) from storage.objects where bucket_id = 'avatares')::int,
+  0,
+  'anon no ve ningún retrato: el bucket es privado (FR-246)'
 );
 
 select throws_ok(
@@ -245,6 +271,72 @@ select results_eq(
   $q$,
   $q$ values (1) $q$,
   'sólo owner borra un comprobante'
+);
+
+-- ── donante: el retrato es propio o no existe ───────────────────────────────
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000005","role":"authenticated","app_metadata":{}}';
+
+select is(
+  (select count(*) from storage.objects where bucket_id = 'avatares')::int,
+  1,
+  'una cuenta del público lee su retrato'
+);
+
+select lives_ok(
+  $q$ insert into storage.objects (bucket_id, name) values
+    ('avatares', '10000000-0000-4000-8000-000000000005/retrato.png') $q$,
+  'una cuenta del público sube un retrato a su carpeta'
+);
+
+select throws_ok(
+  $q$ insert into storage.objects (bucket_id, name) values
+    ('avatares', '10000000-0000-4000-8000-000000000006/retrato.jpg') $q$,
+  '42501',
+  null,
+  'una cuenta del público no sube un retrato a la carpeta de otra'
+);
+
+select results_eq(
+  $q$
+    with cambiados as (
+      update storage.objects set name = '10000000-0000-4000-8000-000000000005/retrato.webp'
+       where id = 'b0000000-0000-4000-8000-000000000004'
+      returning 1
+    )
+    select count(*)::int from cambiados
+  $q$,
+  $q$ values (1) $q$,
+  'una cuenta del público puede reemplazar su retrato'
+);
+
+-- ── otra cuenta del público ─────────────────────────────────────────────────
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000006","role":"authenticated","app_metadata":{}}';
+
+select is(
+  (select count(*) from storage.objects where bucket_id = 'avatares')::int,
+  0,
+  'una cuenta del público no lee el retrato de otra'
+);
+
+-- ── editor no ve retratos: coordinar el catálogo no pide una cara ───────────
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub":"10000000-0000-4000-8000-000000000002","role":"authenticated","app_metadata":{"user_role":"editor"}}';
+
+select is(
+  (select count(*) from storage.objects where bucket_id = 'avatares')::int,
+  0,
+  'editor no lee retratos: no es can_read_donors y no es dueño'
 );
 
 select * from finish();

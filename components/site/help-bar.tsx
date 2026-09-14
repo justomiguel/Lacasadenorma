@@ -16,10 +16,22 @@ import { track } from "@/src/infrastructure/analytics/browser";
  * primaria al ancho completo y el relleno que pide `env(safe-area-inset-bottom)`.
  * Cuando `#donaciones` o una acción primaria de la página están a la vista, baja
  * con una transición y queda inerte —no se desmonta, para que la salida se vea— y
- * vuelve a subir cuando salen. No aparece en `/ayudar` ni en sus retornos de
- * PayPal, que son el mismo flujo. Reserva su alto en el flujo para no tapar el
- * final de la página.
+ * vuelve a subir cuando salen.
+ *
+ * No aparece en `/ayudar` ni en sus retornos de PayPal, que son el mismo flujo.
+ * Tampoco en `/cuenta`: ahí la acción es guardar, salir o borrar, y la barra
+ * tapaba los formularios. Reserva su alto en el flujo para no tapar el final de
+ * las páginas donde sí está.
  */
+
+export function helpBarIsOffRoute(canonical: string): boolean {
+  return (
+    canonical === "/ayudar" ||
+    canonical.startsWith("/ayudar/") ||
+    canonical === "/cuenta" ||
+    canonical.startsWith("/cuenta/")
+  );
+}
 export function HelpBar({
   href = localizedHref("/ayudar", "es"),
   label = "Ayudar a reconstruir",
@@ -77,7 +89,7 @@ export function HelpBar({
     };
   }, [pathname]);
 
-  if (canonical === "/ayudar" || canonical.startsWith("/ayudar/")) {
+  if (helpBarIsOffRoute(canonical)) {
     return null;
   }
 

@@ -219,3 +219,55 @@ export function SubmitButton({
 export function LocaleField({ locale }: { locale: string }) {
   return <input type="hidden" name="idioma" value={locale} />;
 }
+
+export function FileField({
+  name,
+  label,
+  hint,
+  accept,
+  error,
+}: {
+  name: string;
+  label: string;
+  hint?: string;
+  accept: string;
+  error?: string;
+}) {
+  const id = useId();
+  const hintId = `${id}-ayuda`;
+  const errorId = `${id}-error`;
+  const describedBy =
+    [hint === undefined ? null : hintId, error === undefined ? null : errorId]
+      .filter((value) => value !== null)
+      .join(" ") || undefined;
+
+  return (
+    <div className="space-y-2xs">
+      <label htmlFor={id} className="block font-ui text-small font-medium text-ink">
+        {label}
+      </label>
+      <input
+        id={id}
+        name={name}
+        type="file"
+        accept={accept}
+        className={cn(
+          CONTROL,
+          "py-sm file:mr-sm file:border-0 file:bg-transparent file:font-ui file:text-small",
+        )}
+        {...(error === undefined ? {} : { "aria-invalid": true })}
+        {...(describedBy === undefined ? {} : { "aria-describedby": describedBy })}
+      />
+      {hint === undefined ? null : (
+        <p id={hintId} className="font-ui text-caption text-ink-muted">
+          {hint}
+        </p>
+      )}
+      {error === undefined ? null : (
+        <p id={errorId} role="alert" className="font-ui text-small text-danger">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}

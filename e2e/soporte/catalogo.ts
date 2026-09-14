@@ -68,8 +68,20 @@ export async function ocultarItem(
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
 }
 
+/** El renglón del catálogo, acotado al contenido: en WebKit a veces hay un nodo extra. */
+export function articuloDelCatalogo(page: Page, titulo: string) {
+  return page
+    .locator("#contenido")
+    .getByRole("article")
+    .filter({
+      has: page.getByRole("heading", { name: titulo, exact: true }),
+    });
+}
+
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
-  const salir = page.getByRole("button", { name: /cerrar sesión/i });
+  const salir = page
+    .locator("#contenido")
+    .getByRole("button", { name: /cerrar sesión/i });
 
   if (await salir.isVisible()) {
     await salir.click();
@@ -99,7 +111,9 @@ export async function habilitarCuenta(page: Page, email: string): Promise<void> 
   const yaAdmin = page.getByText(CUENTAS.admin);
 
   if (!(await yaAdmin.isVisible())) {
-    const salir = page.getByRole("button", { name: /cerrar sesión/i });
+    const salir = page
+      .locator("#contenido")
+      .getByRole("button", { name: /cerrar sesión/i });
 
     if (await salir.isVisible()) {
       await salir.click();

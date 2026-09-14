@@ -51,6 +51,7 @@ const errors = z.object({
   alreadyGone: phrase,
   quantityInvalid: phrase,
   failed: phrase,
+  portraitInvalid: phrase,
 });
 
 export const accountSchema = z.object({
@@ -67,6 +68,9 @@ export const accountSchema = z.object({
     language: phrase,
     languageEs: phrase,
     languageEn: phrase,
+    portrait: phrase,
+    portraitHint: phrase,
+    portraitEmpty: phrase,
   }),
 
   signUp: screen.extend({
@@ -103,6 +107,12 @@ export const accountSchema = z.object({
     title: phrase,
     lead: phrase,
     seoDescription: phrase,
+    /** Nombre accesible del índice. No se ve: es el `aria-label` de las pestañas. */
+    tabsLabel: phrase,
+    tabPledges: phrase,
+    tabAppearance: phrase,
+    tabAccess: phrase,
+    tabDelete: phrase,
     signedInAs: phrase,
     appearanceHeading: phrase,
     appearanceLead: phrase,
@@ -113,6 +123,14 @@ export const accountSchema = z.object({
     saved: phrase,
     signOut: phrase,
     signingOut: phrase,
+    portraitHeading: phrase,
+    portraitLead: phrase,
+    portraitAdd: phrase,
+    portraitChange: phrase,
+    portraitRemove: phrase,
+    portraitRemoving: phrase,
+    passwordHeading: phrase,
+    passwordLead: phrase,
     deleteHeading: phrase,
     deleteLead: phrase,
     /** La palabra que hay que escribir. Se traduce: en inglés no es "BORRAR". */

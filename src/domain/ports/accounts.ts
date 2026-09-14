@@ -34,6 +34,21 @@ export interface AccountPort {
     profile: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
   ): Promise<DonorProfile>;
 
+  /** Sube el retrato propio. El sujeto sale de la sesión, como en el resto del puerto. */
+  saveOwnPortrait(file: File): Promise<DonorProfile>;
+
+  /** Quita el retrato. La fila del perfil queda; la foto no. */
+  removeOwnPortrait(): Promise<DonorProfile>;
+
+  /**
+   * El archivo propio, para que `/cuenta/retrato` lo sirva sin entregarle al
+   * navegador una URL firmada (ADR-037). Nulo si no hay foto.
+   */
+  readOwnPortraitFile(): Promise<{
+    readonly bytes: ArrayBuffer;
+    readonly mimeType: string;
+  } | null>;
+
   /** Borra la cuenta de quien pide (FR-208). No hay vuelta atrás y no la finge. */
   deleteOwnAccount(): Promise<void>;
 }

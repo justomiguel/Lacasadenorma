@@ -45,13 +45,15 @@ export const ACCOUNT_ERROR_CODES = [
   "quantityInvalid",
   /** Cualquier otra cosa. Ya quedó en el registro del servidor (amenaza I6). */
   "failed",
+  /** El archivo del retrato no es una foto aceptable. */
+  "portraitInvalid",
 ] as const;
 
 export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /** El campo del formulario que hay que señalar, cuando hay uno. */
 export type AccountField =
-  "email" | "password" | "confirmPassword" | "displayName" | "quantity";
+  "email" | "password" | "confirmPassword" | "displayName" | "quantity" | "portrait";
 
 export type AccountOutcome<T> =
   | { readonly status: "ok"; readonly value: T }

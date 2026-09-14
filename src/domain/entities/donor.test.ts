@@ -5,7 +5,9 @@ import {
   canAppearNamed,
   canReserve,
   displayNameOf,
+  isOwnPortraitPath,
   normalizeDisplayName,
+  portraitPathFor,
   type DonorProfile,
 } from "./donor";
 
@@ -16,6 +18,7 @@ function profile(overrides: Partial<DonorProfile> = {}): DonorProfile {
     locale: "es",
     defaultAnonymous: true,
     approvalStatus: "pending",
+    portraitPath: null,
     ...overrides,
   };
 }
@@ -95,5 +98,33 @@ describe("ANONYMOUS_BY_DEFAULT", () => {
     // el `default true` de la columna: si los dos se separan, el caso que ocurre
     // cuando nadie decide deja de ser el seguro.
     expect(ANONYMOUS_BY_DEFAULT).toBe(true);
+  });
+});
+
+describe("portraitPathFor", () => {
+  const quien = "00000000-0000-4000-8000-000000000001";
+  const otra = "00000000-0000-4000-8000-000000000002";
+
+  it("la ruta es la carpeta de la persona, no el nombre original del archivo", () => {
+    expect(portraitPathFor(quien, "image/jpeg")).toBe(`${quien}/retrato.jpg`);
+    expect(portraitPathFor(quien, "image/png")).toBe(`${quien}/retrato.png`);
+    expect(portraitPathFor(quien, "image/webp")).toBe(`${quien}/retrato.webp`);
+  });
+
+  it("una ruta ajena no es el retrato propio", () => {
+    expect(isOwnPortraitPath(quien, portraitPathFor(otra, "image/jpeg"))).toBe(false);
+    expect(isOwnPortraitPath(quien, `${quien}/otra-cosa.jpg`)).toBe(false);
+    expect(isOwnPortraitPath(quien, null)).toBe(false);
+  });
+
+  it("la foto no publica a nadie: canAppearNamed no la mira", () => {
+    expect(
+      canAppearNamed(
+        profile({
+          portraitPath: portraitPathFor(quien, "image/jpeg"),
+          defaultAnonymous: true,
+        }),
+      ),
+    ).toBe(false);
   });
 });

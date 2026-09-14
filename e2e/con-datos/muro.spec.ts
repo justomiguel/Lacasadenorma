@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { apiLocal, sufijoUnico, tokenDe } from "../soporte/backoffice";
 import {
+  articuloDelCatalogo,
   cargarItemPublicado,
   confirmarLlegada,
   habilitarCuenta,
@@ -50,7 +51,8 @@ test.describe("fase E · muro", () => {
         await habilitarCuenta(staffPage, emailOculto);
 
         await paginaSi.goto("/catalogo");
-        const articuloSi = paginaSi.locator("article").filter({ hasText: titulo });
+        const articuloSi = articuloDelCatalogo(paginaSi, titulo);
+        await expect(articuloSi).toHaveCount(1);
         await articuloSi.getByLabel(/quiero aparecer con nombre/i).check();
         await articuloSi.getByLabel(/nombre para mostrar/i).fill(visible);
         await articuloSi
@@ -59,7 +61,8 @@ test.describe("fase E · muro", () => {
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
 
         await paginaNo.goto("/catalogo");
-        const articuloNo = paginaNo.locator("article").filter({ hasText: titulo });
+        const articuloNo = articuloDelCatalogo(paginaNo, titulo);
+        await expect(articuloNo).toHaveCount(1);
         await articuloNo.getByLabel(/nombre para mostrar/i).fill(oculto);
         await articuloNo
           .getByRole("button", { name: /anotarme para traer esto/i })

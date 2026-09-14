@@ -13,6 +13,8 @@
   "languageName": "English",
   "otherLanguageName": "Castellano",
   "signIn": "Sign in",
+  "account": "Your account",
+  "signOut": "Sign out",
   "countryTabsLabel": "Choose the country you'll transfer from",
   "homeLabel": "Home",
   "legalLabel": "Legal",

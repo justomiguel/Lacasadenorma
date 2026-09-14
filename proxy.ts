@@ -99,7 +99,9 @@ export default async function proxy(request: NextRequest): Promise<NextResponse>
   // Las cinco de identidad —crear, ingresar, recuperar, clave, confirmar— existen
   // justamente para quien no la tiene, así que la comparación es por igualdad y no
   // por prefijo. Escrita con `startsWith` dejaría a `/cuenta/ingresar` redirigiendo
-  // a sí misma en un lazo.
+  // a sí misma en un lazo. `/cuenta/sesion` y `/cuenta/retrato` tampoco van en la
+  // lista: no son páginas. La primera contesta JSON anónimo; la segunda, 403. Un
+  // 307 al HTML de acceso las rompería igual que a un comprobante (ADR-037).
   const cuenta = SIGNED_IN_ONLY[pathname];
 
   if (!isSignedIn && cuenta !== undefined) {
