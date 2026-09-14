@@ -81,5 +81,7 @@ romper las entradas ya publicadas.
   la novedad sí. Publicar sigue siendo un acto aparte.
 - Una novedad vieja, con fotos sólo en `update_media`, se sigue viendo. No hay migración de
   contenido.
-- El índice vacío no carga fotos de otras páginas. Tres previas dejaban el LCP de
-  `/novedades` en 3 000 ms contra el presupuesto; los destinos van en el texto.
+- El índice vacío no carga fotos de otras páginas ni prefetch del JS de esos
+  destinos. Tres previas dejaban el LCP en 3 000 ms; tres `Link` con prefetch
+  dejaban 206 KiB de scripts contra 200. Los destinos van en el texto, sin
+  adelantar el bundle.

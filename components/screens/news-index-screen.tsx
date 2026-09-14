@@ -38,7 +38,9 @@ export function newsIndexMetadata(locale: Locale) {
  * enlaces en el texto —para eso están `whoWas`, `whatToRebuild`, `howToHelp` e
  * `introAnd`—, no con una grilla de previas. Tres fotos de otras páginas
  * competían por el LCP y dejaban `/novedades` en 3 000 ms contra el presupuesto
- * de 2 500 (ADR-022, SC-304).
+ * de 2 500 (ADR-022, SC-304). `prefetch={false}` es la otra mitad: el `Link` por
+ * omisión baja el JS de `/norma`, `/reconstruccion` y `/ayudar` (34 KiB) y el
+ * índice vacío pasaba 206 KiB de scripts contra 200 (ADR-018).
  */
 function QueEsElDiario({ locale }: { locale: Locale }) {
   const { ui } = getContent(locale);
@@ -48,13 +50,15 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
       <p>{ui.news.intro}</p>
       <p className="text-ink-muted">
         {ui.news.introLinks}{" "}
-        <InlineLink href={localizedHref("/norma", locale)}>{ui.news.whoWas}</InlineLink>
+        <InlineLink href={localizedHref("/norma", locale)} prefetch={false}>
+          {ui.news.whoWas}
+        </InlineLink>
         {", "}
-        <InlineLink href={localizedHref("/reconstruccion", locale)}>
+        <InlineLink href={localizedHref("/reconstruccion", locale)} prefetch={false}>
           {ui.news.whatToRebuild}
         </InlineLink>{" "}
         {ui.news.introAnd}{" "}
-        <InlineLink href={localizedHref("/ayudar", locale)}>
+        <InlineLink href={localizedHref("/ayudar", locale)} prefetch={false}>
           {ui.news.howToHelp}.
         </InlineLink>
       </p>
