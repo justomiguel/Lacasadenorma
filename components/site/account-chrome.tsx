@@ -19,7 +19,8 @@ import { useChromeSession } from "./session";
  *
  * En el encabezado de escritorio es texto, como «Ingresar». En el menú del
  * teléfono es un bloque: retrato rectangular (no un avatar redondo), nombre,
- * correo y las dos salidas —la cuenta y cerrar sesión— (ADR-032, ADR-037).
+ * correo y las salidas —la cuenta, el backoffice si hay rol, y cerrar sesión—
+ * (ADR-032, ADR-037). El pie no muestra el backoffice: es un colofón.
  */
 
 const LINK =
@@ -81,6 +82,16 @@ export function AccountChrome({
           {ui.account}
         </Link>
 
+        {session.staff ? (
+          <Link
+            href="/admin"
+            className={cn(LINK, "text-paper-muted")}
+            {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
+          >
+            {ui.backoffice}
+          </Link>
+        ) : null}
+
         <SignOutLink
           locale={locale}
           label={ui.signOut}
@@ -93,6 +104,11 @@ export function AccountChrome({
   if (variant === "header" && signedIn) {
     return (
       <div className="flex items-center gap-lg">
+        {session.staff ? (
+          <Link href="/admin" className={className ?? chromeFallback}>
+            {ui.backoffice}
+          </Link>
+        ) : null}
         <Link href={accountHref} className={className ?? chromeFallback} {...current}>
           {label}
         </Link>

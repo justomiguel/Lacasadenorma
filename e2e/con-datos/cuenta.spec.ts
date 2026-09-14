@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
-import { apiLocal } from "../soporte/backoffice";
+import { apiLocal, entrar } from "../soporte/backoffice";
 import {
   CLAVE_PUBLICA,
   abrirSeccionDeCuenta,
@@ -74,6 +74,7 @@ test.describe("fase A · la cuenta del público", () => {
     ).toBeVisible();
     await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
     await expect(page.getByText(/confirmaste el correo, y eso alcanzó/i)).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     // El índice hidrata a pestañas: sin esperar el tablist, los cuatro paneles
     // siguen apilados un instante y las aserciones de «no se ve» mienten.
@@ -127,6 +128,7 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
+    await expect(menu.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     // Axe del overlay abierto no: el menú es `fixed` dentro del encabezado, y
     // el muestreo de contraste toma la fotografía de la home que queda detrás.
@@ -168,6 +170,7 @@ test.describe("fase A · la cuenta del público", () => {
       encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
     ).toBeVisible({ timeout: 20_000 });
     await expect(salir).toBeVisible();
+    await expect(encabezado.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     const caja = await salir.boundingBox();
 
@@ -339,6 +342,38 @@ test.describe("fase A · la cuenta del público", () => {
         /\/admin\/sin-permiso$/,
       );
     }
+
+    await expect(page.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
+  });
+
+  test("quien tiene rol ve Backoffice en el sitio público y llega al panel", async ({
+    page,
+  }) => {
+    await entrar(page, "editor");
+    await page.goto("/");
+
+    const angosto = (page.viewportSize()?.width ?? 1440) < 1024;
+
+    if (angosto) {
+      await page.getByRole("button", { name: /abrir el menú/i }).click();
+
+      const enlace = page
+        .getByRole("dialog")
+        .getByRole("link", { name: /^backoffice$/i });
+
+      await expect(enlace).toBeVisible({ timeout: 20_000 });
+      await enlace.click();
+    } else {
+      const enlace = page
+        .getByRole("banner")
+        .getByRole("link", { name: /^backoffice$/i });
+
+      await expect(enlace).toBeVisible({ timeout: 20_000 });
+      await enlace.click();
+    }
+
+    await expect(page).toHaveURL(/\/admin(\/|$|\?)/);
+    await expect(page).not.toHaveURL(/sin-permiso/);
   });
 
   test("borrar la cuenta la borra, y después ya no entra", async ({
