@@ -387,6 +387,10 @@
 [data-tone="ink"] a[data-tone="paper"] {
   color: #153a2e;
   background-color: #f6f1e8;
+  background-image: none;
+  /* El velo de la foto queda detrás: sin este relleno opaco, axe en WebKit a 3x
+     toma el píxel de la fotografía y acusa contraste. */
+  box-shadow: inset 0 0 0 100vmax #f6f1e8;
 }
 
 /*
