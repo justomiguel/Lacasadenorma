@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { esperarSinViolaciones } from "../soporte/axe";
 import { apiLocal } from "../soporte/backoffice";
 import {
   CLAVE_PUBLICA,
@@ -112,6 +113,7 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
+    await esperarSinViolaciones(page, "menú con sesión");
 
     await menu.getByRole("button", { name: /cerrar sesión/i }).click();
     await expect(page).toHaveURL(/\/cuenta\/ingresar/);
@@ -124,6 +126,44 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
     ).toHaveCount(0);
+  });
+
+  test("con sesión, el encabezado de escritorio muestra el nombre y cómo salir", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "encabezado");
+
+    await crearCuenta(page, request, email);
+    await page.getByLabel(/nombre para mostrar/i).fill("Vecina de la cuadra");
+    await page.getByLabel(/prefiero no aparecer/i).uncheck();
+    await page.getByRole("button", { name: /^guardar$/i }).click();
+    await expect(page.getByText(/^guardado/i)).toBeVisible();
+    await esperarSinViolaciones(page, "/cuenta con sesión");
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const sesion = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
+    );
+    await page.goto("/");
+    await sesion;
+
+    const encabezado = page.getByRole("banner");
+    const salir = encabezado.getByRole("button", { name: /cerrar sesión/i });
+
+    await expect(
+      encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
+    ).toBeVisible();
+    await expect(salir).toBeVisible();
+
+    const caja = await salir.boundingBox();
+
+    expect(caja, "cerrar sesión tiene que estar en el encabezado").not.toBeNull();
+    expect(
+      caja?.height ?? 0,
+      "cerrar sesión no puede partirse en dos líneas",
+    ).toBeLessThan(48);
   });
 
   test("el mismo enlace no sirve dos veces", async ({ page, request }, info) => {

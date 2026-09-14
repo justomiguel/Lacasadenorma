@@ -54,7 +54,7 @@ export function SiteHeader({
   const switchHref = switchLocaleHref(pathname, other);
   const helpHref = `${localizedHref("/ayudar", locale)}#donaciones`;
   const chromeLink =
-    "inline-flex min-h-touch shrink-0 items-center font-ui text-small text-current opacity-75 hover:opacity-100";
+    "inline-flex min-h-touch shrink-0 items-center whitespace-nowrap font-ui text-small text-current opacity-75 hover:opacity-100";
   const menuId = useId();
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [compact, setCompact] = useState(false);

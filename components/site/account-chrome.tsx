@@ -123,7 +123,7 @@ function SignOutLink({
   className?: string;
 }) {
   return (
-    <form action={signOut}>
+    <form action={signOut} className="m-0 shrink-0">
       <LocaleField locale={locale} />
       <button type="submit" className={className ?? chromeFallback}>
         {label}
