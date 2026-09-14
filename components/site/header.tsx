@@ -18,15 +18,16 @@ import {
 } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
+import { SiteMark } from "./mark";
 import { MobileMenu } from "./mobile-menu";
 import { ACCOUNT_HREF, PRIMARY_NAV } from "./navigation";
 
 const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
 
 /**
- * Encabezado editorial (ADR-032): 60 px, el nombre a la izquierda, el menú a la
- * derecha, y nada más en teléfono. El idioma, ingresar y la acción de ayudar
- * viven dentro del menú.
+ * Encabezado editorial (ADR-032, ADR-035): 60 px, el símbolo y el nombre a la
+ * izquierda, el menú a la derecha, y nada más en teléfono. El idioma, ingresar y
+ * la acción de ayudar viven dentro del menú.
  *
  * En la home arranca transparente sobre la fotografía; al desplazarse gana un
  * fondo de papel con un desenfoque muy leve y una regla casi imperceptible. En
@@ -112,8 +113,9 @@ export function SiteHeader({
         <Link
           href={localizedHref("/", locale)}
           aria-label={siteName}
-          className="inline-flex min-h-touch shrink-0 items-center whitespace-nowrap font-display text-small font-medium uppercase tracking-label text-current"
+          className="inline-flex min-h-touch shrink-0 items-center gap-xs whitespace-nowrap font-display text-small font-medium uppercase tracking-label text-current"
         >
+          <SiteMark />
           {siteName}
         </Link>
 

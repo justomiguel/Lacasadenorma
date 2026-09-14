@@ -22,7 +22,6 @@ export const contentType = "image/png";
 const PAPER = "#f6f1e8";
 const INK = "#1c1c1c";
 const INK_MUTED = "#4a4d44";
-const FOREST = "#153a2e";
 const RULE = "#d4cfc0";
 
 async function loadFont(fileName: string): Promise<ArrayBuffer> {
@@ -35,6 +34,12 @@ async function loadPhoto(url: string): Promise<string> {
   const buffer = await readFile(join(process.cwd(), "public", url));
 
   return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+}
+
+async function loadMark(): Promise<string> {
+  const buffer = await readFile(join(process.cwd(), "public", "marca", "simbolo.png"));
+
+  return `data:image/png;base64,${buffer.toString("base64")}`;
 }
 
 function photoWidth(photo: { width: number; height: number }): number {
@@ -51,10 +56,11 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
   const fire =
     whatHappened.photoEssay[1]?.photos[0] ?? whatHappened.photoEssay[0]?.photos[0];
 
-  const [playfair, inter, portrait] = await Promise.all([
+  const [playfair, inter, portrait, mark] = await Promise.all([
     loadFont("PlayfairDisplay-Regular.woff"),
     loadFont("Inter-Medium.woff"),
     fire === undefined ? Promise.resolve(null) : loadPhoto(fire.url),
+    loadMark(),
   ]);
 
   const photo = fire === undefined ? 0 : photoWidth(fire);
@@ -89,13 +95,14 @@ export async function renderOpenGraphImage(locale: Locale): Promise<ImageRespons
           >
             {`${site.place.locality}, ${site.place.province}`}
           </div>
-          <div
-            style={{
-              width: 96,
-              height: 4,
-              backgroundColor: FOREST,
-              marginTop: 24,
-            }}
+          {/* next/og dibuja el PNG a mano: next/image no corre adentro de ImageResponse. */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- satori */}
+          <img
+            src={mark}
+            width={88}
+            height={88}
+            alt=""
+            style={{ marginTop: 24, width: 88, height: 88 }}
           />
         </div>
 

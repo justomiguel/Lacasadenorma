@@ -40,7 +40,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 
 3. **El encabezado es el nombre y el menú.** 60 px, transparente sobre la foto de la
    apertura, papel con un desenfoque de 6 px y una regla casi imperceptible al
-   desplazarse; fijo sobre papel en las interiores. En teléfono no hay más botones: el
+   desplazarse; fijo sobre papel en las interiores. El símbolo 01 ORIGINAL (el
+   círculo verde, recortado, sin el wordmark) va a la izquierda del nombre, a 32 px
+   ([ADR-035](./035-simbolo-de-la-marca.md)). En teléfono no hay más botones: el
    idioma, ingresar y la acción de ayudar viven dentro del menú a pantalla
    completa, que respeta las áreas seguras y entra con un escalón de 40 ms por
    ítem. En escritorio, Ingresar va al lado del idioma, como texto, sin caja.

@@ -44,6 +44,7 @@ export function organizationSchema(siteUrl: string, locale: Locale = "es"): obje
     "@id": id.organization,
     name: site.name,
     url: siteUrl,
+    logo: `${siteUrl}/marca/simbolo.png`,
     description: site.longDescription,
     slogan: site.tagline,
     // La organización no tiene domicilio publicable, pero el lugar del que trata

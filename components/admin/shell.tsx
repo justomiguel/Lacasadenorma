@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { Callout } from "@/components/design-system/callout";
 import { cn } from "@/components/design-system/cn";
+import { SiteMark } from "@/components/site/mark";
 import { APP_ROLE_LABELS, type AppRole } from "@/src/domain/entities/role";
 import { can } from "@/src/domain/permissions";
 
@@ -35,11 +36,12 @@ export function AdminShell({
   return (
     <div className="min-h-dvh bg-paper">
       <header className="border-b border-rule">
-        <div className="mx-auto flex max-w-page items-baseline justify-between gap-md px-md py-sm sm:px-lg">
+        <div className="mx-auto flex max-w-page items-center justify-between gap-md px-md py-sm sm:px-lg">
           <Link
             href="/admin"
-            className="font-ui text-label uppercase tracking-label text-ink"
+            className="inline-flex items-center gap-xs font-ui text-label uppercase tracking-label text-ink"
           >
+            <SiteMark size="lg" />
             Casa de Norma · Backoffice
           </Link>
           <p className="font-ui text-label text-ink-muted">

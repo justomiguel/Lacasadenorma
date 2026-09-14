@@ -7,6 +7,7 @@ import { fill } from "@/src/i18n/fill";
 import { localizedHref } from "@/src/i18n/href";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
 
+import { SiteMark } from "./mark";
 import { ACCOUNT_HREF, LEGAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
 const LINK =
@@ -35,12 +36,15 @@ export function SiteFooter({
   return (
     <footer className="border-t border-rule">
       <Container className="py-2xl lg:py-3xl">
-        <p className="font-display text-section-title">
-          {site.name}.
-          <span className="block text-ink-muted">
-            {site.place.locality}, {site.place.province}.
-          </span>
-        </p>
+        <div className="flex items-center gap-sm">
+          <SiteMark size="2xl" />
+          <p className="font-display text-section-title">
+            {site.name}.
+            <span className="block text-ink-muted">
+              {site.place.locality}, {site.place.province}.
+            </span>
+          </p>
+        </div>
 
         <nav aria-label={ui.nav.footer} className="mt-xl">
           <ul className="flex flex-wrap gap-x-lg">

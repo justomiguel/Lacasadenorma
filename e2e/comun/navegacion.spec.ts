@@ -53,6 +53,22 @@ test.describe("navegación", () => {
     ).toBeVisible();
   });
 
+  test("el encabezado lleva el símbolo junto al nombre", async ({ page }) => {
+    await page.goto("/");
+
+    const home = page.getByRole("banner").getByRole("link", { name: "La Casa de Norma" });
+
+    await expect(home).toBeVisible();
+    await expect(home.locator("img"), "falta el símbolo de la marca").toBeVisible();
+  });
+
+  test("el favicon responde y no es un 404", async ({ request }) => {
+    const respuesta = await request.get("/favicon.ico");
+
+    expect(respuesta.status(), "/favicon.ico no puede 404 (ADR-022)").toBe(200);
+    expect(respuesta.headers()["content-type"]).toMatch(/image\//);
+  });
+
   test("el encabezado marca la página abierta", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 

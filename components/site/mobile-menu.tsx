@@ -11,6 +11,7 @@ import { localizedHref } from "@/src/i18n/href";
 import { htmlLang, otherLocale, type Locale } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
+import { SiteMark } from "./mark";
 import { ACCOUNT_HREF, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
 /**
@@ -55,7 +56,10 @@ export function MobileMenu({
       className="fixed inset-0 z-30 flex h-dvh w-screen flex-col overflow-y-auto bg-forest px-5 text-paper safe-bottom safe-top"
     >
       <div className="flex h-header items-center justify-between">
-        <p className="font-display text-small uppercase tracking-label">{siteName}</p>
+        <p className="inline-flex items-center gap-xs font-display text-small uppercase tracking-label">
+          <SiteMark />
+          {siteName}
+        </p>
         <button
           ref={closeRef}
           type="button"

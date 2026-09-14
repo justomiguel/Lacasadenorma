@@ -52,6 +52,7 @@ propio objeto `Metadata` es una garantía de que a alguna le va a faltar la can�
 | `twitter.card` | `pageMetadata()` | `summary_large_image` |
 | `robots` | Layouts públicos / `app/(es)/admin/layout.tsx` / retornos de PayPal | `index, follow` en público; `noindex, nofollow` en `/ayudar/paypal/*` y `noindex, nofollow, nocache` en todo `/admin` |
 | `formatDetection.telephone` | `rootMetadata()` | `false`, para que iOS no convierta un CBU en un teléfono |
+| Favicon | `app/favicon.ico`, `app/icon.png`, `app/apple-icon.png` | El círculo 01 ORIGINAL recortado (ADR-035). `/favicon.ico` tiene que responder 200: un 404 baja Lighthouse (ADR-022) |
 
 Ese último es un detalle que parece cosmético y no lo es: Safari en iOS detecta secuencias de dígitos
 y las vuelve enlaces `tel:`. Un CBU de 22 dígitos convertido en enlace telefónico es un dato bancario
@@ -106,7 +107,7 @@ pero no tiene nada que valga indexar.
 La mayoría de la gente va a llegar desde WhatsApp. Esa es la vista previa que más importa, y la que
 tiene las reglas más rígidas.
 
-`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse` para la home.
+`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse` para la home: el símbolo 01 ORIGINAL, el nombre, la bajada y la foto de esa noche.
 
 Las demás páginas públicas declaran `og:image` con una foto real de esa página —el recorte de esa noche en Historia, la limpieza en la obra y en Cómo ayudar, el retrato en Norma, la portada del libro en el legado—. Si una página no eligió foto, `pageMetadata` usa el recorte 16:9 de esa noche, para que WhatsApp nunca arme una tarjeta sin imagen.
 
@@ -122,7 +123,7 @@ Marcado que promete lo que la página no cumple es engaño, y además se penaliz
 
 | Tipo | Dónde | De dónde salen los datos |
 |---|---|---|
-| `Organization` | Todas las páginas | `content/{locale}/site.json` |
+| `Organization` | Todas las páginas | `content/{locale}/site.json`. El `logo` es `/marca/simbolo.png` (ADR-035) |
 | `WebSite` | Todas las páginas | `content/{locale}/site.json` |
 | `WebPage` | Home, `/norma`, novedades | Argumentos de la página |
 | `FAQPage` | Home | Las mismas preguntas que se ven en pantalla |

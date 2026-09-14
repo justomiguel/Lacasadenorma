@@ -63,9 +63,9 @@ viene. No hay índice de capítulos: la página es la navegación.
   Mercado Pago lleva la banderita del país. Sin JavaScript se apila y se transfiere igual.
 - **Norma** es `NormaStory`: la única banda carbón del sitio, el retrato a cinco sextos del
   ancho, sin círculo.
-- **Encabezado** (`SiteHeader` + `MobileMenu`): nombre y menú, transparente sobre la apertura.
-  En teléfono, Ingresar vive dentro del menú, con el idioma. En escritorio, al lado del idioma,
-  como texto, sin caja.
+- **Encabezado** (`SiteHeader` + `MobileMenu`): símbolo 01 ORIGINAL y nombre, menú
+  a la derecha, transparente sobre la apertura. En teléfono, Ingresar vive dentro
+  del menú, con el idioma. En escritorio, al lado del idioma, como texto, sin caja.
   **Barra** (`HelpBar`): nativa, papel, safe-area, baja cuando la acción ya está a la vista.
   **Pie** (`SiteFooter`): colofón, no mapa del sitio.
 

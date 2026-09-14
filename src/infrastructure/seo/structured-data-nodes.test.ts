@@ -48,6 +48,12 @@ describe("organizationSchema", () => {
     expect(node).toHaveProperty("areaServed");
     expect(JSON.stringify(node)).toContain(site.place.locality);
   });
+
+  it("publica el símbolo recortado, no un icono que el sitio ya no usa", () => {
+    const node = emitOne(organizationSchema(SITE));
+
+    expect(node).toHaveProperty("logo", `${SITE}/marca/simbolo.png`);
+  });
 });
 
 describe("personSchema", () => {
