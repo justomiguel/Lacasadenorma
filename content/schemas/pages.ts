@@ -101,6 +101,7 @@ export const helpSchema = pageSchema.extend({
       alias: z.string().min(1),
       cbu: z.string().min(1),
       accountNumber: z.string().min(1),
+      bank: z.string().min(1),
     }),
     CL: z.object({
       holder: z.string().min(1),

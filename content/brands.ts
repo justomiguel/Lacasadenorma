@@ -26,6 +26,12 @@ export const BRANDS = {
     width: 24,
     height: 24,
   },
+  brubank: {
+    name: "Brubank",
+    src: "/marcas/brubank.svg",
+    width: 24,
+    height: 24,
+  },
   instagram: {
     name: "Instagram",
     src: "/marcas/instagram.svg",

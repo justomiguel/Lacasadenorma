@@ -63,14 +63,14 @@
   /*
    * Colores de marcas de pago, no de la campaña. Viven acá para que el botón
    * de «Continuar con …» se reconozca como PayPal o Mercado Pago sin escribir un
-   * hex en el componente. El celeste de Mercado Pago no llega a 4.5:1 con
-   * blanco, así que el texto de ese botón es tinta (`mercadopago-ink`).
+   * hex en el componente. El celeste oficial de Mercado Pago no llega a 4.5:1
+   * con papel, así que el botón usa un celeste más oscuro y letra papel, igual
+   * que PayPal.
    */
   --color-paypal: #003087;
   --color-paypal-strong: #001c55;
-  --color-mercadopago: #009ee3;
-  --color-mercadopago-strong: #0088c8;
-  --color-mercadopago-ink: #1c1c1c;
+  --color-mercadopago: #006b9c;
+  --color-mercadopago-strong: #005888;
 
   --color-transparent: transparent;
   --color-current: currentColor;
@@ -377,10 +377,12 @@
 }
 
 /*
- * El logo de PayPal llega como SVG en un `img`, así que `currentColor` no hereda.
- * Sobre el azul de marca el pictograma tiene que ser papel, no tinta.
+ * Los logos de PayPal y Mercado Pago llegan como SVG en un `img`, así que
+ * `currentColor` no hereda. Sobre el azul de marca el pictograma tiene que ser
+ * papel, no tinta.
  */
-[data-brand="paypal"] img {
+[data-brand="paypal"] img,
+[data-brand="mercadopago"] img {
   filter: brightness(0) invert(1);
 }
 

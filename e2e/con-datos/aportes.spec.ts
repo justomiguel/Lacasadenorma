@@ -78,6 +78,13 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await expect(panel.locator("[data-figure]")).toHaveCount(3);
     await expect(panel.getByRole("button", { name: /^copiar$/i })).toHaveCount(3);
     await expect(panel.getByText(help.accounts.AR.holder, { exact: true })).toBeVisible();
+    await expect(
+      panel
+        .getByText(help.accounts.AR.bank, { exact: true })
+        .locator("xpath=..")
+        .locator("img"),
+      "Brubank lleva su logo al lado del nombre",
+    ).toHaveAttribute("src", /brubank/);
   });
 
   test("Mercado Pago distingue Argentina y Chile, y PayPal tiene su enlace", async ({

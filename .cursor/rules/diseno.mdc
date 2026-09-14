@@ -58,9 +58,9 @@ viene. No hay índice de capítulos: la página es la navegación.
 - **Una vista previa de otra página** (`PreviewCard`) es foto, título y flecha, sin borde ni
   fondo. En la home no hay ninguna.
 - **Aportar** es `DonationSelector`: `CountrySelector` (Argentina, Chile, Internacional) y,
-  en Argentina y Chile, dos cards —transferencia bancaria con icono y título, Mercado Pago
-  con su logo—. `ExternalPayment` es un botón con los colores de la marca; Mercado Pago
-  lleva la banderita del país. Sin JavaScript se apila y se transfiere igual.
+  en Argentina y Chile, dos cards —transferencia (Brubank con logo en Argentina) y Mercado
+  Pago con su logo—. `ExternalPayment` es un botón con los colores de la marca y letra papel;
+  Mercado Pago lleva la banderita del país. Sin JavaScript se apila y se transfiere igual.
 - **Norma** es `NormaStory`: la única banda carbón del sitio, el retrato a cinco sextos del
   ancho, sin círculo.
 - **Encabezado** (`SiteHeader` + `MobileMenu`): nombre y menú, transparente sobre la apertura.

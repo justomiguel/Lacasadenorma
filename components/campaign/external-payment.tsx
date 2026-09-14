@@ -11,7 +11,7 @@ const BUTTON_BASE =
   "mt-sm inline-flex min-h-cta w-full items-center justify-center gap-xs rounded-md px-sm no-underline font-ui text-small font-medium transition-colors duration-fast ease-editorial active:translate-y-px sm:gap-sm sm:px-md sm:text-body";
 
 const BUTTON_BRAND = {
-  mercadopago: "bg-mercadopago text-mercadopago-ink hover:bg-mercadopago-strong",
+  mercadopago: "bg-mercadopago text-paper hover:bg-mercadopago-strong",
   paypal: "bg-paypal text-paper hover:bg-paypal-strong",
 } as const;
 
@@ -19,10 +19,10 @@ const BUTTON_BRAND = {
  * Un medio de pago externo, como método y no como banner (ADR-032).
  *
  * La marca con su logo es el título de la card. El botón lleva los colores de
- * esa marca —azul PayPal, celeste Mercado Pago— para que se reconozca el
- * destino. En Mercado Pago, la banderita dice si el link es de Argentina o de
- * Chile. El sitio no cobra ni procesa nada: te lleva y nada más. El enlace
- * sólo existe si hay URL real; sin URL, la fila no se dibuja.
+ * esa marca —azul PayPal, celeste más oscuro de Mercado Pago— y letra papel en
+ * los dos, para que se lea. En Mercado Pago, la banderita dice si el link es de
+ * Argentina o de Chile. El sitio no cobra ni procesa nada: te lleva y nada más.
+ * El enlace sólo existe si hay URL real; sin URL, la fila no se dibuja.
  */
 export function ExternalPayment({
   brand,

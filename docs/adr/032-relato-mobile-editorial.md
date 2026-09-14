@@ -76,11 +76,12 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 
 9. **Aportar es una decisión: desde dónde.** `DonationSelector` reemplaza al tablero:
    `CountrySelector` (Argentina, Chile, Internacional; tabs con teclado y una regla bajo
-   el elegido) y, en Argentina y en Chile, dos cards: transferencia bancaria con icono
-   de banco y título, Mercado Pago con su logo al lado del nombre. Adentro de la
-   primera, `CopyField` —etiqueta chica, dato grande y tabular, icono de copiar que
-   pasa a un tilde con «Copiado» durante 1,5 s—. La segunda es `ExternalPayment`: la
-   marca, una línea, y un botón con los colores de esa marca. Mercado Pago lleva la
+   el elegido) y, en Argentina y en Chile, dos cards: transferencia (en Argentina,
+   Brubank con su logo; en Chile, icono de banco y título) y Mercado Pago con su
+   logo al lado del nombre. Adentro de la primera, `CopyField` —etiqueta chica,
+   dato grande y tabular, icono de copiar que pasa a un tilde con «Copiado»
+   durante 1,5 s—. La segunda es `ExternalPayment`: la marca, una línea, y un
+   botón con los colores de esa marca y letra papel. Mercado Pago lleva la
    banderita de Argentina o de Chile; PayPal es la misma pieza para el resto del
    mundo. Sin JavaScript los tres países se apilan con su título y se transfiere igual.
 
