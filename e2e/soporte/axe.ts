@@ -16,17 +16,8 @@ import { expect, type Page } from "@playwright/test";
  */
 const ETIQUETAS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-export async function esperarSinViolaciones(
-  page: Page,
-  donde: string,
-  opciones?: { readonly include?: string },
-): Promise<void> {
-  const analizador =
-    opciones?.include === undefined
-      ? new AxeBuilder({ page }).withTags(ETIQUETAS)
-      : new AxeBuilder({ page }).withTags(ETIQUETAS).include(opciones.include);
-
-  const resultado = await analizador.analyze();
+export async function esperarSinViolaciones(page: Page, donde: string): Promise<void> {
+  const resultado = await new AxeBuilder({ page }).withTags(ETIQUETAS).analyze();
 
   /**
    * El mensaje incluye la regla, el impacto y el primer selector de cada violación.
