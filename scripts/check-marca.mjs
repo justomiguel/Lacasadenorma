@@ -7,8 +7,8 @@
  * pinten: estar disponibles es el punto del catálogo.
  *
  * Lo que sí exige: que el chrome (`SiteMark`) y la tarjeta de compartir usen
- * **original**. Si el encabezado o Facebook empiezan a mostrar otra variante,
- * falla.
+ * **original**, y que el login, la cuenta y las legales lo pinten. Si el
+ * encabezado, el backoffice o Facebook empiezan a mostrar otra variante, falla.
  *
  * Corre en `npm run verify` y en CI.
  */
@@ -21,6 +21,33 @@ const CATALOG = "content/marca.ts";
 const MARCA_DIR = path.join("public", "marca");
 const CHROME = "components/site/mark.tsx";
 const CARD = "src/infrastructure/seo/share-card.tsx";
+const SURFACES = [
+  { file: "components/site/header.tsx", needle: "SiteMark", why: "el encabezado" },
+  { file: "components/site/mobile-menu.tsx", needle: "SiteMark", why: "el menú" },
+  { file: "components/site/footer.tsx", needle: "SiteMark", why: "el pie" },
+  { file: "components/admin/shell.tsx", needle: "SiteMark", why: "el backoffice" },
+  { file: "app/(es)/admin/login/page.tsx", needle: "SiteMark", why: "el login" },
+  {
+    file: "components/account/auth-shell.tsx",
+    needle: "PageHeader mark",
+    why: "las pantallas de cuenta",
+  },
+  {
+    file: "components/site/legal-document.tsx",
+    needle: "PageHeader mark",
+    why: "privacidad y términos",
+  },
+  {
+    file: "components/screens/not-found-screen.tsx",
+    needle: "PageHeader mark",
+    why: "el 404",
+  },
+  {
+    file: "components/site/page-header.tsx",
+    needle: "SiteMark",
+    why: "el membrete de página",
+  },
+];
 
 const catalog = await readFile(CATALOG, "utf8");
 const variants = [
@@ -122,6 +149,14 @@ if (!chrome.includes("DEFAULT_MARK") && !chrome.includes("/marca/simbolo.png")) 
 
 if (!card.includes("DEFAULT_MARK") && !card.includes("/marca/simbolo.png")) {
   problems.push(`${CARD} tiene que pintar DEFAULT_MARK (original).`);
+}
+
+for (const surface of SURFACES) {
+  const text = await readFile(surface.file, "utf8");
+
+  if (!text.includes(surface.needle)) {
+    problems.push(`${surface.file} tiene que llevar el símbolo en ${surface.why}.`);
+  }
 }
 
 if (original !== undefined && chrome.includes("/marca/terracota.png")) {

@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 import { Container } from "@/components/design-system/layout";
 
+import { SiteMark } from "./mark";
+
 /**
  * Encabezado de una página interior: título, bajada y —sólo si hace falta— una
  * sobrelínea.
@@ -28,21 +30,28 @@ import { Container } from "@/components/design-system/layout";
  * home y la que abre el pie: son las tres que marcan el final de una banda de la
  * página, y el sitio distingue esas de las que dividen contenido, que se alinean
  * con la columna (ux.md §4).
+ *
+ * `mark` pone el símbolo 01 ORIGINAL arriba del título. Sólo en las pantallas
+ * que son una puerta o un documento —cuenta, legales, 404—: el chrome ya lo
+ * lleva, y repetirlo en Cómo ayudar o en el catálogo sería un membrete de más.
  */
 export function PageHeader({
   label,
   title,
   lead,
+  mark = false,
   children,
 }: {
   label?: string;
   title: string;
   lead?: string;
+  mark?: boolean;
   children?: ReactNode;
 }) {
   return (
     <header className="border-b border-rule bg-paper">
       <Container className="pb-2xl pt-2xl lg:pb-3xl">
+        {mark ? <SiteMark size="2xl" className="mb-lg" /> : null}
         {label === undefined ? null : (
           <p className="mb-sm font-ui text-small text-olive">{label}</p>
         )}

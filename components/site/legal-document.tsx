@@ -42,7 +42,7 @@ export function LegalDocument({
 
   return (
     <>
-      <PageHeader label={legalLabel} title={document.title} lead={document.lead}>
+      <PageHeader mark label={legalLabel} title={document.title} lead={document.lead}>
         <p className="mt-lg font-ui text-small text-ink-muted">
           {lastUpdatedLabel} <time dateTime={updatedOn}>{formattedDate}</time>
         </p>

@@ -1,14 +1,16 @@
 import Link from "next/link";
 
+import { SiteMark } from "@/components/site/mark";
+import { getContent } from "@/content";
+
 import { LoginForm } from "./login-form";
 
 /**
  * Acceso al backoffice.
  *
- * No usa el marco de `(panel)` porque todavía no hay sesión, y no usa el encabezado
- * del sitio público porque no es una página del sitio: es una puerta. Lo único que
- * conserva del sitio es la tipografía y el papel, para que quien llega sepa que está
- * en el lugar correcto.
+ * No usa el marco de `(panel)` porque todavía no hay sesión. Conserva el papel
+ * y la tipografía del sitio, y el círculo 01 ORIGINAL identifica la puerta.
+ * El nombre no se repite en versales: lo dice el encabezado.
  */
 export default async function LoginPage({
   searchParams,
@@ -18,13 +20,14 @@ export default async function LoginPage({
   const params = await searchParams;
   const volver = params["volver"];
   const next = typeof volver === "string" ? volver : null;
+  const { site } = getContent("es");
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-measure flex-col justify-center px-md py-3xl sm:px-lg">
-      <p className="font-ui text-label uppercase tracking-label text-ink-muted">
-        Casa de Norma
-      </p>
-      <h1 className="mt-xs font-display text-title text-ink">Entrar al backoffice</h1>
+    <div className="mx-auto max-w-measure px-md py-3xl sm:px-lg">
+      <Link href="/" aria-label={site.name} className="inline-flex">
+        <SiteMark size="2xl" />
+      </Link>
+      <h1 className="mt-2xl font-display text-title text-ink">Entrar al backoffice</h1>
       <p className="mt-sm font-ui text-small text-ink-muted">
         Esta parte del sitio es para quienes mantienen la campaña al día. Si buscabas cómo
         colaborar, está en{" "}

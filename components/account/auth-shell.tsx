@@ -28,7 +28,7 @@ export function AuthShell({
 }) {
   return (
     <>
-      <PageHeader title={title} lead={lead} />
+      <PageHeader mark title={title} lead={lead} />
 
       <Container>
         <Section>

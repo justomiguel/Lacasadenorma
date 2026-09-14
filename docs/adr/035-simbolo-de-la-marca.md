@@ -30,8 +30,9 @@ desmentían la identidad que la lámina acaba de fijar.
    lockup entero duplicaría el texto y pelearía con la serif del sistema.
 3. **El recorte vive en `public/marca/simbolo.png`**, no en `public/marcas/`
    (ése es el catálogo de terceros: PayPal, Mercado Pago, los bancos). El
-   símbolo acompaña el nombre en el encabezado, el menú, el pie y el
-   backoffice, a 32 / 32 / 48 / 24 px según la escala de espacio. No es un
+   símbolo acompaña el nombre en el encabezado, el menú, el pie, el
+   backoffice, **el login**, las pantallas de cuenta y los documentos
+   legales. A 32 / 32 / 48 / 24 px según la escala de espacio. No es un
    logotipo SaaS enorme: el encabezado sigue midiendo 60 px.
 4. **El favicon es el mismo recorte**, no la casa terracota. `app/icon.png`
    (32×32), `app/apple-icon.png` (180×180, opaco: iOS pinta de negro la
@@ -65,7 +66,9 @@ desmentían la identidad que la lámina acaba de fijar.
 - `app/icon.svg` se borra. Next toma `icon.png`, `apple-icon.png` y `favicon.ico`.
 - `components/site/mark.tsx` es la única pieza que sabe la ruta y las medidas.
   El test lee el IHDR del PNG: si el archivo se mueve o se recorta de nuevo y
-  nadie actualiza las medidas, falla.
+  nadie actualiza las medidas, falla. `PageHeader` lo pinta cuando `mark` es
+  verdadero: cuenta, legales y 404. El login del backoffice pone el círculo
+  como membrete de la página, sin repetir el nombre: lo dice el encabezado.
 - La tarjeta de Open Graph es el símbolo y el copy de **esa** página (ADR-036).
   WhatsApp ve la misma marca que el encabezado, no una foto recortada.
 - El encabezado gana ~40 px a la izquierda (símbolo 32 + hueco 8). En 320 px el

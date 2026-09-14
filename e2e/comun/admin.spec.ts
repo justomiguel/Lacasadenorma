@@ -141,6 +141,16 @@ test.describe("flujo 8 · la pantalla de acceso", () => {
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 
+  test("lleva el símbolo de la marca, no un kicker en versales", async ({ page }) => {
+    await page.goto("/admin/login");
+
+    await expect(page.locator('img[src*="/marca/simbolo"]').first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: /entrar al backoffice/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/^casa de norma$/i)).toHaveCount(0);
+  });
+
   test("la pantalla de acceso cumple WCAG 2.2 AA", async ({ page }) => {
     await page.goto("/admin/login");
     await esperarSinViolaciones(page, "/admin/login");

@@ -14,7 +14,7 @@ export function NotFoundScreen({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <PageHeader title={ui.notFoundPage.title} lead={ui.notFoundPage.lead} />
+      <PageHeader mark title={ui.notFoundPage.title} lead={ui.notFoundPage.lead} />
 
       <Container>
         <Section tight>
