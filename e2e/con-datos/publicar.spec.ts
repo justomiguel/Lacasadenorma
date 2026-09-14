@@ -8,6 +8,7 @@ import {
   sufijoUnico,
   tokenDe,
 } from "../soporte/backoffice";
+import { volverABorradorSiSiguePublicada } from "../soporte/novedades";
 
 /**
  * El editor visual pinta un contenteditable y esconde el textarea. El POST sigue
@@ -38,7 +39,8 @@ async function escribirCuerpo(page: Page, texto: string): Promise<void> {
  *
  * Los tres proyectos de Playwright corren en paralelo contra la misma base, así que
  * cada prueba trabaja sobre una novedad con su propio `slug`. Ninguna toca las filas
- * del fixture que las otras suites afirman.
+ * del fixture que las otras suites afirman, y cada una vuelve a borrador al terminar:
+ * `/reconstruccion` muestra la última publicada, no una fila fija.
  */
 
 test.describe("flujo 9 · publicar una novedad", () => {
@@ -52,100 +54,109 @@ test.describe("flujo 9 · publicar una novedad", () => {
     const texto =
       "Con los ladrillos que quedaban se cerró el lado que da al patio. " +
       "Falta el revoque, y para eso hay que esperar que baje la humedad.";
+    let pantallaDeLaNovedad = "";
 
-    // ── Entrar ────────────────────────────────────────────────────────────────
-    await entrar(page, "editor");
+    try {
+      // ── Entrar ────────────────────────────────────────────────────────────────
+      await entrar(page, "editor");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: /estado de la campaña/i }),
-    ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: /estado de la campaña/i }),
+      ).toBeVisible();
 
-    // El rol que muestra el marco sale del claim `app_metadata.user_role` del token,
-    // que puso el hook de la migración leyendo `public.user_roles`. Que diga "Edición"
-    // es la prueba de que ese camino entero funcionó.
-    await expect(page.getByText(/edición/i).first()).toBeVisible();
+      // El rol que muestra el marco sale del claim `app_metadata.user_role` del token,
+      // que puso el hook de la migración leyendo `public.user_roles`. Que diga "Edición"
+      // es la prueba de que ese camino entero funcionó.
+      await expect(page.getByText(/edición/i).first()).toBeVisible();
 
-    // ── Escribir el borrador ──────────────────────────────────────────────────
-    await page.goto("/admin/novedades");
+      // ── Escribir el borrador ──────────────────────────────────────────────────
+      await page.goto("/admin/novedades");
 
-    await page.getByLabel("Título", { exact: true }).fill(titulo);
-    await page.getByLabel(/dirección web/i).fill(slug);
-    await escribirCuerpo(page, texto);
-    await page.getByRole("button", { name: /guardar borrador/i }).click();
+      await page.getByLabel("Título", { exact: true }).fill(titulo);
+      await page.getByLabel(/dirección web/i).fill(slug);
+      await escribirCuerpo(page, texto);
+      await page.getByRole("button", { name: /guardar borrador/i }).click();
 
-    // Guardar lleva a la pantalla de la novedad, que es la mitad de SC-009: quien
-    // acaba de escribir el avance ya está donde se publica.
-    await expect(page).toHaveURL(
-      /\/admin\/novedades\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
-    );
-    const pantallaDeLaNovedad = page.url();
-    await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
-    await expect(page.getByText(/es un borrador/i)).toBeVisible();
+      // Guardar lleva a la pantalla de la novedad, que es la mitad de SC-009: quien
+      // acaba de escribir el avance ya está donde se publica.
+      await expect(page).toHaveURL(
+        /\/admin\/novedades\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
+      pantallaDeLaNovedad = page.url();
+      await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
+      await expect(page.getByText(/es un borrador/i)).toBeVisible();
 
-    // ── Un borrador no tiene camino público ───────────────────────────────────
-    // Antes de publicar, no después: si la URL contestara 200 acá, el paso siguiente
-    // lo taparía y la prueba pasaría igual.
-    expect(
-      (await request.get(`/novedades/${slug}`)).status(),
-      "un borrador alcanzable por URL sería una filtración de las policies",
-    ).toBe(404);
+      // ── Un borrador no tiene camino público ───────────────────────────────────
+      // Antes de publicar, no después: si la URL contestara 200 acá, el paso siguiente
+      // lo taparía y la prueba pasaría igual.
+      expect(
+        (await request.get(`/novedades/${slug}`)).status(),
+        "un borrador alcanzable por URL sería una filtración de las policies",
+      ).toBe(404);
 
-    // ── Publicar ──────────────────────────────────────────────────────────────
-    await page.getByRole("button", { name: /publicar ahora/i }).click();
+      // ── Publicar ──────────────────────────────────────────────────────────────
+      await page.getByRole("button", { name: /publicar ahora/i }).click();
 
-    await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
+      await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
 
-    // ── Y ahora sí está en el sitio ───────────────────────────────────────────
-    // La página pública es la que se comparte por WhatsApp: se comprueba que exista,
-    // que tenga su título como encabezado y que la canónica apunte a ella misma, que es
-    // lo que hace que el enlace compartido no lleve a una copia sin canónica.
-    await page.goto(`/novedades/${slug}`);
+      // ── Y ahora sí está en el sitio ───────────────────────────────────────────
+      // La página pública es la que se comparte por WhatsApp: se comprueba que exista,
+      // que tenga su título como encabezado y que la canónica apunte a ella misma, que es
+      // lo que hace que el enlace compartido no lleve a una copia sin canónica.
+      await page.goto(`/novedades/${slug}`);
 
-    await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
-    await expect(page.getByText(/falta el revoque/i)).toBeVisible();
-    await expect(page.locator("time")).toBeVisible();
-    await esperarSinViolaciones(page, `/novedades/${slug}`);
+      await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
+      await expect(page.getByText(/falta el revoque/i)).toBeVisible();
+      await expect(page.locator("time")).toBeVisible();
+      await esperarSinViolaciones(page, `/novedades/${slug}`);
 
-    const canonica = await page
-      .locator('link[rel="canonical"]')
-      .first()
-      .getAttribute("href");
+      const canonica = await page
+        .locator('link[rel="canonical"]')
+        .first()
+        .getAttribute("href");
 
-    expect(new URL(canonica ?? "", "http://x.test").pathname).toBe(`/novedades/${slug}`);
+      expect(new URL(canonica ?? "", "http://x.test").pathname).toBe(
+        `/novedades/${slug}`,
+      );
 
-    // Y en la lista, que es la página que `revalidatePath` tiene que haber
-    // invalidado: sin eso la novedad existiría por URL directa y no aparecería
-    // donde la gente la busca.
-    await page.goto("/novedades");
-    await expect(page.getByRole("link", { name: new RegExp(sufijo) })).toBeVisible();
-    await expect(page.locator("time").first()).toBeVisible();
-    await esperarSinViolaciones(page, "/novedades");
+      // Y en la lista, que es la página que `revalidatePath` tiene que haber
+      // invalidado: sin eso la novedad existiría por URL directa y no aparecería
+      // donde la gente la busca.
+      await page.goto("/novedades");
+      await expect(page.getByRole("link", { name: new RegExp(sufijo) })).toBeVisible();
+      await expect(page.locator("time").first()).toBeVisible();
+      await esperarSinViolaciones(page, "/novedades");
 
-    // El sitemap es la otra invalidación de ADR-017, y la que nadie mira: si quedara
-    // cacheado, la novedad sería invisible para los buscadores hasta la próxima
-    // revalidación por tiempo.
-    const sitemap = await request.get("/sitemap.xml");
+      // El sitemap es la otra invalidación de ADR-017, y la que nadie mira: si quedara
+      // cacheado, la novedad sería invisible para los buscadores hasta la próxima
+      // revalidación por tiempo.
+      const sitemap = await request.get("/sitemap.xml");
 
-    expect(sitemap.status()).toBe(200);
-    expect(await sitemap.text(), "el sitemap no se invalidó al publicar").toContain(
-      `/novedades/${slug}`,
-    );
+      expect(sitemap.status()).toBe(200);
+      expect(await sitemap.text(), "el sitemap no se invalidó al publicar").toContain(
+        `/novedades/${slug}`,
+      );
 
-    // ── Y se puede volver atrás ───────────────────────────────────────────────
-    // Publicar por error tiene que ser reversible, y reversible de verdad: no alcanza
-    // con que la novedad desaparezca de la lista si sigue respondiendo por su URL.
-    // Se vuelve a la pantalla de la novedad por su URL y no por la lista: la lista
-    // tiene un "Despublicar" por cada novedad publicada del fixture, y el primero que
-    // aparezca al navegar sería el de otra fila.
-    await page.goto(pantallaDeLaNovedad);
-    await page.getByRole("button", { name: /^despublicar$/i }).click();
+      // ── Y se puede volver atrás ───────────────────────────────────────────────
+      // Publicar por error tiene que ser reversible, y reversible de verdad: no alcanza
+      // con que la novedad desaparezca de la lista si sigue respondiendo por su URL.
+      // Se vuelve a la pantalla de la novedad por su URL y no por la lista: la lista
+      // tiene un "Despublicar" por cada novedad publicada del fixture, y el primero que
+      // aparezca al navegar sería el de otra fila.
+      await page.goto(pantallaDeLaNovedad);
+      await page.getByRole("button", { name: /^despublicar$/i }).click();
 
-    await expect(page.getByRole("status")).toContainText(/volvió a borrador/i);
+      await expect(page.getByRole("status")).toContainText(/volvió a borrador/i);
 
-    expect(
-      (await request.get(`/novedades/${slug}`)).status(),
-      "una novedad despublicada seguía teniendo camino público",
-    ).toBe(404);
+      expect(
+        (await request.get(`/novedades/${slug}`)).status(),
+        "una novedad despublicada seguía teniendo camino público",
+      ).toBe(404);
+    } finally {
+      if (pantallaDeLaNovedad !== "") {
+        await volverABorradorSiSiguePublicada(page, pantallaDeLaNovedad);
+      }
+    }
   });
 
   /**
@@ -159,36 +170,47 @@ test.describe("flujo 9 · publicar una novedad", () => {
   test("la publicación queda en el registro de auditoría", async ({ page }, info) => {
     const sufijo = sufijoUnico(`auditoria-${info.project.name}`);
     const slug = `llego-el-agua-${sufijo}`;
+    let pantallaDeLaNovedad = "";
 
-    await entrar(page, "editor");
-    await page.goto("/admin/novedades");
+    try {
+      await entrar(page, "editor");
+      await page.goto("/admin/novedades");
 
-    await page
-      .getByLabel("Título", { exact: true })
-      .fill(`Llegó el agua a la casa (${sufijo})`);
-    await page.getByLabel(/dirección web/i).fill(slug);
-    await escribirCuerpo(page, "Se conectó la cañería nueva y el tanque quedó cargado.");
-    await page.getByRole("button", { name: /guardar borrador/i }).click();
+      await page
+        .getByLabel("Título", { exact: true })
+        .fill(`Llegó el agua a la casa (${sufijo})`);
+      await page.getByLabel(/dirección web/i).fill(slug);
+      await escribirCuerpo(
+        page,
+        "Se conectó la cañería nueva y el tanque quedó cargado.",
+      );
+      await page.getByRole("button", { name: /guardar borrador/i }).click();
 
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await page.getByRole("button", { name: /publicar ahora/i }).click();
-    await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      pantallaDeLaNovedad = page.url();
+      await page.getByRole("button", { name: /publicar ahora/i }).click();
+      await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
 
-    await page
-      .locator("#contenido")
-      .getByRole("button", { name: /cerrar sesión/i })
-      .click();
-    await expect(page).toHaveURL(/\/admin\/login/);
+      await page
+        .locator("#contenido")
+        .getByRole("button", { name: /cerrar sesión/i })
+        .click();
+      await expect(page).toHaveURL(/\/admin\/login/);
 
-    await entrar(page, "admin");
-    await page.goto("/admin/auditoria");
+      await entrar(page, "admin");
+      await page.goto("/admin/auditoria");
 
-    // "Otra persona del equipo" y no un correo: la pantalla muestra el rol de quien
-    // hizo el cambio a propósito, para no poner los correos del equipo a circular.
-    const registro = page.getByRole("list").filter({ hasText: /publicó una novedad/i });
+      // "Otra persona del equipo" y no un correo: la pantalla muestra el rol de quien
+      // hizo el cambio a propósito, para no poner los correos del equipo a circular.
+      const registro = page.getByRole("list").filter({ hasText: /publicó una novedad/i });
 
-    await expect(registro.first()).toBeVisible();
-    await expect(page.getByText(/publicó una novedad/i).first()).toBeVisible();
+      await expect(registro.first()).toBeVisible();
+      await expect(page.getByText(/publicó una novedad/i).first()).toBeVisible();
+    } finally {
+      if (pantallaDeLaNovedad !== "") {
+        await volverABorradorSiSiguePublicada(page, pantallaDeLaNovedad);
+      }
+    }
   });
 
   /**
