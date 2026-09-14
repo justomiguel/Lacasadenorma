@@ -193,7 +193,10 @@ Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
   llegaba a la pantalla de acceso.
 
 Los tres proyectos escriben en la misma base, así que cada prueba trabaja sobre una novedad con su
-propio `slug`, derivado del nombre del proyecto y del reloj.
+propio `slug`, derivado del nombre del proyecto y del reloj. Y cada publicación vuelve a borrador al
+terminar, por el botón del backoffice —no por un `PATCH` a PostgREST—: `/reconstruccion` pide la última
+novedad (`limit: 1`) y `revalidatePath` vive en esa acción. Dejar una fila de prueba publicada hace
+que el flujo 3 deje de ver el fixture y falle en el proyecto siguiente.
 
 Sigue siendo cierto que el shim no es Supabase: el comportamiento de GoTrue ante una contraseña débil,
 la recuperación de contraseña, el rate limiting y el hook configurado en el panel se verifican contra

@@ -28,7 +28,18 @@ test.describe("flujo 3 · ver el trabajo", () => {
     await expect(page.getByText(/cuánto sale cada rubro/i)).toHaveCount(0);
     await expect(page.getByText(/cómo va la obra/i)).toHaveCount(0);
     await expect(page.getByText(/sin cotizar/i)).toHaveCount(0);
-    await expect(page.getByText(/empezó el montaje del techo/i)).toBeVisible();
+
+    // La última novedad publicada, no una fila fija del fixture: otras suites
+    // publican la suya y esta página pide `limit: 1`. El relato tiene que estar;
+    // el título concreto no es el contrato.
+    const loUltimo = page.getByRole("region", {
+      name: ui.reconstructionPage.latestHeading,
+    });
+
+    await expect(loUltimo).toBeVisible();
+    await expect(
+      loUltimo.locator("ol li").getByRole("heading", { level: 2 }),
+    ).toBeVisible();
     await expect(
       page.getByRole("link", { name: ui.reconstructionPage.seeNews }),
     ).toBeVisible();

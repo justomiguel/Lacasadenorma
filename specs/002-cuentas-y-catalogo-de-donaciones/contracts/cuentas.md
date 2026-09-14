@@ -20,7 +20,7 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 | `/cuenta/clave` | Página + formulario de cliente | Fija contraseña nueva, con sesión de recuperación |
 | `/cuenta/confirmar` | **Route handler** | Consume el enlace del correo y crea la sesión |
 | `/cuenta` | Server Component | Índice editorial de la cuenta: reservas, cómo aparecer (foto y nombre), acceso y borrar. `?seccion=` recuerda la pestaña abierta. |
-| `/cuenta/sesion` | **Route handler** | Snapshot privado del chrome: anónima o nombre/correo/si hay retrato. **No** crea el perfil |
+| `/cuenta/sesion` | **Route handler** | Snapshot privado del chrome: anónima o nombre/correo/si hay retrato/`staff`. **No** crea el perfil |
 | `/cuenta/retrato` | **Route handler** | Sirve el retrato propio. Pide la URL firmada en el servidor y la descarta (ADR-037) |
 
 `/cuenta/confirmar` es un `route.ts` y no una página porque su trabajo es canjear un token y

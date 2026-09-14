@@ -6,7 +6,7 @@ import {
   cargarItemPublicado,
   habilitarCuenta,
   idDeItem,
-  ocultarItem,
+  ocultarItemSiExiste,
   vencerReserva,
 } from "../soporte/catalogo";
 import {
@@ -71,7 +71,7 @@ test.describe("fase D · reservas", () => {
         await donante.close();
       }
     } finally {
-      await ocultarItem(request, await idDeItem(request, titulo));
+      await ocultarItemSiExiste(staffPage.request, titulo);
       await staff.close();
     }
   });
@@ -147,7 +147,7 @@ test.describe("fase D · reservas", () => {
         await contextoB.close();
       }
     } finally {
-      await ocultarItem(request, await idDeItem(request, titulo));
+      await ocultarItemSiExiste(staffPage.request, titulo);
       await staff.close();
     }
   });
@@ -199,7 +199,7 @@ test.describe("fase D · reservas", () => {
         await donante.close();
       }
     } finally {
-      await ocultarItem(request, await idDeItem(request, titulo));
+      await ocultarItemSiExiste(staffPage.request, titulo);
       await staff.close();
     }
   });
