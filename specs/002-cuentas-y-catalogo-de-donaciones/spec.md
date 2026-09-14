@@ -342,8 +342,10 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 **Privacidad**
 
-- **FR-238**: El sistema MUST recolectar el mínimo: correo; nombre para mostrar sólo si la persona
-  lo escribe; y una foto de retrato sólo si la persona la sube. La foto MUST NOT publicarse.
+- **FR-238**: El sistema MUST recolectar el mínimo: correo; nombre para mostrar si la persona
+  lo escribe o si entra con una red que lo entrega; y una foto de retrato si la persona la
+  sube o si esa red entrega una. El local-part del correo MUST NOT usarse como nombre. La foto
+  MUST NOT publicarse.
 - **FR-239**: La política de privacidad publicada MUST describir qué se guarda, para qué, cuánto
   tiempo y cómo se borra, en los dos idiomas, **en el mismo despliegue** que habilita el registro.
 - **FR-240**: Borrar la cuenta MUST eliminar los datos personales y MUST conservar la donación como
@@ -379,10 +381,13 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   nativos de Supabase Auth que estén habilitados. Sin ninguno habilitado, MUST NOT mostrar el
   control. MUST NOT inventar un proveedor ni mostrar uno «próximamente».
 - **FR-250**: El alta por una red social MUST nacer anónima y `pending`, igual que el alta por
-  correo. MUST NOT copiar el nombre ni la foto de la red al perfil (FR-230, ADR-037). MUST NOT
-  saltear la habilitación del equipo (ADR-033).
+  correo. MUST copiar al perfil el nombre y la foto que la red entregue, si los campos están
+  vacíos. MUST NOT pisar un nombre o una foto que la persona ya haya elegido. MUST NOT
+  publicarlos en el muro ni saltear la habilitación del equipo (ADR-033).
 - **FR-251**: El callback MUST canjear el código en el servidor, MUST NOT respetar un `next` de la
   query, y MUST fallar con un estado diseñado si el proveedor no entrega un correo.
+- **FR-252**: Si ya existe una cuenta confirmada con el mismo correo, entrar con una red social
+  MUST usar esa cuenta. MUST NOT crear una segunda.
 
 ### Key Entities
 
@@ -433,8 +438,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **SC-213**: El HTML servido de las páginas públicas no cambia según haya sesión o no, verificado
   sobre el documento inicial; el nombre, el correo y el retrato aparecen después, en el menú.
 - **SC-214**: Con un proveedor social habilitado, una persona puede crear la cuenta desde el botón
-  de esa red y aterrizar en `/cuenta` con sesión, sin nombre público y con la cuenta `pending`,
-  verificado en el harness local.
+  de esa red y aterrizar en `/cuenta` con sesión, con el nombre de esa red ya en el perfil, anónima
+  y `pending`. Si esa dirección ya tenía cuenta, entra a ésa. Verificado en el harness local.
 
 ---
 
@@ -474,8 +479,9 @@ Cambiar de automática a con aprobación después es agregar un estado: barato.
 ## Assumptions
 
 - El correo con contraseña sigue siendo el método que no depende de un tercero. OAuth es una
-  alternativa, no un reemplazo: el catálogo cerrado, los botones sólo si están habilitados y la
-  prohibición de copiar nombre o foto de la red están en [ADR-039](../../docs/adr/039-oauth-nativo.md).
+  alternativa, no un reemplazo: el catálogo cerrado, los botones sólo si están habilitados, copiar
+  nombre y foto de la red como propuesta (no al muro) y unificar el mismo correo están en
+  [ADR-039](../../docs/adr/039-oauth-nativo.md).
 - Sin doble factor para el público, igual que hoy para el equipo. Una cuenta del público no da acceso
   a nada más que a sus propias reservas, así que el daño de un robo de credencial es acotado.
 - Sin captcha en esta versión. La confirmación de correo más el tope de reservas activas son la

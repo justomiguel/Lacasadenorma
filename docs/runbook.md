@@ -259,9 +259,10 @@ misma trampa que los enlaces del correo.
 **Sin `NEXT_PUBLIC_`.** Vacía: ningún botón.
 
 **5. Probar a mano, una vez**, el hop real: `/cuenta/crear` → Continuar con Google → autorizar →
-aterrizar en `/cuenta` sin nombre público. La cuenta nace `pending` (el equipo la habilita para
-reservar); el aviso de revisión no se muestra en la pantalla. El e2e no habla con Google: emula el
-canje en la API local.
+aterrizar en `/cuenta` con el nombre (y la foto, si Google la mandó) ya en el perfil, sin aparecer
+en el muro. La cuenta nace `pending` (el equipo la habilita para reservar); el aviso de revisión no
+se muestra en la pantalla. Si esa dirección ya tenía cuenta, se entra a ésa, no se crea otra. El
+e2e no habla con Google: emula el canje en la API local.
 
 Si el proveedor no entrega un correo (Apple con correo oculto), la pantalla de ingresar dice que sin
 correo no se puede crear la cuenta. No se inventa uno.

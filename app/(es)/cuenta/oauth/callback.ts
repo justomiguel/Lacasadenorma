@@ -6,7 +6,9 @@ import {
   oauthFailurePath,
   oauthSuccessPath,
 } from "@/src/application/accounts/oauth-result";
+import { getOwnAccount } from "@/src/application/accounts/own-account";
 import { localizeHref, type Locale } from "@/src/i18n/locale";
+import { accountDepsForClient } from "@/src/infrastructure/accounts/context";
 import { logger } from "@/src/infrastructure/logging/logger";
 import { createServerSupabaseClient } from "@/src/infrastructure/supabase/server-client";
 
@@ -72,6 +74,14 @@ export async function completeOAuth(
     await client.auth.signOut();
 
     return goTo(oauthFailurePath(locale, "oauthNoEmail"));
+  }
+
+  try {
+    // El mismo cliente que acaba de canjear: uno nuevo podría no ver todavía
+    // la cookie que se acaba de escribir, y el nombre de la red se perdería.
+    await getOwnAccount(accountDepsForClient(client), locale);
+  } catch (error) {
+    logger.error("No se pudo copiar el perfil de la red", { error });
   }
 
   const cookieStore = await cookies();

@@ -61,6 +61,36 @@ export function supabaseProviderOf(id: SocialProviderId): string {
   return SUPABASE_PROVIDER[id];
 }
 
+/**
+ * El `provider` que guarda GoTrue en `auth.identities` (`twitter`,
+ * `linkedin_oidc`, `google`). Nulo si es correo u otro IdP que no entra.
+ */
+export function socialProviderFromGoTrue(provider: string): SocialProviderId | null {
+  const token = provider.trim().toLowerCase();
+
+  if (token.length === 0 || token === "email") {
+    return null;
+  }
+
+  const aliased = ALIASES[token];
+
+  if (aliased !== undefined) {
+    return aliased;
+  }
+
+  if (isSocialProvider(token)) {
+    return token;
+  }
+
+  for (const id of SOCIAL_PROVIDER_IDS) {
+    if (SUPABASE_PROVIDER[id] === token) {
+      return id;
+    }
+  }
+
+  return null;
+}
+
 export interface ParsedSocialProviders {
   readonly providers: readonly SocialProviderId[];
   readonly unknown: readonly string[];

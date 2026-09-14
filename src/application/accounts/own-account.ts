@@ -8,6 +8,7 @@ import type { Logger } from "@/src/domain/ports/logger";
 import { LOCALES, type Locale } from "@/src/i18n/locale";
 
 import { accountError, accountOk, type AccountOutcome } from "./outcome";
+import { applySocialProfileHints } from "./social-profile";
 
 /**
  * Los tres casos de uso de la propia cuenta: verla, cambiarle las preferencias y
@@ -126,12 +127,20 @@ export async function getOwnAccount(
       }
     }
 
+    try {
+      await applySocialProfileHints(port, deps.logger);
+    } catch (error) {
+      deps.logger.error("No se pudo copiar el perfil de la red", { error });
+    }
+
     const pledges =
       deps.session.status === "ready"
         ? await deps.session.donations.listOwnPledges()
         : [];
 
-    return accountOk({ profile, pledges });
+    const current = (await port.readOwnProfile()) ?? profile;
+
+    return accountOk({ profile: current, pledges });
   } catch (error) {
     return describeFailure(deps, "leer tu cuenta", error);
   }

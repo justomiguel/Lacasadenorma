@@ -1,3 +1,4 @@
+import type { SocialProfileHints } from "@/src/domain/auth/social-profile";
 import type { DonorProfile } from "@/src/domain/entities/donor";
 import type { OwnPledge } from "@/src/domain/entities/donation-pledge";
 import type { AccountPort } from "@/src/domain/ports/accounts";
@@ -27,6 +28,9 @@ export class FakeAccountPort implements AccountPort {
   failWith: Error | null = null;
   uploadedName: string | null = null;
   ensureCalls = 0;
+  socialHints: SocialProfileHints | null = null;
+  importedPortraitFrom: string | null = null;
+  failPortraitImport = false;
 
   async readOwnProfile(): Promise<DonorProfile | null> {
     this.raiseIfAsked();
@@ -48,6 +52,28 @@ export class FakeAccountPort implements AccountPort {
     this.profile = fakeProfile({ locale: fallbackLocale });
 
     return { profile: this.profile, created: true };
+  }
+
+  async readSocialProfileHints(): Promise<SocialProfileHints | null> {
+    this.raiseIfAsked();
+
+    return this.socialHints;
+  }
+
+  async importPortraitFromUrl(url: string): Promise<DonorProfile | null> {
+    this.raiseIfAsked();
+
+    if (this.failPortraitImport) {
+      return null;
+    }
+
+    this.importedPortraitFrom = url;
+    this.profile = fakeProfile({
+      ...(this.profile ?? fakeProfile()),
+      portraitPath: `${FAKE_ACCOUNT_USER_ID}/retrato.jpg`,
+    });
+
+    return this.profile;
   }
 
   async saveOwnProfile(

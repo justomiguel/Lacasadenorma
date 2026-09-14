@@ -382,9 +382,37 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
     await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+    await expect(page.getByLabel(/nombre para mostrar/i)).toHaveValue(
+      /quien entra con google/i,
+    );
 
     await abrirSeccionDeCuenta(page, /acceso/i);
     await expect(page.getByText(/@local\.test/i)).toBeVisible();
+  });
+
+  test("entrar con Google usa la cuenta que ya existía con ese correo", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "oauth-link");
+
+    await crearCuenta(page, request, email);
+    await expect(page).toHaveURL(/\/cuenta$/);
+
+    const origen = new URL(page.url()).origin;
+    const volver = `${origen}/cuenta/oauth`;
+
+    await page.goto(
+      `${apiLocal()}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(volver)}&email=${encodeURIComponent(email)}`,
+    );
+
+    await expect(page).toHaveURL(/\/cuenta$/);
+    await expect(page.getByLabel(/nombre para mostrar/i)).toHaveValue(
+      /quien entra con google/i,
+    );
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(email)).toBeVisible();
   });
 
   test("el callback OAuth no respeta un next de la query", async ({ page }) => {
