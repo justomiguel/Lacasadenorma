@@ -70,6 +70,9 @@ test.describe("fase D · reservas", () => {
     request,
     browser,
   }, info) => {
+    // Dos altas del público, dos habilitaciones y el cruce: el muro ya pide 90 s
+    // para el mismo armado. 45 s cortaba en CI con el navegador ya cerrado.
+    test.setTimeout(90_000);
     const sufijo = sufijoUnico(info.project.name);
     const titulo = `Última bolsa (${sufijo})`;
     const emailA = correoDePrueba(info.project.name, "reserva-a");
@@ -94,12 +97,20 @@ test.describe("fase D · reservas", () => {
         await habilitarCuenta(staffPage, emailA);
         await habilitarCuenta(staffPage, emailB);
 
+        // Las dos personas tienen que ver el formulario **antes** de que A
+        // reserve: un ítem cubierto se sigue mostrando, pero ya no se ofrece
+        // (FR-210). Si B entra después, no hay botón que apretar.
         await paginaA.goto("/catalogo");
-        const articuloA = paginaA.locator("article").filter({ hasText: titulo });
+        await paginaB.goto("/catalogo");
 
-        await articuloA
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        const articuloA = paginaA.locator("article").filter({ hasText: titulo });
+        const articuloB = paginaB.locator("article").filter({ hasText: titulo });
+        const reservar = /anotarme para traer esto/i;
+
+        await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
+        await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
+
+        await articuloA.getByRole("button", { name: reservar }).click();
         await expect(paginaA).toHaveURL(/\/cuenta$/);
         await expect(
           paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
@@ -107,15 +118,10 @@ test.describe("fase D · reservas", () => {
         await expect(paginaA.getByText(titulo)).toBeVisible();
         await expect(paginaA.getByText(/vence el/i)).toBeVisible();
 
-        await paginaB.goto("/catalogo");
-        const articuloB = paginaB.locator("article").filter({ hasText: titulo });
-
-        await articuloB
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        await articuloB.getByRole("button", { name: reservar }).click();
         await expect(paginaB).toHaveURL(new RegExp(`/catalogo\\?conflicto=${itemId}$`));
         await expect(paginaB.getByText(/alguien se adelantó/i).first()).toBeVisible();
-        await expect(paginaB.getByText(/ya está cubierto/i)).toBeVisible();
+        await expect(articuloB.getByText(/ya está cubierto/i)).toBeVisible();
 
         await paginaA.getByRole("button", { name: /cancelar esta reserva/i }).click();
         await expect(paginaA.getByText(/la cancelaste/i)).toBeVisible();

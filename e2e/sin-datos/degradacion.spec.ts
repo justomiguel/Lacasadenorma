@@ -30,11 +30,13 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
       const texto = (await page.locator("main").innerText()).trim();
+      // Contacto es una ficha —nombre, teléfono, cuatro vías—, no un artículo.
+      const minimo = pagina.path === "/contacto" ? 200 : 400;
 
       expect(
         texto.length,
         `${pagina.path} tendría que tener contenido de lectura`,
-      ).toBeGreaterThan(400);
+      ).toBeGreaterThan(minimo);
     });
   }
 
@@ -86,6 +88,11 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
 
     expect(texto.length).toBeGreaterThan(200);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("link", { name: /quién fue Norma/i })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /qué hay que reconstruir/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /cómo colaborar/i })).toBeVisible();
   });
 
   test("la API pública informa la indisponibilidad sin romperse", async ({ request }) => {

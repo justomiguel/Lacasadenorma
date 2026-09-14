@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
-import { apiLocal, entrar, primeraFila, tokenDe } from "./backoffice";
+import { apiLocal, CUENTAS, entrar, primeraFila, tokenDe } from "./backoffice";
 
 /**
  * Cargar un ítem publicado desde el backoffice, como lo haría el equipo.
@@ -96,15 +96,22 @@ export async function confirmarLlegada(page: Page, titulo: string): Promise<void
 }
 
 export async function habilitarCuenta(page: Page, email: string): Promise<void> {
-  const salir = page.getByRole("button", { name: /cerrar sesión/i });
+  const yaAdmin = page.getByText(CUENTAS.admin);
 
-  if (await salir.isVisible()) {
-    await salir.click();
-    await expect(page).toHaveURL(/\/admin\/login/);
+  if (!(await yaAdmin.isVisible())) {
+    const salir = page.getByRole("button", { name: /cerrar sesión/i });
+
+    if (await salir.isVisible()) {
+      await salir.click();
+      await expect(page).toHaveURL(/\/admin\/login/);
+    }
+
+    await entrar(page, "admin");
   }
 
-  await entrar(page, "admin");
-  await page.goto("/admin/donantes");
+  if (!page.url().includes("/admin/donantes")) {
+    await page.goto("/admin/donantes");
+  }
 
   const fila = page.locator("li").filter({ hasText: email });
 

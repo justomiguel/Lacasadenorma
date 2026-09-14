@@ -20,6 +20,13 @@ test.describe("i18n estructural", () => {
 
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("link", { name: "Help rebuild" }).first()).toBeVisible();
+
+    const castellano = page.getByRole("link", { name: "Castellano" });
+
+    if ((await castellano.count()) === 0) {
+      await page.getByRole("button", { name: "Open the menu" }).click();
+    }
+
     await expect(page.getByRole("link", { name: "Castellano" })).toBeVisible();
   });
 

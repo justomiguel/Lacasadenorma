@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { getContent } from "@/content/pack";
 import { COUNTRY_NAMES } from "@/src/domain/entities";
@@ -14,6 +14,16 @@ import { COUNTRY_NAMES } from "@/src/domain/entities";
 
 const { help, ui } = getContent("es");
 
+/**
+ * El panel del país, no el de «Aportar». HelpTabs ya es un tablist, y el de
+ * país vive adentro: `getByRole("tabpanel")` a secas cuenta los dos.
+ */
+function panelDePais(page: Page) {
+  return page
+    .getByRole("tablist", { name: ui.home.donateTitle })
+    .locator("xpath=following-sibling::*[@role='tabpanel']");
+}
+
 test.describe("flujo 4 · elegir desde dónde aportar", () => {
   test("el selector de país es un tablist con teclado", async ({ page }) => {
     await page.goto("/ayudar");
@@ -22,8 +32,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
 
     await expect(paises).toBeVisible();
     await expect(paises.getByRole("tab")).toHaveCount(3);
-
-    await expect(page.getByRole("tabpanel")).toHaveCount(1);
+    await expect(panelDePais(page)).toBeVisible();
 
     const primera = paises.getByRole("tab").first();
 
@@ -50,7 +59,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await page.goto("/ayudar");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
-    const panel = page.getByRole("tabpanel");
+    const panel = panelDePais(page);
 
     await paises.getByRole("tab", { name: ui.countries.AR }).click();
 
@@ -72,7 +81,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
   }) => {
     await page.goto("/ayudar");
 
-    const panel = page.getByRole("tabpanel");
+    const panel = panelDePais(page);
 
     // Alias, CBU y número de cuenta se copian; titular y CUIT se leen para verificar.
     await expect(panel.locator("[data-figure]")).toHaveCount(3);
@@ -90,7 +99,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await page.goto("/ayudar");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
-    const panel = page.getByRole("tabpanel");
+    const panel = panelDePais(page);
 
     await paises.getByRole("tab", { name: ui.countries.CL }).click();
 
@@ -108,7 +117,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await page.goto("/ayudar");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
-    const panel = page.getByRole("tabpanel");
+    const panel = panelDePais(page);
 
     const arHref = help.mercadoPagoUrl.AR;
     const clHref = help.mercadoPagoUrl.CL;
@@ -190,11 +199,14 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
 
     const seccion = page.locator("#donaciones");
 
+    // HelpTabs se hidrata después: sin JS los países vienen apilados, con JS
+    // son un tablist. Lo que no puede faltar son los datos, en los dos casos.
     await expect(
-      seccion.getByRole("tablist", { name: ui.home.donateTitle }),
+      seccion.getByRole("heading", { name: ui.home.helpTitle.replaceAll("\n", " ") }),
     ).toBeVisible();
     await expect(
       seccion.getByRole("button", { name: /^copiar$/i }).first(),
     ).toBeVisible();
+    await expect(seccion.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
   });
 });

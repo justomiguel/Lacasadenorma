@@ -45,22 +45,31 @@ async function vencerReserva(incoming, outgoing) {
     return;
   }
 
+  /**
+   * El `WITH` de escritura tiene que ir al tope de la sentencia. Postgres no
+   * admite un CTE que hace `UPDATE` adentro de un `SELECT` (`select coalesce((with
+   * marked as (update …)))`): lo rechaza con "WITH clause containing a
+   * data-modifying statement must be at the top level".
+   */
   const resultado = await query(
     `
-      select coalesce((
-        with marked as (
-          update public.donation_pledges
-             set expires_at = now() - interval '1 minute'
-           where id = :'id'::uuid
-             and status = 'reserved'
-          returning item_id
-        )
-        select json_build_object(
-          'itemId', m.item_id,
-          'released', public.release_expired_holds(m.item_id)
-        )
-        from marked m
-      ), 'null'::json);
+      with marked as (
+        update public.donation_pledges
+           set expires_at = now() - interval '1 minute'
+         where id = :'id'::uuid
+           and status = 'reserved'
+        returning item_id
+      )
+      select coalesce(
+        (
+          select json_build_object(
+            'itemId', m.item_id,
+            'released', public.release_expired_holds(m.item_id)
+          )
+          from marked m
+        ),
+        'null'::json
+      );
     `,
     { id: pledgeId.toLowerCase() },
   );

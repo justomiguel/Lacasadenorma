@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { getContent } from "@/content/pack";
+
+const { ui } = getContent("es");
+
 /**
  * Flujo crítico 5: copiar el dato de la cuenta.
  *
@@ -22,7 +26,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   }) => {
     await page.goto("/ayudar");
 
-    const panel = page.getByRole("tabpanel");
+    const panel = page.getByRole("tabpanel", { name: ui.countries.AR });
     const dato = panel.locator("[data-figure]").first();
     const esperado = (await dato.innerText()).trim();
 
@@ -43,7 +47,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   }) => {
     await page.goto("/ayudar");
 
-    const panel = page.getByRole("tabpanel");
+    const panel = page.getByRole("tabpanel", { name: ui.countries.AR });
     // Por posición y no por nombre accesible: el nombre es justamente lo que va a
     // cambiar, y un localizador por nombre dejaría de encontrar el botón que acaba de
     // apretarse.
@@ -65,7 +69,10 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   }) => {
     await page.goto("/ayudar");
 
-    const dato = page.getByRole("tabpanel").locator("[data-figure]").first();
+    const dato = page
+      .getByRole("tabpanel", { name: ui.countries.AR })
+      .locator("[data-figure]")
+      .first();
 
     // Nada de `user-select: none` ni de un valor escondido detrás del botón: si el
     // portapapeles falla, seleccionar y copiar a mano tiene que seguir siendo posible.
@@ -80,7 +87,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
     await page.goto("/ayudar");
 
     const boton = page
-      .getByRole("tabpanel")
+      .getByRole("tabpanel", { name: ui.countries.AR })
       .getByRole("button", { name: /copiar|copiado/i })
       .first();
 
