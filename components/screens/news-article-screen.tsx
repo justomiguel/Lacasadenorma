@@ -71,7 +71,6 @@ export async function generateNewsMetadata(
   }
 
   const update = result.data;
-  const cover = update.media[0];
 
   return pageMetadata({
     locale,
@@ -79,16 +78,6 @@ export async function generateNewsMetadata(
     description: excerpt(update.body),
     path: `/novedades/${update.slug}`,
     ...(update.publishedAt === null ? {} : { publishedTime: update.publishedAt }),
-    ...(cover === undefined
-      ? {}
-      : {
-          image: {
-            url: cover.url,
-            width: cover.width,
-            height: cover.height,
-            alt: cover.alt,
-          },
-        }),
   });
 }
 

@@ -107,11 +107,17 @@ pero no tiene nada que valga indexar.
 La mayoría de la gente va a llegar desde WhatsApp. Esa es la vista previa que más importa, y la que
 tiene las reglas más rígidas.
 
-`app/(es)/opengraph-image.tsx` (y su par en `/en`) genera una imagen de 1200×630 con `ImageResponse` para la home: el símbolo 01 ORIGINAL, el nombre, la bajada y la foto de esa noche.
+`/compartir/tarjeta` genera una imagen de 1200×630 con `ImageResponse`: el símbolo 01 ORIGINAL, el
+título de **esa** página y su descripción SEO. No lleva foto. Facebook, WhatsApp y X toman esa
+imagen porque `pageMetadata()` y `rootMetadata()` la declaran siempre como `og:image` (ADR-036). La
+ruta canónica va en la query (`ruta=/norma&lang=es`); el texto no. Una ruta que no está en la lista
+blanca vuelve al copy de la home.
 
-Las demás páginas públicas declaran `og:image` con una foto real de esa página —el recorte de esa noche en Historia, la limpieza en la obra y en Cómo ayudar, el retrato en Norma, la portada del libro en el legado—. Si una página no eligió foto, `pageMetadata` usa el recorte 16:9 de esa noche, para que WhatsApp nunca arme una tarjeta sin imagen.
+Las fotos reales siguen estructurando las páginas y las `PreviewCard` internas. Dejaron de ser la
+tarjeta del enlace.
 
-`e2e/comun/compartir.spec.ts` verifica que la imagen responda 200 con un `Content-Type` de imagen, en la home y en las páginas que se reenvían.
+`e2e/comun/compartir.spec.ts` verifica que la imagen responda 200 con un PNG, que la URL sea la de
+la tarjeta de la marca, y que `/norma` lleve su descripción SEO real.
 
 ---
 

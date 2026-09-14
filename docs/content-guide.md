@@ -310,7 +310,10 @@ Las inglesas existen para el conmutador de idioma (`/en/ayudar/paypal/completada
 El logo de PayPal (y el de Mercado Pago, Brubank, Scotiabank, WhatsApp y el resto) va al lado del
 nombre en tabs, botones y encabezados de canal. El catálogo es `content/brands.ts`;
 `npm run check:marcas` lo exige. El símbolo de **esta** marca —el círculo 01 ORIGINAL— vive en
-`public/marca/` y no en `public/marcas/` (ADR-035).
+`public/marca/` y no en `public/marcas/` (ADR-035). Las otras variantes de la lámina también están
+ahí, catalogadas en `content/marca.ts` con la superficie en la que van; `npm run check:marca` lo
+exige. Al compartir, Facebook y WhatsApp ven ese círculo y el texto de **esa** página, no una foto
+(ADR-036).
 
 Esas páginas no van al menú ni al sitemap, y declaran `noindex`: no se buscan, se llega desde PayPal.
 No publican el monto ni el identificador que PayPal a veces pone en la query: un redirect no es un

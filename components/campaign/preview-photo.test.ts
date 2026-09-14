@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { getContent } from "@/content";
 
-import { ogImageFrom, previewPhotoFor } from "./preview-photo";
+import { previewPhotoFor } from "./preview-photo";
 
 const DESTINOS = [
   "/que-paso",
@@ -48,6 +48,5 @@ describe("previewPhotoFor", () => {
 
   it("un destino sin tramo no inventa una foto", () => {
     expect(previewPhotoFor("/contacto", "es")).toBeNull();
-    expect(ogImageFrom("/contacto", "es")).toBeUndefined();
   });
 });

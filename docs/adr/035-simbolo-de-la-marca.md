@@ -41,6 +41,14 @@ desmentían la identidad que la lámina acaba de fijar.
 5. **JSON-LD `Organization.logo` apunta al PNG público.** Es un dato verdadero
    —el símbolo existe y se ve— y Google lo pide. No se inventa otro archivo
    «para SEO».
+6. **Las doce variantes de la lámina (y las tres redondas de perfil) se recortan
+   y se catalogan**, cada una con la superficie en la que va. El sitio pinta
+   **original**. El resto está para no volver a abrir la lámina: un avatar, un
+   fondo negro, un monocromo de imprenta. La 05 TERRACOTA se guarda y **no se
+   usa en producto** ([ADR-024](./024-tercera-direccion-visual.md)). Catálogo:
+   `content/marca.ts`. Compuerta: `npm run check:marca`.
+7. **Al compartir, la previa es el símbolo más el texto de esa página**, no una
+   foto del incendio ni del retrato. Lo desarrolla [ADR-036](./036-tarjeta-de-compartir.md).
 
 ## Alternativas descartadas
 
@@ -58,7 +66,9 @@ desmentían la identidad que la lámina acaba de fijar.
 - `components/site/mark.tsx` es la única pieza que sabe la ruta y las medidas.
   El test lee el IHDR del PNG: si el archivo se mueve o se recorta de nuevo y
   nadie actualiza las medidas, falla.
-- La tarjeta de Open Graph lleva el símbolo en lugar de la raya verde. WhatsApp
-  ve la misma marca que el encabezado.
+- La tarjeta de Open Graph es el símbolo y el copy de **esa** página (ADR-036).
+  WhatsApp ve la misma marca que el encabezado, no una foto recortada.
 - El encabezado gana ~40 px a la izquierda (símbolo 32 + hueco 8). En 320 px el
   nombre sigue en una línea: se revisó.
+- `public/marca/` es el catálogo de la marca propia. `public/marcas/` sigue
+  siendo el de terceros. Las dos carpetas no se mezclan.

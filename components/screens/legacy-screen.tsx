@@ -1,5 +1,4 @@
 import { HelpCta } from "@/components/campaign/help-cta";
-import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { Callout } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
@@ -11,14 +10,12 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 export function legacyMetadata(locale: Locale) {
   const { legacy, ui } = getContent(locale);
-  const image = ogImageFrom("/legado", locale);
 
   return pageMetadata({
     locale,
     title: legacy.title,
     description: ui.legacyPage.seoDescription,
     path: "/legado",
-    ...(image === undefined ? {} : { image }),
   });
 }
 

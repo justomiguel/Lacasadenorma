@@ -8,7 +8,8 @@ import type { Locale } from "@/src/i18n/locale";
  * Cada destino de la home y de las preguntas tiene una foto que ya existe: no se
  * inventa un retrato para «Cómo ayudar» ni se deja la tarjeta vacía. Si el
  * material de ese tramo todavía no está, se devuelve `null` y `PreviewCard`
- * reserva el hueco.
+ * reserva el hueco. No es la imagen de Open Graph: al compartir va el símbolo
+ * (ADR-036).
  */
 export function previewPhotoFor(href: string, locale: Locale): Photograph | null {
   const { norma, reconstruction, whatHappened } = getContent(locale);
@@ -36,30 +37,4 @@ export function previewPhotoFor(href: string, locale: Locale): Photograph | null
     default:
       return null;
   }
-}
-
-/** Foto de un tramo, lista para `pageMetadata({ image })`. */
-export function ogImageFrom(
-  href: string,
-  locale: Locale,
-):
-  | {
-      readonly url: string;
-      readonly width: number;
-      readonly height: number;
-      readonly alt: string;
-    }
-  | undefined {
-  const photo = previewPhotoFor(href, locale);
-
-  if (photo === null) {
-    return undefined;
-  }
-
-  return {
-    url: photo.url,
-    width: photo.width,
-    height: photo.height,
-    alt: photo.alt,
-  };
 }

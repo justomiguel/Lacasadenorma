@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { cn } from "@/components/design-system/cn";
+import { DEFAULT_MARK } from "@/content/marca";
 
 /**
  * El símbolo de La Casa de Norma: el círculo 01 ORIGINAL.
@@ -10,11 +11,7 @@ import { cn } from "@/components/design-system/cn";
  * veces. Las medidas son las del PNG recortado; el tamaño visible sale de la
  * escala de espacio, no de un valor arbitrario.
  */
-export const SITE_MARK = {
-  src: "/marca/simbolo.png",
-  width: 198,
-  height: 198,
-} as const;
+export const SITE_MARK = DEFAULT_MARK;
 
 const SIZES = {
   lg: "size-lg",

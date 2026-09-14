@@ -4,6 +4,8 @@ import path from "node:path";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { DEFAULT_MARK, MARK_VARIANTS } from "@/content/marca";
+
 import { SITE_MARK, SiteMark } from "./mark";
 
 vi.mock("next/image", () => ({
@@ -35,11 +37,16 @@ function pngSize(file: string): { width: number; height: number } {
 }
 
 describe("SiteMark", () => {
-  it("el archivo recortado existe y mide lo que declara el componente", () => {
-    const file = path.join(process.cwd(), "public", SITE_MARK.src.replace(/^\//, ""));
-    const size = pngSize(file);
+  it("cada variante recortada existe y mide lo que declara el catálogo", () => {
+    expect(SITE_MARK).toBe(DEFAULT_MARK);
+    expect(DEFAULT_MARK).toBe(MARK_VARIANTS.original);
 
-    expect(size).toEqual({ width: SITE_MARK.width, height: SITE_MARK.height });
+    for (const [id, variant] of Object.entries(MARK_VARIANTS)) {
+      const file = path.join(process.cwd(), "public", variant.src.replace(/^\//u, ""));
+      const size = pngSize(file);
+
+      expect(size, id).toEqual({ width: variant.width, height: variant.height });
+    }
   });
 
   it("el favicon y el icono de Apple salen de ese recorte, en los tamaños que Next espera", () => {

@@ -56,7 +56,7 @@ test.describe("flujo 6 · compartir la campaña", () => {
     });
   }
 
-  test("las páginas públicas llevan imagen en la vista previa al compartir", async ({
+  test("las páginas públicas llevan el símbolo y el texto de esa página al compartir", async ({
     page,
     request,
   }) => {
@@ -66,6 +66,9 @@ test.describe("flujo 6 · compartir la campaña", () => {
       const imagen = await contenidoDeMeta(page, "og:image");
 
       expect(imagen, `${pagina.path} necesita og:image`).toBeTruthy();
+      expect(imagen, `${pagina.path} tiene que usar la tarjeta de la marca`).toContain(
+        "/compartir/tarjeta",
+      );
 
       const respuesta = await request.get(imagen ?? "");
 
@@ -75,6 +78,28 @@ test.describe("flujo 6 · compartir la campaña", () => {
       ).toBe(200);
       expect(respuesta.headers()["content-type"]).toMatch(/image\//);
     }
+  });
+
+  test("Facebook ve el símbolo y la descripción de Norma, no una foto", async ({
+    page,
+    request,
+  }) => {
+    const { ui } = getContent("es");
+
+    await page.goto("/norma");
+
+    const imagen = await contenidoDeMeta(page, "og:image");
+    const descripcion = await contenidoDeMeta(page, "og:description");
+
+    expect(imagen).toContain("/compartir/tarjeta");
+    expect(imagen).toContain("ruta=%2Fnorma");
+    expect(descripcion).toBe(ui.normaPage.seoDescription);
+
+    const respuesta = await request.get(imagen ?? "");
+    const cuerpo = await respuesta.body();
+
+    expect(respuesta.status()).toBe(200);
+    expect(cuerpo.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
   });
 
   test("los enlaces para compartir existen en el HTML, sin depender de JavaScript", async ({

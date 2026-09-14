@@ -1,4 +1,3 @@
-import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { StructuredData } from "@/components/site/structured-data";
 import { getContent } from "@/content";
 import { fill } from "@/src/i18n/fill";
@@ -29,14 +28,11 @@ export function normaMetadata(locale: Locale) {
   const { norma, ui } = getContent(locale);
   const title = fill(ui.normaPage.title, { name: norma.fullName });
 
-  const image = ogImageFrom("/norma", locale);
-
   return pageMetadata({
     locale,
     title,
     description: ui.normaPage.seoDescription,
     path: "/norma",
-    ...(image === undefined ? {} : { image }),
   });
 }
 

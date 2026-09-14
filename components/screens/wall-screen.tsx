@@ -1,5 +1,4 @@
 import { Unavailable } from "@/components/campaign/unavailable";
-import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { formatLongDate } from "@/components/design-system/dates";
@@ -20,14 +19,12 @@ export const revalidate = 300;
 
 export function wallMetadata(locale: Locale) {
   const { wall } = getContent(locale);
-  const image = ogImageFrom("/quienes-ayudaron", locale);
 
   return pageMetadata({
     locale,
     title: wall.title,
     description: wall.seoDescription,
     path: "/quienes-ayudaron",
-    ...(image === undefined ? {} : { image }),
   });
 }
 

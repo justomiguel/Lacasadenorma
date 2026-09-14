@@ -1,5 +1,4 @@
 import { Unavailable } from "@/components/campaign/unavailable";
-import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { CatalogFocus } from "@/components/catalog/focus";
 import { CatalogItem } from "@/components/catalog/item";
 import { ConflictNotice } from "@/components/catalog/conflict-notice";
@@ -22,14 +21,12 @@ export const revalidate = 300;
 
 export function catalogMetadata(locale: Locale) {
   const { catalog } = getContent(locale);
-  const image = ogImageFrom("/catalogo", locale);
 
   return pageMetadata({
     locale,
     title: catalog.title,
     description: catalog.seoDescription,
     path: "/catalogo",
-    ...(image === undefined ? {} : { image }),
   });
 }
 

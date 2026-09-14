@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { pageMetadata, rootMetadata } from "./metadata";
+import { shareCardUrl } from "./share-copy";
 
 describe("pageMetadata", () => {
   it("la canónica es la URL de este idioma, y los hreflang listan los dos", () => {
@@ -20,27 +21,26 @@ describe("pageMetadata", () => {
     expect(es.openGraph?.locale).toBe("es_AR");
     expect(es.openGraph?.alternateLocale).toEqual(["en_US"]);
     expect(es.openGraph?.images).toEqual([
-      expect.objectContaining({ url: "/fotos/incendio-bomberos-frente-hero.jpg" }),
+      expect.objectContaining({
+        url: shareCardUrl("/norma", "es"),
+        width: 1200,
+        height: 630,
+      }),
     ]);
   });
 
-  it("si la página elige foto, esa es la de la vista previa", () => {
+  it("la previa al compartir es la tarjeta del símbolo, no una foto de la página", () => {
     const meta = pageMetadata({
       locale: "es",
       title: "El legado",
       description: "La intención futura, todavía sin organización constituida.",
       path: "/legado",
-      image: {
-        url: "/fotos/norma-libro-portada.jpg",
-        width: 1054,
-        height: 1492,
-        alt: "Portada del libro",
-      },
     });
 
     expect(meta.openGraph?.images).toEqual([
-      expect.objectContaining({ url: "/fotos/norma-libro-portada.jpg" }),
+      expect.objectContaining({ url: shareCardUrl("/legado", "es") }),
     ]);
+    expect(JSON.stringify(meta.openGraph?.images)).not.toContain("/fotos/");
   });
 
   it("noIndex apaga el rastreo sin sacar la canónica", () => {
@@ -72,6 +72,9 @@ describe("pageMetadata", () => {
     });
     expect(en.openGraph?.locale).toBe("en_US");
     expect(en.openGraph?.alternateLocale).toEqual(["es_AR"]);
+    expect(en.openGraph?.images).toEqual([
+      expect.objectContaining({ url: shareCardUrl("/norma", "en") }),
+    ]);
   });
 });
 
@@ -84,5 +87,14 @@ describe("rootMetadata", () => {
       en: "/en",
       "x-default": "/",
     });
+  });
+
+  it("la home también declara la tarjeta del símbolo", () => {
+    const es = rootMetadata("es");
+
+    expect(es.openGraph?.images).toEqual([
+      expect.objectContaining({ url: shareCardUrl("/", "es") }),
+    ]);
+    expect(es.twitter?.images).toEqual([shareCardUrl("/", "es")]);
   });
 });

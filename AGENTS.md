@@ -75,7 +75,9 @@ La fotografía estructura la página. Las editoriales viven en `public/fotos/` d
 `content/*.json`; las del avance vienen de la base con cada novedad. Sin foto real no se pone stock ni
 ilustración: se reserva el espacio y se dice qué va ahí, y el hueco se cuenta: `revision-visual.spec.ts`
 exige el número **exacto** de espacios reservados por página, así que si el material llegó y nadie lo
-ubicó, falla. `npm run check:fotos` comprueba que cada foto declarada exista y mida lo que dice.
+ubicó, falla. `npm run check:fotos` comprueba que cada foto declarada exista y mida lo que dice. Al
+compartir, la previa social es el símbolo 01 ORIGINAL y el texto de esa página, no una foto
+(ADR-036).
 
 ## Comandos
 
@@ -87,6 +89,7 @@ npm run test:e2e         # Playwright
 npm run db:verify        # Postgres local: reset + migraciones + advisors + pgTAP
 npm run check:toolchain  # las versiones de las herramientas son las decididas
 npm run check:marcas     # cada marca de terceros tiene logo y se usa al lado del nombre
+npm run check:marca      # cada variante propia tiene archivo y las medidas del catálogo
 npm run check:rls        # ninguna policy le abre el acceso a cualquiera que se registre
 ```
 

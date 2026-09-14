@@ -1,4 +1,3 @@
-import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { InlineLink } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
@@ -19,14 +18,12 @@ export const revalidate = 300;
 
 export function newsIndexMetadata(locale: Locale) {
   const { ui } = getContent(locale);
-  const image = ogImageFrom("/novedades", locale);
 
   return pageMetadata({
     locale,
     title: ui.news.title,
     description: ui.news.seoDescription,
     path: "/novedades",
-    ...(image === undefined ? {} : { image }),
   });
 }
 

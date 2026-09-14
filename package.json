@@ -35,11 +35,12 @@
     "check:placeholders": "node scripts/check-no-placeholders.mjs",
     "check:secrets": "node scripts/check-no-client-secrets.mjs",
     "check:fotos": "node scripts/check-fotos.mjs",
+    "check:marca": "node scripts/check-marca.mjs",
     "check:marcas": "node scripts/check-marcas.mjs",
     "check:rls": "node scripts/check-rls.mjs",
     "check:toolchain": "node scripts/check-toolchain.mjs",
     "remind:pledges": "node scripts/remind-pledges.mjs",
-    "verify": "npm run check:toolchain && npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run check:placeholders && npm run check:secrets && npm run check:rls && npm run check:fotos && npm run check:marcas && npm run build"
+    "verify": "npm run check:toolchain && npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run check:placeholders && npm run check:secrets && npm run check:rls && npm run check:fotos && npm run check:marcas && npm run check:marca && npm run build"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

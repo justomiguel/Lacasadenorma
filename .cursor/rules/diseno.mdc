@@ -25,6 +25,12 @@ estar igual en una fintech o en un panel, no va acá.
 - Paleta: verde bosque `#153A2E`, oliva, sage, beige/blanco roto, carbón. El verde se usa poco.
 - Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas de la familia.
 - Fotos reales de `public/fotos/`, sin radio ni borde. Prohibido stock, IA y placeholders.
+- **Marca propia.** El círculo 01 ORIGINAL (`content/marca.ts`, `DEFAULT_MARK`)
+  es el símbolo del sitio: encabezado, menú, pie, favicon y tarjetas de
+  compartir. Las otras variantes de la lámina están recortadas en
+  `public/marca/` y catalogadas con la superficie en la que van. No se pintan
+  todas: estar disponibles es el punto. La 05 TERRACOTA no entra al producto
+  (ADR-024). Compuerta: `npm run check:marca`.
 - **Marcas de terceros.** PayPal, Mercado Pago, Brubank, Scotiabank, WhatsApp y cualquier otra
   marca que aparezca como tab, botón, encabezado de canal o enlace lleva **su logo al lado del
   nombre**. Catálogo en `content/brands.ts`; SVG en `public/marcas/` con `fill="currentColor"`.

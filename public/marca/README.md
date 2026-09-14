@@ -1,13 +1,12 @@
 # Marca
 
-Símbolo de La Casa de Norma. Es la variante **01 ORIGINAL** de la lámina de
-identidad (círculo verde principal, perfil en papel), recortada del círculo:
-sin el wordmark, sin la lámina completa.
+Variantes del símbolo de La Casa de Norma, recortadas de la lámina de
+identidad. Sólo el círculo: el wordmark no entra (ADR-035).
 
-El nombre se escribe al lado, en Playfair, porque el sitio ya lo tiene en dos
-idiomas y en el tamaño del encabezado. Meter el lockup entero duplicaría el
-texto y pelearía con la serif del sistema (ADR-035).
+El catálogo —archivo, medidas y **en qué superficie va cada una**— vive en
+`content/marca.ts`. El sitio pinta **original** (`simbolo.png`) en el
+encabezado, el menú, el pie, el favicon y las tarjetas de compartir. El resto
+está para no volver a abrir la lámina.
 
-No es una fotografía ni una marca de terceros: no entra en `check:fotos` ni en
-`check:marcas`. Que el archivo exista y mida lo que declara `SITE_MARK` lo
-comprueba `components/site/mark.test.tsx`.
+No son fotografías ni marcas de terceros: no entran en `check:fotos` ni en
+`check:marcas`. La compuerta es `npm run check:marca`.
