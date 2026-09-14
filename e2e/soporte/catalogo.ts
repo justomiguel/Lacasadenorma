@@ -112,7 +112,14 @@ export async function dejarElCatalogoDelFixture(
   await esperarHuecosDelCatalogo(request, 1);
 }
 
-const MARCA_HUECO = "data-espacio-reservado";
+/**
+ * El atributo en el HTML, no el payload RSC. En un ítem el marcador aparece
+ * dos veces en el documento (`"data-espacio-reservado":true` y
+ * `data-espacio-reservado="true"`); contar la cadena cruda da el doble.
+ */
+function huecosEnHtml(html: string): number {
+  return html.match(/\sdata-espacio-reservado=/g)?.length ?? 0;
+}
 
 async function esperarHuecosDelCatalogo(
   request: APIRequestContext,
@@ -122,7 +129,7 @@ async function esperarHuecosDelCatalogo(
     .poll(
       async () => {
         const primera = await (await request.get("/catalogo")).text();
-        let huecos = primera.split(MARCA_HUECO).length - 1;
+        let huecos = huecosEnHtml(primera);
 
         if (huecos === esperado) {
           return huecos;
@@ -130,7 +137,7 @@ async function esperarHuecosDelCatalogo(
 
         const segunda = await (await request.get("/catalogo")).text();
 
-        huecos = segunda.split(MARCA_HUECO).length - 1;
+        huecos = huecosEnHtml(segunda);
 
         if (huecos !== esperado) {
           const marca = await request.post("/e2e/revalidar", {
