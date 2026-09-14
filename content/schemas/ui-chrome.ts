@@ -32,6 +32,7 @@ export const uiChromeSchema = z.object({
   linkCopiedLive: phrase,
   languageName: phrase,
   otherLanguageName: phrase,
+  signIn: phrase,
   countryTabsLabel: phrase,
   homeLabel: phrase,
   legalLabel: phrase,

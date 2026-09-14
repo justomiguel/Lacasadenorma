@@ -27,6 +27,11 @@ test.describe("navegación", () => {
         `falta ${item.href} en el menú`,
       ).toBeVisible();
     }
+
+    await expect(
+      menu.getByRole("link", { name: /^ingresar$/i }),
+      "falta Ingresar en el menú",
+    ).toBeVisible();
   });
 
   test("en escritorio las cinco secciones están en el encabezado", async ({ page }) => {
@@ -41,6 +46,11 @@ test.describe("navegación", () => {
         `falta ${item.href} en el encabezado`,
       ).toBeVisible();
     }
+
+    await expect(
+      encabezado.getByRole("link", { name: /^ingresar$/i }),
+      "falta Ingresar en el encabezado",
+    ).toBeVisible();
   });
 
   test("el encabezado marca la página abierta", async ({ page }) => {

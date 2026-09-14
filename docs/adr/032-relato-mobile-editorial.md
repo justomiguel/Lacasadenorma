@@ -41,8 +41,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 3. **El encabezado es el nombre y el menú.** 60 px, transparente sobre la foto de la
    apertura, papel con un desenfoque de 6 px y una regla casi imperceptible al
    desplazarse; fijo sobre papel en las interiores. En teléfono no hay más botones: el
-   idioma y la acción de ayudar viven dentro del menú a pantalla completa, que
-   respeta las áreas seguras y entra con un escalón de 40 ms por ítem.
+   idioma, ingresar y la acción de ayudar viven dentro del menú a pantalla
+   completa, que respeta las áreas seguras y entra con un escalón de 40 ms por
+   ítem. En escritorio, Ingresar va al lado del idioma, como texto, sin caja.
 
 4. **La apertura es una foto, no una franja.** 82 svh en teléfono, 90 en escritorio,
    a sangrado. Dirección de arte con `<picture>`: el fotograma vertical de esa noche

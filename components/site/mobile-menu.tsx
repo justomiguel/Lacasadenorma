@@ -11,15 +11,15 @@ import { localizedHref } from "@/src/i18n/href";
 import { htmlLang, otherLocale, type Locale } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
-import { PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
+import { ACCOUNT_HREF, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
 /**
  * El menú del teléfono, a pantalla completa (ADR-032).
  *
- * Es corto a propósito: las cinco secciones en la serif de display, tres enlaces
- * chicos, el idioma abajo y la acción de ayudar. Respeta las áreas seguras del
- * teléfono con `safe-top` y `safe-bottom`. Cada ítem entra con un escalón de
- * 40 ms; con `prefers-reduced-motion` no se mueve nada.
+ * Es corto a propósito: las cinco secciones en la serif de display, los
+ * enlaces chicos, el idioma, ingresar y la acción de ayudar. Respeta las áreas
+ * seguras del teléfono con `safe-top` y `safe-bottom`. Cada ítem entra con un
+ * escalón de 40 ms; con `prefers-reduced-motion` no se mueve nada.
  */
 export function MobileMenu({
   id,
@@ -118,6 +118,14 @@ export function MobileMenu({
         style={{ "--menu-index": PRIMARY_NAV.length + 1 } as CSSProperties}
         className="mt-xl flex flex-col gap-lg pb-md"
       >
+        <Link
+          href={localizedHref(ACCOUNT_HREF, locale)}
+          className="inline-flex min-h-touch w-fit items-center font-ui text-small text-paper-muted underline decoration-1 underline-offset-4"
+          onClick={onClose}
+        >
+          {ui.signIn}
+        </Link>
+
         <Link
           href={switchHref}
           hrefLang={htmlLang(other)}

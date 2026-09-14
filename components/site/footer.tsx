@@ -7,7 +7,7 @@ import { fill } from "@/src/i18n/fill";
 import { localizedHref } from "@/src/i18n/href";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
 
-import { LEGAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
+import { ACCOUNT_HREF, LEGAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
 const LINK =
   "inline-flex min-h-touch items-center font-ui text-small text-ink-muted transition-colors duration-fast hover:text-ink";
@@ -58,6 +58,11 @@ export function SiteFooter({
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href={localizedHref(ACCOUNT_HREF, locale)} className={LINK}>
+                {ui.signIn}
+              </Link>
+            </li>
           </ul>
         </nav>
 

@@ -52,6 +52,13 @@ export const LEGAL_NAV = [
   { href: "/legales/terminos", label: "Términos de uso" },
 ] as const;
 
+/**
+ * Destino único de la cuenta. Sin sesión, `proxy.ts` manda a ingresar; con
+ * sesión, `/cuenta` es el escritorio propio. No vive en PRIMARY_NAV: no es una
+ * sección del relato.
+ */
+export const ACCOUNT_HREF = "/cuenta" as const;
+
 /** Rutas públicas indexables, para el sitemap. */
 export const PUBLIC_ROUTES = [
   "/",

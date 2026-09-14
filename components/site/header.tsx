@@ -19,19 +19,20 @@ import {
 import { track } from "@/src/infrastructure/analytics/browser";
 
 import { MobileMenu } from "./mobile-menu";
-import { PRIMARY_NAV } from "./navigation";
+import { ACCOUNT_HREF, PRIMARY_NAV } from "./navigation";
 
 const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
 
 /**
  * Encabezado editorial (ADR-032): 60 px, el nombre a la izquierda, el menú a la
- * derecha, y nada más en teléfono. El idioma y la acción de ayudar viven dentro
- * del menú.
+ * derecha, y nada más en teléfono. El idioma, ingresar y la acción de ayudar
+ * viven dentro del menú.
  *
  * En la home arranca transparente sobre la fotografía; al desplazarse gana un
  * fondo de papel con un desenfoque muy leve y una regla casi imperceptible. En
  * las páginas interiores es fijo desde el principio, sobre papel. En escritorio
- * las cinco secciones van en línea, con el idioma y la acción como texto.
+ * las cinco secciones van en línea, con el idioma, ingresar y la acción como
+ * texto.
  */
 export function SiteHeader({
   locale,
@@ -46,9 +47,14 @@ export function SiteHeader({
   const canonical = stripLocalePrefix(pathname);
   const overlay = canonical === "/";
   const onHelpPage = canonical === "/ayudar" || canonical.startsWith("/ayudar/");
+  const onAccount =
+    canonical === ACCOUNT_HREF || canonical.startsWith(`${ACCOUNT_HREF}/`);
   const other = otherLocale(locale);
   const switchHref = switchLocaleHref(pathname, other);
   const helpHref = `${localizedHref("/ayudar", locale)}#donaciones`;
+  const accountHref = localizedHref(ACCOUNT_HREF, locale);
+  const chromeLink =
+    "inline-flex min-h-touch shrink-0 items-center font-ui text-small text-current opacity-75 hover:opacity-100";
   const menuId = useId();
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [compact, setCompact] = useState(false);
@@ -138,15 +144,23 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-lg">
-          {/* Escritorio: el idioma y la acción como texto. El `hidden` va en el
-              envoltorio y no en cada enlace, porque `secondaryActionClass` ya trae
-              `inline-flex` y las dos utilidades de display compiten. */}
+          {/* Escritorio: el idioma, ingresar y la acción como texto. El `hidden`
+              va en el envoltorio y no en cada enlace, porque `secondaryActionClass`
+              ya trae `inline-flex` y las dos utilidades de display compiten. */}
           <div className="hidden items-center gap-lg lg:flex">
+            <Link
+              href={accountHref}
+              {...(onAccount ? { "aria-current": "page" as const } : {})}
+              className={chromeLink}
+            >
+              {ui.signIn}
+            </Link>
+
             <Link
               href={switchHref}
               hrefLang={htmlLang(other)}
               lang={htmlLang(other)}
-              className="inline-flex min-h-touch shrink-0 items-center font-ui text-small text-current opacity-75 hover:opacity-100"
+              className={chromeLink}
             >
               {ui.otherLanguageName}
             </Link>
