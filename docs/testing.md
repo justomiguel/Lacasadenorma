@@ -186,9 +186,6 @@ Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
   tres invalidaciones de ADR-017—. Y después despublicarlo y comprobar que vuelve a dar 404: publicar
   por error tiene que ser reversible de verdad, no sólo desaparecer de la lista.
 - La publicación queda en el registro de auditoría, escrita con un rol y leída con otro.
-  Después se despublica: `/reconstruccion` muestra sólo la última novedad, y si ésta
-  quedara publicada el flujo 3 del proyecto siguiente (móvil, Safari) deja de ver el
-  título del fixture.
 - Un `auditor` no publica: la pantalla lo manda al aviso de permiso insuficiente, y la base rechaza el
   `update` **aunque se le hable directamente con su sesión real**, salteando la interfaz entera. Que un
   botón no aparezca no prueba que la operación esté prohibida.
@@ -196,7 +193,10 @@ Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
   llegaba a la pantalla de acceso.
 
 Los tres proyectos escriben en la misma base, así que cada prueba trabaja sobre una novedad con su
-propio `slug`, derivado del nombre del proyecto y del reloj.
+propio `slug`, derivado del nombre del proyecto y del reloj. Y cada publicación vuelve a borrador al
+terminar, por el botón del backoffice —no por un `PATCH` a PostgREST—: `/reconstruccion` pide la última
+novedad (`limit: 1`) y `revalidatePath` vive en esa acción. Dejar una fila de prueba publicada la
+convierte en «lo último» de `/reconstruccion`.
 
 Sigue siendo cierto que el shim no es Supabase: el comportamiento de GoTrue ante una contraseña débil,
 la recuperación de contraseña, el rate limiting y el hook configurado en el panel se verifican contra
@@ -446,7 +446,7 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
-| `/reconstruccion` sin "Empezó el montaje del techo" en móvil/Safari, escritorio verde | Una prueba del proyecto anterior dejó una novedad publicada más nueva. El flujo 9 de auditoría tiene que despublicar: la página muestra sólo la última |
+| `/reconstruccion` muestra una novedad de prueba como lo último | El flujo 9 no volvió a borrador. Tiene que despublicar por el botón del backoffice, no por un `PATCH` a PostgREST |
 | `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba sigue publicado o la caché de ISR no se invalidó. `ocultarItem` espera a que el título desaparezca del HTML; en CI la revisión visual deja sólo el ítem del fixture |
 | `/catalogo` reserva 0 huecos de foto en lugar de 1 | WebKit midió `loading.tsx`. La revisión visual tiene que esperar a que desaparezca "Estamos cargando…" antes de contar |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |

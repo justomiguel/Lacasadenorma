@@ -1,3 +1,4 @@
+import { socialHintsFromIdentities } from "@/src/domain/auth/social-profile";
 import {
   ANONYMOUS_BY_DEFAULT,
   isApprovalStatus,
@@ -9,6 +10,7 @@ import {
 import type { AccountPort } from "@/src/domain/ports/accounts";
 import { isLocale, type Locale } from "@/src/i18n/locale";
 
+import { downloadTrustedPortrait } from "../files/import-portrait";
 import { inspectPortrait } from "../files/portrait";
 import { QueryError } from "./admin/query";
 import type { ServerSupabaseClient } from "./server-client";
@@ -76,10 +78,9 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
      * `ignoreDuplicates` el choque no es un error, que es lo correcto: el estado
      * final es el mismo que se pedía.
      *
-     * No se lee `user_metadata`. El nombre y la foto que Google (o cualquiera)
-     * manda viven ahí, y copiarlos al perfil publicaría un nombre que nadie
-     * eligió mostrar y un avatar que no es el retrato de este sitio (FR-230,
-     * ADR-039). El perfil nace anónimo, con el idioma de la pantalla.
+     * No se lee `user_metadata` para autorizar. El nombre y la foto de la red
+     * salen de `identities[].identity_data` y se copian al perfil sólo si
+     * todavía están vacíos (ADR-039).
      */
     async ensureOwnProfile(
       fallbackLocale: Locale,
@@ -124,6 +125,32 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
       return { profile: existente, created: false };
     },
 
+    async readSocialProfileHints() {
+      const { data, error } = await client.auth.getUser();
+
+      if (error !== null || data.user === null) {
+        throw new QueryError("leer las identidades", {
+          message: error?.message ?? "sin usuario",
+        });
+      }
+
+      return socialHintsFromIdentities(data.user.identities);
+    },
+
+    async importPortraitFromUrl(url: string) {
+      const file = await downloadTrustedPortrait(url);
+
+      if (file === null) {
+        return null;
+      }
+
+      try {
+        return await writePortrait(file);
+      } catch {
+        return null;
+      }
+    },
+
     async saveOwnProfile(
       next: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
     ): Promise<DonorProfile> {
@@ -157,25 +184,7 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
     },
 
     async saveOwnPortrait(file: File): Promise<DonorProfile> {
-      const userId = await requireUserId();
-      const info = await inspectPortrait(file);
-      const path = portraitPathFor(userId, info.mimeType);
-      const current = await readOwnProfile();
-      const previous = current?.portraitPath ?? null;
-
-      const { error: uploadError } = await client.storage
-        .from(PORTRAIT_BUCKET)
-        .upload(path, file, { contentType: info.mimeType, upsert: true });
-
-      if (uploadError !== null) {
-        throw new QueryError("subir el retrato", uploadError);
-      }
-
-      if (previous !== null && previous !== path) {
-        await client.storage.from(PORTRAIT_BUCKET).remove([previous]);
-      }
-
-      return writePortraitPath(userId, path);
+      return writePortrait(file);
     },
 
     async removeOwnPortrait(): Promise<DonorProfile> {
@@ -238,6 +247,28 @@ export function createAccountPort(client: ServerSupabaseClient): AccountPort {
       }
     },
   };
+
+  async function writePortrait(file: File): Promise<DonorProfile> {
+    const userId = await requireUserId();
+    const info = await inspectPortrait(file);
+    const path = portraitPathFor(userId, info.mimeType);
+    const current = await readOwnProfile();
+    const previous = current?.portraitPath ?? null;
+
+    const { error: uploadError } = await client.storage
+      .from(PORTRAIT_BUCKET)
+      .upload(path, file, { contentType: info.mimeType, upsert: true });
+
+    if (uploadError !== null) {
+      throw new QueryError("subir el retrato", uploadError);
+    }
+
+    if (previous !== null && previous !== path) {
+      await client.storage.from(PORTRAIT_BUCKET).remove([previous]);
+    }
+
+    return writePortraitPath(userId, path);
+  }
 
   async function writePortraitPath(
     userId: string,

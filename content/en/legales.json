@@ -4,7 +4,7 @@
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
     "paragraphs": [
-      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, only if you write them down, a name to show and a photo of you that is not published. We do not use third-party cookies and we do not follow you across other pages."
+      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, if there are any, a name to show and a photo of you that is not published. We do not use third-party cookies and we do not follow you across other pages."
     ],
     "sections": [
       {
@@ -19,12 +19,12 @@
         "heading": "If you create an account",
         "paragraphs": [
           "Creating an account is optional and serves one purpose: to be able to say \"I am bringing this one\" and have it written down as yours.",
-          "From you we keep your email and, only if you write them down, the name you want shown, the language you prefer to be written in, and a photo of you. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password. If you create the account with Google or another network, that network gives us the email; the name and photo from there are not copied.",
-          "The name shown is the one you choose, and it is never derived from your email. If you write none, there is none.",
-          "The photo, if you upload one, identifies you while you are signed in. It is not published on any page of the site, it does not appear in Who helped, and it is not shared.",
+          "From you we keep your email, the language you prefer to be written in, and a name and a photo if there are any: you write them, or the network you signed in with brings them if those fields were still empty here. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password. If that address already had an account, signing in with Google (or another network) uses that one: a second account is not created.",
+          "The name shown is the one you choose —or the one the network suggests, which you can change. It is never derived from your email. If there is none, there is none.",
+          "The photo, if you upload one or if the network brought one, identifies you while you are signed in. It is not published on any page of the site, it does not appear in Who helped, and it is not shared.",
           "Your email is not published on any page, is not shared with anyone, and is not used to send you anything other than messages about your account or about something you offered to bring.",
           "The service that runs the accounts also records when you sign in, with the IP address and the browser you sign in from. It is there to detect attempts to get into other people's accounts. The family does not use that information for anything else.",
-          "If the site offers signing in with a network (Google, for example), that network learns that you used this site: that is the trade-off of signing in without inventing a password. We receive your email. We do not receive permission to publish what that network calls you or to use its photo.",
+          "If the site offers signing in with a network (Google, for example), that network learns that you used this site: that is the trade-off of signing in without inventing a password. We receive your email, and if you did not already have a name or photo here, we copy those from that network into your profile. They are not published: the wall stays anonymous until you choose to appear, and the photo does not leave the site.",
           "Your account is kept until you delete it. You can delete it yourself from your account, without asking us and without giving reasons: your email, your name and your photo are deleted right away."
         ]
       },

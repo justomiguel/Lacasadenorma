@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   parseSocialProviders,
+  socialProviderFromGoTrue,
   SOCIAL_PROVIDER_IDS,
   supabaseProviderOf,
 } from "./social-providers";
@@ -82,5 +83,14 @@ describe("el catálogo habla el idioma de GoTrue", () => {
     expect(supabaseProviderOf("linkedin")).toBe("linkedin_oidc");
     expect(supabaseProviderOf("x")).toBe("twitter");
     expect(supabaseProviderOf("google")).toBe("google");
+  });
+});
+
+describe("socialProviderFromGoTrue", () => {
+  it("el correo no es una red, y los alias de Auth sí", () => {
+    expect(socialProviderFromGoTrue("email")).toBeNull();
+    expect(socialProviderFromGoTrue("twitter")).toBe("x");
+    expect(socialProviderFromGoTrue("linkedin_oidc")).toBe("linkedin");
+    expect(socialProviderFromGoTrue("google")).toBe("google");
   });
 });

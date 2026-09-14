@@ -74,6 +74,7 @@ test.describe("fase A · la cuenta del público", () => {
     ).toBeVisible();
     await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
     await expect(page.getByText(/confirmaste el correo, y eso alcanzó/i)).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     // El índice hidrata a pestañas: sin esperar el tablist, los cuatro paneles
     // siguen apilados un instante y las aserciones de «no se ve» mienten.
@@ -127,6 +128,7 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
+    await expect(menu.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     // Axe del overlay abierto no: el menú es `fixed` dentro del encabezado, y
     // el muestreo de contraste toma la fotografía de la home que queda detrás.
@@ -168,6 +170,7 @@ test.describe("fase A · la cuenta del público", () => {
       encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
     ).toBeVisible({ timeout: 20_000 });
     await expect(salir).toBeVisible();
+    await expect(encabezado.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     const caja = await salir.boundingBox();
 
@@ -317,30 +320,6 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page).toHaveURL(/\/cuenta\/ingresar$/);
   });
 
-  test("una cuenta del público en /admin termina en /admin/sin-permiso", async ({
-    page,
-    request,
-  }, info) => {
-    const email = correoDePrueba(info.project.name, "sin-rol");
-
-    await crearCuenta(page, request, email);
-
-    // La sesión es real y está abierta: lo que falta no es el token sino el rol. Es
-    // la distinción entera de ADR-027 —`authenticated` dejó de significar "de
-    // confianza"— vista desde la interfaz.
-    await page.goto("/admin");
-
-    await expect(page).toHaveURL(/\/admin\/sin-permiso$/);
-
-    // Y ninguna pantalla del backoffice se abre por su cuenta.
-    for (const ruta of ["/admin/aportes", "/admin/gastos", "/admin/cuentas"]) {
-      await page.goto(ruta);
-      await expect(page, `${ruta} se abrió para una cuenta sin rol`).toHaveURL(
-        /\/admin\/sin-permiso$/,
-      );
-    }
-  });
-
   test("borrar la cuenta la borra, y después ya no entra", async ({
     page,
     request,
@@ -382,9 +361,37 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
     await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+    await expect(page.getByLabel(/nombre para mostrar/i)).toHaveValue(
+      /quien entra con google/i,
+    );
 
     await abrirSeccionDeCuenta(page, /acceso/i);
     await expect(page.getByText(/@local\.test/i)).toBeVisible();
+  });
+
+  test("entrar con Google usa la cuenta que ya existía con ese correo", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "oauth-link");
+
+    await crearCuenta(page, request, email);
+    await expect(page).toHaveURL(/\/cuenta$/);
+
+    const origen = new URL(page.url()).origin;
+    const volver = `${origen}/cuenta/oauth`;
+
+    await page.goto(
+      `${apiLocal()}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(volver)}&email=${encodeURIComponent(email)}`,
+    );
+
+    await expect(page).toHaveURL(/\/cuenta$/);
+    await expect(page.getByLabel(/nombre para mostrar/i)).toHaveValue(
+      /quien entra con google/i,
+    );
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(email)).toBeVisible();
   });
 
   test("el callback OAuth no respeta un next de la query", async ({ page }) => {

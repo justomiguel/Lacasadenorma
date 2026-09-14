@@ -48,7 +48,7 @@ null default now()`, `published_at` nulo = borrador.
 | Columna | Tipo | Notas |
 |---|---|---|
 | `id` | `uuid` PK → `auth.users` `on delete cascade` | La misma clave que la cuenta: no hay identificador nuevo que filtrar |
-| `display_name` | `text` **nullable** | Nulo hasta que la persona decida aparecer. **No** se deriva del correo (FR-230) |
+| `display_name` | `text` **nullable** | Nulo hasta que la persona elija uno o entre con una red que lo entregue. **No** se deriva del correo (FR-230) |
 | `locale` | `text not null default 'es'` `check (locale in ('es','en'))` | Idioma de los correos (FR-232) |
 | `default_anonymous` | `boolean not null default true` | Preferencia; cada reserva guarda la suya |
 | `approval_status` | `text not null default 'pending'` | `pending` \| `approved` \| `declined`. Confirmar el correo **no** habilita (ADR-033) |

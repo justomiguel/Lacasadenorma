@@ -165,21 +165,56 @@ export async function createConfirmedOauthUser(email, provider) {
     throw new Error(`Proveedor OAuth inesperado: ${provider}`);
   }
 
+  const existing = await findUserByEmail(email);
+
+  if (existing !== null) {
+    await query(
+      `
+        update auth.users
+        set
+          email_confirmed_at = coalesce(email_confirmed_at, now()),
+          raw_app_meta_data = jsonb_build_object(
+            'provider', :'provider',
+            'providers', (
+              select coalesce(jsonb_agg(distinct p), jsonb_build_array(:'provider'))
+              from jsonb_array_elements_text(
+                coalesce(raw_app_meta_data->'providers', '[]'::jsonb)
+                || jsonb_build_array(:'provider')
+              ) as t(p)
+            )
+          ),
+          raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || jsonb_build_object(
+            'full_name', :'full_name',
+            'name', :'full_name'
+          )
+        where email = lower(:'email');
+        select 'null'::json;
+      `,
+      { email, provider, full_name: `Quien entra con ${provider}` },
+    );
+
+    return findUserByEmail(email);
+  }
+
   await query(
     `
       insert into auth.users
-        (email, raw_app_meta_data, email_confirmed_at)
+        (email, raw_app_meta_data, raw_user_meta_data, email_confirmed_at)
       values (
         lower(:'email'),
         json_build_object(
           'provider', :'provider',
           'providers', jsonb_build_array(:'provider')
         ),
+        json_build_object(
+          'full_name', :'full_name',
+          'name', :'full_name'
+        ),
         now()
       );
       select 'null'::json;
     `,
-    { email, provider },
+    { email, provider, full_name: `Quien entra con ${provider}` },
   );
 
   return findUserByEmail(email);

@@ -182,6 +182,22 @@ export async function conItemPublicado(
   }
 }
 
+/**
+ * El `finally` de las pruebas de catálogo. Si el test venció, el `request` del
+ * fixture ya está cerrado y tirar acá escondería la causa; el de la página del
+ * equipo sigue vivo hasta que cerremos el contexto.
+ */
+export async function ocultarItemSiExiste(
+  request: APIRequestContext,
+  titulo: string,
+): Promise<void> {
+  try {
+    await ocultarItem(request, await idDeItem(request, titulo), titulo);
+  } catch (error) {
+    console.warn("No se pudo despublicar el ítem de prueba", error);
+  }
+}
+
 /** El renglón del catálogo, acotado al contenido: en WebKit a veces hay un nodo extra. */
 export function articuloDelCatalogo(page: Page, titulo: string) {
   return page

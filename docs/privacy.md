@@ -126,9 +126,9 @@ puede cachear ni razonar. Es también lo que hace que el HTML público sea idén
 (SC-204, ADR-037).
 
 El menú, después de hidratar, pide un snapshot privado a `/cuenta/sesion`. Esa petición sí lleva la
-cookie, y por eso el nombre y el retrato aparecen en el drawer de quien ya entró, no en el HTML que
-se cachea. Las páginas de `/cuenta` son la otra excepción y no debilitan nada: dependen de la sesión
-por definición y por eso no se cachean.
+cookie, y por eso el nombre, el retrato y —si hay rol interno— el enlace al backoffice aparecen en
+el drawer de quien ya entró, no en el HTML que se cachea. Las páginas de `/cuenta` son la otra
+excepción y no debilitan nada: dependen de la sesión por definición y por eso no se cachean.
 
 ---
 
@@ -142,30 +142,32 @@ anotado a nombre de esa persona.
 | Correo | `auth.users`, que gestiona Supabase Auth | La persona al registrarse, o el proveedor social si entra con una red (ADR-039) | **No.** Ninguna vista pública lo alcanza, y hay un privilegio de columna que lo hace imposible, no una consulta que se acuerda de omitirlo |
 | Hash de la contraseña | `auth.users.encrypted_password` | Supabase Auth, si hay contraseña. Una cuenta que nació por OAuth puede no tenerla | No. No es reversible |
 | Identidad del proveedor social | `auth.identities` | Supabase Auth, si la persona eligió una red | No. El sitio no publica con qué red se creó la cuenta |
-| Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, y sólo si decide aparecer | Sí, y sólo si además marca una donación como no anónima |
+| Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, o la red con la que entró si el campo estaba vacío | Sí, y sólo si además marca una donación como no anónima |
 | Idioma | `donor_profiles.locale` | La persona | No |
 | Preferencia de anonimato | `donor_profiles.default_anonymous`, `default true` | La persona | No. Lo que se publica es su efecto |
-| Retrato | bucket privado `avatares`, ruta en `donor_profiles.portrait_path` | La persona, si sube una foto | **No.** Ni el muro ni ninguna página pública la nombran. El archivo se sirve por `/cuenta/retrato` a su dueña |
+| Retrato | bucket privado `avatares`, ruta en `donor_profiles.portrait_path` | La persona, si sube una foto, o la red con la que entró si no había una | **No.** Ni el muro ni ninguna página pública la nombran. El archivo se sirve por `/cuenta/retrato` a su dueña |
 | Sesiones e inicios de sesión, con IP y user-agent | `auth.sessions` y `auth.audit_log_entries` | Supabase Auth | No |
 
-Cuatro cosas de esta tabla que son decisiones:
+Decisiones de esta tabla:
 
 1. **El correo no se copia a `public`.** Vive en `auth.users`, que el rol `authenticated` no puede
    leer, y viaja en el claim `email` del token de su dueña. Una copia sería un segundo lugar del que
    se puede filtrar y un segundo lugar del que hay que acordarse de borrar.
 2. **`donor_profiles.display_name` es nullable y nunca se deriva del correo** (FR-230). "juanperez"
-   no es un nombre que alguien eligió publicar. Nulo significa "todavía no decidí aparecer", y hay un
-   `check` que impide guardar una cadena de espacios, que significaría lo mismo y se publicaría como
-   un renglón vacío.
+   no es un nombre que alguien eligió publicar. El nombre de Google (o de otra red) sí se copia
+   cuando entra con esa red y el campo está vacío: es una propuesta, y el muro no la publica
+   mientras el default sea el anonimato. Nulo significa "todavía no hay nombre", y hay un
+   `check` que impide guardar una cadena de espacios.
 3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, y lo que
    se afirma en las pruebas es el default de la columna: lo que importa es qué pasa cuando la
    aplicación **no** manda el campo.
 4. **La IP y el user-agent los guarda el proveedor de identidad, no la aplicación.** Esto es lo único
    de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
    una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.
-5. **El nombre y la foto de Google (o de cualquier otra red) no se copian al perfil** (ADR-039).
-   Entrar con Gmail demuestra el correo; no es consentimiento para publicar cómo te llama Google ni
-   para usar su avatar. El perfil nace anónimo, y el retrato es el que se sube en `/cuenta`.
+5. **El nombre y la foto de la red se copian al perfil si los campos están vacíos** (ADR-039).
+   No se publican: el retrato sigue siendo privado y el muro pide que desmarque el anonimato.
+   Un nombre o una foto que la persona ya eligió acá no se pisan. El local-part del correo no
+   se usa.
 6. **Si se habilita una red, esa red se entera de que la persona usa este sitio.** Es el trueque de
    OAuth. La página pública lo nombra; no se habilita un proveedor sin decirlo.
 

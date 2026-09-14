@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Container, Section } from "@/components/design-system/layout";
+import { Band, Container, Section } from "@/components/design-system/layout";
 import { PageHeader } from "@/components/site/page-header";
 
 /**
@@ -14,33 +14,53 @@ import { PageHeader } from "@/components/site/page-header";
  * El pie es el `aside`: el enlace a la otra pantalla de la sección —"¿ya tenés
  * cuenta?", "olvidé mi contraseña"— va **después** del formulario y no arriba,
  * porque arriba compite con la acción que la persona vino a hacer.
+ *
+ * `surface="sunk"` es para el índice de `/cuenta`: la bajada cierra el encabezado
+ * y las pestañas empiezan en otra superficie, pegadas, no a 64 px de papel vacío.
+ * Ingresar y crear una cuenta se quedan en papel: son un formulario, no un índice.
  */
 export function AuthShell({
   title,
   lead,
   children,
   aside,
+  surface = "paper",
 }: {
   title: string;
   lead: string;
   children: ReactNode;
   aside?: ReactNode;
+  surface?: "paper" | "sunk";
 }) {
+  const body = (
+    <>
+      {children}
+
+      {aside === undefined ? null : (
+        <div className="mt-2xl max-w-measure border-t border-rule pt-lg font-ui text-small text-ink-muted">
+          {aside}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <>
       <PageHeader mark title={title} lead={lead} />
 
-      <Container>
-        <Section>
-          {children}
-
-          {aside === undefined ? null : (
-            <div className="mt-2xl max-w-measure border-t border-rule pt-lg font-ui text-small text-ink-muted">
-              {aside}
-            </div>
-          )}
-        </Section>
-      </Container>
+      {surface === "sunk" ? (
+        <Band tone="sunk">
+          <Container>
+            {/* Sin `Section`: su `py-3xl` pelearía con este ritmo y ganaría la
+                hoja, no la clase del llamado (`cn` no resuelve conflictos). */}
+            <div className="py-lg lg:py-xl">{body}</div>
+          </Container>
+        </Band>
+      ) : (
+        <Container>
+          <Section>{body}</Section>
+        </Container>
+      )}
     </>
   );
 }

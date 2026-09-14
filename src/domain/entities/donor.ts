@@ -10,9 +10,10 @@ import type { Locale } from "@/src/i18n/locale";
  * donantes no necesita el correo para nada. Quien necesita contactar a alguien
  * por una entrega lo hace desde el backoffice, con `donaciones.leer`.
  *
- * `displayName` es nulo hasta que la persona escribe uno. **No se deriva del
- * correo.** Convertir `norma.perez@ejemplo.com` en "Norma Pérez" es exactamente
- * el tipo de conveniencia que publica un apellido que nadie pidió publicar.
+ * `displayName` es nulo hasta que hay un nombre: el que la persona escribe, o el
+ * que mandó la red con la que entró. **No se deriva del correo.** Convertir
+ * `norma.perez@ejemplo.com` en "Norma Pérez" es exactamente el tipo de
+ * conveniencia que publica un apellido que nadie pidió publicar.
  */
 export const APPROVAL_STATUSES = ["pending", "approved", "declined"] as const;
 

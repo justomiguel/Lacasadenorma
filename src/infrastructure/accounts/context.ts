@@ -5,7 +5,10 @@ import { readViewer } from "../auth/viewer";
 import { logger } from "../logging/logger";
 import { createAccountPort } from "../supabase/accounts-port";
 import { createDonationsPort } from "../supabase/donations-port";
-import { createServerSupabaseClient } from "../supabase/server-client";
+import {
+  createServerSupabaseClient,
+  type ServerSupabaseClient,
+} from "../supabase/server-client";
 
 /**
  * La raíz de composición de `/cuenta`.
@@ -19,6 +22,18 @@ import { createServerSupabaseClient } from "../supabase/server-client";
  * del token. No se usa `getSession()` en ningún lado de este proyecto: devuelve
  * lo que hay en la cookie sin validar nada.
  */
+export function accountDepsForClient(client: ServerSupabaseClient): AccountDeps {
+  return {
+    session: {
+      status: "ready",
+      port: createAccountPort(client),
+      donations: createDonationsPort(client),
+    },
+    logger,
+    onAccountOpened: notifyAccountOpened,
+  };
+}
+
 export async function getAccountDeps(): Promise<AccountDeps> {
   const client = await createServerSupabaseClient();
 
@@ -30,13 +45,5 @@ export async function getAccountDeps(): Promise<AccountDeps> {
     return { session: { status: "anonymous" }, logger };
   }
 
-  return {
-    session: {
-      status: "ready",
-      port: createAccountPort(client),
-      donations: createDonationsPort(client),
-    },
-    logger,
-    onAccountOpened: notifyAccountOpened,
-  };
+  return accountDepsForClient(client);
 }

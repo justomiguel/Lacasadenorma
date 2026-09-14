@@ -115,11 +115,13 @@ export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise
 /**
  * Cierra la sesión del público.
  *
- * En escritorio el botón está en el encabezado. En teléfono no: el chrome del
- * encabezado se esconde a partir de `lg` y salir vive en el menú a pantalla
- * completa (ADR-037). Buscar un «Cerrar sesión» visible en el documento entero
- * encuentra el del encabezado, que está en el DOM pero oculto, y Playwright se
- * queda esperándolo hasta el timeout —era el colgado de 90 s en iPhone 15.
+ * En escritorio hay un «Cerrar sesión» en el encabezado. En teléfono no: el
+ * chrome se esconde a partir de `lg` y salir vive en el menú, después de
+ * hidratar el island (ADR-037). Buscar un «Cerrar sesión» visible en el
+ * documento entero encuentra el del encabezado, que está en el DOM pero
+ * oculto, y Playwright se queda esperándolo hasta el timeout —era el colgado
+ * de 90 s en iPhone 15. Sin abrir el menú, el ítem de catálogo queda
+ * publicado y la revisión visual cuenta un hueco de más.
  */
 export async function cerrarSesion(page: Page): Promise<void> {
   const enElEncabezado = page
@@ -127,12 +129,15 @@ export async function cerrarSesion(page: Page): Promise<void> {
     .getByRole("button", { name: /cerrar sesión/i });
   const abrirMenu = page.getByRole("button", { name: /abrir el menú|open the menu/i });
 
-  await expect(enElEncabezado.or(abrirMenu)).toBeVisible();
+  await expect(enElEncabezado.or(abrirMenu)).toBeVisible({ timeout: 20_000 });
 
   if (await enElEncabezado.isVisible()) {
     await enElEncabezado.click();
   } else {
     await abrirMenu.click();
+    await expect(
+      page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
+    ).toBeVisible({ timeout: 20_000 });
     await page
       .getByRole("dialog")
       .getByRole("button", { name: /cerrar sesión/i })

@@ -7,12 +7,13 @@ import {
 import { resolveAccountSection } from "@/components/account/account-section";
 import { AccountTabs } from "@/components/account/account-tabs";
 import { AuthShell } from "@/components/account/auth-shell";
+import { SecondaryAction } from "@/components/design-system/actions";
 import { Callout } from "@/components/design-system/callout";
 import { getContent } from "@/content";
 import { getOwnAccount } from "@/src/application/accounts/own-account";
 import type { Locale } from "@/src/i18n/locale";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
-import { readViewer } from "@/src/infrastructure/auth/viewer";
+import { isStaff, readViewer } from "@/src/infrastructure/auth/viewer";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 /**
@@ -25,7 +26,8 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  * pantalla o la política pasa a ser falsa.
  *
  * El índice son pestañas editoriales (`SectionTabs`): reservas, cómo aparecer,
- * acceso y borrar. Sin JavaScript se apilan.
+ * acceso y borrar. Sin JavaScript se apilan. Quien tiene rol ve además el
+ * backoffice, porque `/cuenta` ya es dinámica y no tiene que esperar al island.
  */
 
 export function accountMetadata(locale: Locale) {
@@ -49,7 +51,7 @@ export async function AccountScreen({
   notice: string | null;
   section: string | null;
 }) {
-  const { account, catalog } = getContent(locale);
+  const { account, catalog, ui } = getContent(locale);
   const { profile: copy, fields, errors } = account;
 
   const [viewer, result] = await Promise.all([
@@ -59,7 +61,7 @@ export async function AccountScreen({
 
   if (result.status === "error") {
     return (
-      <AuthShell title={copy.title} lead={copy.lead}>
+      <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
         <Callout tone="warning" title={copy.unavailableTitle}>
           {result.code === "notConfigured" ? copy.unavailableBody : errors[result.code]}
         </Callout>
@@ -86,7 +88,7 @@ export async function AccountScreen({
   const initial = resolveAccountSection(section, pledges.length > 0);
 
   return (
-    <AuthShell title={copy.title} lead={copy.lead}>
+    <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
       {aviso === null ? null : (
         <Callout tone="warning">
           <p>{aviso}</p>
@@ -94,7 +96,13 @@ export async function AccountScreen({
       )}
       {approval}
 
-      <div className={aviso === null && approval === null ? undefined : "mt-3xl"}>
+      {viewer !== null && isStaff(viewer) ? (
+        <SecondaryAction href="/admin" className="mb-lg">
+          {ui.backoffice}
+        </SecondaryAction>
+      ) : null}
+
+      <div className={aviso === null && approval === null ? undefined : "mt-lg"}>
         <AccountTabs
           label={copy.tabsLabel}
           initial={initial}

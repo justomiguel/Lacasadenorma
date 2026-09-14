@@ -29,7 +29,33 @@ export type ChromeSession =
       readonly displayName: string | null;
       readonly email: string | null;
       readonly hasPortrait: boolean;
+      /** `true` sólo con rol interno. El público no lo ve ni lo recibe. */
+      readonly staff: boolean;
     };
+
+/**
+ * El fetch del chrome trae JSON. Sin esto, un campo de más o de menos —o un
+ * `staff` que no es boolean— se colaría al menú.
+ */
+export function readChromeSession(data: unknown): ChromeSession {
+  if (typeof data !== "object" || data === null) {
+    return { status: "anonymous" };
+  }
+
+  const record = data as Record<string, unknown>;
+
+  if (record["status"] !== "signed-in") {
+    return { status: "anonymous" };
+  }
+
+  return {
+    status: "signed-in",
+    displayName: typeof record["displayName"] === "string" ? record["displayName"] : null,
+    email: typeof record["email"] === "string" ? record["email"] : null,
+    hasPortrait: record["hasPortrait"] === true,
+    staff: record["staff"] === true,
+  };
+}
 
 interface SessionValue {
   readonly session: ChromeSession;
@@ -69,11 +95,11 @@ export function SessionProvider({
           return { status: "anonymous" } satisfies ChromeSession;
         }
 
-        return (await response.json()) as ChromeSession;
+        return readChromeSession(await response.json());
       })
       .then((next) => {
         if (!cancelled) {
-          setSession(next.status === "signed-in" ? next : { status: "anonymous" });
+          setSession(next);
         }
       })
       .catch(() => {

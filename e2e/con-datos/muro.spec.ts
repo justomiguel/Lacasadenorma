@@ -7,7 +7,7 @@ import {
   confirmarLlegada,
   habilitarCuenta,
   idDeItem,
-  ocultarItem,
+  ocultarItemSiExiste,
 } from "../soporte/catalogo";
 import { correoDePrueba, crearCuenta } from "../soporte/cuentas";
 import { PAGINAS_PUBLICAS } from "../soporte/paginas";
@@ -119,7 +119,7 @@ test.describe("fase E · muro", () => {
         await donanteNo.close();
       }
     } finally {
-      await ocultarItem(request, await idDeItem(request, titulo), titulo);
+      await ocultarItemSiExiste(staffPage.request, titulo);
       await staff.close();
     }
   });

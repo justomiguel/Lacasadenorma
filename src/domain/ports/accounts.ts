@@ -1,5 +1,6 @@
 import type { Locale } from "@/src/i18n/locale";
 
+import type { SocialProfileHints } from "../auth/social-profile";
 import type { DonorProfile } from "../entities/donor";
 
 /**
@@ -25,6 +26,18 @@ export interface AccountPort {
     readonly profile: DonorProfile;
     readonly created: boolean;
   }>;
+
+  /**
+   * Nombre y foto que manda la red de esta sesión, o nulo si entró con correo.
+   * Vacío no es error: una cuenta de Apple puede no traer foto.
+   */
+  readSocialProfileHints(): Promise<SocialProfileHints | null>;
+
+  /**
+   * Baja el retrato de una URL que ya se comprobó de la red, y lo guarda como
+   * el propio. Nulo si la bajada falló: entrar no puede depender de la foto.
+   */
+  importPortraitFromUrl(url: string): Promise<DonorProfile | null>;
 
   /**
    * Guarda las preferencias. Recibe el perfil entero y no un parche: un parche
