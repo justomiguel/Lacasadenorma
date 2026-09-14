@@ -15,7 +15,7 @@ import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
-const RUTA_PUBLICA = /^\/(?:en\/)?[a-z0-9][a-z0-9\-./]*$/u;
+const RUTA_PUBLICA = /^\/(?:en\/)?(?:[a-z0-9](?:[a-z0-9/-]*[a-z0-9])?)?$/u;
 
 export function GET(): Response {
   return new Response(null, { status: 404 });
@@ -61,7 +61,7 @@ function pathsOf(body: unknown): string[] | null {
   const valid: string[] = [];
 
   for (const path of paths) {
-    if (typeof path !== "string" || !RUTA_PUBLICA.test(path)) {
+    if (typeof path !== "string" || path.includes("..") || !RUTA_PUBLICA.test(path)) {
       return null;
     }
 

@@ -8,6 +8,7 @@ import {
   sufijoUnico,
   tokenDe,
 } from "../soporte/backoffice";
+import { ocultarNovedad } from "../soporte/revalidar";
 
 /**
  * El editor visual pinta un contenteditable y esconde el textarea. El POST sigue
@@ -17,28 +18,6 @@ import {
 async function escribirCuerpo(page: Page, texto: string): Promise<void> {
   await expect(page.getByRole("toolbar", { name: /formato del texto/i })).toBeVisible();
   await page.locator('textarea[name="body"]').fill(texto, { force: true });
-}
-
-/**
- * `/reconstruccion` muestra sólo la última novedad. Si esta queda publicada,
- * el flujo 3 del proyecto siguiente deja de ver el título del fixture.
- */
-async function volverABorrador(page: Page, url: string): Promise<void> {
-  await page.goto(url);
-
-  if (/\/admin\/login/.test(page.url())) {
-    await entrar(page, "admin");
-    await page.goto(url);
-  }
-
-  const despublicar = page.getByRole("button", { name: /^despublicar$/i });
-
-  if (!(await despublicar.isVisible())) {
-    return;
-  }
-
-  await despublicar.click();
-  await expect(page.getByRole("status")).toContainText(/volvió a borrador/i);
 }
 
 /**
@@ -180,10 +159,12 @@ test.describe("flujo 9 · publicar una novedad", () => {
    * policies en pgTAP—. Así que el registro se escribe con un rol y se lee con otro,
    * que es exactamente cómo funciona en la práctica.
    */
-  test("la publicación queda en el registro de auditoría", async ({ page }, info) => {
+  test("la publicación queda en el registro de auditoría", async ({
+    page,
+    request,
+  }, info) => {
     const sufijo = sufijoUnico(`auditoria-${info.project.name}`);
     const slug = `llego-el-agua-${sufijo}`;
-    let pantallaDeLaNovedad = "";
 
     await entrar(page, "editor");
     await page.goto("/admin/novedades");
@@ -196,7 +177,6 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await page.getByRole("button", { name: /guardar borrador/i }).click();
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    pantallaDeLaNovedad = page.url();
 
     try {
       await page.getByRole("button", { name: /publicar ahora/i }).click();
@@ -218,7 +198,7 @@ test.describe("flujo 9 · publicar una novedad", () => {
       await expect(registro.first()).toBeVisible();
       await expect(page.getByText(/publicó una novedad/i).first()).toBeVisible();
     } finally {
-      await volverABorrador(page, pantallaDeLaNovedad);
+      await ocultarNovedad(request, slug);
     }
 
     await page.goto("/reconstruccion");
