@@ -25,14 +25,9 @@ vi.mock("next/image", () => ({
   ),
 }));
 vi.mock("@/app/(es)/cuenta/actions", () => ({ signOut: vi.fn() }));
-vi.mock("./session", async () => {
-  const actual = await vi.importActual<typeof import("./session")>("./session");
-
-  return {
-    ...actual,
-    useChromeSession: mockDeSesion,
-  };
-});
+vi.mock("./session", () => ({
+  useChromeSession: mockDeSesion,
+}));
 
 const ui = getContent("es").ui;
 

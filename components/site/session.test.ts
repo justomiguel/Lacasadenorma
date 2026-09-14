@@ -38,7 +38,13 @@ describe("readChromeSession", () => {
         email: "vecina@ejemplo.invalid",
         hasPortrait: false,
         staff: false,
-      }).staff,
-    ).toBe(false);
+      }),
+    ).toEqual({
+      status: "signed-in",
+      displayName: "Vecina",
+      email: "vecina@ejemplo.invalid",
+      hasPortrait: false,
+      staff: false,
+    });
   });
 });
