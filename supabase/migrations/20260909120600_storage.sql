@@ -84,5 +84,6 @@ create policy comprobantes_delete on storage.objects
   for delete to authenticated
   using (bucket_id = 'comprobantes' and private.has_min_role('owner'));
 
-comment on table storage.objects is
-  'Policies de este proyecto en supabase/migrations/20260909120600_storage.sql. El bucket comprobantes no tiene lectura para anon.';
+-- No hay `COMMENT ON` sobre `storage.objects`: en el proyecto hospedado esa tabla
+-- la posee `supabase_storage_admin`, y `db push` corre como `postgres`. El comentario
+-- pasa en el shim local y revienta en producción con `must be owner of table objects`.

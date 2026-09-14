@@ -70,7 +70,9 @@ proyecto real es el mismo SQL que se probó local.
   `encrypted_password` en el mismo formato bcrypt que usa la plataforma—. Una migración puede pasar
   local y fallar en el proyecto real, **y también lo inverso**, que es el modo de falla peligroso.
   Mitigación: `supabase db push --dry-run` antes del primer push, y tratar el primer
-  `db advisors --linked` como la compuerta verdadera.
+  `db advisors --linked` como la compuerta verdadera. Un caso ya visto: `COMMENT ON`
+  sobre `storage.objects` pasa acá y en el proyecto real falla con `must be owner of
+  table objects`. Lo frena `check:rls`.
 - **El rol que ejecuta algo importa tanto como el privilegio**, y el shim lo hizo evidente tarde. El
   `custom_access_token_hook` no lo invoca el dueño del esquema sino `supabase_auth_admin`, y hasta que
   `050-roles-y-token.sql` lo invocó con ese rol el hook fallaba con `permission denied for schema

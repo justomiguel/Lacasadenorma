@@ -267,6 +267,12 @@ Reglas que no se negocian:
 Cómo llegan a producción, con el simulacro y la aprobación humana, está en
 [`deployment.md`](./deployment.md#5-cómo-llegan-las-migraciones-a-producción).
 
+**`must be owner of table objects`.** `db push` corre como `postgres`. `storage.objects` la posee
+`supabase_storage_admin`. Un `COMMENT ON` sobre esa tabla pasa en el shim local y se corta en el
+proyecto real; las policies sobre el mismo objeto sí se pueden crear. Si eso pasa, la migración
+entera se revierte (va en una transacción) y se reintenta `npx supabase db push` después de sacar el
+comentario. Lo frena `npm run check:rls`.
+
 ---
 
 ## 5. Dar y quitar acceso

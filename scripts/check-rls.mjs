@@ -17,6 +17,8 @@
  *   2. Ninguna policy usa `for all`.
  *   3. Toda función `security definer` fija `set search_path = ''`.
  *   4. Toda vista declara `security_invoker = true`.
+ *   5. Ningún `COMMENT ON` sobre tablas de `storage` o `auth`: no las posee
+ *      `postgres`, y `db push` se corta a mitad de la migración.
  *
  * Las excepciones se declaran acá abajo, con su motivo, y no en la migración: una
  * migración ya aplicada no se edita. Agregar una entrada a esa lista es un diff
@@ -202,6 +204,26 @@ for (const name of files) {
       );
     }
   }
+
+  // Regla 5: `storage.*` y `auth.*` no las posee `postgres`. Un COMMENT ON
+  // pasa en el shim local y corta `db push` en el proyecto real. Se mira el
+  // objeto, no el texto: "vive en auth.users" en un comentario de `public` es
+  // otra cosa.
+  for (const match of sql.matchAll(
+    /comment\s+on\s+(?:table|column|view|function|policy)\s+([\s\S]*?)\s+is\b/gi,
+  )) {
+    const ownedElsewhere = /\b(?:storage|auth)\./i.exec(match[1]);
+
+    if (ownedElsewhere !== null) {
+      report(
+        file,
+        match[1].trim().replaceAll(/\s+/g, " "),
+        "tiene un `COMMENT ON` sobre un objeto que no posee `postgres`",
+        "Sacalo: `db push` corre como `postgres` y el proyecto real responde\n" +
+          "    `must be owner of table objects`. Las policies sobre `storage.objects` sí se pueden crear.",
+      );
+    }
+  }
 }
 
 if (problems.length > 0) {
@@ -226,5 +248,6 @@ console.log(
   `Acceso verificado en ${files.length} migraciones: ` +
     `toda policy que alcanza a \`authenticated\` comprueba rol o propiedad ` +
     `(${declared} apertura(s) declarada(s)), ninguna usa \`for all\`, ` +
-    "toda función `security definer` fija `search_path` y toda vista declara `security_invoker`.",
+    "toda función `security definer` fija `search_path`, toda vista declara `security_invoker` " +
+    "y ningún `COMMENT ON` toca `storage` ni `auth`.",
 );
