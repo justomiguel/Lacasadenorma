@@ -107,6 +107,12 @@ export const accountSchema = z.object({
     title: phrase,
     lead: phrase,
     seoDescription: phrase,
+    /** Nombre accesible del índice. No se ve: es el `aria-label` de las pestañas. */
+    tabsLabel: phrase,
+    tabPledges: phrase,
+    tabAppearance: phrase,
+    tabAccess: phrase,
+    tabDelete: phrase,
     signedInAs: phrase,
     appearanceHeading: phrase,
     appearanceLead: phrase,

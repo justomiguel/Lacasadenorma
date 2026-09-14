@@ -279,7 +279,8 @@ los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta
 
 - **Acceso.** Lo que el sistema guarda de una cuenta es lo que su dueña ve en `/cuenta`: no hay un
   segundo lugar con más. Las tablas de la sección 3.bis —el perfil y las reservas— son la lista
-  completa.
+  completa. En la pantalla está partido en pestañas (reservas, cómo aparecer, acceso, borrar) para
+  no apilar los formularios; el contenido es el mismo.
 - **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
   cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
 - **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo

@@ -2,10 +2,12 @@
 
 import { cancelOwnPledgeAction } from "@/app/(es)/catalogo/actions";
 import { LocaleField, SubmitButton } from "@/components/account/fields";
+import { SecondaryAction } from "@/components/design-system/actions";
 import { formatLongDate } from "@/components/design-system/dates";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import { isActivePledge, type OwnPledge } from "@/src/domain/entities/donation-pledge";
 import { fill } from "@/src/i18n/fill";
+import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 /**
@@ -23,7 +25,14 @@ export function OwnPledges({
   locale: Locale;
 }) {
   if (pledges.length === 0) {
-    return <p className="max-w-measure text-body text-ink-muted">{copy.pledgesEmpty}</p>;
+    return (
+      <div className="max-w-measure space-y-lg">
+        <p className="text-body text-ink-muted">{copy.pledgesEmpty}</p>
+        <SecondaryAction href={localizedHref("/catalogo", locale)}>
+          {catalog.title}
+        </SecondaryAction>
+      </div>
+    );
   }
 
   const dateLocale = locale === "es" ? "es-AR" : "en-US";

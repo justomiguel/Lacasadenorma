@@ -18,6 +18,13 @@ export default async function AccountPage({
 }) {
   const params = await searchParams;
   const aviso = params["aviso"];
+  const seccion = params["seccion"];
 
-  return <AccountScreen locale="en" notice={typeof aviso === "string" ? aviso : null} />;
+  return (
+    <AccountScreen
+      locale="en"
+      notice={typeof aviso === "string" ? aviso : null}
+      section={typeof seccion === "string" ? seccion : null}
+    />
+  );
 }

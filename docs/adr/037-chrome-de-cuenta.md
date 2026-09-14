@@ -39,7 +39,8 @@ respuesta pública **no** lo nombran. Subirlo no es consentimiento para aparecer
 **3. Cerrar sesión, cambiar la contraseña y la foto viven donde ya vive la
 cuenta.** El menú muestra nombre, retrato, enlace a `/cuenta` y «Cerrar sesión».
 Agregar o cambiar la foto, cambiar la contraseña y borrar la cuenta siguen en
-`/cuenta`. No se inventa un panel de ajustes aparte.
+`/cuenta`. No se inventa un panel de ajustes aparte. Esa página se lee como un
+índice editorial (`SectionTabs`): reservas, cómo aparecer, acceso y borrar.
 
 ## Alternativas descartadas
 

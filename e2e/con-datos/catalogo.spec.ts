@@ -122,6 +122,10 @@ test.describe("fase D · reservas", () => {
 
         await articuloA.getByRole("button", { name: reservar }).click();
         await expect(paginaA).toHaveURL(/\/cuenta$/);
+        await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
+          "aria-selected",
+          "true",
+        );
         await expect(
           paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
         ).toBeVisible();
@@ -171,6 +175,10 @@ test.describe("fase D · reservas", () => {
         await expect(articulo).toHaveCount(1);
         await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
         await expect(donantePage).toHaveURL(/\/cuenta$/);
+        await expect(donantePage.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
+          "aria-selected",
+          "true",
+        );
 
         const pledgeId = await donantePage.locator('input[name="pledgeId"]').inputValue();
 

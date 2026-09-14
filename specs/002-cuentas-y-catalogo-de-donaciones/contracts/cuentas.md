@@ -18,7 +18,7 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 | `/cuenta/recuperar` | Página + formulario de cliente | Pide el correo de recuperación |
 | `/cuenta/clave` | Página + formulario de cliente | Fija contraseña nueva, con sesión de recuperación |
 | `/cuenta/confirmar` | **Route handler** | Consume el enlace del correo y crea la sesión |
-| `/cuenta` | Server Component | Mis reservas, mi retrato, mi nombre público, mi anonimato, cambiar la contraseña, borrar mi cuenta |
+| `/cuenta` | Server Component | Índice editorial de la cuenta: reservas, cómo aparecer (foto y nombre), acceso y borrar. `?seccion=` recuerda la pestaña abierta. |
 | `/cuenta/sesion` | **Route handler** | Snapshot privado del chrome: anónima o nombre/correo/si hay retrato. **No** crea el perfil |
 | `/cuenta/retrato` | **Route handler** | Sirve el retrato propio. Pide la URL firmada en el servidor y la descarta (ADR-037) |
 
@@ -26,6 +26,10 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 redirigir; no tiene nada que mostrar. Llama a `verifyOtp({ type, token_hash })` con lo que viene en la
 query, y **valida el destino** contra la lista de rutas conocidas antes de redirigir: un `next` que se
 respeta sin validar es un redirect abierto.
+
+`/cuenta` no es un panel de ajustes aparte (ADR-037): es la misma página de siempre, leída como
+índice. Las pestañas son `SectionTabs` —regla debajo, no píldoras—. Si hay reservas, esa pestaña
+abre primero; si no, abre «cómo aparecer». Sin JavaScript los cuatro paneles se apilan.
 
 El enlace del correo se arma con `emailRedirectTo` **del idioma en que la persona se registró**, y esa
 URL tiene que estar en `auth.site_url` o en `additional_redirect_urls`, incluidas las de preview de

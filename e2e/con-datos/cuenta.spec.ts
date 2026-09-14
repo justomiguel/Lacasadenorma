@@ -4,6 +4,7 @@ import { esperarSinViolaciones } from "../soporte/axe";
 import { apiLocal } from "../soporte/backoffice";
 import {
   CLAVE_PUBLICA,
+  abrirSeccionDeCuenta,
   correoDePrueba,
   crearCuenta,
   enlacePendiente,
@@ -71,7 +72,16 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
     ).toBeVisible();
-    await expect(page.getByText(email)).toBeVisible();
+
+    // El índice hidrata a pestañas: sin esperar el tablist, los cuatro paneles
+    // siguen apilados un instante y las aserciones de «no se ve» mienten.
+    await expect(
+      page.getByRole("tablist", { name: /secciones de tu cuenta/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("tab", { name: /cómo aparecer/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
 
     // El anonimato es el valor por defecto y la casilla lo refleja. Una casilla que
     // **concede** algo no puede venir marcada; ésta niega, y por eso sí (FR-225).
@@ -79,10 +89,15 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
     await expect(page.getByRole("heading", { name: /tu foto/i })).toBeVisible();
     await expect(page.getByLabel(/subir una foto/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^contraseña$/i })).toHaveCount(0);
+
+    await abrirSeccionDeCuenta(page, /acceso/i);
+    await expect(page.getByText(email)).toBeVisible();
     await expect(page.getByRole("heading", { name: /^contraseña$/i })).toBeVisible();
     await expect(
       page.getByRole("button", { name: /guardar la contraseña/i }),
     ).toBeVisible();
+    await expect(page).toHaveURL(/seccion=acceso/);
   });
 
   test("con sesión, el menú muestra la cuenta y cómo salir", async ({
@@ -340,6 +355,7 @@ test.describe("fase A · la cuenta del público", () => {
 
     await crearCuenta(page, request, email);
 
+    await abrirSeccionDeCuenta(page, /^borrar$/i);
     await page.getByLabel(/para confirmar, escribí/i).fill("BORRAR");
     await page.getByRole("button", { name: /^borrar la cuenta$/i }).click();
 
