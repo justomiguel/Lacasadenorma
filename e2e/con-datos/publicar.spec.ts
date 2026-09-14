@@ -163,7 +163,9 @@ test.describe("flujo 9 · publicar una novedad", () => {
     await entrar(page, "editor");
     await page.goto("/admin/novedades");
 
-    await page.getByLabel("Título", { exact: true }).fill(`Llegó el agua a la casa (${sufijo})`);
+    await page
+      .getByLabel("Título", { exact: true })
+      .fill(`Llegó el agua a la casa (${sufijo})`);
     await page.getByLabel(/dirección web/i).fill(slug);
     await escribirCuerpo(page, "Se conectó la cañería nueva y el tanque quedó cargado.");
     await page.getByRole("button", { name: /guardar borrador/i }).click();
