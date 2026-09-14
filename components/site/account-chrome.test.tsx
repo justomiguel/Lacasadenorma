@@ -90,6 +90,7 @@ describe("AccountChrome", () => {
       "href",
       "/admin",
     );
+    expect(screen.queryByRole("button", { name: "Cerrar sesión" })).toBeNull();
     unmount();
 
     renderChrome(staffSession, "drawer");
@@ -102,6 +103,7 @@ describe("AccountChrome", () => {
       "href",
       "/cuenta",
     );
+    expect(screen.getByRole("button", { name: "Cerrar sesión" })).toBeTruthy();
   });
 
   it("el pie no muestra Backoffice aunque haya rol", () => {

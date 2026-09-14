@@ -46,9 +46,11 @@ Agregar o cambiar la foto, cambiar la contraseña y borrar la cuenta siguen en
 **4. El backoffice se nombra en el chrome público sólo si hay rol.** El snapshot
 de `/cuenta/sesion` incluye `staff`. Quien dona no lo ve; quien carga el catálogo
 o las novedades ve «Backoffice» en el encabezado y en el menú, y un enlace en
-`/cuenta` que no espera a hidratar. El pie no lo muestra. En `/admin` el chrome
-público sigue sin personalizarse. La prosa editorial del sitio **no** se edita
-desde ahí: sigue en `content/*.json` (ADR-007).
+`/cuenta` que no espera a hidratar. En el encabezado de escritorio no se suma
+«Cerrar sesión»: un tercer enlace recorta la acción de ayudar. El pie no lo
+muestra. En `/admin` el chrome público sigue sin personalizarse. La prosa
+editorial del sitio **no** se edita desde ahí: sigue en `content/*.json`
+(ADR-007).
 
 ## Alternativas descartadas
 

@@ -17,10 +17,12 @@ import { useChromeSession } from "./session";
 /**
  * Cómo se ve la cuenta en el chrome: ingresar, o nombre + retrato + salir.
  *
- * En el encabezado de escritorio es texto, como «Ingresar». En el menú del
- * teléfono es un bloque: retrato rectangular (no un avatar redondo), nombre,
- * correo y las salidas —la cuenta, el backoffice si hay rol, y cerrar sesión—
- * (ADR-032, ADR-037). El pie no muestra el backoffice: es un colofón.
+ * En el encabezado de escritorio es texto, como «Ingresar». Si hay rol, el
+ * tercer enlace recortaba la acción de ayudar, así que «Cerrar sesión» se queda
+ * en el menú y en `/cuenta`. En el teléfono es un bloque: retrato rectangular
+ * (no un avatar redondo), nombre, correo y las salidas —la cuenta, el
+ * backoffice si hay rol, y cerrar sesión— (ADR-032, ADR-037). El pie no muestra
+ * el backoffice: es un colofón.
  */
 
 const LINK =
@@ -112,11 +114,13 @@ export function AccountChrome({
         <Link href={accountHref} className={className ?? chromeFallback} {...current}>
           {label}
         </Link>
-        <SignOutLink
-          locale={locale}
-          label={ui.signOut}
-          className={className ?? chromeFallback}
-        />
+        {session.staff ? null : (
+          <SignOutLink
+            locale={locale}
+            label={ui.signOut}
+            className={className ?? chromeFallback}
+          />
+        )}
       </div>
     );
   }
