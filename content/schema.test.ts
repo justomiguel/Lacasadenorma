@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest";
 import { getContent } from "./pack";
 import { parseContent, personSchema, siteSchema } from "./schema";
 
-const { faq, help, legacy, legal, norma, site, transparency } = getContent("es");
+const { catalog, faq, help, legacy, legal, norma, site, transparency, wall } =
+  getContent("es");
 
 /** Sin acentos, sin puntuación y en minúsculas: compara la frase, no su formato. */
 function normalizar(text: string): string {
@@ -113,6 +114,13 @@ describe("contenido publicado", () => {
     for (const entry of faq) {
       expect(entry.href === null, entry.question).toBe(entry.linkLabel === null);
     }
+  });
+
+  it("el catálogo y el muro no tienen prosa de introducción: alcanza el encabezado", () => {
+    expect(catalog.paragraphs).toEqual([]);
+    expect(wall.paragraphs).toEqual([]);
+    expect(getContent("en").catalog.paragraphs).toEqual([]);
+    expect(getContent("en").wall.paragraphs).toEqual([]);
   });
 
   it("no afirma que Fundación Norma sea una organización constituida (SC de US5)", () => {

@@ -36,8 +36,14 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
       }
 
       const texto = (await page.locator("main").innerText()).trim();
-      // Contacto es una ficha —nombre, teléfono, cuatro vías—, no un artículo.
-      const minimo = pagina.path === "/contacto" ? 200 : 400;
+      // Contacto es una ficha. Catálogo y muro, sin base, son encabezado, bajada
+      // y estado vacío: tampoco son un artículo.
+      const minimo =
+        pagina.path === "/contacto" ||
+        pagina.path === "/catalogo" ||
+        pagina.path === "/quienes-ayudaron"
+          ? 200
+          : 400;
 
       expect(
         texto.length,

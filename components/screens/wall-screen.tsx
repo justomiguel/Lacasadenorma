@@ -3,7 +3,6 @@ import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { formatLongDate } from "@/components/design-system/dates";
 import { Container, Section } from "@/components/design-system/layout";
-import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import type { DonationWallEntry } from "@/src/domain/entities";
@@ -37,13 +36,7 @@ export async function WallScreen({ locale }: { locale: Locale }) {
       <PageHeader title={wall.title} lead={wall.lead} />
 
       <Container>
-        <Section tight>
-          <Paragraphs items={wall.paragraphs} />
-        </Section>
-      </Container>
-
-      <Container>
-        <Section className="border-t border-rule">
+        <Section>
           {result.status !== "ok" ? (
             <Unavailable
               reason={result.reason}

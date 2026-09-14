@@ -6,7 +6,6 @@ import { WallPreview } from "@/components/catalog/wall-preview";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
-import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { getCatalog } from "@/src/application/use-cases/get-catalog";
@@ -52,13 +51,7 @@ export async function CatalogScreen({
       <PageHeader title={catalog.title} lead={catalog.lead} />
 
       <Container>
-        <Section tight>
-          <Paragraphs items={catalog.paragraphs} />
-        </Section>
-      </Container>
-
-      <Container>
-        <Section className="border-t border-rule">
+        <Section>
           {result.status !== "ok" ? (
             <Unavailable
               reason={result.reason}
