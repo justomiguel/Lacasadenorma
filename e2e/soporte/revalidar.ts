@@ -16,6 +16,17 @@ export async function revalidar(
   const respuesta = await request.post("/e2e/revalidar", { data: { paths } });
 
   expect(respuesta.status(), await respuesta.text()).toBe(200);
+
+  // El route handler sólo marca el path. La regeneración corre en la visita
+  // siguiente, y esa visita puede servir el HTML viejo (stale-while-revalidate).
+  // Dos GET: el primero dispara, el segundo ya trae lo nuevo.
+  for (const path of paths) {
+    const primera = (await request.get(path)).status();
+    const segunda = (await request.get(path)).status();
+
+    expect([200, 404], `${path} (${String(primera)})`).toContain(primera);
+    expect([200, 404], `${path} (${String(segunda)})`).toContain(segunda);
+  }
 }
 
 /**

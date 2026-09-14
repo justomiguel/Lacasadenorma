@@ -338,7 +338,8 @@ Detalles que parecen menores y no lo son:
   porque el browser ya se pudo haber cerrado; sin `revalidatePath`, `/catalogo` sigue mostrando el
   ítem y `revision-visual` cuenta un hueco de foto de más. `POST /e2e/revalidar` existe sólo con
   `E2E_MODO=con-datos` y es el lado Next del harness: el de `scripts/local-api` no puede tocar esa
-  caché. Fuera de ese modo contesta 404.
+  caché. Fuera de ese modo contesta 404. El route handler **marca** el path; la regeneración corre
+  en la visita siguiente y esa visita puede servir el HTML viejo, así que el helper hace dos GET.
 - **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
   comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
   cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
