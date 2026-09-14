@@ -8,7 +8,7 @@ import type { BrandId } from "@/content/brands";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 const BUTTON_BASE =
-  "mt-sm inline-flex min-h-cta w-full items-center justify-center gap-sm rounded-md px-md no-underline font-ui text-body font-medium transition-colors duration-fast ease-editorial active:translate-y-px";
+  "mt-sm inline-flex min-h-cta w-full items-center justify-center gap-xs rounded-md px-sm no-underline font-ui text-small font-medium transition-colors duration-fast ease-editorial active:translate-y-px sm:gap-sm sm:px-md sm:text-body";
 
 const BUTTON_BRAND = {
   mercadopago: "bg-mercadopago text-mercadopago-ink hover:bg-mercadopago-strong",
