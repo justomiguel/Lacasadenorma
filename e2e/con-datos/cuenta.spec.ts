@@ -115,6 +115,15 @@ test.describe("fase A · la cuenta del público", () => {
 
     await menu.getByRole("button", { name: /cerrar sesión/i }).click();
     await expect(page).toHaveURL(/\/cuenta\/ingresar/);
+
+    await page.setViewportSize(VIEWPORT_MINIMO);
+    await page.getByRole("button", { name: /abrir el menú/i }).click();
+    await expect(
+      page.getByRole("dialog").getByRole("link", { name: /^ingresar$/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
+    ).toHaveCount(0);
   });
 
   test("el mismo enlace no sirve dos veces", async ({ page, request }, info) => {
