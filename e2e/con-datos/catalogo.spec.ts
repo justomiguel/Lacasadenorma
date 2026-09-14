@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
+  articuloDelCatalogo,
   cargarItemPublicado,
   habilitarCuenta,
   idDeItem,
@@ -48,8 +49,9 @@ test.describe("fase D · reservas", () => {
         await expect(donantePage).toHaveURL(/\/cuenta\/ingresar/);
 
         await donantePage.goto("/catalogo");
-        const articulo = donantePage.locator("article").filter({ hasText: titulo });
+        const articulo = articuloDelCatalogo(donantePage, titulo);
 
+        await expect(articulo).toHaveCount(1);
         await expect(articulo).toBeVisible();
         await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
 
@@ -108,9 +110,12 @@ test.describe("fase D · reservas", () => {
         await paginaA.goto("/catalogo");
         await paginaB.goto("/catalogo");
 
-        const articuloA = paginaA.locator("article").filter({ hasText: titulo });
-        const articuloB = paginaB.locator("article").filter({ hasText: titulo });
+        const articuloA = articuloDelCatalogo(paginaA, titulo);
+        const articuloB = articuloDelCatalogo(paginaB, titulo);
         const reservar = /anotarme para traer esto/i;
+
+        await expect(articuloA).toHaveCount(1);
+        await expect(articuloB).toHaveCount(1);
 
         await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
         await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
@@ -162,11 +167,9 @@ test.describe("fase D · reservas", () => {
         await habilitarCuenta(staffPage, email);
 
         await donantePage.goto("/catalogo");
-        await donantePage
-          .locator("article")
-          .filter({ hasText: titulo })
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        const articulo = articuloDelCatalogo(donantePage, titulo);
+        await expect(articulo).toHaveCount(1);
+        await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
         await expect(donantePage).toHaveURL(/\/cuenta$/);
 
         const pledgeId = await donantePage.locator('input[name="pledgeId"]').inputValue();
@@ -177,11 +180,9 @@ test.describe("fase D · reservas", () => {
         await expect(donantePage.getByText(/venció el/i)).toBeVisible();
 
         await donantePage.goto("/catalogo");
+        await expect(articuloDelCatalogo(donantePage, titulo)).toHaveCount(1);
         await expect(
-          donantePage
-            .locator("article")
-            .filter({ hasText: titulo })
-            .getByText(/faltan 1/i),
+          articuloDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
         ).toBeVisible();
       } finally {
         await donante.close();

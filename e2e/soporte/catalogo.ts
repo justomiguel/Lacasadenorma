@@ -68,6 +68,16 @@ export async function ocultarItem(
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
 }
 
+/** El renglón del catálogo, acotado al contenido: en WebKit a veces hay un nodo extra. */
+export function articuloDelCatalogo(page: Page, titulo: string) {
+  return page
+    .locator("#contenido")
+    .getByRole("article")
+    .filter({
+      has: page.getByRole("heading", { name: titulo, exact: true }),
+    });
+}
+
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
   const salir = page
     .locator("#contenido")
