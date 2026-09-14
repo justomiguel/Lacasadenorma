@@ -21,7 +21,7 @@ const PRIMARY_BASE =
 
 const PRIMARY_TONE = {
   forest: "bg-forest text-paper hover:bg-forest-strong active:bg-forest-strong",
-  paper: "bg-paper text-forest hover:bg-sage active:bg-sage",
+  paper: "bg-paper text-forest hover:bg-paper-sunk active:bg-paper-muted",
 } as const;
 
 export type ActionTone = keyof typeof PRIMARY_TONE;

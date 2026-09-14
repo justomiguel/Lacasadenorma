@@ -39,7 +39,7 @@ export function BrandLabel({
   className?: string;
 }) {
   return (
-    <span className={cn("inline-flex items-center gap-xs", className)}>
+    <span className={cn("inline-flex min-w-0 items-center gap-xs", className)}>
       <BrandMark id={id} />
       {children}
     </span>

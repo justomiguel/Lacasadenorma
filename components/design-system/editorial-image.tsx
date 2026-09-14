@@ -88,15 +88,21 @@ export function EditorialImage({
 
   return (
     <figure className={cn("min-w-0", VARIANT_CLASS[variant], className)}>
+      {/*
+        El wipe escala al 1.03. `overflow: hidden` recorta descendientes, no la
+        caja transformada: si el transform va en el mismo nodo que el sangrado,
+        la home desborda 6 px (criterio 10). El clip queda afuera, el wipe adentro.
+      */}
       <div
-        data-reveal-photo=""
-        {...(stagger ? { "data-stagger": "1" } : {})}
         className={cn(
+          "overflow-hidden",
           variant === "full-bleed" ? "bleed" : "",
-          crop === undefined ? "" : cn("overflow-hidden", CROP_CLASS[crop]),
+          crop === undefined ? "" : CROP_CLASS[crop],
         )}
       >
-        {image}
+        <div data-reveal-photo="" {...(stagger ? { "data-stagger": "1" } : {})}>
+          {image}
+        </div>
       </div>
       {text === null && media.credit === null ? null : (
         <figcaption className="mt-sm max-w-measure font-ui text-caption text-ink-muted">
