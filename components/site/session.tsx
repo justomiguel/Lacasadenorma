@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -47,6 +48,7 @@ export function SessionProvider({
 }) {
   const [session, setSession] = useState<ChromeSession>({ status: "anonymous" });
   const [generation, setGeneration] = useState(0);
+  const pathname = usePathname();
   const endpoint = localizedHref("/cuenta/sesion", locale);
   const retrato = localizedHref("/cuenta/retrato", locale);
 
@@ -56,6 +58,10 @@ export function SessionProvider({
 
   useEffect(() => {
     let cancelled = false;
+
+    // `pathname` está a propósito: un redirect de Server Action no desmonta
+    // este provider. Sin volver a pedir, el encabezado seguiría diciendo
+    // «Ingresar» después de entrar, y el nombre después de salir.
 
     void fetch(endpoint, { cache: "no-store" })
       .then(async (response) => {
@@ -79,7 +85,7 @@ export function SessionProvider({
     return () => {
       cancelled = true;
     };
-  }, [endpoint, generation]);
+  }, [endpoint, generation, pathname]);
 
   const value = useMemo<SessionValue>(() => {
     const portraitSrc =
