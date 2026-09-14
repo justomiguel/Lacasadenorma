@@ -5,8 +5,9 @@ import { formatLongDate } from "@/components/design-system/dates";
 import { Container, Section } from "@/components/design-system/layout";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
-import type { DonationWallEntry } from "@/src/domain/entities";
+import { keepStaleOnError } from "@/src/application/result";
 import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
+import type { DonationWallEntry } from "@/src/domain/entities";
 import { fill } from "@/src/i18n/fill";
 import { localizedHref } from "@/src/i18n/href";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
@@ -29,7 +30,9 @@ export function wallMetadata(locale: Locale) {
 
 export async function WallScreen({ locale }: { locale: Locale }) {
   const { wall, catalog, ui } = getContent(locale);
-  const result = await getDonationWall({ dataLayer: getPublicDataLayer(), logger });
+  const result = keepStaleOnError(
+    await getDonationWall({ dataLayer: getPublicDataLayer(), logger }),
+  );
 
   return (
     <>

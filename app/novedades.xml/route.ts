@@ -1,4 +1,5 @@
 import { getContent } from "@/content";
+import { keepStaleOnError } from "@/src/application/result";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
 import { logger } from "@/src/infrastructure/logging/logger";
@@ -14,7 +15,9 @@ export const revalidate = 300;
 export async function GET(): Promise<Response> {
   const siteUrl = getSiteUrl();
   const { site, ui } = getContent("es");
-  const updates = await listUpdates({ dataLayer: getPublicDataLayer(), logger });
+  const updates = keepStaleOnError(
+    await listUpdates({ dataLayer: getPublicDataLayer(), logger }),
+  );
   const items = updates.status === "ok" ? updates.data : [];
 
   const xml = renderNewsRss({

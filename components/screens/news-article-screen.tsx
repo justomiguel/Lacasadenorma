@@ -12,6 +12,7 @@ import { RichText } from "@/components/design-system/rich-text";
 import { Byline } from "@/components/design-system/typography";
 import { StructuredData } from "@/components/site/structured-data";
 import { getContent } from "@/content";
+import { keepStaleOnError } from "@/src/application/result";
 import { findUpdate } from "@/src/application/use-cases/get-updates";
 import { coverPhoto, isPhoto, isVideo } from "@/src/domain/entities";
 import { excerpt, referencedMediaIds } from "@/src/domain/rich-text";
@@ -34,7 +35,9 @@ type NewsArticleProps = {
 };
 
 async function readUpdate(slug: string) {
-  return findUpdate({ dataLayer: getPublicDataLayer(), logger, slug });
+  return keepStaleOnError(
+    await findUpdate({ dataLayer: getPublicDataLayer(), logger, slug }),
+  );
 }
 
 /**

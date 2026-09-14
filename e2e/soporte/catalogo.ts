@@ -1,6 +1,18 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
 import { apiLocal, CUENTAS, entrar, primeraFila, tokenDe } from "./backoffice";
+import { esperarQueNoAparezca, revalidar } from "./revalidar";
+
+/**
+ * El ítem sin foto de `supabase/fixtures/dev.sql`. Es el único hueco que
+ * `revision-visual.spec.ts` cuenta en `/catalogo`. Cualquier otro publicado
+ * suma uno de más.
+ *
+ * No se le pone foto a los ítems de prueba: el shim local no tiene Storage
+ * (runbook §7). La aislación es despublicar y esperar a que el HTML lo deje
+ * de mostrar.
+ */
+const ITEM_SIN_FOTO_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
 
 /**
  * Cargar un ítem publicado desde el backoffice, como lo haría el equipo.
@@ -48,10 +60,11 @@ export async function idDeItem(
   return id;
 }
 
-/** Lo saca de `/catalogo` para no dejar un hueco de foto en la revisión visual. */
+/** Lo saca de `/catalogo` y tira la caché de ISR para no dejar un hueco de foto. */
 export async function ocultarItem(
   request: APIRequestContext,
   itemId: string,
+  titulo: string,
 ): Promise<void> {
   const token = await tokenDe(request, "editor");
   const respuesta = await request.patch(
@@ -66,6 +79,107 @@ export async function ocultarItem(
   );
 
   expect(respuesta.status(), "despublicar el ítem de prueba").toBe(204);
+  await revalidar(request, ["/catalogo", "/en/catalogo"]);
+  await esperarQueNoAparezca(request, "/catalogo", titulo);
+  await esperarQueNoAparezca(request, "/en/catalogo", titulo);
+}
+
+/**
+ * Deja `/catalogo` como lo horneó el fixture: un ítem, un hueco.
+ *
+ * Corre al empezar la revisión visual en CI, donde hay un solo worker y los
+ * proyectos van en serie. En local la suite es paralela: despublicar acá
+ * sacaría el ítem de otra prueba. El cleanup de cada test sigue siendo
+ * `ocultarItem`.
+ */
+export async function dejarElCatalogoDelFixture(
+  request: APIRequestContext,
+): Promise<void> {
+  const token = await tokenDe(request, "editor");
+  const respuesta = await request.patch(
+    `${apiLocal()}/rest/v1/donation_items?id=neq.${ITEM_SIN_FOTO_DEL_FIXTURE}&published_at=not.is.null`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Prefer: "return=minimal",
+      },
+      data: { published_at: null },
+    },
+  );
+
+  expect(respuesta.status(), "despublicar ítems que no son el del fixture").toBe(204);
+  await revalidar(request, ["/catalogo", "/en/catalogo"]);
+  await esperarHuecosDelCatalogo(request, 1);
+}
+
+/**
+ * El atributo en el HTML, no el payload RSC. En un ítem el marcador aparece
+ * dos veces en el documento (`"data-espacio-reservado":true` y
+ * `data-espacio-reservado="true"`); contar la cadena cruda da el doble.
+ */
+function huecosEnHtml(html: string): number {
+  return html.match(/\sdata-espacio-reservado=/g)?.length ?? 0;
+}
+
+async function esperarHuecosDelCatalogo(
+  request: APIRequestContext,
+  esperado: number,
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const primera = await (await request.get("/catalogo")).text();
+        let huecos = huecosEnHtml(primera);
+
+        if (huecos === esperado) {
+          return huecos;
+        }
+
+        const segunda = await (await request.get("/catalogo")).text();
+
+        huecos = huecosEnHtml(segunda);
+
+        if (huecos !== esperado) {
+          const marca = await request.post("/e2e/revalidar", {
+            data: { paths: ["/catalogo", "/en/catalogo"] },
+          });
+
+          expect(marca.status(), await marca.text()).toBe(200);
+        }
+
+        return huecos;
+      },
+      {
+        timeout: 20_000,
+        intervals: [500, 1_000, 1_000, 2_000],
+        message: `/catalogo tendría que reservar ${String(esperado)} huecos de foto (criterio 11)`,
+      },
+    )
+    .toBe(esperado);
+}
+
+/**
+ * Publica un ítem, corre el cuerpo y lo despublica siempre.
+ *
+ * El id se resuelve **antes** del cuerpo: si la prueba se queda sin tiempo, el
+ * `finally` todavía tiene con qué pegarle a PostgREST. El `request` de Playwright
+ * no depende del browser, así que esto sigue andando con el contexto ya cerrado.
+ */
+export async function conItemPublicado(
+  request: APIRequestContext,
+  staffPage: Page,
+  titulo: string,
+  cantidad: number,
+  cuerpo: (itemId: string) => Promise<void>,
+): Promise<void> {
+  await cargarItemPublicado(staffPage, titulo, cantidad);
+  const itemId = await idDeItem(request, titulo);
+
+  try {
+    await cuerpo(itemId);
+  } finally {
+    await ocultarItem(request, itemId, titulo);
+  }
 }
 
 /**
@@ -78,7 +192,7 @@ export async function ocultarItemSiExiste(
   titulo: string,
 ): Promise<void> {
   try {
-    await ocultarItem(request, await idDeItem(request, titulo));
+    await ocultarItem(request, await idDeItem(request, titulo), titulo);
   } catch (error) {
     console.warn("No se pudo despublicar el ítem de prueba", error);
   }

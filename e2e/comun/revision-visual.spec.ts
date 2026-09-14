@@ -1,5 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 
+import { dejarElCatalogoDelFixture } from "../soporte/catalogo";
 import { PAGINAS_PUBLICAS, VIEWPORT_MINIMO } from "../soporte/paginas";
 
 /**
@@ -301,9 +302,33 @@ async function medir(page: Page): Promise<Medicion> {
   );
 }
 
+/**
+ * `/catalogo` es dinámica y tiene `loading.tsx`. En WebKit el `goto` puede
+ * resolver sobre "Estamos cargando…" —cero huecos— y medir el cascarón.
+ */
+async function esperarCatalogoListo(page: Page, path: string): Promise<void> {
+  if (path !== "/catalogo") {
+    return;
+  }
+
+  await expect(page.getByText(/estamos cargando/i)).toHaveCount(0);
+}
+
+/**
+ * En CI, un ítem de prueba del proyecto anterior puede seguir publicado o
+ * cacheado. Localmente la suite es paralela y esto despublicaría el de otra
+ * prueba.
+ */
+async function aislarCatalogoSiCorresponde(request: APIRequestContext): Promise<void> {
+  if (process.env.CI && process.env.E2E_MODO === "con-datos") {
+    await dejarElCatalogoDelFixture(request);
+  }
+}
+
 async function revisar(page: Page, donde: string) {
   for (const pagina of PAGINAS_PUBLICAS) {
     await page.goto(pagina.path);
+    await esperarCatalogoListo(page, pagina.path);
     // Playfair e Inter cambian el ancho respecto de la fallback. Medir antes de
     // que carguen reportaba 10 px de desborde que el usuario no llega a ver.
     await page.evaluate(() => document.fonts.ready);
@@ -373,14 +398,20 @@ async function revisar(page: Page, donde: string) {
 test.describe("revisión visual · ux.md §12", () => {
   test("las quince páginas cumplen los criterios medibles en el viewport del proyecto", async ({
     page,
+    request,
   }) => {
+    test.setTimeout(90_000);
+    await aislarCatalogoSiCorresponde(request);
     await revisar(page, "el viewport del proyecto");
   });
 
   test("las quince páginas cumplen los criterios medibles en 360 px", async ({
     page,
+    request,
   }) => {
+    test.setTimeout(90_000);
     await page.setViewportSize(VIEWPORT_MINIMO);
+    await aislarCatalogoSiCorresponde(request);
     await revisar(page, "360 px");
   });
 

@@ -115,25 +115,25 @@ export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise
 /**
  * Cierra la sesión del público.
  *
- * En escritorio hay un «Cerrar sesión» en el encabezado y, si la pestaña Acceso
- * está abierta, otro en el perfil. En teléfono el encabezado no lo trae: vive
- * en el menú, y aparece después de hidratar el island (ADR-037). Sin abrir el
- * menú, Playwright espera el botón hasta que vence todo el test, el ítem de
- * catálogo queda publicado y la revisión visual cuenta un hueco de más.
+ * En escritorio hay un «Cerrar sesión» en el encabezado. En teléfono no: el
+ * chrome se esconde a partir de `lg` y salir vive en el menú, después de
+ * hidratar el island (ADR-037). Buscar un «Cerrar sesión» visible en el
+ * documento entero encuentra el del encabezado, que está en el DOM pero
+ * oculto, y Playwright se queda esperándolo hasta el timeout —era el colgado
+ * de 90 s en iPhone 15. Sin abrir el menú, el ítem de catálogo queda
+ * publicado y la revisión visual cuenta un hueco de más.
  */
 export async function cerrarSesion(page: Page): Promise<void> {
   const enElEncabezado = page
     .getByRole("banner")
     .getByRole("button", { name: /cerrar sesión/i });
+  const abrirMenu = page.getByRole("button", { name: /abrir el menú|open the menu/i });
+
+  await expect(enElEncabezado.or(abrirMenu)).toBeVisible({ timeout: 20_000 });
 
   if (await enElEncabezado.isVisible()) {
     await enElEncabezado.click();
-    return;
-  }
-
-  const abrirMenu = page.getByRole("button", { name: /abrir el menú/i });
-
-  if (await abrirMenu.isVisible()) {
+  } else {
     await abrirMenu.click();
     await expect(
       page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
@@ -142,9 +142,7 @@ export async function cerrarSesion(page: Page): Promise<void> {
       .getByRole("dialog")
       .getByRole("button", { name: /cerrar sesión/i })
       .click();
-    return;
   }
 
-  await expect(enElEncabezado).toBeVisible({ timeout: 20_000 });
-  await enElEncabezado.click();
+  await expect(page).toHaveURL(/\/cuenta\/ingresar/);
 }

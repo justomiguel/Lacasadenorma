@@ -60,3 +60,7 @@ esperar un despliegue.
 - Cada acción nueva del backoffice tiene que declarar qué rutas públicas toca. Es una lista que se
   puede quedar corta, y el ISR de cinco minutos existe precisamente para que quedarse corto sea un
   atraso y no un error permanente.
+- Un render que termina —aunque sea con el aviso de "no disponible"— se cachea como éxito. Si la
+  lectura a la base falla durante la revalidación, Next reemplazaría la página buena por la vacía
+  durante cinco minutos. Las pantallas que leen datos vivos tiran (`keepStaleOnError`) cuando el
+  motivo es `error`; `not-configured` y `not-published` sí se pintan, porque son estados estables.

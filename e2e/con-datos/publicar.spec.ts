@@ -9,6 +9,7 @@ import {
   tokenDe,
 } from "../soporte/backoffice";
 import { volverABorradorSiSiguePublicada } from "../soporte/novedades";
+import { esperarQueAparezca } from "../soporte/revalidar";
 
 /**
  * El editor visual pinta un contenteditable y esconde el textarea. El POST sigue
@@ -121,7 +122,8 @@ test.describe("flujo 9 · publicar una novedad", () => {
 
       // Y en la lista, que es la página que `revalidatePath` tiene que haber
       // invalidado: sin eso la novedad existiría por URL directa y no aparecería
-      // donde la gente la busca.
+      // donde la gente la busca. La primera visita puede servir el HTML viejo.
+      await esperarQueAparezca(request, "/novedades", sufijo);
       await page.goto("/novedades");
       await expect(page.getByRole("link", { name: new RegExp(sufijo) })).toBeVisible();
       await expect(page.locator("time").first()).toBeVisible();
@@ -130,12 +132,7 @@ test.describe("flujo 9 · publicar una novedad", () => {
       // El sitemap es la otra invalidación de ADR-017, y la que nadie mira: si quedara
       // cacheado, la novedad sería invisible para los buscadores hasta la próxima
       // revalidación por tiempo.
-      const sitemap = await request.get("/sitemap.xml");
-
-      expect(sitemap.status()).toBe(200);
-      expect(await sitemap.text(), "el sitemap no se invalidó al publicar").toContain(
-        `/novedades/${slug}`,
-      );
+      await esperarQueAparezca(request, "/sitemap.xml", `/novedades/${slug}`);
 
       // ── Y se puede volver atrás ───────────────────────────────────────────────
       // Publicar por error tiene que ser reversible, y reversible de verdad: no alcanza

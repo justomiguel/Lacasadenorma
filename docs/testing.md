@@ -195,8 +195,8 @@ Lo que el flujo 9 afirma, en cuatro pruebas y en los tres proyectos:
 Los tres proyectos escriben en la misma base, así que cada prueba trabaja sobre una novedad con su
 propio `slug`, derivado del nombre del proyecto y del reloj. Y cada publicación vuelve a borrador al
 terminar, por el botón del backoffice —no por un `PATCH` a PostgREST—: `/reconstruccion` pide la última
-novedad (`limit: 1`) y `revalidatePath` vive en esa acción. Dejar una fila de prueba publicada hace
-que el flujo 3 deje de ver el fixture y falle en el proyecto siguiente.
+novedad (`limit: 1`) y `revalidatePath` vive en esa acción. Dejar una fila de prueba publicada la
+convierte en «lo último» de `/reconstruccion`.
 
 Sigue siendo cierto que el shim no es Supabase: el comportamiento de GoTrue ante una contraseña débil,
 la recuperación de contraseña, el rate limiting y el hook configurado en el panel se verifican contra
@@ -329,6 +329,23 @@ Detalles que parecen menores y no lo son:
   porque Vercel restaura la caché de build entre despliegues: un deploy puede prerenderizar cifras
   leídas hasta cinco minutos antes. Para el sitio es inocuo —la página revalida sola—, pero explica una
   cifra que llega vieja a un despliegue recién hecho.
+- **Un fallo de lectura durante la revalidación no puede pintarse.** Next toma un render que termina
+  —aunque sea con el aviso de "no disponible"— como éxito y reemplaza la página buena. En una corrida
+  con-datos de quince minutos, `/reconstruccion` perdía la novedad del fixture a los cinco: el pool
+  de PostgREST (4) se saturaba, `listUpdates` devolvía `error` y la revalidación horneaba la página
+  sin el relato. `keepStaleOnError` tira para conservar el HTML del build; el pool local pasó a 12.
+- **Una escritura por REST no invalida ISR.** El cleanup del catálogo despublica contra PostgREST
+  porque el browser ya se pudo haber cerrado; sin `revalidatePath`, `/catalogo` sigue mostrando el
+  ítem y `revision-visual` cuenta un hueco de foto de más. `POST /e2e/revalidar` existe sólo con
+  `E2E_MODO=con-datos` y es el lado Next del harness: el de `scripts/local-api` no puede tocar esa
+  caché. Fuera de ese modo contesta 404. El route handler **marca** el path; la regeneración corre
+  en la visita siguiente y esa visita puede servir el HTML viejo, así que el helper hace dos GET y
+  después espera a que el título del ítem no esté en el HTML. Si la regeneración tira
+  (`keepStaleOnError`) se vuelve a marcar. En CI, la revisión visual despublica cualquier ítem que
+  no sea el del fixture antes de contar huecos: Safari corre después de los catálogos de
+  escritorio y de móvil, y un leftover publicado o cacheado era un segundo hueco. En WebKit,
+  `/catalogo` además espera a que desaparezca "Estamos cargando…": `loading.tsx` no reserva
+  espacio, y medir ese cascarón daba cero huecos.
 - **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
   comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
   cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
@@ -429,6 +446,9 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
+| `/reconstruccion` muestra una novedad de prueba como lo último | El flujo 9 no volvió a borrador. Tiene que despublicar por el botón del backoffice, no por un `PATCH` a PostgREST |
+| `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba sigue publicado o la caché de ISR no se invalidó. `ocultarItem` espera a que el título desaparezca del HTML; en CI la revisión visual deja sólo el ítem del fixture |
+| `/catalogo` reserva 0 huecos de foto en lugar de 1 | WebKit midió `loading.tsx`. La revisión visual tiene que esperar a que desaparezca "Estamos cargando…" antes de contar |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |

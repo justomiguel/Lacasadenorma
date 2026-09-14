@@ -21,7 +21,7 @@ const PRIMARY_BASE =
 
 const PRIMARY_TONE = {
   forest: "bg-forest text-paper hover:bg-forest-strong active:bg-forest-strong",
-  paper: "bg-paper text-forest hover:bg-paper-sunk active:bg-paper-muted",
+  paper: "isolate bg-paper text-forest hover:bg-paper-sunk active:bg-paper-muted",
 } as const;
 
 export type ActionTone = keyof typeof PRIMARY_TONE;
@@ -59,7 +59,12 @@ export function PrimaryAction({
   tone?: ActionTone;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   return (
-    <Link href={href} className={primaryActionClass(tone, className)} {...rest}>
+    <Link
+      href={href}
+      className={primaryActionClass(tone, className)}
+      {...(tone === "paper" ? { "data-tone": "paper" as const } : {})}
+      {...rest}
+    >
       {children}
     </Link>
   );

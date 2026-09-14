@@ -172,4 +172,13 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
       0,
     );
   });
+
+  test("la palanca de revalidar de las pruebas con-datos no existe acá", async ({
+    request,
+  }) => {
+    expect((await request.get("/e2e/revalidar")).status()).toBe(404);
+    expect(
+      (await request.post("/e2e/revalidar", { data: { paths: ["/catalogo"] } })).status(),
+    ).toBe(404);
+  });
 });

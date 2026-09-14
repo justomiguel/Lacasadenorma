@@ -3,9 +3,8 @@ import { expect, test } from "@playwright/test";
 import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
   articuloDelCatalogo,
-  cargarItemPublicado,
+  conItemPublicado,
   habilitarCuenta,
-  idDeItem,
   ocultarItemSiExiste,
   vencerReserva,
 } from "../soporte/catalogo";
@@ -40,33 +39,37 @@ test.describe("fase D · reservas", () => {
     const staffPage = await staff.newPage();
 
     try {
-      await cargarItemPublicado(staffPage, titulo);
-      const itemId = await idDeItem(request, titulo);
-
       const donante = await browser.newContext();
       const donantePage = await donante.newPage();
 
       try {
-        await crearCuenta(donantePage, request, email);
-        await cerrarSesion(donantePage);
-        await expect(donantePage).toHaveURL(/\/cuenta\/ingresar/);
+        await conItemPublicado(request, staffPage, titulo, 1, async (itemId) => {
+          await crearCuenta(donantePage, request, email);
+          await cerrarSesion(donantePage);
 
-        await donantePage.goto("/catalogo");
-        const articulo = articuloDelCatalogo(donantePage, titulo);
+          await donantePage.goto("/catalogo");
+          const articulo = articuloDelCatalogo(donantePage, titulo);
 
-        await expect(articulo).toHaveCount(1);
-        await expect(articulo).toBeVisible();
-        await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
+          await expect(articulo).toHaveCount(1);
+          await expect(articulo).toBeVisible();
+          await articulo
+            .getByRole("button", { name: /anotarme para traer esto/i })
+            .click();
 
-        await expect(donantePage).toHaveURL(new RegExp(`/cuenta/ingresar\\?volver=`));
-        await expect(donantePage).toHaveURL(new RegExp(itemId));
+          await expect(donantePage).toHaveURL(new RegExp(`/cuenta/ingresar\\?volver=`));
+          await expect(donantePage).toHaveURL(new RegExp(itemId));
 
-        await donantePage.getByLabel("Correo").fill(email);
-        await donantePage.getByLabel("Contraseña").fill(CLAVE_PUBLICA);
-        await donantePage.getByRole("button", { name: /^ingresar$/i }).click();
+          const acceso = donantePage
+            .locator("form")
+            .filter({ has: donantePage.getByRole("button", { name: /^ingresar$/i }) });
 
-        await expect(donantePage).toHaveURL(new RegExp(`/catalogo\\?item=${itemId}$`));
-        await expect(articulo.getByRole("heading", { name: titulo })).toBeVisible();
+          await acceso.getByLabel("Correo").fill(email);
+          await acceso.getByLabel("Contraseña").fill(CLAVE_PUBLICA);
+          await acceso.getByRole("button", { name: /^ingresar$/i }).click();
+
+          await expect(donantePage).toHaveURL(new RegExp(`/catalogo\\?item=${itemId}$`));
+          await expect(articulo.getByRole("heading", { name: titulo })).toBeVisible();
+        });
       } finally {
         await donante.close();
       }
@@ -92,56 +95,55 @@ test.describe("fase D · reservas", () => {
     const staffPage = await staff.newPage();
 
     try {
-      await cargarItemPublicado(staffPage, titulo, 1);
-      const itemId = await idDeItem(request, titulo);
-
       const contextoA = await browser.newContext();
       const paginaA = await contextoA.newPage();
       const contextoB = await browser.newContext();
       const paginaB = await contextoB.newPage();
 
       try {
-        await crearCuenta(paginaA, request, emailA);
-        await crearCuenta(paginaB, request, emailB);
+        await conItemPublicado(request, staffPage, titulo, 1, async (itemId) => {
+          await crearCuenta(paginaA, request, emailA);
+          await crearCuenta(paginaB, request, emailB);
 
-        await habilitarCuenta(staffPage, emailA);
-        await habilitarCuenta(staffPage, emailB);
+          await habilitarCuenta(staffPage, emailA);
+          await habilitarCuenta(staffPage, emailB);
 
-        // Las dos personas tienen que ver el formulario **antes** de que A
-        // reserve: un ítem cubierto se sigue mostrando, pero ya no se ofrece
-        // (FR-210). Si B entra después, no hay botón que apretar.
-        await paginaA.goto("/catalogo");
-        await paginaB.goto("/catalogo");
+          // Las dos personas tienen que ver el formulario **antes** de que A
+          // reserve: un ítem cubierto se sigue mostrando, pero ya no se ofrece
+          // (FR-210). Si B entra después, no hay botón que apretar.
+          await paginaA.goto("/catalogo");
+          await paginaB.goto("/catalogo");
 
-        const articuloA = articuloDelCatalogo(paginaA, titulo);
-        const articuloB = articuloDelCatalogo(paginaB, titulo);
-        const reservar = /anotarme para traer esto/i;
+          const articuloA = articuloDelCatalogo(paginaA, titulo);
+          const articuloB = articuloDelCatalogo(paginaB, titulo);
+          const reservar = /anotarme para traer esto/i;
 
-        await expect(articuloA).toHaveCount(1);
-        await expect(articuloB).toHaveCount(1);
+          await expect(articuloA).toHaveCount(1);
+          await expect(articuloB).toHaveCount(1);
 
-        await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
-        await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
+          await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
+          await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
 
-        await articuloA.getByRole("button", { name: reservar }).click();
-        await expect(paginaA).toHaveURL(/\/cuenta$/);
-        await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
-          "aria-selected",
-          "true",
-        );
-        await expect(
-          paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
-        ).toBeVisible();
-        await expect(paginaA.getByText(titulo)).toBeVisible();
-        await expect(paginaA.getByText(/vence el/i)).toBeVisible();
+          await articuloA.getByRole("button", { name: reservar }).click();
+          await expect(paginaA).toHaveURL(/\/cuenta$/);
+          await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
+            "aria-selected",
+            "true",
+          );
+          await expect(
+            paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
+          ).toBeVisible();
+          await expect(paginaA.getByText(titulo)).toBeVisible();
+          await expect(paginaA.getByText(/vence el/i)).toBeVisible();
 
-        await articuloB.getByRole("button", { name: reservar }).click();
-        await expect(paginaB).toHaveURL(new RegExp(`/catalogo\\?conflicto=${itemId}$`));
-        await expect(paginaB.getByText(/alguien se adelantó/i).first()).toBeVisible();
-        await expect(articuloB.getByText(/ya está cubierto/i)).toBeVisible();
+          await articuloB.getByRole("button", { name: reservar }).click();
+          await expect(paginaB).toHaveURL(new RegExp(`/catalogo\\?conflicto=${itemId}$`));
+          await expect(paginaB.getByText(/alguien se adelantó/i).first()).toBeVisible();
+          await expect(articuloB.getByText(/ya está cubierto/i)).toBeVisible();
 
-        await paginaA.getByRole("button", { name: /cancelar esta reserva/i }).click();
-        await expect(paginaA.getByText(/la cancelaste/i)).toBeVisible();
+          await paginaA.getByRole("button", { name: /cancelar esta reserva/i }).click();
+          await expect(paginaA.getByText(/la cancelaste/i)).toBeVisible();
+        });
       } finally {
         await contextoA.close();
         await contextoB.close();
@@ -164,37 +166,40 @@ test.describe("fase D · reservas", () => {
     const staffPage = await staff.newPage();
 
     try {
-      await cargarItemPublicado(staffPage, titulo, 1);
-
       const donante = await browser.newContext();
       const donantePage = await donante.newPage();
 
       try {
-        await crearCuenta(donantePage, request, email);
-        await habilitarCuenta(staffPage, email);
+        await conItemPublicado(request, staffPage, titulo, 1, async () => {
+          await crearCuenta(donantePage, request, email);
+          await habilitarCuenta(staffPage, email);
 
-        await donantePage.goto("/catalogo");
-        const articulo = articuloDelCatalogo(donantePage, titulo);
-        await expect(articulo).toHaveCount(1);
-        await articulo.getByRole("button", { name: /anotarme para traer esto/i }).click();
-        await expect(donantePage).toHaveURL(/\/cuenta$/);
-        await expect(donantePage.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
-          "aria-selected",
-          "true",
-        );
+          await donantePage.goto("/catalogo");
+          const articulo = articuloDelCatalogo(donantePage, titulo);
+          await expect(articulo).toHaveCount(1);
+          await articulo
+            .getByRole("button", { name: /anotarme para traer esto/i })
+            .click();
+          await expect(donantePage).toHaveURL(/\/cuenta$/);
+          await expect(
+            donantePage.getByRole("tab", { name: /reservas/i }),
+          ).toHaveAttribute("aria-selected", "true");
 
-        const pledgeId = await donantePage.locator('input[name="pledgeId"]').inputValue();
+          const pledgeId = await donantePage
+            .locator('input[name="pledgeId"]')
+            .inputValue();
 
-        await vencerReserva(request, pledgeId);
+          await vencerReserva(request, pledgeId);
 
-        await donantePage.goto("/cuenta");
-        await expect(donantePage.getByText(/venció el/i)).toBeVisible();
+          await donantePage.goto("/cuenta");
+          await expect(donantePage.getByText(/venció el/i)).toBeVisible();
 
-        await donantePage.goto("/catalogo");
-        await expect(articuloDelCatalogo(donantePage, titulo)).toHaveCount(1);
-        await expect(
-          articuloDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
-        ).toBeVisible();
+          await donantePage.goto("/catalogo");
+          await expect(articuloDelCatalogo(donantePage, titulo)).toHaveCount(1);
+          await expect(
+            articuloDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
+          ).toBeVisible();
+        });
       } finally {
         await donante.close();
       }
@@ -212,5 +217,13 @@ test.describe("fase D · reservas", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /no es para tu rol/i }),
     ).toBeVisible();
+  });
+
+  test("la palanca de revalidar no acepta una URL absoluta", async ({ request }) => {
+    const respuesta = await request.post("/e2e/revalidar", {
+      data: { paths: ["https://evil.example/"] },
+    });
+
+    expect(respuesta.status()).toBe(400);
   });
 });

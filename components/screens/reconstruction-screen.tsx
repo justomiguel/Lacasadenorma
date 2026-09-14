@@ -6,6 +6,7 @@ import { PhotoSequence } from "@/components/design-system/photo";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
+import { keepStaleOnError } from "@/src/application/result";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
 import { coverPhoto } from "@/src/domain/entities";
 import { excerpt } from "@/src/domain/rich-text";
@@ -30,11 +31,13 @@ export function reconstructionMetadata(locale: Locale) {
 
 export async function ReconstructionScreen({ locale }: { locale: Locale }) {
   const { reconstruction, ui } = getContent(locale);
-  const latest = await listUpdates({
-    dataLayer: getPublicDataLayer(),
-    logger,
-    limit: 1,
-  });
+  const latest = keepStaleOnError(
+    await listUpdates({
+      dataLayer: getPublicDataLayer(),
+      logger,
+      limit: 1,
+    }),
+  );
   const update =
     latest.status === "ok" && latest.data[0] !== undefined ? latest.data[0] : null;
 

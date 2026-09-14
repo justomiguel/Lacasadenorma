@@ -370,10 +370,27 @@
   --color-rule: #d4cfc0;
 }
 
-[data-tone="ink"] a:not(.bg-sage):not(.bg-paper):not([data-brand]),
-[data-tone="forest"] a:not(.bg-sage):not(.bg-paper):not([data-brand]) {
+[data-tone="ink"]
+  a:not(.bg-sage):not(.bg-paper):not([data-tone="paper"]):not([data-brand]),
+[data-tone="forest"]
+  a:not(.bg-sage):not(.bg-paper):not([data-tone="paper"]):not([data-brand]) {
   color: var(--color-paper);
   text-decoration-color: var(--color-paper-muted);
+}
+
+/*
+ * CTA de papel sobre una banda oscura. La regla de arriba pinta los enlaces de
+ * papel; sin esta isla, «Ayudar a reconstruir» queda beige sobre beige y axe
+ * (y una persona) no lo lee. Los hex son los de `@theme`.
+ */
+[data-tone="forest"] a[data-tone="paper"],
+[data-tone="ink"] a[data-tone="paper"] {
+  color: #153a2e;
+  background-color: #f6f1e8;
+  background-image: none;
+  /* El velo de la foto queda detrás: sin este relleno opaco, axe en WebKit a 3x
+     toma el píxel de la fotografía y acusa contraste. */
+  box-shadow: inset 0 0 0 100vmax #f6f1e8;
 }
 
 /*
@@ -391,8 +408,8 @@
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-ink) 25%, transparent);
 }
 
-[data-tone="ink"] a:hover,
-[data-tone="forest"] a:hover {
+[data-tone="ink"] a:hover:not([data-tone="paper"]),
+[data-tone="forest"] a:hover:not([data-tone="paper"]) {
   text-decoration-color: var(--color-paper);
 }
 

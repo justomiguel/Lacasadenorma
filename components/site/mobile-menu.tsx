@@ -156,6 +156,7 @@ export function MobileMenu({
         <a
           href={helpHref}
           data-help-primary=""
+          data-tone="paper"
           className={primaryActionClass("paper", "sm:w-full")}
           onClick={() => {
             onClose();

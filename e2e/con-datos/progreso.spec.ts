@@ -6,6 +6,10 @@ const { ui } = getContent("es");
 
 /**
  * El progreso público no son cifras: es el relato y las fotos del trabajo.
+ *
+ * `/reconstruccion` muestra la última novedad publicada (`limit: 1`). El
+ * relato tiene que estar; el título concreto no es el contrato. Las pruebas
+ * que publican otra la vuelven a borrador al terminar.
  */
 
 test.describe("flujo 3 · ver el trabajo", () => {
