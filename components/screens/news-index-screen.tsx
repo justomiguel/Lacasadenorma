@@ -6,7 +6,7 @@ import { NewsFeed, NewsFeedItem } from "@/components/design-system/news-feed";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
-import { isPhoto } from "@/src/domain/entities";
+import { coverPhoto } from "@/src/domain/entities";
 import { excerpt } from "@/src/domain/rich-text";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -18,13 +18,22 @@ export const revalidate = 300;
 
 export function newsIndexMetadata(locale: Locale) {
   const { ui } = getContent(locale);
-
-  return pageMetadata({
+  const meta = pageMetadata({
     locale,
     title: ui.news.title,
     description: ui.news.seoDescription,
     path: "/novedades",
   });
+
+  return {
+    ...meta,
+    alternates: {
+      ...meta.alternates,
+      types: {
+        "application/rss+xml": "/novedades.xml",
+      },
+    },
+  };
 }
 
 /**
@@ -103,23 +112,19 @@ export async function NewsIndexScreen({ locale }: { locale: Locale }) {
             </div>
           ) : (
             <NewsFeed>
-              {updates.data.map((update) => {
-                const cover = update.media.find(isPhoto) ?? null;
-
-                return (
-                  <NewsFeedItem
-                    key={update.id}
-                    href={localizedHref(`/novedades/${update.slug}`, locale)}
-                    title={update.title}
-                    date={update.publishedAt}
-                    summary={excerpt(update.body, 140)}
-                    action={ui.news.readUpdate}
-                    photo={cover}
-                    locale={locale}
-                    {...(locale === "en" ? { lang: "es-AR" } : {})}
-                  />
-                );
-              })}
+              {updates.data.map((update) => (
+                <NewsFeedItem
+                  key={update.id}
+                  href={localizedHref(`/novedades/${update.slug}`, locale)}
+                  title={update.title}
+                  date={update.publishedAt}
+                  summary={excerpt(update.body, 140)}
+                  action={ui.news.readUpdate}
+                  photo={coverPhoto(update)}
+                  locale={locale}
+                  {...(locale === "en" ? { lang: "es-AR" } : {})}
+                />
+              ))}
             </NewsFeed>
           )}
         </Section>

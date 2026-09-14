@@ -175,4 +175,37 @@ describe("novedades", () => {
       entityId: RECORD,
     });
   });
+
+  it("el epígrafe y el crédito se guardan; el vacío queda ausente", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const file = new File([new Uint8Array([0xff, 0xd8, 0xff])], "techo.jpg", {
+      type: "image/jpeg",
+    });
+
+    const conDatos = await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file,
+      alt: "Cabriadas de madera apoyadas sobre los muros",
+      caption: "Las cabriadas, el martes.",
+      credit: "Familia",
+    });
+    const sinDatos = await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file,
+      alt: "Cabriadas de madera apoyadas sobre los muros",
+      caption: "",
+      credit: "   ",
+    });
+
+    expect(conDatos.status).toBe("ok");
+    expect(sinDatos.status).toBe("ok");
+
+    const altas = fake.calls.filter((call) => call.name === "createMedia");
+
+    expect(altas[0]?.input).toMatchObject({
+      caption: "Las cabriadas, el martes.",
+      credit: "Familia",
+    });
+    expect(altas[1]?.input).toMatchObject({ caption: null, credit: null });
+  });
 });

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { newsIndexMetadata } from "@/components/screens/news-index-screen";
+
 import { pageMetadata, rootMetadata } from "./metadata";
 import { shareCardUrl } from "./share-copy";
 
@@ -75,6 +77,14 @@ describe("pageMetadata", () => {
     expect(en.openGraph?.images).toEqual([
       expect.objectContaining({ url: shareCardUrl("/norma", "en") }),
     ]);
+  });
+
+  it("el índice de novedades declara el feed RSS", () => {
+    const meta = newsIndexMetadata("es");
+
+    expect(meta.alternates?.types).toEqual({
+      "application/rss+xml": "/novedades.xml",
+    });
   });
 });
 

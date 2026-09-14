@@ -10,6 +10,7 @@ import type { MediaAsset } from "@/src/domain/entities";
 
 import { CONTROL, FieldFrame, useField } from "./form-field";
 import { editorJsonToMarkdown, markdownToEditorJson } from "./news-editor-document";
+import { NewsMediaLibrary } from "./news-editor-library";
 import { WorkMedia } from "./news-editor-media";
 import { withMediaSources } from "./news-editor-sources";
 import {
@@ -215,6 +216,27 @@ export function NewsBodyField({
           ) : null}
 
           <EditorContent editor={editor} />
+
+          {canInsert ? (
+            <NewsMediaLibrary
+              media={media}
+              onInsert={(item) => {
+                editor
+                  .chain()
+                  .focus()
+                  .insertContent({
+                    type: "workMedia",
+                    attrs: {
+                      mediaId: item.id,
+                      alt: item.alt,
+                      kind: item.kind,
+                      src: item.url,
+                    },
+                  })
+                  .run();
+              }}
+            />
+          ) : null}
         </div>
       )}
     </FieldFrame>

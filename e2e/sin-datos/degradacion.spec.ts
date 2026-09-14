@@ -29,6 +29,12 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
 
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
+      // `/catalogo` es dinámica y tiene `loading.tsx`. El `goto` puede caer en
+      // "Estamos cargando…" (192 caracteres) antes de que llegue el HTML servido.
+      if (pagina.path === "/catalogo") {
+        await expect(page.getByText(/estamos cargando/i)).toHaveCount(0);
+      }
+
       const texto = (await page.locator("main").innerText()).trim();
       // Contacto es una ficha —nombre, teléfono, cuatro vías—, no un artículo.
       const minimo = pagina.path === "/contacto" ? 200 : 400;
@@ -93,6 +99,23 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
       page.getByRole("link", { name: /qué hay que reconstruir/i }),
     ).toBeVisible();
     await expect(page.getByRole("link", { name: /cómo colaborar/i })).toBeVisible();
+  });
+
+  test("sin base, la obra no afirma que el diario está vacío", async ({
+    page,
+    request,
+  }) => {
+    await page.goto("/reconstruccion");
+
+    const texto = await page.locator("main").innerText();
+
+    expect(texto).not.toContain("Lo último de la obra");
+    expect(texto).not.toContain("Todavía no hay novedades publicadas");
+
+    const feed = await request.get("/novedades.xml");
+
+    expect(feed.status()).toBe(200);
+    expect(await feed.text()).not.toContain("<item>");
   });
 
   test("la API pública informa la indisponibilidad sin romperse", async ({ request }) => {

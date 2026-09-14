@@ -29,6 +29,7 @@ export function NewsFeedItem({
   photo,
   locale,
   lang,
+  prefetch,
 }: {
   href: string;
   title: string;
@@ -38,6 +39,7 @@ export function NewsFeedItem({
   photo: MediaAsset | null;
   locale: Locale;
   lang?: string;
+  prefetch?: boolean;
 }) {
   const cover = photo !== null && isPhoto(photo) ? photo : null;
 
@@ -46,6 +48,7 @@ export function NewsFeedItem({
       <Link
         href={href}
         className="arrow-link group flex flex-row items-start gap-md text-ink no-underline sm:gap-xl"
+        {...(prefetch === undefined ? {} : { prefetch })}
       >
         {cover === null ? null : (
           <div className="relative aspect-square w-5xl shrink-0 overflow-hidden bg-paper-sunk sm:w-6xl">

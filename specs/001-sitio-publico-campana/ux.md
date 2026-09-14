@@ -394,7 +394,7 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
 |---|---|
 | `/norma` | La historia completa. Ensayo fotográfico. Es la página que hace que el proyecto sea de una persona, no de una causa |
 | `/que-paso` | El incendio, con respeto. Sin detalles gráficos. Termina en qué se necesita ahora, para que no cierre en la pérdida |
-| `/reconstruccion` | Qué se perdió, qué hay que reparar, presupuesto por rubro, hitos, fotos del avance |
+| `/reconstruccion` | Qué hay que reparar, fotos del trabajo, y la última entrada del diario cuando existe (004) |
 | `/ayudar` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |
 | `/novedades` y `/novedades/[slug]` | Diario de la obra: feed cronológico con fecha; cada entrada compartible con su propia vista previa (ADR-034) |

@@ -7,6 +7,6 @@ export const revalidate = 300;
 
 export const metadata = reconstructionMetadata("en");
 
-export default function ReconstructionPage() {
+export default async function ReconstructionPage() {
   return <ReconstructionScreen locale="en" />;
 }

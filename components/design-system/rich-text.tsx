@@ -85,9 +85,12 @@ function MediaBlock({
         >
           <source src={asset.url} type={type} />
         </video>
-        {asset.caption === null ? null : (
+        {asset.caption === null && asset.credit === null ? null : (
           <figcaption className="mt-xs font-ui text-caption text-ink-muted">
             {asset.caption}
+            {asset.credit === null ? null : (
+              <span className="block text-ink-faint">Video: {asset.credit}</span>
+            )}
           </figcaption>
         )}
       </figure>

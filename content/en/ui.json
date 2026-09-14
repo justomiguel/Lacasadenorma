@@ -293,6 +293,7 @@
     "noMilestonesTitle": "No milestones have been published yet",
     "noMilestonesBody": "Milestones are loaded when the work has a plan with stages. Until then there is no timeline to show, and an empty one would say nothing.",
     "photosNote": "Photos of the progress are published with each update, so each one is dated and can be shared on its own.",
+    "latestHeading": "The latest from the work",
     "seeNews": "See the updates from the site",
     "helpHeading": "Help with the work",
     "helpLead": "Each gift helps rebuild the house. The transfer details are on the how to help page."

@@ -293,6 +293,7 @@
     "noMilestonesTitle": "Todavía no hay hitos publicados",
     "noMilestonesBody": "Los hitos se cargan cuando la obra tiene un plan con etapas. Hasta entonces no hay una línea de tiempo que mostrar, y una vacía no diría nada.",
     "photosNote": "Las fotos del avance se publican junto con cada novedad, así que cada una queda fechada y se puede compartir por separado.",
+    "latestHeading": "Lo último de la obra",
     "seeNews": "Ver las novedades de la obra",
     "helpHeading": "Ayudar con la obra",
     "helpLead": "Cada aporte suma a reconstruir la casa. Los datos para transferir están en la página de cómo ayudar."

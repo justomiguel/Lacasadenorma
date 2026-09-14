@@ -1,11 +1,18 @@
 import { HelpCta } from "@/components/campaign/help-cta";
+import { SecondaryAction } from "@/components/design-system/actions";
 import { Band, Container, Section } from "@/components/design-system/layout";
+import { NewsFeed, NewsFeedItem } from "@/components/design-system/news-feed";
 import { PhotoSequence } from "@/components/design-system/photo";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
+import { listUpdates } from "@/src/application/use-cases/get-updates";
+import { coverPhoto } from "@/src/domain/entities";
+import { excerpt } from "@/src/domain/rich-text";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
+import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
+import { logger } from "@/src/infrastructure/logging/logger";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 export const revalidate = 300;
@@ -21,8 +28,15 @@ export function reconstructionMetadata(locale: Locale) {
   });
 }
 
-export function ReconstructionScreen({ locale }: { locale: Locale }) {
+export async function ReconstructionScreen({ locale }: { locale: Locale }) {
   const { reconstruction, ui } = getContent(locale);
+  const latest = await listUpdates({
+    dataLayer: getPublicDataLayer(),
+    logger,
+    limit: 1,
+  });
+  const update =
+    latest.status === "ok" && latest.data[0] !== undefined ? latest.data[0] : null;
 
   return (
     <>
@@ -43,6 +57,39 @@ export function ReconstructionScreen({ locale }: { locale: Locale }) {
             </Section>
           </Container>
         </Band>
+      )}
+
+      {update === null ? null : (
+        <Container>
+          <Section className="border-t border-rule" labelledBy="lo-ultimo">
+            <SectionHeading title={ui.reconstructionPage.latestHeading} id="lo-ultimo" />
+            <p className="mt-md max-w-measure text-body text-ink-muted">
+              {ui.reconstructionPage.photosNote}
+            </p>
+            <div className="mt-xl">
+              <NewsFeed>
+                <NewsFeedItem
+                  href={localizedHref(`/novedades/${update.slug}`, locale)}
+                  title={update.title}
+                  date={update.publishedAt}
+                  summary={excerpt(update.body, 140)}
+                  action={ui.news.readUpdate}
+                  photo={coverPhoto(update)}
+                  locale={locale}
+                  prefetch={false}
+                  {...(locale === "en" ? { lang: "es-AR" } : {})}
+                />
+              </NewsFeed>
+            </div>
+            <SecondaryAction
+              href={localizedHref("/novedades", locale)}
+              prefetch={false}
+              className="mt-lg"
+            >
+              {ui.reconstructionPage.seeNews}
+            </SecondaryAction>
+          </Section>
+        </Container>
       )}
 
       {reconstruction.scope.length === 0 ? null : (

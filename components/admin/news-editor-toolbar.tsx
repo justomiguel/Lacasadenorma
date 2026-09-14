@@ -97,6 +97,30 @@ export function MediaInsertPanel({
           )}
         />
       </label>
+      <label className="block font-ui text-small text-ink">
+        Epígrafe
+        <span className="ml-2xs font-normal text-ink-faint">(opcional)</span>
+        <input
+          data-news-media="caption"
+          type="text"
+          maxLength={300}
+          className={cn(
+            "mt-2xs w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body",
+          )}
+        />
+      </label>
+      <label className="block font-ui text-small text-ink">
+        Crédito
+        <span className="ml-2xs font-normal text-ink-faint">(opcional)</span>
+        <input
+          data-news-media="credit"
+          type="text"
+          maxLength={120}
+          className={cn(
+            "mt-2xs w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body",
+          )}
+        />
+      </label>
       {error === null ? null : (
         <p role="alert" className="font-ui text-small text-danger">
           {error}
@@ -115,8 +139,16 @@ export function MediaInsertPanel({
             const altInput = root?.querySelector<HTMLInputElement>(
               '[data-news-media="alt"]',
             );
+            const captionInput = root?.querySelector<HTMLInputElement>(
+              '[data-news-media="caption"]',
+            );
+            const creditInput = root?.querySelector<HTMLInputElement>(
+              '[data-news-media="credit"]',
+            );
             const file = fileInput?.files?.[0];
             const alt = altInput?.value.trim() ?? "";
+            const caption = captionInput?.value.trim() ?? "";
+            const credit = creditInput?.value.trim() ?? "";
 
             if (file === undefined || alt.length < 10) {
               setError(
@@ -130,6 +162,8 @@ export function MediaInsertPanel({
             data.set("slug", slug);
             data.set("file", file);
             data.set("alt", alt);
+            data.set("caption", caption);
+            data.set("credit", credit);
 
             setPending(true);
             setError(null);

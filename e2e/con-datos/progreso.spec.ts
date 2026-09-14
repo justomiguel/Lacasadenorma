@@ -28,6 +28,12 @@ test.describe("flujo 3 · ver el trabajo", () => {
     await expect(page.getByText(/cuánto sale cada rubro/i)).toHaveCount(0);
     await expect(page.getByText(/cómo va la obra/i)).toHaveCount(0);
     await expect(page.getByText(/sin cotizar/i)).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: /empezó el montaje del techo/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: ui.reconstructionPage.seeNews }),
+    ).toBeVisible();
   });
 
   test("el cierre de la home habla de la casa y no de una fundación constituida", async ({

@@ -79,8 +79,7 @@ describe("listUpdates", () => {
 
   it("le pasa el límite al puerto en lugar de recortar después", async () => {
     // Recortar en la aplicación traería todas las filas para tirar la mayoría.
-    // En la home, donde se muestran las últimas tres, esa diferencia es la consulta
-    // entera.
+    // En `/reconstruccion` se pide la última; esa diferencia es la consulta.
     let pedido: number | undefined = -1;
 
     const layer: DataLayer = {

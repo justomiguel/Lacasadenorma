@@ -19,11 +19,13 @@ import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context
  * mano con `getAll`.
  */
 
-/** Las rutas que muestran novedades. Publicar una toca las cuatro. */
+/** Las rutas que muestran novedades. Publicar una toca el índice, el artículo, la obra y el feed. */
 function revalidatePublicUpdates(slug: string): void {
   revalidatePath("/");
   revalidatePath("/novedades");
   revalidatePath(`/novedades/${slug}`);
+  revalidatePath("/novedades.xml");
+  revalidatePath("/reconstruccion");
   revalidatePath("/sitemap.xml");
 }
 

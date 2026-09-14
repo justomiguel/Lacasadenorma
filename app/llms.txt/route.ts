@@ -61,7 +61,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [La historia de Norma](${siteUrl}/norma): quién fue, con la obra conmemorativa para leer o descargar.
 - [Qué ocurrió](${siteUrl}/que-paso): el incendio del 7 de septiembre, las fotos de esa madrugada,
   lo que cubrió la prensa y qué se necesita ahora.
-- [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra y las fotos del trabajo.
+- [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra, las fotos del trabajo y la última novedad publicada.
 - [Qué le falta a la casa](${siteUrl}/catalogo): materiales y cosas que todavía hacen falta, y
   cuánto queda. Sin foto no se inventa una. Reservar una unidad se abre cuando la cuenta está
   habilitada.
@@ -71,7 +71,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   Chile.
 - [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.
 - [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta, sin cifras públicas.
-- [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado.
+- [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado. También en ${siteUrl}/novedades.xml.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
 - [Privacidad](${siteUrl}/legales/privacidad) · [Términos](${siteUrl}/legales/terminos)
 

@@ -83,7 +83,10 @@ El sitemap sale de la **misma lista de rutas que la navegación del pie** (`PUBL
 aparecen en los dos idiomas con el mismo slug; el cuerpo sigue en castellano (ADR-023).
 
 Las novedades publicadas se enumeran en tiempo de ejecución con `listUpdates()`. La ruta revalida
-cada 300 segundos, y publicar una novedad invalida `/sitemap.xml` explícitamente (ADR-017).
+cada 300 segundos, y publicar una novedad invalida `/sitemap.xml` explícitamente (ADR-017). El
+diario también se publica como RSS en `/novedades.xml` (el mismo listado, sin JavaScript). El
+índice lo declara con `rel="alternate"`. Un borrador no entra: el puerto público no lo
+devuelve.
 
 Tres cosas que el sitemap **no** trae, y son decisiones:
 
@@ -162,7 +165,7 @@ lea con la conexión de Riacho He Hé y con JavaScript desactivado.
 | Ruta | Modo |
 |---|---|
 | `/norma`, `/que-paso`, `/legado`, `/legales/*`, `/ayudar/paypal/*` | Estáticas en build: su contenido vive en el repositorio |
-| `/`, `/ayudar`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
+| `/`, `/ayudar`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/novedades.xml`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
 | `/llms.txt` | `force-static` |
 | `/api/health` | `force-dynamic`, `no-store` |
 | `/admin/**` | Server-rendered, `private, no-store` |

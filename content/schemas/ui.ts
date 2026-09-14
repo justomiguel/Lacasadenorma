@@ -142,6 +142,7 @@ export const uiPagesSchema = z.object({
     noMilestonesTitle: phrase,
     noMilestonesBody: phrase,
     photosNote: phrase,
+    latestHeading: phrase,
     seeNews: phrase,
     helpHeading: phrase,
     helpLead: phrase,

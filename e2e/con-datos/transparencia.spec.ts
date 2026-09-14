@@ -79,4 +79,26 @@ test.describe("flujo 7 · transparencia y novedades", () => {
       "un borrador accesible por URL directa sería una filtración de las policies",
     ).toBe(404);
   });
+
+  test("el feed lista las publicadas y omite el borrador", async ({ request, page }) => {
+    const respuesta = await request.get("/novedades.xml");
+
+    expect(respuesta.status()).toBe(200);
+    expect(respuesta.headers()["content-type"] ?? "").toContain("application/rss+xml");
+
+    const xml = await respuesta.text();
+
+    expect(xml).toContain("Empezó el montaje del techo");
+    expect(xml).toContain("Se retiraron los escombros");
+    expect(xml).not.toContain("Borrador que no tiene que aparecer");
+    expect(xml.indexOf("empezo-el-techo")).toBeLessThan(
+      xml.indexOf("se-retiraron-los-escombros"),
+    );
+
+    await page.goto("/novedades");
+
+    const alternate = page.locator('link[rel="alternate"][type="application/rss+xml"]');
+
+    await expect(alternate).toHaveAttribute("href", /novedades\.xml/);
+  });
 });
