@@ -28,8 +28,9 @@ const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
 /**
  * Encabezado editorial (ADR-032, ADR-035): 60 px, el símbolo y el nombre a la
  * izquierda, el menú a la derecha, y nada más en teléfono. El idioma, la cuenta
- * —ingresar, o el nombre y cerrar sesión— y la acción de ayudar viven dentro del
- * menú (ADR-037).
+ * —ingresar, o el nombre y cerrar sesión— y la acción de ayudar viven dentro
+ * del menú (ADR-037). La cuenta va arriba de las secciones, porque debajo de
+ * las cinco de display no se ve en un teléfono chico.
  *
  * En la home arranca transparente sobre la fotografía; al desplazarse gana un
  * fondo de papel con un desenfoque muy leve y una regla casi imperceptible. En

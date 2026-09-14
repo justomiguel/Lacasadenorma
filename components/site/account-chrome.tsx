@@ -21,8 +21,9 @@ import { useChromeSession } from "./session";
  * tercer enlace recortaba la acción de ayudar, así que «Cerrar sesión» se queda
  * en el menú y en `/cuenta`. En el teléfono es un bloque: retrato rectangular
  * (no un avatar redondo), nombre, correo y las salidas —la cuenta, el
- * backoffice si hay rol, y cerrar sesión— (ADR-032, ADR-037). El pie no muestra
- * el backoffice: es un colofón.
+ * backoffice si hay rol, y cerrar sesión—. En el menú ese bloque va arriba de
+ * las secciones: las cinco de display llenan 360×640 y lo que queda debajo no
+ * se ve (ADR-032, ADR-037). El pie no muestra el backoffice: es un colofón.
  */
 
 const LINK =

@@ -18,10 +18,12 @@ import { PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 /**
  * El menú del teléfono, a pantalla completa (ADR-032).
  *
- * Es corto a propósito: las cinco secciones en la serif de display, los
- * enlaces chicos, el idioma, la cuenta y la acción de ayudar. Respeta las áreas
- * seguras del teléfono con `safe-top` y `safe-bottom`. Cada ítem entra con un
- * escalón de 40 ms; con `prefers-reduced-motion` no se mueve nada.
+ * Es corto a propósito: la cuenta —y Backoffice, si hay rol— primero, para que
+ * no queden debajo de las cinco secciones en un teléfono chico; después las
+ * secciones en la serif de display, los enlaces chicos, el idioma y la acción
+ * de ayudar. Respeta las áreas seguras del teléfono con `safe-top` y `safe-bottom`.
+ * Cada ítem entra con un escalón de 40 ms; con `prefers-reduced-motion` no se
+ * mueve nada.
  */
 export function MobileMenu({
   id,
@@ -72,7 +74,25 @@ export function MobileMenu({
         </button>
       </div>
 
-      <nav aria-label={ui.nav.primary} className="mt-2xl flex-1">
+      {/*
+       * La cuenta va primero: en 360×640 las cinco secciones de display
+       * llenan la pantalla, y Backoffice / Ingresar debajo no se veían.
+       */}
+      <div
+        data-menu-item=""
+        style={{ "--menu-index": 0 } as CSSProperties}
+        className="mt-lg border-b border-paper/15 pb-lg"
+      >
+        <AccountChrome
+          locale={locale}
+          ui={ui}
+          variant="drawer"
+          className="text-paper-muted"
+          onNavigate={onClose}
+        />
+      </div>
+
+      <nav aria-label={ui.nav.primary} className="mt-xl flex-1">
         <ul className="flex flex-col">
           {PRIMARY_NAV.map((item, index) => {
             const actual = canonical === item.href;
@@ -81,7 +101,7 @@ export function MobileMenu({
               <li
                 key={item.href}
                 data-menu-item=""
-                style={{ "--menu-index": index } as CSSProperties}
+                style={{ "--menu-index": index + 1 } as CSSProperties}
               >
                 <Link
                   href={localizedHref(item.href, locale)}
@@ -101,7 +121,7 @@ export function MobileMenu({
 
         <ul
           data-menu-item=""
-          style={{ "--menu-index": PRIMARY_NAV.length } as CSSProperties}
+          style={{ "--menu-index": PRIMARY_NAV.length + 1 } as CSSProperties}
           className="mt-lg flex flex-wrap gap-x-lg"
         >
           {SECONDARY_NAV.map((item) => (
@@ -120,17 +140,9 @@ export function MobileMenu({
 
       <div
         data-menu-item=""
-        style={{ "--menu-index": PRIMARY_NAV.length + 1 } as CSSProperties}
+        style={{ "--menu-index": PRIMARY_NAV.length + 2 } as CSSProperties}
         className="mt-xl flex flex-col gap-lg pb-md"
       >
-        <AccountChrome
-          locale={locale}
-          ui={ui}
-          variant="drawer"
-          className="text-paper-muted"
-          onNavigate={onClose}
-        />
-
         <Link
           href={switchHref}
           hrefLang={htmlLang(other)}
