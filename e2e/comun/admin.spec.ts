@@ -144,7 +144,7 @@ test.describe("flujo 8 · la pantalla de acceso", () => {
   test("lleva el símbolo de la marca, no un kicker en versales", async ({ page }) => {
     await page.goto("/admin/login");
 
-    await expect(page.locator('img[src*="/marca/simbolo"]').first()).toBeVisible();
+    await expect(page.locator('img[src*="simbolo.png"]').first()).toBeVisible();
     await expect(
       page.getByRole("heading", { level: 1, name: /entrar al backoffice/i }),
     ).toBeVisible();
