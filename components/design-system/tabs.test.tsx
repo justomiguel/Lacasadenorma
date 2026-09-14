@@ -64,6 +64,8 @@ describe("SectionTabs con JavaScript", () => {
     expect(tabs).toHaveLength(3);
     expect(tabs[0]).toHaveAttribute("aria-selected", "true");
     expect(tabs[1]).toHaveAttribute("aria-selected", "false");
+    expect(tabs[0]?.className).toMatch(/font-medium/);
+    expect(tabs[0]?.className).not.toMatch(/-mb-px/);
     expect(screen.getByRole("tabpanel")).toHaveTextContent("0000003100010000000001");
     expect(screen.queryByText("WhatsApp de Justo")).not.toBeInTheDocument();
   });

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useActionState, useEffect, useRef, type ReactNode } from "react";
+import { useFormStatus } from "react-dom";
 
 import { cn } from "@/components/design-system/cn";
 import type { AdminResult, FieldErrors } from "@/src/application/admin";
@@ -59,12 +60,20 @@ export function ActionForm({
 
   return (
     <form ref={formRef} action={formAction} className={cn("space-y-lg", className)}>
-      <FieldErrorsContext.Provider value={errorsOf(state)}>
-        {children}
-      </FieldErrorsContext.Provider>
-      <Feedback state={state} />
+      <FormBusy>
+        <FieldErrorsContext.Provider value={errorsOf(state)}>
+          {children}
+        </FieldErrorsContext.Provider>
+        <Feedback state={state} />
+      </FormBusy>
     </form>
   );
+}
+
+function FormBusy({ children }: { children: ReactNode }) {
+  const { pending } = useFormStatus();
+
+  return <div aria-busy={pending || undefined}>{children}</div>;
 }
 
 /**

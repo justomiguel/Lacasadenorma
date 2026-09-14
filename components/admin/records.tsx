@@ -12,6 +12,8 @@ import { cn } from "@/components/design-system/cn";
  * celdas vacías y a acciones dentro de una celda, que es donde el foco se pierde.
  *
  * El libro de gastos público sí es una tabla, y vive en el sistema de diseño.
+ * `data-records` marca la lista para que la fila con una acción abierta se pinte:
+ * sin eso, clickear «Editar» no se ve.
  */
 
 export function RecordList({
@@ -21,7 +23,11 @@ export function RecordList({
   children: ReactNode;
   className?: string;
 }) {
-  return <ul className={cn("border-t border-rule", className)}>{children}</ul>;
+  return (
+    <ul data-records="" className={cn("border-t border-rule", className)}>
+      {children}
+    </ul>
+  );
 }
 
 export function Record({
@@ -109,7 +115,7 @@ export function RowAction({
     <details className="group">
       <summary
         className={cn(
-          "inline-flex min-h-touch cursor-pointer list-none items-center font-ui text-small underline decoration-1 underline-offset-4",
+          "inline-flex min-h-touch cursor-pointer list-none items-center font-ui text-small underline decoration-1 underline-offset-4 group-open:text-ink",
           tone === "danger" ? "text-danger" : "text-ink-muted hover:text-ink",
         )}
       >

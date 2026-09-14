@@ -10,14 +10,12 @@ import type { MediaAsset } from "@/src/domain/entities";
 
 import { CONTROL, FieldFrame, useField } from "./form-field";
 import { editorJsonToMarkdown, markdownToEditorJson } from "./news-editor-document";
+import { NewsFormatToolbar } from "./news-editor-format";
+import { MediaInsertPanel } from "./news-editor-insert";
 import { NewsMediaLibrary } from "./news-editor-library";
 import { WorkMedia } from "./news-editor-media";
 import { withMediaSources } from "./news-editor-sources";
-import {
-  EditorToolButton,
-  MediaInsertPanel,
-  type MediaUploadFn,
-} from "./news-editor-toolbar";
+import type { MediaUploadFn } from "./news-editor-toolbar";
 
 export function NewsBodyField({
   name,
@@ -108,83 +106,14 @@ export function NewsBodyField({
 
       {editor === null ? null : (
         <div className="space-y-sm">
-          <div
-            className="flex flex-wrap gap-2xs"
-            role="toolbar"
-            aria-label="Formato del texto"
-          >
-            <EditorToolButton
-              label="Negrita"
-              pressed={editor.isActive("bold")}
-              onClick={() => editor.chain().focus().toggleBold().run()}
-            >
-              N
-            </EditorToolButton>
-            <EditorToolButton
-              label="Cursiva"
-              pressed={editor.isActive("italic")}
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-            >
-              C
-            </EditorToolButton>
-            <EditorToolButton
-              label="Subtítulo"
-              pressed={editor.isActive("heading", { level: 3 })}
-              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            >
-              Tít
-            </EditorToolButton>
-            <EditorToolButton
-              label="Lista"
-              pressed={editor.isActive("bulletList")}
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-            >
-              Lista
-            </EditorToolButton>
-            <EditorToolButton
-              label="Cita"
-              pressed={editor.isActive("blockquote")}
-              onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            >
-              Cita
-            </EditorToolButton>
-            <EditorToolButton
-              label="Enlace"
-              pressed={editor.isActive("link")}
-              onClick={() => {
-                const href = window.prompt("Dirección del enlace (https:// o /ruta)");
-
-                if (href === null) {
-                  return;
-                }
-
-                if (href.trim().length === 0) {
-                  editor.chain().focus().unsetLink().run();
-                  return;
-                }
-
-                editor.chain().focus().setLink({ href: href.trim() }).run();
-              }}
-            >
-              Link
-            </EditorToolButton>
-            {canInsert ? (
-              <>
-                <EditorToolButton
-                  label="Insertar foto"
-                  onClick={() => setPendingKind("photo")}
-                >
-                  Foto
-                </EditorToolButton>
-                <EditorToolButton
-                  label="Insertar video"
-                  onClick={() => setPendingKind("video")}
-                >
-                  Video
-                </EditorToolButton>
-              </>
-            ) : null}
-          </div>
+          <NewsFormatToolbar
+            editor={editor}
+            canInsert={canInsert}
+            pendingKind={pendingKind}
+            onInsert={(kind) => {
+              setPendingKind((current) => (current === kind ? null : kind));
+            }}
+          />
 
           {pendingKind !== null &&
           updateId !== undefined &&

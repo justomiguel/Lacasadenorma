@@ -8,6 +8,7 @@ import { APP_ROLE_LABELS, type AppRole } from "@/src/domain/entities/role";
 import { can } from "@/src/domain/permissions";
 
 import { ADMIN_SECTIONS } from "./nav";
+import { AdminNav } from "./nav-bar";
 
 /**
  * El marco del backoffice.
@@ -50,27 +51,7 @@ export function AdminShell({
           </p>
         </div>
 
-        {sections.length === 0 ? null : (
-          <nav aria-label="Secciones del backoffice" className="border-t border-rule">
-            {/*
-             * Desplazamiento horizontal en el teléfono en lugar de un menú
-             * desplegable: siete secciones entran en dos gestos, y un menú agrega un
-             * toque a cada navegación de un trabajo que se hace muchas veces por día.
-             */}
-            <ul className="mx-auto flex max-w-page gap-lg overflow-x-auto px-md py-xs sm:px-lg">
-              {sections.map((section) => (
-                <li key={section.href}>
-                  <Link
-                    href={section.href}
-                    className="inline-flex min-h-touch items-center whitespace-nowrap font-ui text-small text-ink-muted transition-colors duration-fast hover:text-ink"
-                  >
-                    {section.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
+        <AdminNav sections={sections} />
       </header>
 
       <main id="contenido" className="mx-auto max-w-page px-md py-xl sm:px-lg">

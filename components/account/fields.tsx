@@ -1,7 +1,9 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+
+import { ChosenFile } from "@/components/design-system/chosen-file";
 
 import { cn } from "@/components/design-system/cn";
 
@@ -202,6 +204,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
+      aria-busy={pending}
       className={cn(
         "inline-flex min-h-cta w-full items-center justify-center rounded-md px-lg font-ui text-body font-medium sm:min-h-12 sm:w-auto",
         "transition-colors duration-fast ease-editorial disabled:opacity-60",
@@ -226,16 +229,20 @@ export function FileField({
   hint,
   accept,
   error,
+  pendingLabel,
 }: {
   name: string;
   label: string;
   hint?: string;
   accept: string;
   error?: string;
+  pendingLabel?: string;
 }) {
   const id = useId();
   const hintId = `${id}-ayuda`;
   const errorId = `${id}-error`;
+  const { pending } = useFormStatus();
+  const [file, setFile] = useState<File | null>(null);
   const describedBy =
     [hint === undefined ? null : hintId, error === undefined ? null : errorId]
       .filter((value) => value !== null)
@@ -251,13 +258,24 @@ export function FileField({
         name={name}
         type="file"
         accept={accept}
+        disabled={pending}
         className={cn(
           CONTROL,
           "py-sm file:mr-sm file:border-0 file:bg-transparent file:font-ui file:text-small",
         )}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setFile(event.target.files?.[0] ?? null);
+        }}
         {...(error === undefined ? {} : { "aria-invalid": true })}
         {...(describedBy === undefined ? {} : { "aria-describedby": describedBy })}
       />
+      {file === null ? null : (
+        <ChosenFile
+          file={file}
+          pending={pending}
+          {...(pending && pendingLabel !== undefined ? { pendingLabel } : {})}
+        />
+      )}
       {hint === undefined ? null : (
         <p id={hintId} className="font-ui text-caption text-ink-muted">
           {hint}

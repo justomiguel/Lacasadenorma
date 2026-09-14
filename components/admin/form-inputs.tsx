@@ -1,5 +1,9 @@
 "use client";
 
+import { useState, type ChangeEvent } from "react";
+import { useFormStatus } from "react-dom";
+
+import { ChosenFile } from "@/components/design-system/chosen-file";
 import { cn } from "@/components/design-system/cn";
 
 import { CONTROL, FieldFrame, useField, type FieldProps } from "./form-field";
@@ -145,6 +149,8 @@ export function FileField({
   accept,
 }: FieldProps & { accept?: string }) {
   const field = useField(name, hint);
+  const { pending } = useFormStatus();
+  const [file, setFile] = useState<File | null>(null);
 
   return (
     <FieldFrame
@@ -161,12 +167,23 @@ export function FileField({
         id={field.id}
         name={name}
         type="file"
+        disabled={pending}
         className="block w-full font-ui text-small text-ink file:mr-sm file:min-h-touch file:rounded-sm file:border file:border-rule file:bg-paper-sunk file:px-sm file:py-xs file:font-ui file:text-small"
         aria-invalid={field.error === undefined ? undefined : true}
         aria-describedby={field.describedBy}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setFile(event.target.files?.[0] ?? null);
+        }}
         {...(required === true ? { required: true } : {})}
         {...(accept === undefined ? {} : { accept })}
       />
+      {file === null ? null : (
+        <ChosenFile
+          file={file}
+          pending={pending}
+          {...(pending ? { pendingLabel: "Subiendo…" } : {})}
+        />
+      )}
     </FieldFrame>
   );
 }

@@ -80,6 +80,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
+      aria-busy={pending}
       className={cn(
         "inline-flex min-h-touch items-center justify-center rounded-sm px-lg py-xs font-ui text-small font-medium transition-colors duration-fast ease-editorial disabled:opacity-60",
         tones[tone],

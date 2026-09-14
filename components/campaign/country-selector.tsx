@@ -99,10 +99,8 @@ export function CountrySelector({
             aria-controls={`${baseId}-panel`}
             tabIndex={selected ? 0 : -1}
             className={cn(
-              "-mb-px inline-flex min-h-12 items-center whitespace-nowrap border-b-2 px-md font-ui text-body transition-colors duration-fast ease-editorial first:pl-0",
-              selected
-                ? "border-forest font-medium text-ink"
-                : "border-transparent text-ink-muted hover:text-ink",
+              "inline-flex min-h-12 items-center whitespace-nowrap px-md font-ui text-body transition-colors duration-fast ease-editorial first:pl-0",
+              selected ? "font-medium text-ink" : "text-ink-muted hover:text-ink",
             )}
             onClick={() => {
               onChange(item);

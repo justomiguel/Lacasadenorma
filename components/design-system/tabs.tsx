@@ -19,6 +19,9 @@ import { cn } from "./cn";
  * seleccionado marcado con una regla más gruesa—, y no el de píldoras, a
  * propósito: dentro de un panel puede haber un segundo nivel de opciones (los
  * canales de donación), y dos niveles con la misma forma no se distinguen.
+ *
+ * El subrayado de la pestaña activa se pinta por dentro (`aria-selected` en
+ * `globals.css`). `overflow-x` en este tablist recorta cualquier `-mb-px`.
  */
 
 export interface TabItem {
@@ -167,10 +170,8 @@ export function SectionTabs({
               aria-controls={`${baseId}-panel`}
               tabIndex={isSelected ? 0 : -1}
               className={cn(
-                "-mb-px inline-flex min-h-touch shrink-0 items-center whitespace-nowrap border-b-2 px-md font-ui text-body transition-colors duration-fast first:pl-0",
-                isSelected
-                  ? "border-forest font-medium text-ink"
-                  : "border-transparent text-ink-muted hover:text-ink",
+                "inline-flex min-h-touch shrink-0 items-center whitespace-nowrap px-md font-ui text-body transition-colors duration-fast first:pl-0",
+                isSelected ? "font-medium text-ink" : "text-ink-muted hover:text-ink",
               )}
               onClick={() => {
                 select(item.id);
