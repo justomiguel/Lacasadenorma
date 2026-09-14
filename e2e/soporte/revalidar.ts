@@ -70,3 +70,35 @@ export async function esperarQueNoAparezca(
     )
     .toBe(false);
 }
+
+/**
+ * Espera a que una página marcada por `revalidatePath` muestre un texto.
+ *
+ * La primera visita después de marcar puede servir el HTML viejo
+ * (stale-while-revalidate). No se vuelve a marcar con `/e2e/revalidar`: eso
+ * taparía que la acción del backoffice no invalidó.
+ */
+export async function esperarQueAparezca(
+  request: APIRequestContext,
+  path: string,
+  texto: string,
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const primera = await (await request.get(path)).text();
+
+        if (primera.includes(texto)) {
+          return true;
+        }
+
+        return (await (await request.get(path)).text()).includes(texto);
+      },
+      {
+        timeout: 15_000,
+        intervals: [500, 1_000, 1_000, 2_000],
+        message: `${path} no muestra «${texto}» después de invalidar ISR`,
+      },
+    )
+    .toBe(true);
+}
