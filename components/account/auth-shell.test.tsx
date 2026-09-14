@@ -23,4 +23,22 @@ describe("AuthShell", () => {
     expect(container.querySelector("img")).toHaveAttribute("src", SITE_MARK.src);
     expect(container.querySelector("h1")).toHaveTextContent("Ingresar");
   });
+
+  it("el índice de la cuenta hunde las pestañas en otra superficie, pegadas al encabezado", () => {
+    const { container } = render(
+      <AuthShell
+        title="Tu cuenta"
+        lead="Acá está todo lo que el sitio guarda de vos."
+        surface="sunk"
+      >
+        <p>Cómo aparecer</p>
+      </AuthShell>,
+    );
+
+    const sunk = container.querySelector(".bg-paper-sunk");
+
+    expect(sunk).not.toBeNull();
+    expect(sunk).toHaveTextContent("Cómo aparecer");
+    expect(sunk?.querySelector("h1")).toBeNull();
+  });
 });

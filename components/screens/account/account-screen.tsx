@@ -59,7 +59,7 @@ export async function AccountScreen({
 
   if (result.status === "error") {
     return (
-      <AuthShell title={copy.title} lead={copy.lead}>
+      <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
         <Callout tone="warning" title={copy.unavailableTitle}>
           {result.code === "notConfigured" ? copy.unavailableBody : errors[result.code]}
         </Callout>
@@ -86,7 +86,7 @@ export async function AccountScreen({
   const initial = resolveAccountSection(section, pledges.length > 0);
 
   return (
-    <AuthShell title={copy.title} lead={copy.lead}>
+    <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
       {aviso === null ? null : (
         <Callout tone="warning">
           <p>{aviso}</p>
@@ -94,7 +94,7 @@ export async function AccountScreen({
       )}
       {approval}
 
-      <div className={aviso === null && approval === null ? undefined : "mt-3xl"}>
+      <div className={aviso === null && approval === null ? undefined : "mt-lg"}>
         <AccountTabs
           label={copy.tabsLabel}
           initial={initial}
