@@ -211,9 +211,13 @@ verificar_que_el_build_tiene_datos() {
     fi
   done
 
+  if ! grep -q 'Empezó el montaje del techo' ".next/server/app/reconstruccion.html" 2>/dev/null; then
+    sin_datos+=("reconstruccion")
+  fi
+
   if (( ${#sin_datos[@]} > 0 )); then
-    echo "El sitio se construyó sin los datos bancarios: ${sin_datos[*]}." >&2
-    echo "El HTML estático de la home o de /ayudar no tiene campos copiables." >&2
+    echo "El sitio se construyó sin los datos del fixture: ${sin_datos[*]}." >&2
+    echo "El HTML estático no tiene cifras copiables o no trae la novedad de la obra." >&2
     echo "Qué mirar, en este orden:" >&2
     echo "  1. curl 'http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug'" >&2
     echo "  2. rm -rf .next/cache && volvé a correr" >&2

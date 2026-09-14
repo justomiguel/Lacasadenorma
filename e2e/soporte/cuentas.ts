@@ -116,7 +116,10 @@ export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise
  * Cierra la sesión del público.
  *
  * En escritorio hay un «Cerrar sesión» en el encabezado y, si la pestaña Acceso
- * está abierta, otro en el perfil. Sin acotar, Playwright se niega a hacer click.
+ * está abierta, otro en el perfil. En teléfono el encabezado no lo trae: vive
+ * en el menú, y aparece después de hidratar el island (ADR-037). Sin abrir el
+ * menú, Playwright espera el botón hasta que vence todo el test, el ítem de
+ * catálogo queda publicado y la revisión visual cuenta un hueco de más.
  */
 export async function cerrarSesion(page: Page): Promise<void> {
   const enElEncabezado = page
@@ -128,5 +131,20 @@ export async function cerrarSesion(page: Page): Promise<void> {
     return;
   }
 
-  await page.getByRole("button", { name: /cerrar sesión/i }).click();
+  const abrirMenu = page.getByRole("button", { name: /abrir el menú/i });
+
+  if (await abrirMenu.isVisible()) {
+    await abrirMenu.click();
+    await expect(
+      page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
+    ).toBeVisible({ timeout: 20_000 });
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: /cerrar sesión/i })
+      .click();
+    return;
+  }
+
+  await expect(enElEncabezado).toBeVisible({ timeout: 20_000 });
+  await enElEncabezado.click();
 }
