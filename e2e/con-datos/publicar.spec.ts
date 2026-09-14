@@ -186,8 +186,11 @@ test.describe("flujo 9 · publicar una novedad", () => {
       );
       await page.getByRole("button", { name: /guardar borrador/i }).click();
 
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page).toHaveURL(
+        /\/admin\/novedades\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
       pantallaDeLaNovedad = page.url();
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       await page.getByRole("button", { name: /publicar ahora/i }).click();
       await expect(page.getByRole("status")).toContainText(/novedad publicada/i);
 
