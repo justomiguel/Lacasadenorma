@@ -14,6 +14,9 @@ const fotoA: MediaAsset = {
   width: 1600,
   height: 1200,
   takenOn: null,
+  posterUrl: null,
+  posterWidth: null,
+  posterHeight: null,
 };
 
 const fotoB: MediaAsset = {
@@ -32,6 +35,13 @@ const video: MediaAsset = {
   alt: "La colada, de un extremo al otro",
   width: 1920,
   height: 1080,
+};
+
+const videoConPoster: MediaAsset = {
+  ...video,
+  posterUrl: "https://ejemplo.test/obra-f10.jpg",
+  posterWidth: 1920,
+  posterHeight: 1080,
 };
 
 function update(partial: Partial<UpdateRecord> = {}): UpdateRecord {
@@ -53,28 +63,51 @@ describe("coverPhoto", () => {
       media: [fotoA, fotoB],
     });
 
-    expect(coverPhoto(entry)?.id).toBe(fotoB.id);
+    expect(coverPhoto(entry)?.url).toBe(fotoB.url);
   });
 
-  it("un video al inicio del relato no hace de miniatura", () => {
+  it("un video con fotograma al inicio del relato es la portada", () => {
+    const entry = update({
+      body: `![la colada](video:${videoConPoster.id})\n\n![las cabriadas](media:${fotoA.id})`,
+      media: [videoConPoster, fotoA],
+    });
+
+    expect(coverPhoto(entry)).toEqual({
+      url: videoConPoster.posterUrl,
+      alt: videoConPoster.alt,
+      width: 1920,
+      height: 1080,
+    });
+  });
+
+  it("un video al inicio sin fotograma se saltea y usa la foto", () => {
     const entry = update({
       body: `![la colada](video:${video.id})\n\n![las cabriadas](media:${fotoA.id})`,
       media: [video, fotoA],
     });
 
-    expect(coverPhoto(entry)?.id).toBe(fotoA.id);
+    expect(coverPhoto(entry)?.url).toBe(fotoA.url);
   });
 
-  it("si el cuerpo no nombra foto, usa la primera adjunta", () => {
+  it("si el cuerpo no nombra visual, usa la primera foto adjunta", () => {
     const entry = update({
       body: "Llegaron las chapas.",
       media: [video, fotoA],
     });
 
-    expect(coverPhoto(entry)?.id).toBe(fotoA.id);
+    expect(coverPhoto(entry)?.url).toBe(fotoA.url);
   });
 
-  it("sin foto no inventa una miniatura", () => {
+  it("un video solo con fotograma es la portada", () => {
+    expect(coverPhoto(update({ media: [videoConPoster] }))).toEqual({
+      url: videoConPoster.posterUrl,
+      alt: videoConPoster.alt,
+      width: 1920,
+      height: 1080,
+    });
+  });
+
+  it("sin foto ni fotograma no inventa una miniatura", () => {
     expect(coverPhoto(update({ media: [video] }))).toBeNull();
     expect(coverPhoto(update())).toBeNull();
   });

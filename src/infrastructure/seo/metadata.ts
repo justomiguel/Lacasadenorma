@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getContent } from "@/content";
+import type { CoverImage } from "@/src/domain/entities";
 import {
   languageAlternates,
   localizeHref,
@@ -19,8 +20,8 @@ import { SHARE_CARD_SIZE, shareCardUrl } from "./share-copy";
  * `hreflang` sí listan las dos, más `x-default` al castellano: es el idioma de
  * origen (ADR-023).
  *
- * La imagen de Open Graph es siempre la tarjeta del símbolo más el copy de
- * **esta** página, no una foto (ADR-036).
+ * La imagen de Open Graph es la tarjeta del símbolo (ADR-036), salvo una
+ * novedad publicada con portada: ahí es esa imagen (ADR-038).
  */
 export interface PageMetadataInput {
   readonly locale: Locale;
@@ -31,6 +32,8 @@ export interface PageMetadataInput {
   readonly path: string;
   readonly publishedTime?: string;
   readonly noIndex?: boolean;
+  /** Portada real de una novedad. Sin esto, la previa es la tarjeta. */
+  readonly image?: CoverImage;
 }
 
 function shareImage(locale: Locale, path: string, title: string) {
@@ -42,12 +45,25 @@ function shareImage(locale: Locale, path: string, title: string) {
   };
 }
 
+function openGraphImage(input: PageMetadataInput, fullTitle: string) {
+  if (input.image === undefined) {
+    return shareImage(input.locale, input.path, fullTitle);
+  }
+
+  return {
+    url: input.image.url,
+    width: input.image.width,
+    height: input.image.height,
+    alt: input.image.alt,
+  };
+}
+
 export function pageMetadata(input: PageMetadataInput): Metadata {
   const { site } = getContent(input.locale);
   const url = localizeHref(input.path, input.locale);
   const fullTitle = `${input.title} — ${site.name}`;
   const alternate = ogLocale(otherLocale(input.locale));
-  const image = shareImage(input.locale, input.path, fullTitle);
+  const image = openGraphImage(input, fullTitle);
 
   return {
     title: input.title,

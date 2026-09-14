@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { cn } from "@/components/design-system/cn";
 
+import { extractCoverFrame } from "./extract-video-cover";
+
 const TOOL =
   "inline-flex min-h-touch min-w-touch items-center justify-center rounded-sm border border-rule bg-paper px-sm font-ui text-small text-ink hover:bg-paper-sunk aria-pressed:border-forest aria-pressed:bg-paper-sunk disabled:opacity-50";
 
@@ -157,32 +159,47 @@ export function MediaInsertPanel({
               return;
             }
 
-            const data = new FormData();
-            data.set("updateId", updateId);
-            data.set("slug", slug);
-            data.set("file", file);
-            data.set("alt", alt);
-            data.set("caption", caption);
-            data.set("credit", credit);
-
             setPending(true);
             setError(null);
 
-            void upload(data).then((result) => {
-              setPending(false);
+            void (async () => {
+              const data = new FormData();
+              data.set("updateId", updateId);
+              data.set("slug", slug);
+              data.set("file", file);
+              data.set("alt", alt);
+              data.set("caption", caption);
+              data.set("credit", credit);
 
-              if (result.status !== "ok" || result.value === undefined) {
-                setError(result.message);
-                return;
+              if (kind === "video") {
+                try {
+                  data.set("poster", await extractCoverFrame(file));
+                } catch (cause) {
+                  console.error("No se pudo extraer el fotograma de portada.", cause);
+                }
               }
 
-              onInserted({
-                mediaId: result.value.mediaId,
-                kind: result.value.kind,
-                url: result.value.url,
-                alt,
-              });
-            });
+              try {
+                const result = await upload(data);
+
+                if (result.status !== "ok" || result.value === undefined) {
+                  setError(result.message);
+                  return;
+                }
+
+                onInserted({
+                  mediaId: result.value.mediaId,
+                  kind: result.value.kind,
+                  url: result.value.url,
+                  alt,
+                });
+              } catch (cause) {
+                console.error("No se pudo subir el archivo.", cause);
+                setError("No pudimos subir el archivo. Probá de nuevo.");
+              } finally {
+                setPending(false);
+              }
+            })();
           }}
         >
           {pending ? "Subiendo…" : "Insertar"}

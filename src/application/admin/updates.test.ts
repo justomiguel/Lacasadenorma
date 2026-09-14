@@ -208,4 +208,37 @@ describe("novedades", () => {
     });
     expect(altas[1]?.input).toMatchObject({ caption: null, credit: null });
   });
+
+  it("un video manda el fotograma de portada; una foto no", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const video = new File([new Uint8Array([0x1a, 0x45, 0xdf, 0xa3])], "colada.mp4", {
+      type: "video/mp4",
+    });
+    const poster = new File([new Uint8Array([0xff, 0xd8, 0xff])], "colada.jpg", {
+      type: "image/jpeg",
+    });
+    const foto = new File([new Uint8Array([0xff, 0xd8, 0xff])], "techo.jpg", {
+      type: "image/jpeg",
+    });
+
+    const conVideo = await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file: video,
+      alt: "La colada del contrapiso, de un extremo al otro",
+      poster,
+    });
+    const conFoto = await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file: foto,
+      alt: "Cabriadas de madera apoyadas sobre los muros",
+    });
+
+    expect(conVideo.status).toBe("ok");
+    expect(conFoto.status).toBe("ok");
+
+    const altas = fake.calls.filter((call) => call.name === "createMedia");
+
+    expect(altas[0]?.input).toMatchObject({ poster });
+    expect(altas[1]?.input).toMatchObject({ poster: null });
+  });
 });

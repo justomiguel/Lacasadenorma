@@ -1,6 +1,6 @@
 import { referencedMediaIds } from "../rich-text";
 
-import { isPhoto, type MediaAsset } from "./media";
+import { isPhoto, type CoverImage, type MediaAsset } from "./media";
 
 export interface UpdateRecord {
   readonly id: string;
@@ -13,26 +13,59 @@ export interface UpdateRecord {
 }
 
 /**
- * La foto que acompaña la entrada en el índice y en la obra.
+ * La imagen que acompaña la entrada en el índice, en la obra y al compartir.
  *
- * No es la previa de WhatsApp (ADR-036 usa la tarjeta de la marca). Es la
- * miniatura del sumario: la primera foto que el relato nombra, y si el cuerpo
- * no nombra ninguna, la primera adjunta. Un video no hace de miniatura.
+ * Es el primer visual del relato: una foto, o el fotograma 10 de un video
+ * (ADR-038). Si el cuerpo no nombra ninguno, el primer adjunto que tenga
+ * imagen. Un video sin póster se saltea: no se inventa un cuadro.
  */
 export function coverPhoto(
   update: Pick<UpdateRecord, "body" | "media">,
-): MediaAsset | null {
-  const photos = new Map(
-    update.media.filter(isPhoto).map((item) => [item.id, item] as const),
-  );
+): CoverImage | null {
+  const byId = new Map(update.media.map((item) => [item.id, item] as const));
 
   for (const id of referencedMediaIds(update.body)) {
-    const photo = photos.get(id);
+    const item = byId.get(id);
+    const cover = item === undefined ? null : coverOf(item);
 
-    if (photo !== undefined) {
-      return photo;
+    if (cover !== null) {
+      return cover;
     }
   }
 
-  return update.media.find(isPhoto) ?? null;
+  for (const item of update.media) {
+    const cover = coverOf(item);
+
+    if (cover !== null) {
+      return cover;
+    }
+  }
+
+  return null;
+}
+
+function coverOf(item: MediaAsset): CoverImage | null {
+  if (isPhoto(item)) {
+    return {
+      url: item.url,
+      alt: item.alt,
+      width: item.width,
+      height: item.height,
+    };
+  }
+
+  if (
+    item.posterUrl === null ||
+    item.posterWidth === null ||
+    item.posterHeight === null
+  ) {
+    return null;
+  }
+
+  return {
+    url: item.posterUrl,
+    alt: item.alt,
+    width: item.posterWidth,
+    height: item.posterHeight,
+  };
 }

@@ -165,6 +165,7 @@ export function articleSchema(input: {
   description: string;
   publishedAt: string | null;
   locale?: Locale;
+  image?: string;
 }): object {
   const locale = input.locale ?? "es";
   const id = ids(input.siteUrl);
@@ -181,6 +182,7 @@ export function articleSchema(input: {
     isPartOf: { "@id": id.website },
     publisher: { "@id": id.organization },
     ...(input.publishedAt === null ? {} : { datePublished: input.publishedAt }),
+    ...(input.image === undefined ? {} : { image: input.image }),
   };
 }
 

@@ -201,6 +201,7 @@ el editor.
   esperado es de decenas de entradas, no de miles.
 - No hay transcodificación de video: se acepta lo que un teléfono exporta como MP4 o WebM.
 - Las medidas de un video que no se puedan leer del encabezado se guardan como 1920×1080
-  (proporción `aspect-wide`) para reservar espacio; no se inventa un fotograma.
+  (proporción `aspect-wide`) para reservar espacio. El fotograma de portada no se
+  inventa en el servidor: a partir de 005 / ADR-038 lo extrae el admin al subir.
 - Guardar y publicar siguen siendo dos operaciones (001, US3). El editor no publica al
   guardar.

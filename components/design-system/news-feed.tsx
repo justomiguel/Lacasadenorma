@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { isPhoto, type MediaAsset } from "@/src/domain/entities";
+import type { CoverImage } from "@/src/domain/entities";
 import type { Locale } from "@/src/i18n/locale";
 
 import { ArrowIcon } from "./icons";
@@ -36,13 +36,11 @@ export function NewsFeedItem({
   date: string | null;
   summary: string;
   action: string;
-  photo: MediaAsset | null;
+  photo: CoverImage | null;
   locale: Locale;
   lang?: string;
   prefetch?: boolean;
 }) {
-  const cover = photo !== null && isPhoto(photo) ? photo : null;
-
   return (
     <li className="py-xl first:pt-0">
       <Link
@@ -50,13 +48,13 @@ export function NewsFeedItem({
         className="arrow-link group flex flex-row items-start gap-md text-ink no-underline sm:gap-xl"
         {...(prefetch === undefined ? {} : { prefetch })}
       >
-        {cover === null ? null : (
+        {photo === null ? null : (
           <div className="relative aspect-square w-5xl shrink-0 overflow-hidden bg-paper-sunk sm:w-6xl">
             <Image
-              src={cover.url}
-              alt={cover.alt}
-              width={cover.width}
-              height={cover.height}
+              src={photo.url}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
               sizes="120px"
               quality={80}
               className="h-full w-full object-cover"

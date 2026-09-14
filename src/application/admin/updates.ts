@@ -142,6 +142,10 @@ const mediaSchema = z.object({
   credit: optionalText(120),
   takenOn: optionalPastDate,
   sortOrder: z.coerce.number().int().min(0).max(99).catch(0),
+  poster: z
+    .union([z.instanceof(File), z.string(), z.null(), z.undefined()])
+    .optional()
+    .transform((value) => (value instanceof File && value.size > 0 ? value : null)),
 });
 
 export async function addUpdateMedia(
@@ -169,6 +173,7 @@ export async function addUpdateMedia(
         caption: data.caption,
         credit: data.credit,
         takenOn: data.takenOn,
+        poster: data.poster,
       });
 
       await deps.gateway.updates.attachMediaToUpdate({

@@ -119,6 +119,9 @@ export type MediaRow = Pick<
   | "width"
   | "height"
   | "taken_on"
+  | "poster_path"
+  | "poster_width"
+  | "poster_height"
 >;
 
 function toCurrency(value: string, context: string): CurrencyCode {
@@ -285,5 +288,8 @@ export function mapMedia(
     width: row.width,
     height: row.height,
     takenOn: row.taken_on,
+    posterUrl: row.poster_path === null ? null : publicUrlFor("fotos", row.poster_path),
+    posterWidth: row.poster_width,
+    posterHeight: row.poster_height,
   };
 }

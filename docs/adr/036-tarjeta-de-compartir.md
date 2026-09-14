@@ -62,3 +62,6 @@ La foto sigue en la página. La tarjeta del enlace es la marca.
   la descripción de Open Graph es la SEO real de Norma.
 - La fotografía sigue siendo la estructura de las páginas. Lo que cambia es
   el recuadro de 1200×630 que ve quien todavía no abrió el enlace.
+- [ADR-038](./038-portada-de-novedad.md) abre una excepción: una novedad
+  publicada **con** portada usa esa imagen como `og:image`. El resto de las
+  URLs —incluida una nota sin foto ni fotograma— sigue esta decisión.

@@ -13,7 +13,7 @@ import { Byline } from "@/components/design-system/typography";
 import { StructuredData } from "@/components/site/structured-data";
 import { getContent } from "@/content";
 import { findUpdate } from "@/src/application/use-cases/get-updates";
-import { isPhoto, isVideo } from "@/src/domain/entities";
+import { coverPhoto, isPhoto, isVideo } from "@/src/domain/entities";
 import { excerpt, referencedMediaIds } from "@/src/domain/rich-text";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -71,6 +71,7 @@ export async function generateNewsMetadata(
   }
 
   const update = result.data;
+  const cover = coverPhoto(update);
 
   return pageMetadata({
     locale,
@@ -78,6 +79,7 @@ export async function generateNewsMetadata(
     description: excerpt(update.body),
     path: `/novedades/${update.slug}`,
     ...(update.publishedAt === null ? {} : { publishedTime: update.publishedAt }),
+    ...(cover === null ? {} : { image: cover }),
   });
 }
 
@@ -114,6 +116,7 @@ export async function NewsArticleScreen({
   const leftoverVideos = update.media.filter(
     (item) => isVideo(item) && !referenced.has(item.id),
   );
+  const cover = coverPhoto(update);
 
   const cmsBody = (
     <>
@@ -143,6 +146,7 @@ export async function NewsArticleScreen({
                 preload="metadata"
                 width={item.width}
                 height={item.height}
+                poster={item.posterUrl ?? undefined}
                 className="aspect-wide w-full bg-paper-sunk"
                 aria-label={item.alt}
               >
@@ -170,6 +174,7 @@ export async function NewsArticleScreen({
               description: summary,
               publishedAt: update.publishedAt,
               locale,
+              ...(cover === null ? {} : { image: cover.url }),
             }),
             breadcrumbSchema(
               siteUrl,

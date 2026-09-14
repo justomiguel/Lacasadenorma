@@ -45,6 +45,33 @@ describe("pageMetadata", () => {
     expect(JSON.stringify(meta.openGraph?.images)).not.toContain("/fotos/");
   });
 
+  it("una novedad con portada se comparte con esa imagen, no con la tarjeta", () => {
+    const cover = {
+      url: "https://ejemplo.test/storage/v1/object/public/fotos/obra-f10.jpg",
+      alt: "La colada, de un extremo al otro",
+      width: 1920,
+      height: 1080,
+    };
+    const meta = pageMetadata({
+      locale: "es",
+      title: "Empezó el techo",
+      description: "Llegaron las chapas y se apoyaron sobre los muros.",
+      path: "/novedades/empezo-el-techo",
+      image: cover,
+    });
+
+    expect(meta.openGraph?.images).toEqual([
+      expect.objectContaining({
+        url: cover.url,
+        width: cover.width,
+        height: cover.height,
+        alt: cover.alt,
+      }),
+    ]);
+    expect(meta.twitter?.images).toEqual([cover.url]);
+    expect(JSON.stringify(meta.openGraph?.images)).not.toContain("/compartir/tarjeta");
+  });
+
   it("noIndex apaga el rastreo sin sacar la canónica", () => {
     const meta = pageMetadata({
       locale: "es",

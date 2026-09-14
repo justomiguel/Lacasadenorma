@@ -82,6 +82,12 @@ export function fakeAdminGateway(
           width: isVideo ? 1920 : 1600,
           height: isVideo ? 1080 : 1200,
           takenOn: input.takenOn,
+          posterUrl:
+            input.poster === undefined || input.poster === null
+              ? null
+              : "https://ejemplo.test/poster.jpg",
+          posterWidth: input.poster === undefined || input.poster === null ? null : 1920,
+          posterHeight: input.poster === undefined || input.poster === null ? null : 1080,
         });
       },
       attachMediaToUpdate: (input) => record("attachMediaToUpdate", input, undefined),

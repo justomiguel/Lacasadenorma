@@ -64,6 +64,24 @@ describe("garantías que valen para todo el grafo", () => {
     );
 
     expect(sinFecha).not.toHaveProperty("datePublished");
+    expect(sinFecha).not.toHaveProperty("image");
+  });
+
+  it("una novedad con portada declara esa imagen y no inventa otra", () => {
+    const node = emitOne(
+      articleSchema({
+        siteUrl: SITE,
+        slug: "la-colada",
+        title: "La colada",
+        description: "Se coló el contrapiso de un extremo al otro.",
+        publishedAt: "2026-09-14T00:00:00.000Z",
+        image: "https://ejemplo.test/storage/v1/object/public/fotos/obra-f10.jpg",
+      }),
+    );
+
+    expect(node.image).toBe(
+      "https://ejemplo.test/storage/v1/object/public/fotos/obra-f10.jpg",
+    );
   });
 
   it("la URL de una novedad en inglés lleva el prefijo y el idioma del cuerpo sigue siendo castellano", () => {

@@ -86,6 +86,7 @@ export async function saveDonationItem(
           caption: data.caption,
           credit: data.credit,
           takenOn: null,
+          poster: null,
         });
         photoMediaId = media.id;
       }

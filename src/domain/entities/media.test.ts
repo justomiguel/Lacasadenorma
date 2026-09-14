@@ -13,6 +13,9 @@ const sample: MediaAsset = {
   width: 1600,
   height: 1200,
   takenOn: null,
+  posterUrl: null,
+  posterWidth: null,
+  posterHeight: null,
 };
 
 describe("media", () => {

@@ -589,6 +589,9 @@ export type Database = {
           height: number;
           id: string;
           kind: Database["public"]["Enums"]["media_kind"];
+          poster_height: number | null;
+          poster_path: string | null;
+          poster_width: number | null;
           storage_path: string;
           taken_on: string | null;
           updated_at: string;
@@ -604,6 +607,9 @@ export type Database = {
           height: number;
           id?: string;
           kind?: Database["public"]["Enums"]["media_kind"];
+          poster_height?: number | null;
+          poster_path?: string | null;
+          poster_width?: number | null;
           storage_path: string;
           taken_on?: string | null;
           updated_at?: string;
@@ -619,6 +625,9 @@ export type Database = {
           height?: number;
           id?: string;
           kind?: Database["public"]["Enums"]["media_kind"];
+          poster_height?: number | null;
+          poster_path?: string | null;
+          poster_width?: number | null;
           storage_path?: string;
           taken_on?: string | null;
           updated_at?: string;

@@ -80,6 +80,7 @@ function MediaBlock({
           preload="metadata"
           width={asset.width}
           height={asset.height}
+          poster={asset.posterUrl ?? undefined}
           className="aspect-wide w-full bg-paper-sunk"
           aria-label={node.alt}
         >

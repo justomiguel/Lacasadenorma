@@ -193,12 +193,13 @@ tiene que aparecer", y el índice declara el feed como `application/rss+xml`.
 
 ## Assumptions
 
-- No hay selector de portada: la primera foto del relato es la miniatura. La
-  previa social sigue siendo la tarjeta de la marca (ADR-036).
+- No hay selector de portada: la primera foto del relato es la miniatura.
+  La previa social de **esta** feature sigue siendo la tarjeta de la marca
+  (ADR-036). 005 / ADR-038 exceptúan el artículo que sí tiene portada.
 - No hay teaser en la home: la home es el relato de cinco momentos (ADR-032) y
   un sexto bloque pelearía el LCP (SC-001, SC-304).
-- No hay fotograma inventado para el video (003). Un video sin foto al lado
-  no genera miniatura.
+- Un video sin fotograma extraído no genera miniatura (003). El fotograma 10
+  al subir es 005, no esta feature.
 - No hay comentarios, etiquetas, autores visibles, paginación, YouTube, ni
   vínculo a un ítem del catálogo o a un hito: eso es otra spec.
 - El copy `photosNote` y `seeNews` de `/reconstruccion` ya existe; esta

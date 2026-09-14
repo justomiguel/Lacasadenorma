@@ -126,6 +126,7 @@ export interface AdminUpdatePort {
     caption: string | null;
     credit: string | null;
     takenOn: string | null;
+    poster: File | null;
   }): Promise<MediaAsset>;
   attachMediaToUpdate(input: {
     updateId: string;

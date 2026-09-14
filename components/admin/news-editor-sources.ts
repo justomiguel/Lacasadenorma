@@ -27,6 +27,7 @@ export function withMediaSources(
           ...node.attrs,
           src: asset?.url ?? null,
           kind: asset?.kind ?? stringAttr(node.attrs, "kind"),
+          poster: asset?.posterUrl ?? null,
         },
       };
     }),

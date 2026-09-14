@@ -1,11 +1,11 @@
 import type { MediaAsset, UpdateRecord } from "@/src/domain/entities";
 import type { AdminUpdatePort } from "@/src/domain/ports/admin";
 
-import { UnsupportedFileError } from "../../files/image";
+import { inspectImage, storageKeyFor, UnsupportedFileError } from "../../files/image";
 import { inspectUpload } from "../../files/inspect-upload";
 import { mapMedia, type MediaRow } from "../mappers";
 import type { ServerSupabaseClient } from "../server-client";
-import { MEDIA_COLUMNS, UPDATE_COLUMNS } from "./columns";
+import { MEDIA_COLUMNS, PHOTO_BUCKET, UPDATE_COLUMNS } from "./columns";
 import { QueryError } from "./query";
 
 interface UpdateRow {
@@ -15,6 +15,56 @@ interface UpdateRow {
   body: string;
   published_at: string | null;
   update_media: { sort_order: number; media: MediaRow | null }[];
+}
+
+interface StoredPoster {
+  readonly key: string;
+  readonly mimeType: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+async function uploadObject(
+  client: ServerSupabaseClient,
+  bucketId: string,
+  key: string,
+  file: File,
+  contentType: string,
+): Promise<void> {
+  const { error } = await client.storage.from(bucketId).upload(key, file, {
+    contentType,
+    upsert: false,
+  });
+
+  if (error !== null) {
+    throw new UnsupportedFileError(`No pudimos subir el archivo: ${error.message}`);
+  }
+}
+
+async function dropObject(
+  client: ServerSupabaseClient,
+  bucketId: string,
+  key: string,
+): Promise<void> {
+  const { error } = await client.storage.from(bucketId).remove([key]);
+
+  if (error !== null) {
+    console.error(
+      `No se pudo borrar ${bucketId}/${key} después de un alta fallida.`,
+      error,
+    );
+  }
+}
+
+async function inspectPoster(file: File): Promise<StoredPoster> {
+  const info = await inspectImage(file);
+
+  return {
+    key: storageKeyFor(info.mimeType),
+    mimeType: info.mimeType,
+    width: info.width,
+    height: info.height,
+  };
 }
 
 export function createUpdatesPort(client: ServerSupabaseClient): AdminUpdatePort {
@@ -102,25 +152,39 @@ export function createUpdatesPort(client: ServerSupabaseClient): AdminUpdatePort
     },
 
     /**
-     * El orden importa: primero se valida el archivo por contenido, después se
-     * sube, y sólo entonces se crea la fila. Si la fila se creara primero, un
-     * fallo de subida dejaría un medio registrado que no existe, y el artículo
-     * mostraría un hueco roto.
+     * El orden importa: primero se valida por contenido (el video y, si viene,
+     * el JPEG del fotograma 10), después se sube, y sólo entonces se crea la
+     * fila. Si la fila se creara primero, un fallo de subida dejaría un medio
+     * registrado que no existe.
      */
     async createMedia(input): Promise<MediaAsset> {
       const placed = await inspectUpload(input.file);
+      const poster =
+        placed.kind === "video" && input.poster instanceof File
+          ? await inspectPoster(input.poster)
+          : null;
 
-      const { error: uploadError } = await client.storage
-        .from(placed.bucketId)
-        .upload(placed.key, input.file, {
-          contentType: placed.mimeType,
-          upsert: false,
-        });
+      await uploadObject(
+        client,
+        placed.bucketId,
+        placed.key,
+        input.file,
+        placed.mimeType,
+      );
 
-      if (uploadError !== null) {
-        throw new UnsupportedFileError(
-          `No pudimos subir el archivo: ${uploadError.message}`,
-        );
+      if (poster !== null && input.poster instanceof File) {
+        try {
+          await uploadObject(
+            client,
+            PHOTO_BUCKET,
+            poster.key,
+            input.poster,
+            poster.mimeType,
+          );
+        } catch (error) {
+          await dropObject(client, placed.bucketId, placed.key);
+          throw error;
+        }
       }
 
       const { data, error } = await client
@@ -135,11 +199,20 @@ export function createUpdatesPort(client: ServerSupabaseClient): AdminUpdatePort
           width: placed.width,
           height: placed.height,
           taken_on: input.takenOn,
+          poster_path: poster?.key ?? null,
+          poster_width: poster?.width ?? null,
+          poster_height: poster?.height ?? null,
         })
         .select(MEDIA_COLUMNS)
         .single();
 
       if (error !== null) {
+        await dropObject(client, placed.bucketId, placed.key);
+
+        if (poster !== null) {
+          await dropObject(client, PHOTO_BUCKET, poster.key);
+        }
+
         throw new QueryError("registrar el archivo", error);
       }
 

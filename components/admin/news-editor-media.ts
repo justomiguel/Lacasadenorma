@@ -19,6 +19,7 @@ export const WorkMedia = Node.create({
       alt: { default: "" },
       kind: { default: "photo" },
       src: { default: null },
+      poster: { default: null },
     };
   },
 
@@ -32,10 +33,20 @@ export const WorkMedia = Node.create({
     const src = stringAttr(HTMLAttributes, "src");
 
     if (kind === "video" && typeof src === "string") {
+      const poster = stringAttr(HTMLAttributes, "poster");
+
       return [
         "div",
         mergeAttributes(HTMLAttributes, { "data-work-media": kind }),
-        ["video", { controls: "true", src, "aria-label": alt }],
+        [
+          "video",
+          {
+            controls: "true",
+            src,
+            "aria-label": alt,
+            ...(typeof poster === "string" ? { poster } : {}),
+          },
+        ],
       ];
     }
 
