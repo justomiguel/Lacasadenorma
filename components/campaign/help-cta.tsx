@@ -53,6 +53,7 @@ export function HelpCta({
         data-help-primary=""
         className={resolved}
         onClick={onClick}
+        {...(tone === "paper" ? { "data-tone": "paper" as const } : {})}
       >
         {label}
       </a>
@@ -60,7 +61,13 @@ export function HelpCta({
   }
 
   return (
-    <Link href={href} data-help-primary="" className={resolved} onClick={onClick}>
+    <Link
+      href={href}
+      data-help-primary=""
+      className={resolved}
+      onClick={onClick}
+      {...(tone === "paper" ? { "data-tone": "paper" as const } : {})}
+    >
       {label}
     </Link>
   );
