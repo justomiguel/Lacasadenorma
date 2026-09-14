@@ -1,5 +1,7 @@
 import { OwnPledges } from "@/components/account/own-pledges";
 import { AuthShell } from "@/components/account/auth-shell";
+import { ChangePasswordForm } from "@/components/account/password-form";
+import { PortraitForm } from "@/components/account/portrait-form";
 import {
   DeleteAccountForm,
   ProfileForm,
@@ -19,10 +21,10 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  * La propia cuenta.
  *
  * Muestra exactamente lo que el sistema guarda de una persona —el correo, el
- * nombre que eligió, si quiere aparecer, en qué idioma se le escribe— y nada más,
- * porque eso es lo que `docs/privacy.md` promete que se puede ver desde acá. Si
- * algún día se guardara un dato más, tiene que aparecer en esta pantalla o la
- * política pasa a ser falsa.
+ * retrato, el nombre que eligió, si quiere aparecer, en qué idioma se le escribe—
+ * y nada más, porque eso es lo que `docs/privacy.md` promete que se puede ver
+ * desde acá. Si algún día se guardara un dato más, tiene que aparecer en esta
+ * pantalla o la política pasa a ser falsa.
  *
  * Lo que todavía **no** está: el muro. Llega en la fase E.
  */
@@ -111,6 +113,20 @@ export async function AccountScreen({
       </div>
 
       <div className="mt-3xl">
+        <SectionHeading title={copy.portraitHeading} />
+        <p className="mb-xl max-w-measure text-body text-ink-muted">
+          {copy.portraitLead}
+        </p>
+        <PortraitForm
+          copy={copy}
+          errors={errors}
+          fields={fields}
+          locale={locale}
+          profile={donor}
+        />
+      </div>
+
+      <div className="mt-3xl">
         <SectionHeading title={copy.appearanceHeading} />
         <p className="mb-xl max-w-measure text-body text-ink-muted">
           {copy.appearanceLead}
@@ -129,6 +145,20 @@ export async function AccountScreen({
           fields={fields}
           locale={locale}
           profile={donor}
+        />
+      </div>
+
+      <div className="mt-3xl">
+        <SectionHeading title={copy.passwordHeading} />
+        <p className="mb-xl max-w-measure text-body text-ink-muted">
+          {copy.passwordLead}
+        </p>
+        <ChangePasswordForm
+          copy={account.password}
+          errors={errors}
+          fields={fields}
+          locale={locale}
+          saved={copy.saved}
         />
       </div>
 

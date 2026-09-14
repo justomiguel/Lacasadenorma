@@ -1,10 +1,10 @@
 {
-  "updatedOn": "2026-09-13",
+  "updatedOn": "2026-09-14",
   "privacy": {
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
     "paragraphs": [
-      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and nothing beyond that. We do not use third-party cookies and we do not follow you across other pages."
+      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, only if you write them down, a name to show and a photo of you that is not published. We do not use third-party cookies and we do not follow you across other pages."
     ],
     "sections": [
       {
@@ -19,11 +19,12 @@
         "heading": "If you create an account",
         "paragraphs": [
           "Creating an account is optional and serves one purpose: to be able to say \"I am bringing this one\" and have it written down as yours.",
-          "From you we keep your email and, only if you write them down, the name you want shown and the language you prefer to be written in. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password.",
+          "From you we keep your email and, only if you write them down, the name you want shown, the language you prefer to be written in, and a photo of you. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password.",
           "The name shown is the one you choose, and it is never derived from your email. If you write none, there is none.",
+          "The photo, if you upload one, identifies you while you are signed in. It is not published on any page of the site, it does not appear in Who helped, and it is not shared.",
           "Your email is not published on any page, is not shared with anyone, and is not used to send you anything other than messages about your account or about something you offered to bring.",
           "The service that runs the accounts also records when you sign in, with the IP address and the browser you sign in from. It is there to detect attempts to get into other people's accounts. The family does not use that information for anything else.",
-          "Your account is kept until you delete it. You can delete it yourself from your account, without asking us and without giving reasons: your email and your name are deleted right away."
+          "Your account is kept until you delete it. You can delete it yourself from your account, without asking us and without giving reasons: your email, your name and your photo are deleted right away."
         ]
       },
       {
@@ -54,7 +55,7 @@
         "paragraphs": [
           "Signing up to bring a material stores, besides your email, how much you committed to bring and until when that hold is good. If you leave a note for the family, it stays in the internal record and is not published.",
           "The name you want shown is optional, and the default is not to appear. If you write it and check that you want to appear, it is published on Who helped only when the material arrives. If you leave it unchecked, what you brought is counted without your name.",
-          "If you delete the account, your email and your name are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",
+          "If you delete the account, your email, your name and your photo are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",
           "The emails we send you are about your account or a hold of yours: that we received it, that it was written down, that expiry is near, that it arrived, or that it was cancelled. There is no list and no broadcast."
         ]
       },

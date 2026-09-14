@@ -8,6 +8,7 @@ import {
   enlacePendiente,
   urlDelEnlace,
 } from "../soporte/cuentas";
+import { VIEWPORT_MINIMO } from "../soporte/paginas";
 
 /**
  * El alta de una cuenta del público, de punta a punta (fase A de la feature 002).
@@ -75,6 +76,45 @@ test.describe("fase A · la cuenta del público", () => {
     // **concede** algo no puede venir marcada; ésta niega, y por eso sí (FR-225).
     await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /tu foto/i })).toBeVisible();
+    await expect(page.getByLabel(/subir una foto/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^contraseña$/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /guardar la contraseña/i }),
+    ).toBeVisible();
+  });
+
+  test("con sesión, el menú muestra la cuenta y cómo salir", async ({
+    page,
+    request,
+  }, info) => {
+    const email = correoDePrueba(info.project.name, "menu");
+
+    await crearCuenta(page, request, email);
+    await page.getByLabel(/nombre para mostrar/i).fill("Vecina de la cuadra");
+    await page.getByLabel(/prefiero no aparecer/i).uncheck();
+    await page.getByRole("button", { name: /^guardar$/i }).click();
+    await expect(page.getByText(/^guardado/i)).toBeVisible();
+
+    await page.setViewportSize(VIEWPORT_MINIMO);
+    const sesion = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
+    );
+    await page.goto("/");
+    await sesion;
+    await page.getByRole("button", { name: /abrir el menú/i }).click();
+
+    const menu = page.getByRole("dialog");
+
+    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible();
+    await expect(menu.getByText(email)).toBeVisible();
+    await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
+    await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
+    await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
+
+    await menu.getByRole("button", { name: /cerrar sesión/i }).click();
+    await expect(page).toHaveURL(/\/cuenta\/ingresar/);
   });
 
   test("el mismo enlace no sirve dos veces", async ({ page, request }, info) => {

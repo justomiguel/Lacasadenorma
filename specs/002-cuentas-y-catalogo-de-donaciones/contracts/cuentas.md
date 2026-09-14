@@ -18,7 +18,9 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 | `/cuenta/recuperar` | Página + formulario de cliente | Pide el correo de recuperación |
 | `/cuenta/clave` | Página + formulario de cliente | Fija contraseña nueva, con sesión de recuperación |
 | `/cuenta/confirmar` | **Route handler** | Consume el enlace del correo y crea la sesión |
-| `/cuenta` | Server Component | Mis reservas, mi nombre público, mi anonimato, borrar mi cuenta |
+| `/cuenta` | Server Component | Mis reservas, mi retrato, mi nombre público, mi anonimato, cambiar la contraseña, borrar mi cuenta |
+| `/cuenta/sesion` | **Route handler** | Snapshot privado del chrome: anónima o nombre/correo/si hay retrato. **No** crea el perfil |
+| `/cuenta/retrato` | **Route handler** | Sirve el retrato propio. Pide la URL firmada en el servidor y la descarta (ADR-037) |
 
 `/cuenta/confirmar` es un `route.ts` y no una página porque su trabajo es canjear un token y
 redirigir; no tiene nada que mostrar. Llama a `verifyOtp({ type, token_hash })` con lo que viene en la
@@ -42,6 +44,9 @@ discriminado para `useActionState`, y no filtran por qué falló un intento de s
 | `requestPasswordReset` | correo | **Responde lo mismo exista o no la cuenta** |
 | `setPassword` | contraseña | Requiere sesión de recuperación |
 | `updateProfile` | nombre público, anonimato, idioma | Revalida el muro si el anonimato cambió |
+| `savePortrait` | archivo de imagen | Sube el retrato al bucket privado `avatares` |
+| `removePortrait` | — | Borra el retrato |
+| `changePassword` | contraseña nueva y confirmación | Requiere sesión activa, no la de recuperación |
 | `deleteAccount` | confirmación escrita | Borra la cuenta; las donaciones quedan anónimas (FR-240) |
 
 Dos detalles que son decisiones, no estilo:

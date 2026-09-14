@@ -1,120 +1,20 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { DonorProfile } from "@/src/domain/entities/donor";
-import type { OwnPledge } from "@/src/domain/entities/donation-pledge";
-import type { AccountPort } from "@/src/domain/ports/accounts";
-import type { ClaimInput, DonationsPort } from "@/src/domain/ports/donations";
-import type { Logger } from "@/src/domain/ports/logger";
 
 import {
-  deleteOwnAccount,
-  getOwnAccount,
-  updateOwnProfile,
-  type AccountDeps,
-} from "./own-account";
-
-class FakeAccountPort implements AccountPort {
-  profile: DonorProfile | null = null;
-  deleted = false;
-  failWith: Error | null = null;
-
-  async readOwnProfile(): Promise<DonorProfile | null> {
-    this.raiseIfAsked();
-
-    return this.profile;
-  }
-
-  async ensureOwnProfile(fallbackLocale: "es" | "en"): Promise<{
-    profile: DonorProfile;
-    created: boolean;
-  }> {
-    this.raiseIfAsked();
-
-    if (this.profile !== null) {
-      return { profile: this.profile, created: false };
-    }
-
-    this.profile = {
-      userId: "00000000-0000-4000-8000-000000000001",
-      displayName: null,
-      locale: fallbackLocale,
-      defaultAnonymous: true,
-      approvalStatus: "pending",
-    };
-
-    return { profile: this.profile, created: true };
-  }
-
-  async saveOwnProfile(
-    next: Pick<DonorProfile, "displayName" | "locale" | "defaultAnonymous">,
-  ): Promise<DonorProfile> {
-    this.raiseIfAsked();
-
-    this.profile = {
-      userId: "00000000-0000-4000-8000-000000000001",
-      approvalStatus: this.profile?.approvalStatus ?? "pending",
-      ...next,
-    };
-
-    return this.profile;
-  }
-
-  async deleteOwnAccount(): Promise<void> {
-    this.raiseIfAsked();
-
-    this.deleted = true;
-  }
-
-  private raiseIfAsked(): void {
-    if (this.failWith !== null) {
-      throw this.failWith;
-    }
-  }
-}
-
-class FakeDonationsPort implements DonationsPort {
-  pledges: OwnPledge[] = [];
-  appearance: { isAnonymous: boolean; displayName: string | null } | null = null;
-
-  async claimItem(_input: ClaimInput): Promise<OwnPledge> {
-    throw new Error("no se reserva desde esta prueba");
-  }
-
-  async listOwnPledges(): Promise<readonly OwnPledge[]> {
-    return this.pledges;
-  }
-
-  async cancelOwnPledge(): Promise<void> {
-    return;
-  }
-
-  async updateOwnAppearance(next: {
-    isAnonymous: boolean;
-    displayName: string | null;
-  }): Promise<void> {
-    this.appearance = next;
-  }
-}
-
-const silent: Logger = {
-  debug: () => undefined,
-  info: () => undefined,
-  warn: () => undefined,
-  error: () => undefined,
-};
+  FakeAccountPort,
+  FakeDonationsPort,
+  FAKE_ACCOUNT_USER_ID,
+  fakeAccountDeps,
+} from "./fake-account-port";
+import { deleteOwnAccount, getOwnAccount, updateOwnProfile } from "./own-account";
 
 let port: FakeAccountPort;
 let donations: FakeDonationsPort;
 
-function deps(state: "ready" | "anonymous" | "not-configured" = "ready"): AccountDeps {
-  if (state === "ready") {
-    return {
-      session: { status: "ready", port, donations },
-      logger: silent,
-    };
-  }
-
-  return { session: { status: state }, logger: silent };
+function deps(state: "ready" | "anonymous" | "not-configured" = "ready") {
+  return fakeAccountDeps(port, donations, state);
 }
 
 beforeEach(() => {
@@ -130,11 +30,12 @@ describe("getOwnAccount", () => {
       status: "ok",
       value: {
         profile: {
-          userId: "00000000-0000-4000-8000-000000000001",
+          userId: FAKE_ACCOUNT_USER_ID,
           displayName: null,
           locale: "en",
           defaultAnonymous: true,
           approvalStatus: "pending",
+          portraitPath: null,
         },
         pledges: [],
       },
@@ -163,9 +64,9 @@ describe("getOwnAccount", () => {
 
   it("al nacer avisa, y si el aviso falla la cuenta igual queda", async () => {
     const opened: DonorProfile[] = [];
-    const depsConAviso: AccountDeps = {
+    const depsConAviso = {
       ...deps(),
-      onAccountOpened: async (profile) => {
+      onAccountOpened: async (profile: DonorProfile) => {
         opened.push(profile);
       },
     };
@@ -237,11 +138,12 @@ describe("updateOwnProfile", () => {
     expect(result).toEqual({
       status: "ok",
       value: {
-        userId: "00000000-0000-4000-8000-000000000001",
+        userId: FAKE_ACCOUNT_USER_ID,
         displayName: "Vecina de la cuadra",
         locale: "es",
         defaultAnonymous: false,
         approvalStatus: "pending",
+        portraitPath: null,
       },
     });
   });
@@ -256,11 +158,12 @@ describe("updateOwnProfile", () => {
     expect(result).toEqual({
       status: "ok",
       value: {
-        userId: "00000000-0000-4000-8000-000000000001",
+        userId: FAKE_ACCOUNT_USER_ID,
         displayName: null,
         locale: "es",
         defaultAnonymous: true,
         approvalStatus: "pending",
+        portraitPath: null,
       },
     });
   });

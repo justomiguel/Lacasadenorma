@@ -374,6 +374,7 @@ export type Database = {
           display_name: string | null;
           id: string;
           locale: string;
+          portrait_path: string | null;
           review_note: string | null;
           reviewed_at: string | null;
           reviewed_by: string | null;
@@ -386,6 +387,7 @@ export type Database = {
           display_name?: string | null;
           id: string;
           locale?: string;
+          portrait_path?: string | null;
           review_note?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -398,6 +400,7 @@ export type Database = {
           display_name?: string | null;
           id?: string;
           locale?: string;
+          portrait_path?: string | null;
           review_note?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;

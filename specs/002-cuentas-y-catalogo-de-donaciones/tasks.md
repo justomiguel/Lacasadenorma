@@ -238,6 +238,29 @@ HTML servido.
 
 ---
 
+## Fase G — Chrome de cuenta
+
+**Objetivo**: quien entra ve su nombre, su retrato y cómo irse, sin personalizar el HTML público
+(ADR-037).
+
+**Prueba independiente**: con sesión, el menú muestra nombre y «Cerrar sesión»; el HTML inicial de
+la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
+
+- [x] **T072** [P] Dominio: `portraitPathFor` / `isOwnPortraitPath` en rojo, y el caso de uso de
+      subir y borrar el retrato sin crear el perfil al leer el chrome.
+- [x] **T073** Migración del bucket `avatares` (privado, 2 MiB, JPEG/PNG/WebP) y de
+      `donor_profiles.portrait_path`, con policies por propiedad.
+- [x] **T074** [P] `supabase/tests/060-storage.sql` y `080-donantes-y-muro.sql`: anon no lee
+      retratos; una cuenta no lee ni escribe el de otra; el `check` impide una ruta ajena.
+- [x] **T075** Puerto, `/cuenta/sesion`, `/cuenta/retrato`, formularios de foto y de contraseña,
+      chrome del menú y del encabezado.
+- [x] **T076** [P] `e2e/con-datos/cuenta.spec.ts`: con sesión, el menú tiene el nombre y cerrar
+      sesión; sin sesión sigue «Ingresar».
+- [x] **T077** [P] Privacidad pública, `docs/privacy.md` y ADR-037 en el mismo cambio que la
+      columna nueva.
+
+---
+
 ## Dependencias
 
 ```

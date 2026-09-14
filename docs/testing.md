@@ -368,9 +368,9 @@ Ocho suites sobre PostgreSQL 17 real con un shim que emula lo que Supabase agreg
 | `030-matriz-de-permisos.sql` | 39 | La matriz completa rol × tabla × operación, y quién puede agregar al rastro de auditoría |
 | `040-integridad-financiera.sql` | 26 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
 | `050-roles-y-token.sql` | 21 | Que el rol venga de `app_metadata`, que `user_metadata` se ignore, y que el servidor de auth pueda ejecutar el hook |
-| `060-storage.sql` | 16 | `fotos` público, `comprobantes` privado, y las policies de cada uno |
+| `060-storage.sql` | 27 | `fotos` y `videos` públicos, `comprobantes` y `avatares` privados, y las policies de cada uno |
 | `070-catalogo.sql` | 49 | El `check` de no-sobreventa, la vista pública, dos sesiones concurrentes por la última unidad, el tope de reservas, el vencimiento sin cron, que un `insert` directo falle, que cumplir una reserva no mueva totales de dinero, y que borrar la cuenta anonimice el nombre |
-| `080-donantes-y-muro.sql` | 55 | Que una cuenta del público vea sólo su fila, que no pueda habilitarse sola, y que `anon` lea exactamente cinco columnas del muro |
+| `080-donantes-y-muro.sql` | 56 | Que una cuenta del público vea sólo su fila, que no pueda habilitarse sola, y que `anon` lea exactamente cinco columnas del muro |
 
 La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.
 `030-matriz-de-permisos.sql` recorre seis roles contra quince tablas y cuatro operaciones, y la mayoría

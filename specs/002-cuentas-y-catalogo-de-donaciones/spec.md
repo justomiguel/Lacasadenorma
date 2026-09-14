@@ -110,6 +110,12 @@ no puede leer ni escribir nada de la campaña ni entrar al backoffice.
    dejan de existir y lo que ya donó se conserva como donación anónima, sin su nombre.
 7. **Given** el anonimato como preferencia, **When** alguien crea su cuenta y no elige nada,
    **Then** el estado por defecto es **anónimo**: aparecer con nombre es una decisión explícita.
+8. **Given** una sesión abierta, **When** abre el menú, **Then** ve su nombre (o «Tu cuenta» si
+   todavía no eligió uno), su retrato si cargó uno, un enlace a su cuenta y cómo cerrar la sesión.
+9. **Given** alguien en su cuenta, **When** sube una foto suya, **Then** esa foto aparece en el menú
+   y en `/cuenta`, y **no** aparece en ninguna página pública.
+10. **Given** alguien en su cuenta, **When** cambia la contraseña, **Then** la sesión sigue abierta
+    y la contraseña anterior ya no sirve.
 
 ---
 
@@ -336,8 +342,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 **Privacidad**
 
-- **FR-238**: El sistema MUST recolectar el mínimo: correo, y nombre para mostrar sólo si la persona
-  decide aparecer.
+- **FR-238**: El sistema MUST recolectar el mínimo: correo; nombre para mostrar sólo si la persona
+  lo escribe; y una foto de retrato sólo si la persona la sube. La foto MUST NOT publicarse.
 - **FR-239**: La política de privacidad publicada MUST describir qué se guarda, para qué, cuánto
   tiempo y cómo se borra, en los dos idiomas, **en el mismo despliegue** que habilita el registro.
 - **FR-240**: Borrar la cuenta MUST eliminar los datos personales y MUST conservar la donación como
@@ -351,11 +357,27 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-243**: El catálogo y la sección de quienes ayudaron MUST tener metadata propia, estar en el
   sitemap y estar disponibles en los dos idiomas.
 
+**Chrome de cuenta (ADR-037)**
+
+- **FR-244**: Con sesión activa, el menú MUST mostrar el nombre que la persona eligió —o una
+  etiqueta de «tu cuenta» si no eligió ninguno—, un retrato si hay uno, un enlace a `/cuenta` y la
+  acción de cerrar sesión. MUST NOT derivar un nombre del correo (FR-230).
+- **FR-245**: El HTML de las páginas públicas MUST seguir siendo idéntico con o sin sesión. El chrome
+  de cuenta MUST hidratarse después, por un snapshot privado, y MUST NOT leer cookies en el
+  documento público.
+- **FR-246**: Una persona MUST poder subir, cambiar y borrar una foto de retrato desde `/cuenta`. El
+  archivo MUST vivir en un bucket privado, MUST pertenecer sólo a su dueña, y MUST NOT aparecer en
+  el muro ni en ninguna respuesta pública.
+- **FR-247**: El retrato MUST ser un recorte rectangular, no un avatar circular. Sin foto, el espacio
+  se reserva y se dice qué va ahí, sin imagen de archivo ni icono de relleno.
+- **FR-248**: Una persona con sesión MUST poder cambiar su contraseña desde `/cuenta`, sin pasar por
+  el correo de recuperación.
+
 ### Key Entities
 
 - **Cuenta del público**: alguien que se registró para poder reservar. Tiene correo confirmado,
-  idioma de preferencia, y nombre para mostrar si decidió aparecer. No tiene rol interno, y esa
-  ausencia es lo que la define.
+  idioma de preferencia, nombre para mostrar si decidió aparecer, y un retrato optativo que no se
+  publica. No tiene rol interno, y esa ausencia es lo que la define.
 - **Ítem del catálogo**: algo que hace falta para la obra. Tiene qué es, cantidad necesaria, unidad,
   cuánto está reservado, cuánto entregado, valor estimado opcional, foto opcional, rubro de
   presupuesto opcional y estado de publicación.
@@ -397,6 +419,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   funcionando, y la pantalla lo dice, verificado en el modo de prueba sin datos.
 - **SC-212**: El tiempo entre que la familia confirma una donación y que el nombre aparece en el muro
   no supera los cinco minutos sin intervención manual.
+- **SC-213**: El HTML servido de las páginas públicas no cambia según haya sesión o no, verificado
+  sobre el documento inicial; el nombre, el correo y el retrato aparecen después, en el menú.
 
 ---
 

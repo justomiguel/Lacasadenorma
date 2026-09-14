@@ -103,6 +103,14 @@ const nextConfig: NextConfig = {
   // cacheComponents queda deshabilitado a propósito. Ver docs/adr/011.
   typedRoutes: true,
 
+  // El retrato pesa hasta 2 MiB; multipart suma unos KB. Sin esto Next corta en
+  // 1 MB y el tope del bucket nunca llega a aplicarse (ADR-037).
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [70, 80],
@@ -136,6 +144,22 @@ const nextConfig: NextConfig = {
       {
         // Las rutas autenticadas nunca se cachean en un intermediario.
         source: "/admin/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/cuenta",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/cuenta/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/en/cuenta",
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
+      },
+      {
+        source: "/en/cuenta/:path*",
         headers: [{ key: "Cache-Control", value: "private, no-store" }],
       },
     ];

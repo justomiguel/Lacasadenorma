@@ -1,10 +1,10 @@
 {
-  "updatedOn": "2026-09-13",
+  "updatedOn": "2026-09-14",
   "privacy": {
     "title": "Privacidad",
     "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
     "paragraphs": [
-      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y nada más que eso. No usamos cookies de terceros y no te seguimos por otras páginas."
+      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y, si vos los escribís, un nombre para mostrar y una foto tuya que no se publica. No usamos cookies de terceros y no te seguimos por otras páginas."
     ],
     "sections": [
       {
@@ -19,11 +19,12 @@
         "heading": "Si te creás una cuenta",
         "paragraphs": [
           "Crear una cuenta es opcional y sirve para una sola cosa: poder decir «esto lo traigo yo» y que quede anotado a tu nombre.",
-          "De vos guardamos tu correo, y sólo si vos lo escribís, el nombre con el que querés que se te muestre y en qué idioma preferís que te escribamos. Tu contraseña no se guarda: se guarda un resultado cifrado del que no se puede volver a tu contraseña.",
+          "De vos guardamos tu correo, y sólo si vos lo escribís, el nombre con el que querés que se te muestre, en qué idioma preferís que te escribamos y una foto tuya. Tu contraseña no se guarda: se guarda un resultado cifrado del que no se puede volver a tu contraseña.",
           "El nombre para mostrar lo elegís vos y nunca se deduce de tu correo. Si no escribís ninguno, no hay ninguno.",
+          "La foto, si la subís, te identifica cuando estás ingresada. No se publica en ninguna página del sitio, no aparece en Quiénes ayudaron y no se comparte.",
           "El correo no se publica en ninguna página, no se comparte con nadie y no se usa para mandarte nada que no sea sobre tu cuenta o sobre algo que vos hayas ofrecido traer.",
           "El servicio que administra las cuentas anota además cuándo iniciás sesión, con la dirección IP y el navegador desde el que entrás. Sirve para detectar intentos de entrar a cuentas ajenas. La familia no usa esa información para nada más.",
-          "Tu cuenta se conserva hasta que la borres. Podés borrarla vos desde tu cuenta, sin pedirnos permiso y sin dar explicaciones: se borran tu correo y tu nombre en el momento."
+          "Tu cuenta se conserva hasta que la borres. Podés borrarla vos desde tu cuenta, sin pedirnos permiso y sin dar explicaciones: se borran tu correo, tu nombre y tu foto en el momento."
         ]
       },
       {
@@ -54,7 +55,7 @@
         "paragraphs": [
           "Anotarte para traer un material guarda, además del correo, cuánto te comprometiste a traer y hasta cuándo vale esa reserva. Si dejás una nota para la familia, queda en el registro interno y no se publica.",
           "El nombre con el que querés aparecer es optativo y el valor por defecto es no aparecer. Si lo escribís y marcás que querés aparecer, se publica en Quiénes ayudaron recién cuando el material llega. Si no lo marcás, lo que trajiste se cuenta sin tu nombre.",
-          "Si borrás la cuenta, se borra tu correo y tu nombre. Las reservas que ya se cumplieron se quedan como un hecho sobre la obra, sin identificarte.",
+          "Si borrás la cuenta, se borra tu correo, tu nombre y tu foto. Las reservas que ya se cumplieron se quedan como un hecho sobre la obra, sin identificarte.",
           "Los correos que te mandamos son sobre tu cuenta o sobre una reserva tuya: que la recibimos, que quedó anotada, que se acerca el vencimiento, que llegó, o que se canceló. No hay lista ni envíos de difusión."
         ]
       },
