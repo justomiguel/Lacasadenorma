@@ -119,7 +119,7 @@ test.describe("fase E · muro", () => {
         await donanteNo.close();
       }
     } finally {
-      await ocultarItem(request, await idDeItem(request, titulo));
+      await ocultarItem(request, await idDeItem(request, titulo), titulo);
       await staff.close();
     }
   });

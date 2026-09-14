@@ -339,7 +339,13 @@ Detalles que parecen menores y no lo son:
   ítem y `revision-visual` cuenta un hueco de foto de más. `POST /e2e/revalidar` existe sólo con
   `E2E_MODO=con-datos` y es el lado Next del harness: el de `scripts/local-api` no puede tocar esa
   caché. Fuera de ese modo contesta 404. El route handler **marca** el path; la regeneración corre
-  en la visita siguiente y esa visita puede servir el HTML viejo, así que el helper hace dos GET.
+  en la visita siguiente y esa visita puede servir el HTML viejo, así que el helper hace dos GET y
+  después espera a que el título del ítem no esté en el HTML. Si la regeneración tira
+  (`keepStaleOnError`) se vuelve a marcar. En CI, la revisión visual despublica cualquier ítem que
+  no sea el del fixture antes de contar huecos: Safari corre después de los catálogos de
+  escritorio y de móvil, y un leftover publicado o cacheado era un segundo hueco. En WebKit,
+  `/catalogo` además espera a que desaparezca "Estamos cargando…": `loading.tsx` no reserva
+  espacio, y medir ese cascarón daba cero huecos.
 - **Y después de construir, el script mira lo construido.** Todo lo anterior comprueba condiciones; esto
   comprueba el resultado, que es lo único que no puede estar bien por casualidad. Las cuatro páginas con
   cifras tienen que traer al menos un `data-figure` en su HTML prerenderizado, o el script corta con un
@@ -441,7 +447,8 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
 | `/reconstruccion` sin "Empezó el montaje del techo" en móvil/Safari, escritorio verde | Una prueba del proyecto anterior dejó una novedad publicada más nueva. El flujo 9 de auditoría tiene que despublicar: la página muestra sólo la última |
-| `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba se despublicó por REST y la caché de ISR no se invalidó. `ocultarItem` tiene que pegarle a `/e2e/revalidar` |
+| `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba sigue publicado o la caché de ISR no se invalidó. `ocultarItem` espera a que el título desaparezca del HTML; en CI la revisión visual deja sólo el ítem del fixture |
+| `/catalogo` reserva 0 huecos de foto en lugar de 1 | WebKit midió `loading.tsx`. La revisión visual tiene que esperar a que desaparezca "Estamos cargando…" antes de contar |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |
