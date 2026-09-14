@@ -34,8 +34,8 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
    «Ayudar a reconstruir». `SecondaryAction`: texto y flecha, sin caja, sin fondo,
    sin borde; la flecha se mueve 3 px al pasar el puntero. Utilitaria (`ICON_ACTION`):
    un icono de 44 px para copiar, cerrar, abrir el menú. Los iconos son una sola
-   familia (`icons.tsx`): trazo 1.5, cinco piezas, sin iconos al lado de los
-   títulos.
+   familia (`icons.tsx`): trazo 1.5, sin iconos de relleno. El de banco entra
+   al lado del título de la transferencia para distinguirla de Mercado Pago.
 
 3. **El encabezado es el nombre y el menú.** 60 px, transparente sobre la foto de la
    apertura, papel con un desenfoque de 6 px y una regla casi imperceptible al
@@ -57,11 +57,10 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 6. **Cada momento abre igual y el aire separa.** `StoryHeading`: el numeral chico y la
    etiqueta en versales de 12 px con espaciado, en la voz de interfaz, y el titular
    grande. La sobrelínea vuelve a propósito y **sólo acá**, en los cinco momentos de
-   la home y en el encabezado de la transferencia, porque la dueña la pidió como marca
-   del relato; en todo lo demás sigue prohibida y `revision-visual.spec.ts` la sigue
-   midiendo. Entre momentos hay 80 px de aire en teléfono y 120 en escritorio
-   (`StorySection`), y la superficie cambia con el relato: papel, bosque, papel hundido,
-   carbón, papel.
+   la home, porque la dueña la pidió como marca del relato; en todo lo demás sigue
+   prohibida y `revision-visual.spec.ts` la sigue midiendo. Entre momentos hay 80 px
+   de aire en teléfono y 120 en escritorio (`StorySection`), y la superficie cambia
+   con el relato: papel, bosque, papel hundido, carbón, papel.
 
 7. **La fotografía es el sistema.** `EditorialImage` tiene cinco variantes —a
    sangrado, desplazada por la derecha, retrato a cinco sextos del ancho, en la medida
@@ -77,11 +76,12 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 
 9. **Aportar es una decisión: desde dónde.** `DonationSelector` reemplaza al tablero:
    `CountrySelector` (Argentina, Chile, Internacional; tabs con teclado y una regla bajo
-   el elegido), `BankTransferDetails` con `CopyField` —etiqueta chica, dato grande y
-   tabular, icono de copiar que pasa a un tilde con «Copiado» durante 1,5 s— y
-   `ExternalPayment`, donde Mercado Pago y PayPal son métodos y no banners: la marca
-   con su logo, una línea, «Continuar con … →». Sin JavaScript los tres países se
-   apilan con su título y se transfiere igual.
+   el elegido) y, en Argentina y en Chile, dos cards: transferencia bancaria con icono
+   de banco y título, Mercado Pago con su logo al lado del nombre. Adentro de la
+   primera, `CopyField` —etiqueta chica, dato grande y tabular, icono de copiar que
+   pasa a un tilde con «Copiado» durante 1,5 s—. La segunda es `ExternalPayment`: la
+   marca, una línea, «Continuar con … →». PayPal es la misma pieza para el resto del
+   mundo. Sin JavaScript los tres países se apilan con su título y se transfiere igual.
 
 10. **Las vistas previas dejan de ser tarjetas.** `PreviewCard` conserva el nombre
     y pierde la caja: foto sin radio, título y flecha, toda ella enlace. En la home no

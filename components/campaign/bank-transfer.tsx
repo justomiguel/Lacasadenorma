@@ -1,14 +1,20 @@
 "use client";
 
+import type { ReactNode } from "react";
+
+import { PaymentMethodCard } from "@/components/campaign/payment-method-card";
 import { CopyField } from "@/components/design-system/copy-field";
+import { BankIcon } from "@/components/design-system/icons";
 import type { HelpContent } from "@/content/schema";
 
 /**
  * Los datos para transferir, país por país.
  *
- * Una lista de filas con regla fina, sin caja: la etiqueta chica arriba, el dato
- * grande y tabular, y el icono de copiar a la derecha. Titular y documento no se
- * copian —se leen para verificar— y por eso no llevan acción.
+ * Van en una card con el icono de banco y el título del canal, para no
+ * confundirse con Mercado Pago. Adentro: una lista de filas con regla fina, la
+ * etiqueta chica arriba, el dato grande y tabular, y el icono de copiar a la
+ * derecha. Titular y documento no se copian —se leen para verificar— y por eso
+ * no llevan acción.
  *
  * Las etiquetas están en castellano en los dos idiomas a propósito: son los
  * nombres que usa el banco, y quien transfiere desde afuera los necesita tal
@@ -19,18 +25,19 @@ export function BankTransferDetails({
   children,
 }: {
   heading: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <div>
-      <p
-        data-kicker=""
-        className="font-ui text-eyebrow font-medium uppercase text-ink-muted"
-      >
-        {heading}
-      </p>
-      <div className="mt-sm">{children}</div>
-    </div>
+    <PaymentMethodCard
+      title={
+        <>
+          <BankIcon className="shrink-0" />
+          {heading}
+        </>
+      }
+    >
+      {children}
+    </PaymentMethodCard>
   );
 }
 

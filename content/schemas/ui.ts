@@ -149,8 +149,6 @@ export const uiPagesSchema = z.object({
   }),
   helpPage: z.object({
     seoDescription: phrase,
-    beforeTransferTitle: phrase,
-    beforeTransfer: phrase,
     accountsHeading: phrase,
     afterHeading: phrase,
     afterLinkLead: phrase,

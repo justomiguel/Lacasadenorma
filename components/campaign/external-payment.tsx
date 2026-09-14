@@ -1,5 +1,6 @@
 "use client";
 
+import { PaymentMethodCard } from "@/components/campaign/payment-method-card";
 import { secondaryActionClass } from "@/components/design-system/actions";
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { ArrowIcon } from "@/components/design-system/icons";
@@ -9,9 +10,9 @@ import { track } from "@/src/infrastructure/analytics/browser";
 /**
  * Un medio de pago externo, como método y no como banner (ADR-032).
  *
- * La marca con su logo, una línea que dice qué es, y el enlace que lleva al
- * medio. El sitio no cobra ni procesa nada: te lleva y nada más. El enlace sólo
- * existe si hay URL real; sin URL, la fila no se dibuja.
+ * La marca con su logo es el título de la card, una línea dice qué es, y el
+ * enlace lleva al medio. El sitio no cobra ni procesa nada: te lleva y nada más.
+ * El enlace sólo existe si hay URL real; sin URL, la fila no se dibuja.
  */
 export function ExternalPayment({
   brand,
@@ -38,11 +39,8 @@ export function ExternalPayment({
   }
 
   return (
-    <div className="border-b border-rule py-md">
-      <p className="font-ui text-body-large font-medium">
-        <BrandLabel id={brand}>{name}</BrandLabel>
-      </p>
-      <p className="mt-2xs max-w-measure text-small text-ink-muted">{lead}</p>
+    <PaymentMethodCard title={<BrandLabel id={brand}>{name}</BrandLabel>}>
+      <p className="max-w-measure text-small text-ink-muted">{lead}</p>
       <a
         href={url}
         rel="noopener noreferrer"
@@ -58,6 +56,6 @@ export function ExternalPayment({
         </span>
         <ArrowIcon />
       </a>
-    </div>
+    </PaymentMethodCard>
   );
 }

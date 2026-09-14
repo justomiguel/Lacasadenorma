@@ -81,7 +81,7 @@ export function CopyField({
   }
 
   return (
-    <div className={cn("min-w-0 border-b border-rule py-sm", className)}>
+    <div className={cn("min-w-0 border-b border-rule py-sm last:border-b-0", className)}>
       <div className="flex items-center justify-between gap-md">
         <div className="min-w-0">
           <p className="font-ui text-caption text-ink-muted">{label}</p>

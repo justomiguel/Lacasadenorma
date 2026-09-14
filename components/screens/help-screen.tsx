@@ -2,8 +2,7 @@ import { HelpTabs } from "@/components/campaign/help-tabs";
 import { ogImageFrom } from "@/components/campaign/preview-photo";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { WallPreview } from "@/components/catalog/wall-preview";
-import { Callout } from "@/components/design-system/callout";
-import { Band, Container, Editorial, Section } from "@/components/design-system/layout";
+import { Band, Container, Section } from "@/components/design-system/layout";
 import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
@@ -32,12 +31,10 @@ export function helpMetadata(locale: Locale) {
 /**
  * Cómo ayudar.
  *
- * La página tiene tres partes y cada una está sobre una superficie distinta:
- * el contexto (papel), las tres formas de ayudar como pestañas (papel hundido,
- * es el corazón de la página y la barra de ayuda del teléfono apunta acá), y qué
- * pasa después más compartir (papel). Antes eran cinco secciones sobre el mismo
- * fondo separadas por reglas, y las tres formas y el tablero de donaciones se
- * leían como dos cosas distintas.
+ * La página tiene dos partes y cada una está sobre una superficie distinta:
+ * las tres formas de ayudar como pestañas (papel hundido, es el corazón de la
+ * página y la barra de ayuda del teléfono apunta acá), y qué pasa después más
+ * compartir (papel).
  */
 export async function HelpScreen({ locale }: { locale: Locale }) {
   const { help, site, ui } = getContent(locale);
@@ -47,20 +44,6 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
   return (
     <>
       <PageHeader title={help.title} lead={help.lead} />
-
-      <Container>
-        <Section tight>
-          <Editorial
-            aside={
-              <Callout tone="warning" title={ui.helpPage.beforeTransferTitle}>
-                <p>{ui.helpPage.beforeTransfer}</p>
-              </Callout>
-            }
-          >
-            <Paragraphs items={help.paragraphs} />
-          </Editorial>
-        </Section>
-      </Container>
 
       <Band tone="sunk">
         <Container>

@@ -51,9 +51,11 @@ export function ContactScreen({ locale }: { locale: Locale }) {
             <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
           </div>
 
-          <div className="mt-2xl">
-            <Paragraphs items={help.paragraphs} />
-          </div>
+          {help.paragraphs.length === 0 ? null : (
+            <div className="mt-2xl">
+              <Paragraphs items={help.paragraphs} />
+            </div>
+          )}
 
           <div className="mt-2xl">
             <HelpCta

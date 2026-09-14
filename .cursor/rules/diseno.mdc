@@ -57,9 +57,10 @@ viene. No hay índice de capítulos: la página es la navegación.
   en la medida; ninguna se muestra más ancha que su archivo ni dentro de un rectángulo redondeado.
 - **Una vista previa de otra página** (`PreviewCard`) es foto, título y flecha, sin borde ni
   fondo. En la home no hay ninguna.
-- **Aportar** es `DonationSelector`: `CountrySelector` (Argentina, Chile, Internacional),
-  `BankTransferDetails` con `CopyField` icónico, `ExternalPayment` como método y no como banner.
-  Sin JavaScript se apila y se transfiere igual.
+- **Aportar** es `DonationSelector`: `CountrySelector` (Argentina, Chile, Internacional) y,
+  en Argentina y Chile, dos cards —transferencia bancaria con icono y título, Mercado Pago
+  con su logo—. `ExternalPayment` es método y no banner. Sin JavaScript se apila y se
+  transfiere igual.
 - **Norma** es `NormaStory`: la única banda carbón del sitio, el retrato a cinco sextos del
   ancho, sin círculo.
 - **Encabezado** (`SiteHeader` + `MobileMenu`): nombre y menú, transparente sobre la apertura.

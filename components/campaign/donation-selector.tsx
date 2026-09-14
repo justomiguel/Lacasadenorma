@@ -29,9 +29,10 @@ function useHydrated(): boolean {
  * Cómo aportar, desde dónde (ADR-032).
  *
  * Una sola decisión —Argentina, Chile o cualquier otro país— y debajo sólo lo
- * que sirve para esa respuesta: la transferencia con sus datos para copiar y el
- * medio de pago del país, o PayPal para el resto del mundo. Antes eran dos
- * niveles de píldoras (canal y país) que mostraban todo a la vez.
+ * que sirve para esa respuesta: la transferencia y Mercado Pago en cards
+ * distintas (icono de banco frente al logo de la marca), o PayPal para el resto
+ * del mundo. Antes eran dos niveles de píldoras (canal y país) que mostraban
+ * todo a la vez.
  *
  * Mejora progresiva de verdad: el HTML servido trae los tres países apilados con
  * su título. Si el JavaScript no llega, quien entró igual ve los datos y puede
@@ -74,7 +75,7 @@ export function DonationSelector({
 
   const panels: Record<DonationRegion, ReactNode> = {
     AR: (
-      <>
+      <div className="grid gap-md">
         <ArgentinaTransfer
           account={help.accounts.AR}
           heading={ui.home.transfer}
@@ -88,10 +89,10 @@ export function DonationSelector({
           context={ui.countries.AR}
           url={help.mercadoPagoUrl.AR}
         />
-      </>
+      </div>
     ),
     CL: (
-      <>
+      <div className="grid gap-md">
         <ChileTransfer
           account={help.accounts.CL}
           heading={ui.home.transfer}
@@ -105,7 +106,7 @@ export function DonationSelector({
           context={ui.countries.CL}
           url={help.mercadoPagoUrl.CL}
         />
-      </>
+      </div>
     ),
     INT: (
       <ExternalPayment

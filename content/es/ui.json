@@ -192,7 +192,7 @@
     "donateTitle": "Elegí cómo ayudar",
     "donateLead": "Transferencia desde Argentina o Chile, Mercado Pago o PayPal. Elegí desde dónde aportás y copiá los datos.",
     "international": "Internacional",
-    "transfer": "Transferencia",
+    "transfer": "Transferencia bancaria",
     "mercadoPago": "Mercado Pago",
     "mercadoPagoLead": "Hay un link de Mercado Pago para Argentina y otro para Chile. Elegí el de tu país.",
     "mercadoPagoCta": "Continuar con Mercado Pago",
@@ -297,8 +297,6 @@
   },
   "helpPage": {
     "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Justo y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
-    "beforeTransferTitle": "Antes de transferir",
-    "beforeTransfer": "Verificá que estés en el dominio correcto. Si los datos bancarios que ves no coinciden con los que difundimos por nuestros canales, no transfieras. Nunca vamos a pedirte una clave, un código de tu banco ni los datos de tu tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",
     "afterHeading": "Qué pasa cuando transferís",
     "afterLinkLead": "Cómo se lleva la cuenta está explicado en",
