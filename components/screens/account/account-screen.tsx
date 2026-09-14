@@ -72,23 +72,17 @@ export async function AccountScreen({
   const aviso =
     notice !== null && notice in errors ? errors[notice as keyof typeof errors] : null;
   const approval =
-    donor.approvalStatus === "pending" ? (
-      <Callout tone="warning" title={copy.pendingTitle}>
-        {copy.pendingBody.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
-      </Callout>
-    ) : donor.approvalStatus === "declined" ? (
+    donor.approvalStatus === "declined" ? (
       <Callout tone="warning" title={copy.declinedTitle}>
         {copy.declinedBody.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
       </Callout>
-    ) : (
+    ) : donor.approvalStatus === "approved" ? (
       <p className="max-w-measure font-ui text-small text-ink-muted">
         {copy.approvedNote}
       </p>
-    );
+    ) : null;
   const initial = resolveAccountSection(section, pledges.length > 0);
 
   return (
@@ -100,7 +94,7 @@ export async function AccountScreen({
       )}
       {approval}
 
-      <div className="mt-3xl">
+      <div className={aviso === null && approval === null ? undefined : "mt-3xl"}>
         <AccountTabs
           label={copy.tabsLabel}
           initial={initial}

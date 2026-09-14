@@ -104,11 +104,6 @@
     "deleting": "Deleting…",
     "unavailableTitle": "This part isn't connected yet",
     "unavailableBody": "Accounts need the campaign's database, and this deployment doesn't have it configured yet. The rest of the site works.",
-    "pendingTitle": "The team is reviewing your request",
-    "pendingBody": [
-      "You confirmed the email, and that was enough to create the account. Reserving materials waits until the team approves it: you'll get an email.",
-      "In the meantime you can choose how you appear, or delete the account if you change your mind."
-    ],
     "declinedTitle": "The account wasn't approved this time",
     "declinedBody": [
       "The team reviewed the request and did not approve the account this time. Nothing will be reserved under your name.",

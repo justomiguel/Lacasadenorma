@@ -72,6 +72,8 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
     ).toBeVisible();
+    await expect(page.getByText(/el equipo está revisando tu pedido/i)).toHaveCount(0);
+    await expect(page.getByText(/confirmaste el correo, y eso alcanzó/i)).toHaveCount(0);
 
     // El índice hidrata a pestañas: sin esperar el tablist, los cuatro paneles
     // siguen apilados un instante y las aserciones de «no se ve» mienten.

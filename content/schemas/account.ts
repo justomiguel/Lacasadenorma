@@ -140,8 +140,6 @@ export const accountSchema = z.object({
     deleting: phrase,
     unavailableTitle: phrase,
     unavailableBody: phrase,
-    pendingTitle: phrase,
-    pendingBody: paragraphs,
     declinedTitle: phrase,
     declinedBody: paragraphs,
     approvedNote: phrase,

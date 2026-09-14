@@ -53,6 +53,17 @@ describe("los mensajes de la cuenta", () => {
     );
   });
 
+  it("la cuenta pendiente no publica el aviso de pedido en revisión", () => {
+    for (const locale of LOCALES) {
+      const publicado = JSON.stringify(getContent(locale).account);
+
+      expect(publicado).not.toMatch(/está revisando tu pedido/i);
+      expect(publicado).not.toMatch(/is reviewing your request/i);
+      expect(publicado).not.toMatch(/Confirmaste el correo, y eso alcanzó/i);
+      expect(publicado).not.toMatch(/You confirmed the email, and that was enough/i);
+    }
+  });
+
   it("la palabra de confirmación del borrado está traducida", () => {
     expect(getContent("es").account.profile.deleteWord).toBe("BORRAR");
     expect(getContent("en").account.profile.deleteWord).toBe("DELETE");
