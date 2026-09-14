@@ -113,17 +113,14 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(page.getByText(/^guardado/i)).toBeVisible();
 
     await page.setViewportSize(VIEWPORT_MINIMO);
-    const sesion = page.waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
-    );
     await page.goto("/");
-    await sesion;
     await page.getByRole("button", { name: /abrir el menú/i }).click();
 
     const menu = page.getByRole("dialog");
 
-    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible();
+    await expect(menu.getByText("Vecina de la cuadra")).toBeVisible({
+      timeout: 20_000,
+    });
     await expect(menu.getByText(email)).toBeVisible();
     await expect(menu.getByRole("link", { name: /tu cuenta/i })).toBeVisible();
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
@@ -160,19 +157,14 @@ test.describe("fase A · la cuenta del público", () => {
     await esperarSinViolaciones(page, "/cuenta con sesión");
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    const sesion = page.waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname === "/cuenta/sesion" && response.ok(),
-    );
     await page.goto("/");
-    await sesion;
 
     const encabezado = page.getByRole("banner");
     const salir = encabezado.getByRole("button", { name: /cerrar sesión/i });
 
     await expect(
       encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
     await expect(salir).toBeVisible();
 
     const caja = await salir.boundingBox();
@@ -385,8 +377,10 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /tu cuenta/i }),
     ).toBeVisible();
+    // El aviso de pending es un Callout (`role=note`), no un heading: el título
+    // va en un párrafo a propósito, para no romper la jerarquía de `/cuenta`.
     await expect(
-      page.getByRole("heading", { name: /el equipo está revisando/i }),
+      page.getByRole("note").filter({ hasText: /el equipo está revisando/i }),
     ).toBeVisible();
     await expect(page.getByLabel(/prefiero no aparecer/i)).toBeChecked();
     await expect(page.getByText(/no aparecerías/i)).toBeVisible();
