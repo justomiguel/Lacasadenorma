@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { excerpt, parseRichText, richTextToPlainText } from "./rich-text";
+import {
+  excerpt,
+  parseRichText,
+  referencedMediaIds,
+  richTextToPlainText,
+  serializeRichText,
+} from "./rich-text";
 
 describe("parseRichText", () => {
   it("separa párrafos por línea en blanco y une los saltos simples", () => {
@@ -80,6 +86,56 @@ describe("parseRichText", () => {
     expect(parseRichText("   \n\n  ")).toEqual([]);
   });
 
+  it("reconoce una foto y un video intercalados por su uuid", () => {
+    const foto = "11111111-1111-4111-8111-111111111111";
+    const video = "22222222-2222-4222-8222-222222222222";
+    const blocks = parseRichText(
+      `Llegaron las chapas.\n\n![Cabriadas de madera apoyadas sobre los muros](media:${foto})\n\n![La colada del contrapiso](video:${video})`,
+    );
+
+    expect(blocks).toEqual([
+      {
+        kind: "paragraph",
+        content: [{ kind: "text", value: "Llegaron las chapas." }],
+      },
+      {
+        kind: "figure",
+        mediaId: foto,
+        alt: "Cabriadas de madera apoyadas sobre los muros",
+      },
+      { kind: "video", mediaId: video, alt: "La colada del contrapiso" },
+    ]);
+  });
+
+  it("no convierte en figura una imagen con URL http(s) ni un uuid mal formado", () => {
+    // La lista es blanca: media: y video:. Cualquier otra cosa —un tracker, un
+    // javascript:, un uuid truncado— queda como texto, que es lo que quien lo
+    // escribió ve y lo que React escapa.
+    expect(parseRichText("![techo](https://ejemplo.test/techo.jpg)")).toEqual([
+      {
+        kind: "paragraph",
+        content: [{ kind: "text", value: "![techo](https://ejemplo.test/techo.jpg)" }],
+      },
+    ]);
+    expect(parseRichText("![techo](media:no-es-un-uuid)")).toEqual([
+      {
+        kind: "paragraph",
+        content: [{ kind: "text", value: "![techo](media:no-es-un-uuid)" }],
+      },
+    ]);
+  });
+
+  it("trata como párrafo un bloque que mezcla prosa y una figura", () => {
+    const id = "11111111-1111-4111-8111-111111111111";
+
+    expect(parseRichText(`Mirá ![techo](media:${id}) acá.`)).toEqual([
+      {
+        kind: "paragraph",
+        content: [{ kind: "text", value: `Mirá ![techo](media:${id}) acá.` }],
+      },
+    ]);
+  });
+
   describe("no produce marcado ejecutable", () => {
     it("deja el HTML como texto literal", () => {
       // Es la garantía central: no hay nodo que represente HTML, así que un
@@ -130,11 +186,43 @@ describe("parseRichText", () => {
   });
 });
 
+describe("serializeRichText", () => {
+  it("redondea un cuerpo con figura y lista al mismo markdown", () => {
+    const source =
+      "El **techo** está.\n\n![Cabriadas de madera](media:11111111-1111-4111-8111-111111111111)\n\n- chapas\n- clavos";
+
+    expect(serializeRichText(parseRichText(source))).toBe(source);
+  });
+});
+
+describe("referencedMediaIds", () => {
+  it("devuelve los uuid de figura y video, en orden, sin repetir", () => {
+    const foto = "11111111-1111-4111-8111-111111111111";
+    const video = "22222222-2222-4222-8222-222222222222";
+
+    expect(
+      referencedMediaIds(
+        `![una](media:${foto})\n\ntexto\n\n![otra](video:${video})\n\n![de nuevo](media:${foto})`,
+      ),
+    ).toEqual([foto, video]);
+  });
+});
+
 describe("richTextToPlainText", () => {
   it("descarta el marcado y conserva el texto", () => {
     expect(
       richTextToPlainText("### Avance\n\nEl **techo** está.\n\n- chapas\n- clavos"),
     ).toBe("Avance El techo está. chapas clavos");
+  });
+
+  it("no mete el alt de una foto en el texto plano", () => {
+    // El alt describe la foto para quien no la ve; el resumen de la novedad es
+    // el relato. Mezclarlos haría que la metadata oliera a pie de foto.
+    expect(
+      richTextToPlainText(
+        "Llegaron las chapas.\n\n![Cabriadas de madera](media:11111111-1111-4111-8111-111111111111)",
+      ),
+    ).toBe("Llegaron las chapas.");
   });
 });
 

@@ -34,6 +34,18 @@ describe("novedades", () => {
     expect(fake.calls).toEqual([]);
   });
 
+  it("rechaza un iframe de terceros en el cuerpo", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const result = await saveUpdate(editor, {
+      ...draft,
+      body: 'Mirá <iframe src="https://www.youtube.com/embed/abc"></iframe>',
+    });
+
+    expect(result.status).toBe("invalid");
+    expect(result.status === "invalid" ? result.fieldErrors : {}).toHaveProperty("body");
+    expect(fake.calls).toEqual([]);
+  });
+
   it("rechaza una dirección web con mayúsculas o espacios", async () => {
     const { deps: editor } = deps("editor");
     const result = await saveUpdate(editor, { ...draft, slug: "Empezó el techo" });
@@ -115,6 +127,30 @@ describe("novedades", () => {
       "attachMediaToUpdate",
       "audit.append",
     ]);
+  });
+
+  it("un video con descripción real deja rastro distinto al de una foto", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const file = new File([new Uint8Array([0x1a, 0x45, 0xdf, 0xa3])], "colada.mp4", {
+      type: "video/mp4",
+    });
+
+    const result = await addUpdatePhoto(editor, {
+      updateId: RECORD,
+      file,
+      alt: "La colada del contrapiso, de un extremo al otro",
+    });
+
+    expect(result.status).toBe("ok");
+    if (result.status === "ok") {
+      expect(result.value.kind).toBe("video");
+      expect(result.message).toMatch(/video/i);
+    }
+    expect(fake.audit[0]).toMatchObject({
+      action: "update.video_added",
+      entityTable: "updates",
+      entityId: RECORD,
+    });
   });
 
   /**

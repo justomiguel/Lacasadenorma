@@ -110,6 +110,8 @@ export type PaymentMethodRow = Pick<
 export type MediaRow = Pick<
   Tables["media"]["Row"],
   | "id"
+  | "kind"
+  | "bucket_id"
   | "storage_path"
   | "alt_text"
   | "caption"
@@ -265,16 +267,18 @@ export function mapPaymentMethod(row: PaymentMethodRow): PaymentMethod {
 }
 
 /**
- * Una foto. `publicUrlFor` traduce la ruta del bucket a una URL absoluta; se pasa
- * como función para que este módulo no dependa del cliente de Supabase.
+ * Una foto o un video. `publicUrlFor` traduce bucket + ruta a una URL absoluta;
+ * se pasa como función para que este módulo no dependa del cliente de Supabase.
  */
 export function mapMedia(
   row: MediaRow,
-  publicUrlFor: (storagePath: string) => string,
+  publicUrlFor: (bucketId: string, storagePath: string) => string,
 ): MediaAsset {
   return {
     id: row.id,
-    url: publicUrlFor(row.storage_path),
+    kind: row.kind,
+    bucketId: row.bucket_id,
+    url: publicUrlFor(row.bucket_id, row.storage_path),
     alt: row.alt_text,
     caption: row.caption,
     credit: row.credit,

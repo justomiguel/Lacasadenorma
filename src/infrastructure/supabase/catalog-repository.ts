@@ -2,7 +2,7 @@ import { isDonationUnit, remaining } from "@/src/domain/catalog";
 import type { DonationItem } from "@/src/domain/entities";
 import type { CatalogRepository } from "@/src/domain/ports/repositories";
 
-import { MEDIA_COLUMNS, PHOTO_BUCKET } from "./admin/columns";
+import { MEDIA_COLUMNS } from "./admin/columns";
 import type { Database } from "./database.types";
 import { MappingError, mapMedia, type MediaRow } from "./mappers";
 import type { ServerSupabaseClient } from "./server-client";
@@ -23,8 +23,8 @@ const CATALOG_COLUMNS =
 type CatalogRow = Database["public"]["Views"]["donation_catalog"]["Row"];
 
 export function createCatalogRepository(client: ServerSupabaseClient): CatalogRepository {
-  const publicUrlFor = (storagePath: string): string =>
-    client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+  const publicUrlFor = (bucketId: string, storagePath: string): string =>
+    client.storage.from(bucketId).getPublicUrl(storagePath).data.publicUrl;
 
   return {
     async listPublishedItems(campaignId: string): Promise<DonationItem[]> {
@@ -52,7 +52,7 @@ export function createCatalogRepository(client: ServerSupabaseClient): CatalogRe
 export async function loadPhotos(
   client: ServerSupabaseClient,
   ids: readonly (string | null)[],
-  publicUrlFor: (storagePath: string) => string,
+  publicUrlFor: (bucketId: string, storagePath: string) => string,
 ): Promise<Map<string, ReturnType<typeof mapMedia>>> {
   const unique = [...new Set(ids.filter((id): id is string => id !== null))];
 

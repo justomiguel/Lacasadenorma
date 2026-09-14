@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { ActionState } from "@/components/admin/form";
-import { addUpdatePhoto, saveUpdate, setUpdatePublished } from "@/src/application/admin";
+import { addUpdateMedia, saveUpdate, setUpdatePublished } from "@/src/application/admin";
 import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context";
 
 /**
@@ -93,13 +93,21 @@ export async function addPhotoAction(
   _state: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  return uploadUpdateMediaAction(formData);
+}
+
+/**
+ * Subida desde el editor: no redirige, devuelve el medio para intercalarlo.
+ * El POST del formulario de texto sigue siendo otra acción.
+ */
+export async function uploadUpdateMediaAction(formData: FormData) {
   const deps = await getAdminDeps();
 
   if (deps === null) {
     return NOT_CONFIGURED;
   }
 
-  const result = await addUpdatePhoto(deps, Object.fromEntries(formData));
+  const result = await addUpdateMedia(deps, Object.fromEntries(formData));
 
   if (result.status === "ok") {
     revalidatePath("/admin/novedades");

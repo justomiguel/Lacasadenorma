@@ -3,11 +3,12 @@ import { Unavailable } from "@/components/campaign/unavailable";
 import { EmptyState } from "@/components/design-system/callout";
 import { PreviewCard } from "@/components/design-system/card";
 import { Container, Section } from "@/components/design-system/layout";
-import { Byline } from "@/components/design-system/typography";
+import { NewsFeed, NewsFeedItem } from "@/components/design-system/news-feed";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
 import { excerpt } from "@/src/domain/rich-text";
+import { isPhoto } from "@/src/domain/entities";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -88,16 +89,11 @@ function QueEsElDiario({ locale }: { locale: Locale }) {
  * Es un índice, no un muro de tarjetas: cada entrada es una fecha, un título y
  * dos líneas, separadas por una regla. Una foto por entrada, cuando existe, en la
  * columna angosta. Es la forma que tiene un sumario de revista y funciona igual en
- * un teléfono.
+ * un teléfono (ADR-034).
  *
  * El título de cada entrada es el enlace, no un "leer más" al final: el enlace
  * tiene que decir a dónde lleva cuando se lo escucha aislado en un lector de
  * pantalla.
- */
-/**
- * Cinco minutos de atraso máximo para las cifras (ADR-017). Las acciones del
- * backoffice invalidan esta ruta al publicar, así que en la práctica el dato aparece
- * al instante; esto es el piso para lo que se cambie fuera del backoffice.
  */
 export async function NewsIndexScreen({ locale }: { locale: Locale }) {
   const { ui } = getContent(locale);
@@ -126,27 +122,25 @@ export async function NewsIndexScreen({ locale }: { locale: Locale }) {
               )}
             </div>
           ) : (
-            <ul className="grid gap-lg sm:grid-cols-2 lg:grid-cols-3">
-              {updates.data.map((update) => (
-                <li key={update.id} className="flex min-w-0">
-                  <PreviewCard
-                    as="h2"
+            <NewsFeed>
+              {updates.data.map((update) => {
+                const cover = update.media.find(isPhoto) ?? null;
+
+                return (
+                  <NewsFeedItem
+                    key={update.id}
                     href={localizedHref(`/novedades/${update.slug}`, locale)}
                     title={update.title}
+                    date={update.publishedAt}
                     summary={excerpt(update.body, 140)}
                     action={ui.news.readUpdate}
-                    media={update.media[0] ?? null}
-                    className="w-full"
+                    photo={cover}
+                    locale={locale}
                     {...(locale === "en" ? { lang: "es-AR" } : {})}
-                    eyebrow={
-                      update.publishedAt === null ? undefined : (
-                        <Byline isoDate={update.publishedAt} locale={locale} />
-                      )
-                    }
                   />
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+            </NewsFeed>
           )}
         </Section>
       </Container>

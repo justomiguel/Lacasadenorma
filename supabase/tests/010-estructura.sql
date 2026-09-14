@@ -15,7 +15,7 @@
 -- por qué cumplir sus reglas.
 
 begin;
-select plan(38);
+select plan(40);
 
 -- ── RLS ─────────────────────────────────────────────────────────────────────
 
@@ -408,6 +408,12 @@ select has_index('public', 'updates', 'updates_slug_idx',
 
 select has_index('public', 'media', 'media_storage_path_idx',
   array['storage_path']::name[], 'media(storage_path): vincula la fila con el archivo del bucket');
+
+select col_not_null('public', 'media', 'kind',
+  'media.kind no puede ser nulo: una fila sin kind no se puede renderizar (ADR-034)');
+
+select col_not_null('public', 'media', 'bucket_id',
+  'media.bucket_id no puede ser nulo: sin bucket no hay URL pública');
 
 select has_index('public', 'user_roles', 'user_roles_user_id_idx',
   array['user_id']::name[], 'user_roles(user_id): lo resuelve el hook del token en cada emisión');

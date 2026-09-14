@@ -16,7 +16,7 @@
 -- aserción nombra el bucket: es el discriminante real.
 
 begin;
-select plan(16);
+select plan(19);
 
 -- ── Configuración de los buckets ────────────────────────────────────────────
 
@@ -31,6 +31,19 @@ select results_eq(
             array['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
   $q$,
   'el bucket fotos es público, con 10 MiB de límite y sólo formatos de imagen'
+);
+
+select results_eq(
+  $q$
+    select id, public, file_size_limit, allowed_mime_types
+      from storage.buckets
+     where id = 'videos'
+  $q$,
+  $q$
+    values ('videos', true, 52428800::bigint,
+            array['video/mp4', 'video/webm'])
+  $q$,
+  'el bucket videos es público, con 50 MiB de límite y sólo MP4 y WebM (ADR-034)'
 );
 
 select results_eq(
@@ -67,7 +80,8 @@ insert into auth.users (id, email) values
 
 insert into storage.objects (id, bucket_id, name) values
   ('b0000000-0000-4000-8000-000000000001', 'fotos', 'obra/techo.jpg'),
-  ('b0000000-0000-4000-8000-000000000002', 'comprobantes', '2026/08/chapas.pdf');
+  ('b0000000-0000-4000-8000-000000000002', 'comprobantes', '2026/08/chapas.pdf'),
+  ('b0000000-0000-4000-8000-000000000003', 'videos', 'obra/colada.mp4');
 
 -- ── anon ────────────────────────────────────────────────────────────────────
 
@@ -77,6 +91,12 @@ select is(
   (select count(*) from storage.objects where bucket_id = 'fotos')::int,
   1,
   'anon lee los objetos del bucket fotos: se sirven desde el CDN de todos modos'
+);
+
+select is(
+  (select count(*) from storage.objects where bucket_id = 'videos')::int,
+  1,
+  'anon lee los objetos del bucket videos: se sirven desde el CDN de todos modos'
 );
 
 -- Para `comprobantes` no hay ninguna policy que nombre a `anon`, y la ausencia
@@ -106,6 +126,11 @@ set local "request.jwt.claims" =
 select lives_ok(
   $q$ insert into storage.objects (bucket_id, name) values ('fotos', 'obra/contrapiso.jpg') $q$,
   'editor sube una foto al bucket fotos'
+);
+
+select lives_ok(
+  $q$ insert into storage.objects (bucket_id, name) values ('videos', 'obra/contrapiso.mp4') $q$,
+  'editor sube un video al bucket videos'
 );
 
 select results_eq(

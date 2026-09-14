@@ -20,9 +20,10 @@ export const RECEIPT_COLUMNS =
   "id, expense_id, storage_path, file_name, mime_type, size_bytes";
 
 export const MEDIA_COLUMNS =
-  "id, storage_path, alt_text, caption, credit, width, height, taken_on";
+  "id, kind, bucket_id, storage_path, alt_text, caption, credit, width, height, taken_on";
 
 export const UPDATE_COLUMNS = `id, slug, title, body, published_at, update_media(sort_order, media(${MEDIA_COLUMNS}))`;
 
 export const PHOTO_BUCKET = "fotos";
+export const VIDEO_BUCKET = "videos";
 export const RECEIPT_BUCKET = "comprobantes";

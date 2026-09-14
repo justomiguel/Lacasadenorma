@@ -20,6 +20,7 @@ import type {
 
 import { createCatalogRepository } from "./catalog-repository";
 import { createDonationWallRepository } from "./wall-repository";
+import { MEDIA_COLUMNS } from "./admin/columns";
 import {
   mapBudgetItem,
   mapCampaign,
@@ -76,12 +77,6 @@ const MILESTONE_COLUMNS = "id, title, description, status, happened_on, sort_ord
 const PAYMENT_METHOD_COLUMNS =
   "id, kind, country_code, currency, label, fields, instructions, sort_order";
 
-const MEDIA_COLUMNS =
-  "id, storage_path, alt_text, caption, credit, width, height, taken_on";
-
-/** Bucket público de fotos. El de comprobantes nunca se resuelve a URL pública. */
-const PHOTO_BUCKET = "fotos";
-
 export function createSupabaseRepositories(client: ServerSupabaseClient): {
   campaigns: CampaignRepository;
   transparency: TransparencyRepository;
@@ -91,8 +86,8 @@ export function createSupabaseRepositories(client: ServerSupabaseClient): {
   catalog: CatalogRepository;
   wall: DonationWallRepository;
 } {
-  const publicUrlFor = (storagePath: string): string =>
-    client.storage.from(PHOTO_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+  const publicUrlFor = (bucketId: string, storagePath: string): string =>
+    client.storage.from(bucketId).getPublicUrl(storagePath).data.publicUrl;
 
   const campaigns: CampaignRepository = {
     async getActiveCampaign(): Promise<Campaign | null> {
