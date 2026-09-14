@@ -8,7 +8,12 @@ import {
   ocultarItem,
   vencerReserva,
 } from "../soporte/catalogo";
-import { CLAVE_PUBLICA, correoDePrueba, crearCuenta } from "../soporte/cuentas";
+import {
+  CLAVE_PUBLICA,
+  correoDePrueba,
+  crearCuenta,
+  cerrarSesion,
+} from "../soporte/cuentas";
 
 /**
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).
@@ -39,7 +44,7 @@ test.describe("fase D · reservas", () => {
 
       try {
         await crearCuenta(donantePage, request, email);
-        await donantePage.getByRole("button", { name: /cerrar sesión/i }).click();
+        await cerrarSesion(donantePage);
         await expect(donantePage).toHaveURL(/\/cuenta\/ingresar/);
 
         await donantePage.goto("/catalogo");

@@ -44,8 +44,12 @@ export function AccountChrome({
   const canonical = stripLocalePrefix(usePathname());
   const onAccount =
     canonical === ACCOUNT_HREF || canonical.startsWith(`${ACCOUNT_HREF}/`);
+  const onAdmin = canonical === "/admin" || canonical.startsWith("/admin/");
   const current = onAccount ? { "aria-current": "page" as const } : {};
-  const signedIn = session.status === "signed-in";
+  // El backoffice ya tiene su propia salida. Mostrar otra acá duplicaba el
+  // botón y, peor, la pública manda a `/cuenta/ingresar` en lugar de a
+  // `/admin/login`.
+  const signedIn = session.status === "signed-in" && !onAdmin;
   const label = signedIn ? (session.displayName ?? ui.account) : ui.signIn;
 
   if (variant === "drawer" && signedIn) {

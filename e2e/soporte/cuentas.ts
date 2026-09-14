@@ -94,3 +94,22 @@ export async function crearCuenta(
     "abrir el enlace de confirmación tenía que dejar la sesión abierta en /cuenta",
   ).toHaveURL(/\/cuenta$/);
 }
+
+/**
+ * Cierra la sesión del público.
+ *
+ * En escritorio hay dos botones «Cerrar sesión» en `/cuenta`: el del encabezado
+ * y el del perfil. Sin acotar, Playwright se niega a hacer click.
+ */
+export async function cerrarSesion(page: Page): Promise<void> {
+  const enElEncabezado = page
+    .getByRole("banner")
+    .getByRole("button", { name: /cerrar sesión/i });
+
+  if (await enElEncabezado.isVisible()) {
+    await enElEncabezado.click();
+    return;
+  }
+
+  await page.getByRole("button", { name: /cerrar sesión/i }).click();
+}

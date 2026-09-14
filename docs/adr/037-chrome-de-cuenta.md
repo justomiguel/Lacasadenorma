@@ -66,5 +66,8 @@ que el perfil: propiedad, no rol. Borrar la cuenta borra el archivo.
   shim de Storage no firma URLs (ADR-013). La compuerta local es pgTAP sobre las
   policies y el caso de uso con un puerto falso. La subida real queda en el
   runbook, al lado de las fotos de las novedades.
+- El backoffice vive debajo de `PublicDocument`, así que el encabezado público
+  también está en `/admin`. El chrome de cuenta **no** se personaliza ahí: el
+  panel ya tiene su propia salida, y la pública manda a `/cuenta/ingresar`.
 - `FR-238` se amplía: el mínimo ahora admite una foto optativa, que no se publica.
   La política de privacidad se actualiza en el mismo cambio.

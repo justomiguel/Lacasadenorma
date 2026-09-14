@@ -69,7 +69,9 @@ export async function ocultarItem(
 }
 
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
-  const salir = page.getByRole("button", { name: /cerrar sesión/i });
+  const salir = page
+    .locator("#contenido")
+    .getByRole("button", { name: /cerrar sesión/i });
 
   if (await salir.isVisible()) {
     await salir.click();
@@ -99,7 +101,9 @@ export async function habilitarCuenta(page: Page, email: string): Promise<void> 
   const yaAdmin = page.getByText(CUENTAS.admin);
 
   if (!(await yaAdmin.isVisible())) {
-    const salir = page.getByRole("button", { name: /cerrar sesión/i });
+    const salir = page
+      .locator("#contenido")
+      .getByRole("button", { name: /cerrar sesión/i });
 
     if (await salir.isVisible()) {
       await salir.click();
