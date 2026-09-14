@@ -42,6 +42,20 @@ describe("getOwnAccount", () => {
     });
   });
 
+  it("copia el nombre de la red si el perfil acaba de nacer vacío", async () => {
+    port.socialHints = {
+      displayName: "Quien entra con Google",
+      avatarUrl: null,
+    };
+
+    const result = await getOwnAccount(deps(), "es");
+
+    expect(result.status).toBe("ok");
+    expect(port.profile?.displayName).toBe("Quien entra con Google");
+    expect(port.profile?.defaultAnonymous).toBe(true);
+    expect(port.profile?.approvalStatus).toBe("pending");
+  });
+
   it("sin sesión no hay cuenta propia, y lo dice con su propio código", async () => {
     const result = await getOwnAccount(deps("anonymous"), "es");
 

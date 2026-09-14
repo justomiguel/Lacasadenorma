@@ -11,8 +11,9 @@ import { issueSession } from "./sesion.mjs";
  * `GET /authorize` y `POST /token?grant_type=pkce`. Lo que **no** emula es a
  * Google: no hay un hop a accounts.google.com. El authorize crea una cuenta
  * ya confirmada y redirige al callback del sitio con un `code`, y el canje
- * emite la sesión. El hop real se prueba a mano, una vez, y está en el
- * runbook.
+ * emite la sesión. Si `email` viene en la query —sólo para el e2e de
+ * unificación— reusa esa fila en lugar de inventar una. El hop real se
+ * prueba a mano, una vez, y está en el runbook.
  *
  * El destino del 302 se valida: sólo `/cuenta/oauth` y `/en/cuenta/oauth`,
  * en 127.0.0.1 o localhost. Un authorize que respetara cualquier
@@ -55,7 +56,11 @@ async function authorize(outgoing, parametros) {
     return;
   }
 
-  const email = `oauth.${provider}.${randomUUID()}@local.test`;
+  const emailParam = parametros.get("email")?.trim() ?? "";
+  const email =
+    emailParam.length > 0 && emailParam.includes("@")
+      ? emailParam
+      : `oauth.${provider}.${randomUUID()}@local.test`;
   const row = await createConfirmedOauthUser(email, provider);
 
   if (row === null) {

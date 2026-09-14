@@ -36,11 +36,13 @@ no se muestra un control que no hace nada. Habilitar el proveedor en el panel
 de Supabase y no ponerlo acá es deliberado: el panel dice que Auth *puede*
 hablar con Google; la variable dice que *este sitio se lo ofrece a la persona*.
 
-**3. No se copia el nombre ni la foto de la red.** FR-230 sigue: el nombre que
-se publica es el que la persona eligió acá, nunca el del correo y nunca el de
-Google. El retrato es el que sube en `/cuenta` (ADR-037), no el avatar de la
-red. El perfil nace anónimo y `pending`, igual que con el correo (ADR-033).
-OAuth no saltea la habilitación.
+**3. Se copia el nombre y la foto de la red, como propuesta, no como
+publicación.** Quien entra con Google (o con otra red del catálogo) ya dijo
+cómo se llama y cómo se ve en esa cuenta. El perfil acá nace con ese nombre y
+con ese retrato, para no pedírselos de nuevo. Sigue anónimo y `pending`: el
+muro no los publica hasta que la persona desmarque el anonimato, y el retrato
+sigue siendo privado (ADR-037). Si ya había elegido un nombre o una foto acá,
+no se pisan. El local-part del correo sigue sin ser un nombre (FR-230).
 
 **4. Sin correo no hay cuenta.** Una reserva se confirma por correo. Si el
 proveedor no entrega una dirección, se cierra la sesión que acaba de abrirse y
@@ -58,16 +60,25 @@ reemplazo. La acción primaria de crear e ingresar sigue siendo el formulario.
 Las redes se ofrecen debajo, separadas por un «o», con el logo al lado del
 nombre (regla de marcas). No son píldoras ni una segunda primaria.
 
+**7. Un mismo correo es una sola cuenta.** Auth une las identidades que
+comparten un correo confirmado. Quien ya tenía cuenta con contraseña y
+después entra con Google (la misma dirección) sigue siendo esa persona: no se
+crea una segunda fila. Al revés, quien nació por Google puede poner una
+contraseña en `/cuenta` y entrar con las dos. Un correo distinto es otra
+cuenta; unirlas a mano (`linkIdentity`) no se ofrece en esta versión.
+
 ## Alternativas descartadas
 
 | Alternativa | Por qué no |
 |---|---|
 | Mostrar las veinte redes que Auth lista | Azure, Keycloak y WorkOS no son redes sociales para este público. Un botón de Keycloak en `/cuenta/crear` es un control que nadie va a usar y que hay que vestir con un logo |
 | `NEXT_PUBLIC_AUTH_SOCIAL_PROVIDERS` | No es un secreto, pero un módulo de cliente no tiene por qué conocer la lista. La página es un Server Component y baja los ids por props; `check:secrets` ya rechaza leer entorno de servidor desde `"use client"` |
-| Copiar nombre y foto de Google al perfil | FR-230 y ADR-037. Un nombre de cuenta de Google no es un nombre que alguien eligió publicar en el muro. Un avatar redondo de Google no es el retrato rectangular de este sitio |
+| Copiar el nombre al muro sin preguntar | El default sigue siendo el anonimato. Traer el nombre de Google llena el campo; publicarlo es otra decisión |
+| Pedir nombre y foto de nuevo después de Google | Es el paso que este pedido elimina. La persona puede cambiarlos en `/cuenta` |
 | Saltear `pending` porque el correo ya está verificado | ADR-033 no es sobre la veracidad del correo: es sobre que el equipo vea a quién le abre el catálogo. OAuth demuestra el correo; no decide la habilitación |
+| Unir cuentas con correos distintos | `linkIdentity` pide una sesión ya abierta y un segundo salto. El caso que importa es el mismo Gmail con el que ya se registró |
 | Magic link como único método, sin OAuth | Ya estaba descartado en ADR-003 para el backoffice. Para el público, el correo con contraseña ya existe; OAuth es el atajo, no el reemplazo |
-| Probar el hop real contra Google en Playwright | El harness local emula GoTrue, no a Google. El salto verdadero se documenta en el runbook, igual que el retrato (ADR-013). Lo que el e2e afirma es: el botón aparece cuando está habilitado, el callback canjea, la sesión queda abierta y el perfil nace anónimo y `pending` |
+| Probar el hop real contra Google en Playwright | El harness local emula GoTrue, no a Google. El salto verdadero se documenta en el runbook, igual que el retrato (ADR-013). Lo que el e2e afirma es: el botón aparece cuando está habilitado, el callback canjea, la sesión queda abierta, el perfil nace `pending` con el nombre de la red, y un correo que ya tenía cuenta se unifica |
 
 ## Consecuencias
 

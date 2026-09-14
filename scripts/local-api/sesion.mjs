@@ -23,6 +23,32 @@ import { signJwt } from "./jwt.mjs";
  */
 export const refreshTokens = new Map();
 
+function identitiesOf(row) {
+  if (row.email_confirmed_at === null) {
+    return [];
+  }
+
+  const listed = row.app_metadata?.providers;
+  const providers =
+    Array.isArray(listed) && listed.length > 0
+      ? listed
+      : [row.app_metadata?.provider ?? "email"];
+
+  return providers.map((provider) => ({
+    id: row.id,
+    user_id: row.id,
+    provider,
+    identity_data: {
+      email: row.email,
+      email_verified: true,
+      full_name: row.user_metadata?.full_name ?? null,
+      name: row.user_metadata?.name ?? null,
+      picture: row.user_metadata?.picture ?? null,
+      avatar_url: row.user_metadata?.avatar_url ?? null,
+    },
+  }));
+}
+
 /** La forma del usuario que devuelve GoTrue, con lo que supabase-js mira. */
 export function asGoTrueUser(row) {
   return {
@@ -37,16 +63,7 @@ export function asGoTrueUser(row) {
     user_metadata: row.user_metadata,
     // Una cuenta sin confirmar no tiene identidad todavía, y la lista vacía es
     // justamente la señal que GoTrue usa para decir "esto ya existía" sin decirlo.
-    identities:
-      row.email_confirmed_at === null
-        ? []
-        : [
-            {
-              id: row.id,
-              user_id: row.id,
-              provider: row.app_metadata?.provider ?? "email",
-            },
-          ],
+    identities: identitiesOf(row),
     created_at: row.created_at,
     updated_at: row.created_at,
     is_anonymous: false,

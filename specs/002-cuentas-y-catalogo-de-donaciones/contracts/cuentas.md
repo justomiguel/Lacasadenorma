@@ -31,8 +31,11 @@ respeta sin validar es un redirect abierto.
 `/cuenta/oauth` es el mismo patrón para el salto a una red (ADR-039). Canjea el `code` de PKCE con
 `exchangeCodeForSession`, y el destino **no viene de la query**: va a `/cuenta`, o al catálogo si la
 acción dejó esa vuelta en una cookie httpOnly. Sin correo en la sesión que acaba de abrir, cierra y
-manda a ingresar con `aviso=oauthNoEmail`. El `redirectTo` de `signInWithOAuth` y el de los correos
-tienen que estar los dos en `additional_redirect_urls`.
+manda a ingresar con `aviso=oauthNoEmail`. Si el perfil todavía no tiene nombre o retrato, copia los
+que manda `identities[].identity_data` de esa red —no `user_metadata`— y no los publica. Unificar
+dos cuentas con el mismo correo confirmado es trabajo de Auth; el harness local lo emula. El
+`redirectTo` de `signInWithOAuth` y el de los correos tienen que estar los dos en
+`additional_redirect_urls`.
 
 `/cuenta` no es un panel de ajustes aparte (ADR-037): es la misma página de siempre, leída como
 índice. Las pestañas son `SectionTabs` —regla debajo, no píldoras—. Si hay reservas, esa pestaña
