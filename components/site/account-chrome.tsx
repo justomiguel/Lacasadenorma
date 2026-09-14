@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { signOut } from "@/app/(es)/cuenta/actions";
 import { LocaleField } from "@/components/account/fields";
 import { cn } from "@/components/design-system/cn";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
-import type { Locale } from "@/src/i18n/locale";
+import { stripLocalePrefix, type Locale } from "@/src/i18n/locale";
 
 import { ACCOUNT_HREF } from "./navigation";
 import { useChromeSession } from "./session";
@@ -40,6 +41,10 @@ export function AccountChrome({
 }) {
   const { session, portraitSrc } = useChromeSession();
   const accountHref = localizedHref(ACCOUNT_HREF, locale);
+  const canonical = stripLocalePrefix(usePathname());
+  const onAccount =
+    canonical === ACCOUNT_HREF || canonical.startsWith(`${ACCOUNT_HREF}/`);
+  const current = onAccount ? { "aria-current": "page" as const } : {};
   const signedIn = session.status === "signed-in";
   const label = signedIn ? (session.displayName ?? ui.account) : ui.signIn;
 
@@ -66,6 +71,7 @@ export function AccountChrome({
         <Link
           href={accountHref}
           className={cn(LINK, "text-paper-muted")}
+          {...current}
           {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
         >
           {ui.account}
@@ -83,7 +89,7 @@ export function AccountChrome({
   if (variant === "header" && signedIn) {
     return (
       <div className="flex items-center gap-lg">
-        <Link href={accountHref} className={className ?? chromeFallback}>
+        <Link href={accountHref} className={className ?? chromeFallback} {...current}>
           {label}
         </Link>
         <SignOutLink
@@ -99,6 +105,7 @@ export function AccountChrome({
     <Link
       href={accountHref}
       className={className ?? chromeFallback}
+      {...current}
       {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
     >
       {label}
