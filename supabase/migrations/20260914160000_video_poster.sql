@@ -31,8 +31,12 @@ begin
               and poster_height is null
             )
             or (
+              -- `width > 0` sobre NULL es UNKNOWN, y un CHECK trata UNKNOWN
+              -- como válido. Sin `is not null` una ruta sin medidas pasaría.
               poster_path is not null
               and length(btrim(poster_path)) > 0
+              and poster_width is not null
+              and poster_height is not null
               and poster_width > 0
               and poster_height > 0
             )

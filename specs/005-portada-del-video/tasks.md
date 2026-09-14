@@ -10,4 +10,4 @@
 - [x] T005 Admin: extraer fotograma 10, mandarlo; puerto guarda JPEG en `fotos`
 - [x] T006 Artículo: `og:image` de la portada; `<video poster>`; feed usa
       `CoverImage`
-- [ ] T007 pgTAP del check; `npm run verify`
+- [x] T007 pgTAP del check; `npm run verify`
