@@ -178,3 +178,36 @@ export async function saveBudgetItem(
     }),
   });
 }
+
+const shareSchema = z.object({
+  campaignId: uuid("la campaña"),
+  publishShare: checkbox,
+});
+
+export async function setPublishContributionShare(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<boolean>> {
+  return perform({
+    deps,
+    permission: "campana.escribir",
+    describe: "cambiar si el muro muestra el porcentaje",
+    schema: shareSchema,
+    input,
+    run: async (data) => {
+      await deps.gateway.campaign.setPublishContributionShare(data);
+
+      return data.publishShare;
+    },
+    success: (publishShare) =>
+      publishShare
+        ? "El muro va a mostrar el porcentaje de cada aporte sobre lo que ya llegó."
+        : "El muro va a mostrar sólo el nombre.",
+    audit: (data) => ({
+      action: "campaign.contribution_share_toggled",
+      entityTable: "campaigns",
+      entityId: data.campaignId,
+      diff: { publishContributionShare: data.publishShare },
+    }),
+  });
+}

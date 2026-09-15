@@ -69,6 +69,11 @@ export interface AdminCampaignPort {
     sortOrder: number;
     publish: boolean;
   }): Promise<string>;
+  /** Si el muro de aportes muestra el % sobre lo ya recibido (ADR-042). */
+  setPublishContributionShare(input: {
+    campaignId: string;
+    publishShare: boolean;
+  }): Promise<void>;
 }
 
 // ── Finanzas ────────────────────────────────────────────────────────────────
@@ -81,7 +86,18 @@ export interface AdminContributionPort {
     receivedAt: string;
     paymentMethodId: string | null;
     sourceNote: string | null;
+    isAnonymous: boolean;
+    contributorDisplayName: string | null;
   }): Promise<string>;
+  /**
+   * Sólo el nombre público. El monto no se toca: un aporte no se corrige, se
+   * anula y se registra de nuevo.
+   */
+  updateContributionAppearance(input: {
+    id: string;
+    isAnonymous: boolean;
+    contributorDisplayName: string | null;
+  }): Promise<void>;
   voidContribution(input: { id: string; reason: string }): Promise<void>;
   /** Marca la fecha de conciliación bancaria de la campaña. */
   markReconciled(input: { campaignId: string; reconciledAt: string }): Promise<void>;

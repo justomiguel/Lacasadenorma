@@ -42,6 +42,30 @@ export function ratioAsPercentage(
   return percentage((part / whole) * 100, onOutOfRange);
 }
 
+/**
+ * Qué parte es un aporte de lo ya recibido, en entero truncado.
+ *
+ * Es la misma cuenta que `private.contribution_wall_for`: `(parte * 100) /
+ * total` en enteros. Devuelve `null` cuando no hay denominador o cuando el
+ * truncado es 0: publicar `0%` sería fingir un dato (ADR-042).
+ */
+export function shareOfReceived(
+  amountMinor: bigint,
+  receivedMinor: bigint,
+): number | null {
+  if (receivedMinor <= 0n || amountMinor <= 0n) {
+    return null;
+  }
+
+  const pct = (amountMinor * 100n) / receivedMinor;
+
+  if (pct < 1n) {
+    return null;
+  }
+
+  return Number(pct > 100n ? 100n : pct);
+}
+
 export function formatPercentage(
   value: number,
   options?: { decimals?: number; locale?: string },

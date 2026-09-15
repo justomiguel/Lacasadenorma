@@ -968,9 +968,11 @@ select is_empty(
 );
 
 -- ── La vista pública agregada ───────────────────────────────────────────────
--- Es la única lectura de aportes que existe para todo el mundo, y la razón por la
+-- Es la lectura de **totales** que existe para todo el mundo, y la razón por la
 -- que `contributions` puede estar cerrada sin que la página de transparencia
--- quede vacía (amenaza I2). Se comprueba con los seis roles de una sola vez.
+-- quede vacía (amenaza I2). El muro de nombres, sin montos, vive en
+-- `contribution_wall` y se prueba en `021-contribution-wall.sql` (ADR-042).
+-- Se comprueba con los seis roles de una sola vez.
 
 create temporary table totales_por_rol (rol text primary key, filas integer not null) on commit drop;
 

@@ -218,7 +218,11 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
   distinta. La suma exacta de montos sigue siendo una propiedad del backoffice (SC-007).
 - **FR-013**: Los archivos de comprobantes MUST NOT ser accesibles públicamente; sólo roles
   autorizados pueden obtenerlos, mediante acceso temporal.
-- **FR-014**: Los aportes individuales y la identidad de quienes aportan MUST NOT ser públicos.
+- **FR-014**: Los montos de los aportes individuales MUST NOT ser públicos. La identidad de
+  quien aportó MUST NOT ser pública salvo consentimiento explícito (`is_anonymous = false` y
+  `contributor_display_name`). El porcentaje que un aporte representa de lo ya recibido MUST
+  NOT publicarse salvo que la campaña tenga `publish_contribution_share` y el porcentaje se
+  calcule en la base, truncado a entero, omitiendo el 0% (ADR-042).
 - **FR-015**: Los registros financieros MUST NOT poder eliminarse: se anulan con motivo y fecha, y
   la anulación queda registrada.
 - **FR-016**: Todo cambio en datos financieros MUST registrar autor y momento.

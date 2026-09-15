@@ -1,22 +1,30 @@
-import type { DonationWallEntry } from "@/src/domain/entities";
+import type { ContributionWallEntry, DonationWallEntry } from "@/src/domain/entities";
+import { isCurrencyCode } from "@/src/domain/money";
 import type { DonationWallRepository } from "@/src/domain/ports/repositories";
 
 import type { Database } from "./database.types";
 import type { ServerSupabaseClient } from "./server-client";
 
 /**
- * Lectura pública del muro. Consulta **la vista**, nunca la tabla, y enumera
- * las cinco columnas: un `select *` sobre `donation_pledges` lo rechaza la
- * base (ADR-030). El filtro de filas está en la policy, no acá.
+ * Lectura pública del muro. Consulta **las vistas**, nunca las tablas.
  *
- * El título del ítem se pide aparte, por id, sobre `donation_items`. Si el
- * ítem dejó de estar publicado, `anon` no lo ve y la línea se queda con el
- * nombre y la cantidad, que siguen siendo un hecho sobre la obra.
+ * En especie: `donation_wall`, cinco columnas. Un `select *` sobre
+ * `donation_pledges` lo rechaza la base (ADR-030).
+ *
+ * En plata: `contribution_wall`, nombre y porcentaje opcional. Un `select`
+ * sobre `contributions` lo rechaza la base (ADR-016, ADR-042). El monto no
+ * existe en esta consulta.
  */
 
 const WALL_COLUMNS = "id, item_id, quantity, donor_display_name, fulfilled_at";
+const MONEY_WALL_COLUMNS =
+  "id, donor_display_name, received_at, currency, percent_of_received";
 
 type WallRow = Database["public"]["Views"]["donation_wall"]["Row"];
+type MoneyWallRow = Pick<
+  Database["public"]["Views"]["contribution_wall"]["Row"],
+  "id" | "donor_display_name" | "received_at" | "currency" | "percent_of_received"
+>;
 
 export function createDonationWallRepository(
   client: ServerSupabaseClient,
@@ -39,6 +47,24 @@ export function createDonationWallRepository(
 
       return data.flatMap((row) => {
         const entry = toEntry(row, titles);
+
+        return entry === null ? [] : [entry];
+      });
+    },
+
+    async listMoneyEntries(campaignId): Promise<ContributionWallEntry[]> {
+      const { data, error } = await client
+        .from("contribution_wall")
+        .select(MONEY_WALL_COLUMNS)
+        .eq("campaign_id", campaignId)
+        .order("received_at", { ascending: false });
+
+      if (error !== null) {
+        throw new Error(`leer el muro de aportes: ${error.message}`);
+      }
+
+      return data.flatMap((row) => {
+        const entry = toMoneyEntry(row);
 
         return entry === null ? [] : [entry];
       });
@@ -86,5 +112,32 @@ function toEntry(row: WallRow, titles: Map<string, string>): DonationWallEntry |
     quantity: row.quantity,
     donorDisplayName: row.donor_display_name,
     fulfilledAt: row.fulfilled_at,
+  };
+}
+
+function toMoneyEntry(row: MoneyWallRow): ContributionWallEntry | null {
+  if (
+    row.id === null ||
+    row.donor_display_name === null ||
+    row.received_at === null ||
+    row.currency === null
+  ) {
+    return null;
+  }
+
+  const currency = row.currency.trim();
+
+  if (!isCurrencyCode(currency)) {
+    return null;
+  }
+
+  const percent = row.percent_of_received;
+
+  return {
+    id: row.id,
+    donorDisplayName: row.donor_display_name,
+    receivedAt: row.received_at,
+    currency,
+    percentOfReceived: percent === null || percent < 1 ? null : percent,
   };
 }

@@ -217,8 +217,11 @@ select results_eq(
        and has_function_privilege('anon', p.oid, 'execute')
      order by 1
   $q$,
-  $q$ values ('private.campaign_totals_for(uuid)') $q$,
-  'la única función invocable de private que anon puede ejecutar es el agregado de la vista pública (E3)'
+  $q$
+    values ('private.campaign_totals_for(uuid)'),
+           ('private.contribution_wall_for(uuid)')
+  $q$,
+  'anon puede ejecutar exactamente el agregado de totales y el muro de aportes de private (E3)'
 );
 
 -- `authenticated` sí necesita EXECUTE sobre las funciones de autorización: una
@@ -239,9 +242,10 @@ select results_eq(
     values ('private.campaign_totals_for(uuid)'),
            ('private.can_read_donors()'),
            ('private.can_read_ledger()'),
+           ('private.contribution_wall_for(uuid)'),
            ('private.has_min_role(app_role)')
   $q$,
-  'authenticated puede invocar exactamente cuatro funciones security definer de private (E3)'
+  'authenticated puede invocar exactamente cinco funciones security definer de private (E3)'
 );
 
 -- El hook del token corre con los privilegios que le da el servidor de auth y

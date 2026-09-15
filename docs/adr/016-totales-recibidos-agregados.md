@@ -1,6 +1,6 @@
 # ADR-016 · El total recibido viene de una vista agregada, no del detalle de aportes
 
-**Estado**: Aceptada · **Fecha**: 2026-09-09
+**Estado**: Aceptada · **Fecha**: 2026-09-09 · Enmendada por [ADR-042](./042-muro-de-aportes-con-porcentaje.md): el nombre de un aporte puede publicarse con consentimiento; el monto sigue sin camino de lectura pública.
 
 ## Contexto
 

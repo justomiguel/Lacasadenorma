@@ -4,6 +4,7 @@ import { formatMoney } from "@/src/domain/money";
 
 import { perform, type AdminDeps, type AdminResult } from "./core";
 import {
+  checkbox,
   currency,
   optionalText,
   optionalUuid,
@@ -16,11 +17,12 @@ import {
 /**
  * Aportes: registrar, anular, marcar la conciliación.
  *
- * Un aporte es el único dato del sistema que **no** es público ni siquiera en
- * detalle agregado por fila (FR-014): en un pueblo donde todos se conocen, "medio
- * millón el 3 de septiembre" alcanza para saber quién fue. Por eso el registro no
- * guarda el nombre de quien aportó: guarda una nota de conciliación, que es lo que
- * hace falta para cruzarlo con el resumen del banco, y nada más.
+ * Un aporte es el único dato del sistema cuyo **monto** no es público ni siquiera
+ * en detalle agregado por fila (FR-014): en un pueblo donde todos se conocen,
+ * "medio millón el 3 de septiembre" alcanza para saber quién fue. El nombre sí
+ * puede publicarse, y sólo con consentimiento explícito (ADR-042). La nota de
+ * conciliación sigue siendo interna: es lo que hace falta para cruzarlo con el
+ * resumen del banco, no un padrón.
  *
  * La conciliación no es un adorno: la fecha que se marca acá es la que la página
  * pública muestra, y si tiene más de treinta días el sitio lo dice solo. Es la forma
@@ -35,16 +37,36 @@ const recordSchema = z
     receivedAt: pastDate,
     paymentMethodId: optionalUuid,
     /**
-     * Con qué dato del resumen bancario se identifica el movimiento. Nunca el nombre
-     * de quien aportó: eso convertiría la tabla en un padrón de donantes.
+     * Con qué dato del resumen bancario se identifica el movimiento. No es el
+     * nombre público: ese va en `contributorDisplayName`, y sólo con consentimiento.
      */
     sourceNote: optionalText(200),
+    appearOnWall: checkbox,
+    contributorDisplayName: optionalText(80),
   })
-  .transform(({ amount, currency: code, ...rest }, ctx) => {
-    const money = toMoney(ctx, amount, code);
+  .superRefine((data, ctx) => {
+    if (data.appearOnWall && data.contributorDisplayName === null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["contributorDisplayName"],
+        message: "Para aparecer en la lista hace falta un nombre.",
+      });
+    }
+  })
+  .transform(
+    ({ amount, currency: code, appearOnWall, contributorDisplayName, ...rest }, ctx) => {
+      const money = toMoney(ctx, amount, code);
 
-    return money === null ? z.NEVER : { ...rest, money };
-  });
+      return money === null
+        ? z.NEVER
+        : {
+            ...rest,
+            money,
+            isAnonymous: !appearOnWall,
+            contributorDisplayName: appearOnWall ? contributorDisplayName : null,
+          };
+    },
+  );
 
 export async function recordContribution(
   deps: AdminDeps,
@@ -63,6 +85,8 @@ export async function recordContribution(
         receivedAt: data.receivedAt,
         paymentMethodId: data.paymentMethodId,
         sourceNote: data.sourceNote,
+        isAnonymous: data.isAnonymous,
+        contributorDisplayName: data.contributorDisplayName,
       }),
     }),
     success: () => "Aporte registrado. El total público ya lo incluye.",
@@ -73,9 +97,8 @@ export async function recordContribution(
       diff: {
         amount: formatMoney(data.money),
         receivedAt: data.receivedAt,
-        // La nota **no** va al diff: es lo más cercano a un dato personal que hay
-        // en el sistema, y el registro de auditoría lo leen más roles que la tabla.
         hasSourceNote: data.sourceNote !== null,
+        appeared: !data.isAnonymous,
       },
     }),
   });
@@ -137,6 +160,52 @@ export async function markReconciled(
       entityTable: "campaigns",
       entityId: data.campaignId,
       diff: { reconciledAt: data.reconciledAt },
+    }),
+  });
+}
+
+const appearanceSchema = z
+  .object({
+    id: uuid("el aporte"),
+    appearOnWall: checkbox,
+    contributorDisplayName: optionalText(80),
+  })
+  .superRefine((data, ctx) => {
+    if (data.appearOnWall && data.contributorDisplayName === null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["contributorDisplayName"],
+        message: "Para aparecer en la lista hace falta un nombre.",
+      });
+    }
+  })
+  .transform((data) => ({
+    id: data.id,
+    isAnonymous: !data.appearOnWall,
+    contributorDisplayName: data.appearOnWall ? data.contributorDisplayName : null,
+  }));
+
+export async function updateContributionAppearance(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<null>> {
+  return perform({
+    deps,
+    permission: "finanzas.escribir",
+    describe: "cambiar el nombre público del aporte",
+    schema: appearanceSchema,
+    input,
+    run: async (data) => {
+      await deps.gateway.contributions.updateContributionAppearance(data);
+
+      return null;
+    },
+    success: () => "Nombre público actualizado.",
+    audit: (data) => ({
+      action: "contribution.appearance_updated",
+      entityTable: "contributions",
+      entityId: data.id,
+      diff: { appeared: !data.isAnonymous },
     }),
   });
 }

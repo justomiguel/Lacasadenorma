@@ -2,6 +2,7 @@ import type {
   BudgetItem,
   Campaign,
   CatalogClaim,
+  ContributionWallEntry,
   DonationItem,
   DonationWallEntry,
   ExpenseRecord,
@@ -34,6 +35,7 @@ export interface FakeData {
   catalog?: DonationItem[];
   claims?: CatalogClaim[];
   wall?: DonationWallEntry[];
+  moneyWall?: ContributionWallEntry[];
   /** Cuando está definido, todas las lecturas fallan con este error. */
   failWith?: Error;
 }
@@ -47,6 +49,7 @@ export const fakeCampaign: Campaign = {
   goalCurrency: "ARS",
   status: "active",
   reconciledAt: "2026-09-08T00:00:00.000Z",
+  publishContributionShare: false,
 };
 
 export function fakeLogger(): Logger & { calls: string[] } {
@@ -108,6 +111,7 @@ export function fakeSupabaseLayer(
     },
     wall: {
       listEntries: () => guard(data.wall ?? []),
+      listMoneyEntries: () => guard(data.moneyWall ?? []),
     },
   };
 }

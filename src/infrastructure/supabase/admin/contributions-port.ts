@@ -31,6 +31,7 @@ export function createContributionsPort(
         paymentMethodId: row.payment_method_id,
         sourceNote: row.source_note,
         isAnonymous: row.is_anonymous,
+        contributorDisplayName: row.contributor_display_name,
         voidReason: row.void_reason,
         recordedBy: row.recorded_by,
       }));
@@ -46,6 +47,8 @@ export function createContributionsPort(
           received_at: input.receivedAt,
           payment_method_id: input.paymentMethodId,
           source_note: input.sourceNote,
+          is_anonymous: input.isAnonymous,
+          contributor_display_name: input.contributorDisplayName,
         })
         .select("id")
         .single();
@@ -55,6 +58,24 @@ export function createContributionsPort(
       }
 
       return data.id;
+    },
+
+    async updateContributionAppearance({
+      id,
+      isAnonymous,
+      contributorDisplayName,
+    }): Promise<void> {
+      const { error } = await client
+        .from("contributions")
+        .update({
+          is_anonymous: isAnonymous,
+          contributor_display_name: contributorDisplayName,
+        })
+        .eq("id", id);
+
+      if (error !== null) {
+        throw new QueryError("actualizar el nombre público del aporte", error);
+      }
     },
 
     /**
