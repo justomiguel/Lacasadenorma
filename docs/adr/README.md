@@ -36,7 +36,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [023](./023-i18n-estructural.md) | i18n estructural: castellano sin prefijo, inglés en `/en` | Aceptada |
 | [024](./024-tercera-direccion-visual.md) | El color sale de la casa: tercera dirección visual y limpieza de contenido | Reemplazada por ADR-025 para la dirección de arte |
 | [025](./025-mockup-aprobado.md) | El mockup aprobado es la fuente de verdad visual | Aceptada |
-| [026](./026-jerarquia-y-capitulos.md) | Capítulos visibles, una sola clase de acción y las tres formas de ayudar en pestañas | Reemplazada por ADR-032 en jerarquía, acciones y previas |
+| [026](./026-jerarquia-y-capitulos.md) | Capítulos visibles, una sola clase de acción y las tres formas de ayudar en pestañas | Reemplazada por ADR-032 en jerarquía, acciones y previas, y por ADR-045 en las tres formas de ayudar |
 | [027](./027-identidad-publica.md) | Una identidad, dos audiencias: `authenticated` deja de significar «de confianza» | Aceptada |
 | [028](./028-correo-resend.md) | Correos de identidad por SMTP de Resend; los del producto, por un puerto propio | Aceptada |
 | [029](./029-reserva-sin-sobreventa.md) | La reserva se decide con un contador y un CHECK, no leyendo antes de escribir | Aceptada |
@@ -55,3 +55,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [042](./042-muro-de-aportes-con-porcentaje.md) | El muro de aportes publica el nombre, y el porcentaje sólo si se prende | Aceptada |
 | [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |
 | [044](./044-tabla-del-catalogo-y-quiero-donar.md) | El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar» | Aceptada |
+| [045](./045-tres-caminos-para-ayudar.md) | Tres caminos para ayudar, no pestañas | Aceptada |

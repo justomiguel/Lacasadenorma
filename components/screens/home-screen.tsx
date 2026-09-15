@@ -1,6 +1,6 @@
 import { DocumentaryGallery } from "@/components/campaign/documentary-gallery";
 import { FaqSection } from "@/components/campaign/faq-section";
-import { HelpTabs } from "@/components/campaign/help-tabs";
+import { HelpPaths } from "@/components/campaign/help-paths";
 import { Hero } from "@/components/campaign/hero";
 import { NormaStory } from "@/components/campaign/norma-story";
 import { ShareBlock } from "@/components/campaign/share-block";
@@ -31,7 +31,7 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
  * Norma, porque ella es el momento que rompe el ritmo.
  */
 export function HomeScreen({ locale }: { locale: Locale }) {
-  const { help, norma, reconstruction, site, ui, whatHappened } = getContent(locale);
+  const { norma, reconstruction, site, ui, whatHappened } = getContent(locale);
   const siteUrl = getSiteUrl();
   const night = whatHappened.photoEssay[0]?.photos ?? [];
   const flames = night[1] ?? night[0];
@@ -132,7 +132,7 @@ export function HomeScreen({ locale }: { locale: Locale }) {
           id="como-ayudar"
           lead={ui.home.helpKicker}
         />
-        <HelpTabs help={help} ui={ui} origen="home" className="mt-2xl" />
+        <HelpPaths locale={locale} ui={ui} heading="h3" className="mt-2xl" />
       </StorySection>
 
       <StorySection labelledBy="norma-en-casa" chapter="norma" tone="ink">

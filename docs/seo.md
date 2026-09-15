@@ -136,7 +136,7 @@ Marcado que promete lo que la página no cumple es engaño, y además se penaliz
 | `WebSite` | Todas las páginas | `content/{locale}/site.json` |
 | `WebPage` | Home, `/norma`, novedades | Argumentos de la página |
 | `FAQPage` | Home | Las mismas preguntas que se ven en pantalla |
-| `DonateAction` | Home | Apunta a `/ayudar` |
+| `DonateAction` | Home | Apunta a `/ayudar`, el tablero de los tres caminos (ADR-045) |
 | `Person` | `/norma` | `content/{locale}/norma.json` |
 | `Article` | `/novedades/[slug]` | La novedad publicada |
 | `BreadcrumbList` | `/norma`, `/novedades/[slug]` | Sólo cuando hay dos niveles o más |
@@ -165,7 +165,7 @@ lea con la conexión de Riacho He Hé y con JavaScript desactivado.
 | Ruta | Modo |
 |---|---|
 | `/norma`, `/que-paso`, `/legado`, `/legales/*`, `/ayudar/paypal/*` | Estáticas en build: su contenido vive en el repositorio |
-| `/`, `/ayudar`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/novedades.xml`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
+| `/`, `/ayudar`, `/ayudar/dinero`, `/transparencia`, `/reconstruccion`, `/novedades`, `/novedades/[slug]`, `/novedades.xml`, `/sitemap.xml` | ISR, `revalidate = 300`, más invalidación al publicar (ADR-017) |
 | `/llms.txt` | `force-static` |
 | `/api/health` | `force-dynamic`, `no-store` |
 | `/admin/**` | Server-rendered, `private, no-store` |

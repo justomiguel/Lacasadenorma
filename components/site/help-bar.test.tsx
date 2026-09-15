@@ -89,6 +89,7 @@ describe("HelpBar sin JavaScript", () => {
 describe("helpBarIsOffRoute", () => {
   it("cubre aportar y la cuenta, no el relato", () => {
     expect(helpBarIsOffRoute("/ayudar")).toBe(true);
+    expect(helpBarIsOffRoute("/ayudar/dinero")).toBe(true);
     expect(helpBarIsOffRoute("/ayudar/paypal/completada")).toBe(true);
     expect(helpBarIsOffRoute("/cuenta")).toBe(true);
     expect(helpBarIsOffRoute("/cuenta/ingresar")).toBe(true);

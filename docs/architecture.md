@@ -346,7 +346,7 @@ privilegiado que se pueda quedar desactualizado. El detalle está en [`docs/webm
 | Ruta | Estrategia | Por qué |
 | --- | --- | --- |
 | `/norma`, `/que-paso`, `/legado`, `/legales/*` | Estática | No dependen de la base |
-| `/`, `/reconstruccion`, `/catalogo`, `/quienes-ayudaron`, `/ayudar`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
+| `/`, `/reconstruccion`, `/catalogo`, `/quienes-ayudaron`, `/ayudar`, `/ayudar/dinero`, `/transparencia`, `/novedades`, `/novedades/[slug]`, `/sitemap.xml` | `revalidate = 300` más `revalidatePath` al publicar | Cifras frescas sin una consulta por visita |
 | `/llms.txt` | `force-static` | Es un resumen del sitio, no un dato |
 | `/api/public/*` | `public, max-age=60, stale-while-revalidate=300` | Respuestas chicas y cacheables en el borde |
 | `/api/health` | `force-dynamic`, `no-store` | Un diagnóstico cacheado no es un diagnóstico |

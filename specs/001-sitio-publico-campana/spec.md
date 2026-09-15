@@ -22,8 +22,8 @@ está implementada, el proyecto ya cumple su propósito: la casa se reconstruye.
 sostiene esto.
 
 **Independent Test**: Se puede probar completo abriendo la home en un teléfono, leyéndola, tocando
-"Ayudar a reconstruir", eligiendo un país y copiando los datos de la cuenta. Entrega valor sin
-backoffice, sin autenticación y sin base de datos.
+"Ayudar a reconstruir", eligiendo "Donar dinero" y copiando los datos de la cuenta argentina (ya
+está elegida). Entrega valor sin backoffice, sin autenticación y sin base de datos.
 
 **Acceptance Scenarios**:
 
@@ -34,9 +34,13 @@ backoffice, sin autenticación y sin base de datos.
    respondidas, en este orden, las nueve preguntas: quién fue Norma, qué pasó, qué hay que
    reconstruir, cómo colaborar, cuánto se consiguió, en qué se usa el dinero, cómo se rinden los
    fondos, cuál es el futuro del proyecto, y cómo continúa el legado.
-3. **Given** una persona que quiere colaborar desde Argentina, **When** entra a la sección de
-   aportes, **Then** ve los datos de la cuenta argentina con un control para copiar cada dato
-   individualmente y confirmación visible de que se copió.
+3. **Given** una persona que quiere colaborar desde Argentina, **When** toca «Ayudar a
+   reconstruir», elige «Donar dinero» y llega a `/ayudar/dinero`, **Then** ve los datos de la
+   cuenta argentina con un control para copiar cada dato individualmente y confirmación visible de
+   que se copió.
+3b. **Given** una persona que toca «Ayudar a reconstruir», **When** llega a `/ayudar`, **Then**
+   ve tres caminos a la vista —dar una mano presencial, donar dinero, donar artículos— y
+   ninguno está detrás de una pestaña.
 4. **Given** una persona que quiere colaborar desde Chile o Estados Unidos, **When** elige su país,
    **Then** ve los datos de ese país sin tener que leer los de los otros.
 5. **Given** un método de aporte cuyos datos todavía no fueron cargados, **When** se renderiza la
@@ -204,6 +208,14 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 - **FR-008**: El modelo de métodos de aporte MUST permitir agregar nuevos medios (plataformas de
   pago u otros países) sin rediseñar la estructura de datos ni la interfaz.
 - **FR-009**: El sitio MUST NOT procesar pagos ni solicitar datos de tarjeta en esta versión.
+- **FR-037**: El CTA «Ayudar a reconstruir» MUST llevar a una pantalla que presenta tres caminos
+  a la vista: dar una mano presencial, donar dinero y donar artículos. MUST NOT esconder un
+  camino detrás de una pestaña.
+- **FR-038**: Dar una mano presencial MUST llevar al contacto publicado de Justo Miguel Vargas y
+  a un enlace a Google Maps del pueblo. MUST NOT publicar un lote ni unas coordenadas que no
+  estén verificadas, ni incrustar un mapa de un tercero.
+- **FR-039**: Donar dinero MUST llevar a los métodos de aporte de Argentina, Chile y el resto del
+  mundo (PayPal). Donar artículos MUST llevar al catálogo de lo que falta.
 
 **Transparencia**
 
@@ -303,7 +315,8 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 
 - **SC-001**: Una persona que nunca vio el sitio puede explicar, después de treinta segundos en la
   home en un teléfono, quién fue Norma, qué se está reconstruyendo y cómo colaborar.
-- **SC-002**: Copiar un dato bancario requiere como máximo tres toques desde la home.
+- **SC-002**: Copiar un dato bancario argentino requiere como máximo tres toques desde la home:
+  Ayudar a reconstruir → Donar dinero → Copiar (ADR-045).
 - **SC-003**: En las páginas principales, la puntuación de performance, accesibilidad, buenas
   prácticas y SEO es de al menos 95 sobre 100 en condiciones de producción.
 - **SC-004**: En una conexión móvil de 4G promedio, el contenido principal de la home es legible en

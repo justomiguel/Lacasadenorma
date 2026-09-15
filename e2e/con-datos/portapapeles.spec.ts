@@ -24,7 +24,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   test("lo que queda en el portapapeles es lo que estaba a la vista", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const panel = page.getByRole("tabpanel", { name: ui.countries.AR });
     const dato = panel.locator("[data-figure]").first();
@@ -45,7 +45,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   test("el resultado se anuncia por una región viva, no sólo con un color", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const panel = page.getByRole("tabpanel", { name: ui.countries.AR });
     // Por posición y no por nombre accesible: el nombre es justamente lo que va a
@@ -67,7 +67,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   test("el valor sigue seleccionable a mano, por si el permiso no está", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const dato = page
       .getByRole("tabpanel", { name: ui.countries.AR })
@@ -84,7 +84,7 @@ test.describe("flujo 5 · copiar la cuenta", () => {
   });
 
   test("el botón de copiar es alcanzable y accionable con teclado", async ({ page }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const boton = page
       .getByRole("tabpanel", { name: ui.countries.AR })

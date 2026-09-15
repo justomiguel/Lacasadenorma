@@ -1,5 +1,6 @@
 import { ContactActions } from "@/components/campaign/contact-actions";
 import { HelpCta } from "@/components/campaign/help-cta";
+import { BrandLabel } from "@/components/design-system/brand-mark";
 import { Container, Section } from "@/components/design-system/layout";
 import { Paragraphs } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
@@ -20,11 +21,12 @@ export function contactMetadata(locale: Locale) {
 }
 
 /**
- * Contacto publicado: Justo Miguel Vargas, WhatsApp, correo e Instagram.
- * No hay formulario: el sitio no pide datos (docs/privacy.md).
+ * Contacto publicado: Justo Miguel Vargas, WhatsApp, correo, Instagram, y el
+ * mapa del pueblo (ADR-045). No hay formulario: el sitio no pide datos
+ * (docs/privacy.md). El mapa es un enlace a Google Maps, no un iframe.
  */
 export function ContactScreen({ locale }: { locale: Locale }) {
-  const { help, ui } = getContent(locale);
+  const { help, site, ui } = getContent(locale);
 
   return (
     <>
@@ -45,6 +47,22 @@ export function ContactScreen({ locale }: { locale: Locale }) {
             instagramLabel={ui.contactPage.instagram}
             origen="contacto"
           />
+
+          <div className="mt-2xl max-w-measure">
+            <h2 className="font-display text-heading">{ui.contactPage.mapsHeading}</h2>
+            <p className="mt-md text-body text-ink-muted">{ui.contactPage.mapsLead}</p>
+            <p className="mt-sm font-ui text-body">
+              {site.place.locality}, {site.place.province}
+            </p>
+            <a
+              href={help.contact.mapsUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="mt-lg inline-flex min-h-touch items-center gap-xs font-ui text-body font-medium text-forest transition-colors duration-fast hover:text-forest-strong"
+            >
+              <BrandLabel id="google">{ui.contactPage.mapsCta}</BrandLabel>
+            </a>
+          </div>
 
           <div className="mt-2xl max-w-measure">
             <h2 className="font-display text-heading">{ui.home.debrisTitle}</h2>

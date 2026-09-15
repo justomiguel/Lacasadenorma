@@ -67,7 +67,9 @@ test.describe("flujo 1 · abrir la home", () => {
     await expect(
       page.getByRole("heading", { name: ui.home.helpTitle.replaceAll("\n", " ") }),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: ui.home.donateTitle })).toBeVisible();
+    await expect(page.getByRole("heading", { name: ui.home.pathHands })).toBeVisible();
+    await expect(page.getByRole("heading", { name: ui.home.pathMoney })).toBeVisible();
+    await expect(page.getByRole("heading", { name: ui.home.pathArticles })).toBeVisible();
     await expect(
       page.getByRole("heading", { name: norma.openingTitle.replaceAll("\n", " ") }),
     ).toBeVisible();

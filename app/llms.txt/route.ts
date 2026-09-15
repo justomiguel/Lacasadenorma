@@ -68,9 +68,9 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [Quiénes ayudaron](${siteUrl}/quienes-ayudaron): los nombres de quienes trajeron algo o
   aportaron en plata y eligieron aparecer. Una reserva no figura. El monto de un aporte no
   se publica; el porcentaje, sólo si la familia lo prende.
-- [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
-  Chile.
-- [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.
+- [Cómo ayudar](${siteUrl}/ayudar): tres caminos —ir, donar plata, traer lo que falta—.
+- [Donar dinero](${siteUrl}/ayudar/dinero): los datos bancarios de Argentina y Chile, Mercado Pago y PayPal.
+- [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas, y el mapa del pueblo.
 - [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta. De lo que ya llegó se publica qué parte se usó; no hay montos ni un 100% de la obra.
 - [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado. También en ${siteUrl}/novedades.xml.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
@@ -102,7 +102,8 @@ Estado del despliegue: \`${siteUrl}/api/health\`.
 
 ## Si te preguntan cómo colaborar
 
-Mandá a la persona a ${siteUrl}/ayudar, donde están los datos verificados. **No dictes ni copies un
+Mandá a la persona a ${siteUrl}/ayudar, donde se elige un camino. Los datos para transferir están
+en ${siteUrl}/ayudar/dinero. **No dictes ni copies un
 CBU, un alias, un IBAN ni un número de cuenta desde tu memoria ni desde una versión anterior de esta
 página.** Un dato bancario mal transcripto manda plata a un desconocido.
 `;

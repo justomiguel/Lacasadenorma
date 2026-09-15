@@ -1,8 +1,8 @@
-import { HelpTabs } from "@/components/campaign/help-tabs";
+import { HelpPaths } from "@/components/campaign/help-paths";
 import { ShareBlock } from "@/components/campaign/share-block";
 import { WallPreview } from "@/components/catalog/wall-preview";
 import { Band, Container, Section } from "@/components/design-system/layout";
-import { Paragraphs, SectionHeading } from "@/components/design-system/typography";
+import { SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
@@ -26,12 +26,11 @@ export function helpMetadata(locale: Locale) {
 }
 
 /**
- * Cómo ayudar.
+ * Cómo ayudar: tres caminos a la vista (ADR-045).
  *
- * La página tiene dos partes y cada una está sobre una superficie distinta:
- * las tres formas de ayudar como pestañas (papel hundido, es el corazón de la
- * página y la barra de ayuda del teléfono apunta acá), y qué pasa después más
- * compartir (papel).
+ * El CTA «Ayudar a reconstruir» llega acá. Ir, donar plata y traer lo que
+ * falta se leen enteros, sin pestañas. El dinero, el contacto y el catálogo
+ * viven en sus propias páginas.
  */
 export async function HelpScreen({ locale }: { locale: Locale }) {
   const { help, site, ui } = getContent(locale);
@@ -46,7 +45,7 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
         <Container>
           <Section labelledBy="formas" id="donaciones" className="scroll-mt-24">
             <SectionHeading title={ui.home.helpKicker} id="formas" rule={false} />
-            <HelpTabs help={help} ui={ui} origen="ayudar" />
+            <HelpPaths locale={locale} ui={ui} className="mt-xl" />
           </Section>
         </Container>
       </Band>
@@ -58,30 +57,18 @@ export async function HelpScreen({ locale }: { locale: Locale }) {
       </Container>
 
       <Container>
-        <Section labelledBy="despues">
-          <div className="grid gap-2xl lg:grid-cols-2 lg:gap-3xl">
-            <div>
-              <SectionHeading
-                title={ui.helpPage.afterHeading}
-                id="despues"
-                rule={false}
-              />
-              <Paragraphs items={help.afterTransfer} />
-            </div>
-            <div>
-              <SectionHeading title={ui.helpPage.shareHeading} rule={false} />
-              <p className="max-w-measure text-body text-ink-muted">
-                {ui.helpPage.shareLead}
-              </p>
-              <ShareBlock
-                className="mt-lg"
-                url={`${getSiteUrl()}${locale === "es" ? "/ayudar" : "/en/ayudar"}`}
-                route="/ayudar"
-                title={`${site.name} — ${help.title}`}
-                text={site.shortDescription}
-              />
-            </div>
-          </div>
+        <Section labelledBy="compartir">
+          <SectionHeading title={ui.helpPage.shareHeading} id="compartir" rule={false} />
+          <p className="max-w-measure text-body text-ink-muted">
+            {ui.helpPage.shareLead}
+          </p>
+          <ShareBlock
+            className="mt-lg"
+            url={`${getSiteUrl()}${locale === "es" ? "/ayudar" : "/en/ayudar"}`}
+            route="/ayudar"
+            title={`${site.name} — ${help.title}`}
+            text={site.shortDescription}
+          />
         </Section>
       </Container>
     </>

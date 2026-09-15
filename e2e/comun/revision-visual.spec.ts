@@ -18,8 +18,8 @@ import { PAGINAS_PUBLICAS, VIEWPORT_MINIMO } from "../soporte/paginas";
  * vez. Los tres se rompieron de verdad, y ninguno se veía mirando el CSS:
  * `--container-measure` decía 68 caracteres y entregaba 104.
  *
- * Cada test recorre las quince páginas en lugar de haber uno por página: son quince gotos
- * y una medición, y partirlos en veintidós tests agrega más arranque que cobertura. El
+ * Cada test recorre `PAGINAS_PUBLICAS` en lugar de haber uno por página: son esos gotos
+ * y una medición, y partirlos en un test por ruta agrega más arranque que cobertura. El
  * mensaje de cada aserción dice en qué página falló.
  */
 
@@ -396,7 +396,7 @@ async function revisar(page: Page, donde: string) {
 }
 
 test.describe("revisión visual · ux.md §12", () => {
-  test("las quince páginas cumplen los criterios medibles en el viewport del proyecto", async ({
+  test("las páginas públicas cumplen los criterios medibles en el viewport del proyecto", async ({
     page,
     request,
   }) => {
@@ -405,7 +405,7 @@ test.describe("revisión visual · ux.md §12", () => {
     await revisar(page, "el viewport del proyecto");
   });
 
-  test("las quince páginas cumplen los criterios medibles en 360 px", async ({
+  test("las páginas públicas cumplen los criterios medibles en 360 px", async ({
     page,
     request,
   }) => {

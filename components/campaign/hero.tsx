@@ -92,7 +92,7 @@ export function Hero({ locale }: { locale: Locale }) {
             >
               <HelpCta
                 origen="apertura"
-                fragment="donaciones"
+                href={localizedHref("/ayudar", locale)}
                 tone="paper"
                 label={ui.helpCta}
               />

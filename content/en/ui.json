@@ -43,7 +43,7 @@
     "/ayudar": {
       "label": "How to help",
       "shortLabel": "How to help",
-      "summary": "Three ways to make a difference."
+      "summary": "Three paths: go in person, give money, or bring what is needed."
     },
     "/norma": {
       "label": "Norma",
@@ -181,16 +181,19 @@
     "seeWork": "See the work on the house",
     "chapterHelp": "03. How to help",
     "helpTitle": "Your help\ncounts too",
-    "helpKicker": "Three ways to make a difference",
-    "helpTabsLabel": "Ways to help",
-    "tabDonate": "Donate money",
-    "tabHands": "Lend a hand",
-    "tabMaterials": "Donate materials",
+    "helpKicker": "Three paths. Choose one.",
+    "helpPathsLabel": "Three ways to help",
+    "pathHands": "Give a hand in person",
+    "pathHandsLead": "If you can go, Justo coordinates. WhatsApp, and the map of the town.",
+    "pathHandsCta": "Coordinate with Justo",
+    "pathMoney": "Donate money",
+    "pathMoneyLead": "Bank transfer from Argentina or Chile, Mercado Pago or PayPal.",
+    "pathMoneyCta": "See the accounts",
+    "pathArticles": "Donate items",
+    "pathArticlesLead": "The list of what is still needed, so two people don't bring the same thing.",
+    "pathArticlesCta": "See what is needed",
     "debrisTitle": "Clear debris",
     "debrisBody": "If you can give a hand in person, we are organising a crew to clear and haul debris.",
-    "materialsTitle": "Material donations",
-    "materialsBody": "Cement, lime, sand, roof sheets. Any other material useful for the future house helps too.",
-    "materialsContact": "To arrange a delivery, write to Justo.",
     "whatsapp": "WhatsApp",
     "call": "Call",
     "email": "Email",
@@ -220,12 +223,15 @@
   },
   "contactPage": {
     "title": "Contact",
-    "seoDescription": "WhatsApp, email and Instagram of Justo Miguel Vargas to coordinate debris removal and material donations in Riacho He Hé, Formosa.",
+    "seoDescription": "WhatsApp, email and Instagram of Justo Miguel Vargas to coordinate help on the ground in Riacho He Hé, Formosa. The map opens the town.",
     "lead": "To coordinate help on the ground, the published contact is Justo Miguel Vargas.",
     "whatsapp": "Write on WhatsApp",
     "call": "Call",
     "email": "Write an email",
-    "instagram": "Instagram"
+    "instagram": "Instagram",
+    "mapsHeading": "Where the house is",
+    "mapsLead": "The house is in Riacho He Hé, Formosa. The map opens the town. Justo will give you the exact lot when you arrange to go.",
+    "mapsCta": "Google Maps"
   },
   "notFoundPage": {
     "title": "This page is not here",
@@ -252,10 +258,10 @@
       "paragraphs": [
         "PayPal sent us back to this page because the payment was not finished. Thank you anyway for getting this far.",
         "If it was an accidental close, or a detail that did not go through, you can try again. It would help a great deal: the priority is rebuilding the family house in Riacho He Hé.",
-        "The channels are on How to help: a transfer from Argentina or Chile, Mercado Pago, and PayPal. Use whichever is at hand. The site does not ask for card details or process the payment: it takes you to the channel and nothing more.",
+        "The channels are on Donate money: a transfer from Argentina or Chile, Mercado Pago, and PayPal. Use whichever is at hand. The site does not ask for card details or process the payment: it takes you to the channel and nothing more.",
         "If you would rather not use PayPal, a bank transfer arrives in full. The verified details are on that same page."
       ],
-      "cta": "Back to How to help"
+      "cta": "Back to donating money"
     }
   },
   "normaPage": {
@@ -302,7 +308,10 @@
     "helpLead": "Each gift helps rebuild the house. The transfer details are on the how to help page."
   },
   "helpPage": {
-    "seoDescription": "Details to transfer from Argentina or Chile, Justo's WhatsApp, and material donations. This page does not take money or ask for card details.",
+    "seoDescription": "Three paths to help: go in person, give money, or bring what is needed. This page does not take money or ask for card details.",
+    "moneyTitle": "Donate money",
+    "moneyLead": "Bank transfer from Argentina or Chile, Mercado Pago or PayPal. Choose where you are giving from and copy the details.",
+    "moneySeoDescription": "Details to transfer from Argentina or Chile, Mercado Pago and PayPal. This page does not take money or ask for card details.",
     "accountsHeading": "Choose where you will transfer from",
     "afterHeading": "What happens when you transfer",
     "afterLinkLead": "How the books are kept is explained on",
