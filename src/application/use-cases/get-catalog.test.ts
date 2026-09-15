@@ -17,6 +17,7 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
     title: "Chapas del techo",
     description: "Chapa sinusoidal calibre 25, de 3,66 m.",
     unit: "unidad",
+    category: "materiales",
     neededQuantity: 40,
     remainingQuantity: 35,
     fulfilledQuantity: 2,

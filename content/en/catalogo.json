@@ -25,8 +25,17 @@
     "unidad": { "one": "unit", "other": "units" },
     "metro": { "one": "metre", "other": "metres" },
     "metro_cuadrado": { "one": "square metre", "other": "square metres" },
+    "metro_cubico": { "one": "cubic metre", "other": "cubic metres" },
     "bolsa": { "one": "bag", "other": "bags" },
     "litro": { "one": "litre", "other": "litres" },
     "juego": { "one": "set", "other": "sets" }
+  },
+  "categories": {
+    "materiales": "Materials",
+    "aberturas": "Doors and windows",
+    "instalaciones": "Installations",
+    "electrodomesticos": "Appliances",
+    "muebles": "Furniture",
+    "ajuar": "Household goods"
   }
 }

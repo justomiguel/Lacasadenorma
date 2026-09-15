@@ -76,7 +76,8 @@ aplicación y se refuerza en la reserva, que es donde importa.
 | `budget_item_id` | `uuid` **nullable** → `budget_items` `on delete set null` | Para que el catálogo y el presupuesto hablen de la misma obra (FR-213) |
 | `title` | `text` | "Chapas del techo" |
 | `description` | `text` nullable | Qué sirve y qué no: medida, material, calidad |
-| `unit` | enum `donation_unit` | `unidad` \| `metro` \| `metro_cuadrado` \| `bolsa` \| `litro` \| `juego` |
+| `unit` | enum `donation_unit` | `unidad` \| `metro` \| `metro_cuadrado` \| `metro_cubico` \| `bolsa` \| `litro` \| `juego` |
+| `category` | enum `donation_item_category` | `materiales` \| `aberturas` \| `instalaciones` \| `electrodomesticos` \| `muebles` \| `ajuar` (FR-253) |
 | `needed_quantity` | `integer not null` | |
 | `reserved_quantity` | `integer not null default 0` | **Derivada, y la mueven sólo tres funciones** |
 | `fulfilled_quantity` | `integer not null default 0` | Ídem |
@@ -183,7 +184,7 @@ select
   i.id, i.campaign_id, i.budget_item_id, i.title, i.description, i.unit,
   i.needed_quantity,
   i.needed_quantity - i.reserved_quantity - i.fulfilled_quantity as remaining_quantity,
-  i.fulfilled_quantity, i.photo_media_id, i.sort_order
+  i.fulfilled_quantity, i.photo_media_id, i.sort_order, i.category
 from public.donation_items i
 where i.published_at is not null;
 ```

@@ -1,14 +1,25 @@
-import { DONATION_UNITS, type ItemQuantities } from "./entities/donation-item";
+import {
+  DONATION_ITEM_CATEGORIES,
+  DONATION_UNITS,
+  type DonationItemCategory,
+  type ItemQuantities,
+} from "./entities/donation-item";
 import { DomainError } from "./errors";
 import { isCurrencyCode, money, type Money } from "./money";
 
 export type {
   DonationItem,
   DonationItemAdminRecord,
+  DonationItemCategory,
   DonationUnit,
   ItemQuantities,
 } from "./entities/donation-item";
-export { DONATION_UNITS, DONATION_UNIT_LABELS } from "./entities/donation-item";
+export {
+  DONATION_ITEM_CATEGORIES,
+  DONATION_ITEM_CATEGORY_LABELS,
+  DONATION_UNITS,
+  DONATION_UNIT_LABELS,
+} from "./entities/donation-item";
 
 /**
  * Cuánto falta de un ítem.
@@ -59,6 +70,48 @@ export function estimatedValueOf(
 
 export function isDonationUnit(value: string): value is (typeof DONATION_UNITS)[number] {
   return (DONATION_UNITS as readonly string[]).includes(value);
+}
+
+export function isDonationItemCategory(
+  value: string,
+): value is (typeof DONATION_ITEM_CATEGORIES)[number] {
+  return (DONATION_ITEM_CATEGORIES as readonly string[]).includes(value);
+}
+
+/**
+ * Agrupa el catálogo público en el orden de las categorías (FR-253).
+ * Una categoría sin ítems no aparece: no se reserva un hueco vacío.
+ */
+export interface CatalogCategoryGroup<T> {
+  readonly category: DonationItemCategory;
+  readonly items: readonly T[];
+}
+
+export function groupCatalogByCategory<
+  T extends { readonly category: string; readonly sortOrder: number },
+>(items: readonly T[]): readonly CatalogCategoryGroup<T>[] {
+  const grouped = new Map<string, T[]>();
+
+  for (const item of items) {
+    const current = grouped.get(item.category) ?? [];
+    current.push(item);
+    grouped.set(item.category, current);
+  }
+
+  return DONATION_ITEM_CATEGORIES.flatMap((category) => {
+    const members = grouped.get(category);
+
+    if (members === undefined || members.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        category,
+        items: [...members].sort((left, right) => left.sortOrder - right.sortOrder),
+      },
+    ];
+  });
 }
 
 function assertQuantities({ needed, reserved, fulfilled }: ItemQuantities): void {

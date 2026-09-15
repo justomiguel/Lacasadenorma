@@ -4,7 +4,7 @@
 -- Fase D: reservas concurrentes, tope por cuenta, vencimiento sin cron (FR-218).
 
 begin;
-select plan(49);
+select plan(54);
 
 insert into public.campaigns (id, slug, title, summary, status, published_at) values
   ('c7000000-0000-4000-8000-000000000001', 'obra-catalogo', 'Obra del catálogo', 'Resumen', 'active', now());
@@ -108,6 +108,14 @@ insert into public.contributions (
 select has_table('public', 'donation_items', 'existe donation_items');
 select has_view('public', 'donation_catalog', 'existe la vista pública del catálogo');
 select has_type('public', 'donation_unit', 'existe el enum donation_unit');
+select has_type('public', 'donation_item_category', 'existe el enum de categoría del catálogo');
+select has_column('public', 'donation_items', 'category', 'cada ítem tiene categoría');
+select col_not_null('public', 'donation_items', 'category', 'la categoría no puede faltar');
+select has_column('public', 'donation_catalog', 'category', 'la vista pública incluye la categoría');
+select ok(
+  'metro_cubico'::public.donation_unit = 'metro_cubico',
+  'metro_cubico es una unidad del catálogo'
+);
 
 select col_is_pk(
   'public', 'donation_items', 'id',

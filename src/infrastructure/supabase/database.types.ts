@@ -218,6 +218,7 @@ export type Database = {
         Row: {
           budget_item_id: string | null;
           campaign_id: string;
+          category: Database["public"]["Enums"]["donation_item_category"];
           created_at: string;
           currency: string | null;
           description: string | null;
@@ -236,6 +237,7 @@ export type Database = {
         Insert: {
           budget_item_id?: string | null;
           campaign_id: string;
+          category?: Database["public"]["Enums"]["donation_item_category"];
           created_at?: string;
           currency?: string | null;
           description?: string | null;
@@ -254,6 +256,7 @@ export type Database = {
         Update: {
           budget_item_id?: string | null;
           campaign_id?: string;
+          category?: Database["public"]["Enums"]["donation_item_category"];
           created_at?: string;
           currency?: string | null;
           description?: string | null;
@@ -929,6 +932,7 @@ export type Database = {
         Row: {
           budget_item_id: string | null;
           campaign_id: string | null;
+          category: Database["public"]["Enums"]["donation_item_category"] | null;
           description: string | null;
           fulfilled_quantity: number | null;
           id: string | null;
@@ -942,6 +946,7 @@ export type Database = {
         Insert: {
           budget_item_id?: string | null;
           campaign_id?: string | null;
+          category?: Database["public"]["Enums"]["donation_item_category"] | null;
           description?: string | null;
           fulfilled_quantity?: number | null;
           id?: string | null;
@@ -955,6 +960,7 @@ export type Database = {
         Update: {
           budget_item_id?: string | null;
           campaign_id?: string | null;
+          category?: Database["public"]["Enums"]["donation_item_category"] | null;
           description?: string | null;
           fulfilled_quantity?: number | null;
           id?: string | null;
@@ -1115,7 +1121,21 @@ export type Database = {
     Enums: {
       app_role: "auditor" | "editor" | "admin" | "owner";
       campaign_status: "draft" | "active" | "paused" | "completed";
-      donation_unit: "unidad" | "metro" | "metro_cuadrado" | "bolsa" | "litro" | "juego";
+      donation_item_category:
+        | "materiales"
+        | "aberturas"
+        | "instalaciones"
+        | "electrodomesticos"
+        | "muebles"
+        | "ajuar";
+      donation_unit:
+        | "unidad"
+        | "metro"
+        | "metro_cuadrado"
+        | "bolsa"
+        | "litro"
+        | "juego"
+        | "metro_cubico";
       expense_category:
         | "materiales"
         | "mano_de_obra"
@@ -1252,7 +1272,23 @@ export const Constants = {
     Enums: {
       app_role: ["auditor", "editor", "admin", "owner"],
       campaign_status: ["draft", "active", "paused", "completed"],
-      donation_unit: ["unidad", "metro", "metro_cuadrado", "bolsa", "litro", "juego"],
+      donation_item_category: [
+        "materiales",
+        "aberturas",
+        "instalaciones",
+        "electrodomesticos",
+        "muebles",
+        "ajuar",
+      ],
+      donation_unit: [
+        "unidad",
+        "metro",
+        "metro_cuadrado",
+        "bolsa",
+        "litro",
+        "juego",
+        "metro_cubico",
+      ],
       expense_category: [
         "materiales",
         "mano_de_obra",

@@ -158,9 +158,18 @@ export const catalogSchema = pageSchema.extend({
     unidad: unitCopy,
     metro: unitCopy,
     metro_cuadrado: unitCopy,
+    metro_cubico: unitCopy,
     bolsa: unitCopy,
     litro: unitCopy,
     juego: unitCopy,
+  }),
+  categories: z.object({
+    materiales: z.string().min(1),
+    aberturas: z.string().min(1),
+    instalaciones: z.string().min(1),
+    electrodomesticos: z.string().min(1),
+    muebles: z.string().min(1),
+    ajuar: z.string().min(1),
   }),
 });
 

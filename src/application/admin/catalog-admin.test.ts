@@ -11,6 +11,7 @@ const chapas = {
   title: "Chapas del techo",
   unit: "unidad",
   neededQuantity: "40",
+  category: "materiales",
   currency: "ARS",
 };
 

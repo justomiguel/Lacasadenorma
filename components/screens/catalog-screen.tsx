@@ -6,11 +6,13 @@ import { WallPreview } from "@/components/catalog/wall-preview";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
+import { SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { keepStaleOnError } from "@/src/application/result";
 import { getCatalog } from "@/src/application/use-cases/get-catalog";
 import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
+import { groupCatalogByCategory } from "@/src/domain/catalog";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -67,15 +69,26 @@ export async function CatalogScreen({
             <div>
               {conflictId === null ? null : <ConflictNotice copy={catalog} />}
               <CatalogFocus itemId={focusId} />
-              {result.data.map((item, index) => (
-                <CatalogItem
-                  key={item.id}
-                  item={item}
-                  copy={catalog}
-                  account={account}
-                  locale={locale}
-                  priority={index === 0}
-                />
+              {groupCatalogByCategory(result.data).map((group, groupIndex) => (
+                <section
+                  key={group.category}
+                  className={groupIndex === 0 ? undefined : "mt-3xl"}
+                >
+                  <SectionHeading
+                    title={catalog.categories[group.category]}
+                    id={group.category}
+                  />
+                  {group.items.map((item, index) => (
+                    <CatalogItem
+                      key={item.id}
+                      item={item}
+                      copy={catalog}
+                      account={account}
+                      locale={locale}
+                      priority={group.category === "materiales" && index === 0}
+                    />
+                  ))}
+                </section>
               ))}
             </div>
           )}

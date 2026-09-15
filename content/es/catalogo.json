@@ -25,8 +25,17 @@
     "unidad": { "one": "unidad", "other": "unidades" },
     "metro": { "one": "metro", "other": "metros" },
     "metro_cuadrado": { "one": "metro cuadrado", "other": "metros cuadrados" },
+    "metro_cubico": { "one": "metro cúbico", "other": "metros cúbicos" },
     "bolsa": { "one": "bolsa", "other": "bolsas" },
     "litro": { "one": "litro", "other": "litros" },
     "juego": { "one": "juego", "other": "juegos" }
+  },
+  "categories": {
+    "materiales": "Materiales",
+    "aberturas": "Aberturas",
+    "instalaciones": "Instalaciones",
+    "electrodomesticos": "Electrodomésticos",
+    "muebles": "Muebles",
+    "ajuar": "Ajuar y lo cotidiano"
   }
 }

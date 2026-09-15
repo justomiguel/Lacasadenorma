@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { DONATION_UNITS } from "@/src/domain/entities";
+import { DONATION_ITEM_CATEGORIES, DONATION_UNITS } from "@/src/domain/entities";
 import { formatMoney } from "@/src/domain/money";
 
 import { perform, type AdminDeps, type AdminResult } from "./core";
@@ -30,6 +30,7 @@ const saveSchema = z
     title: requiredText("el ítem", 140),
     description: optionalText(500),
     unit: z.enum(DONATION_UNITS, { error: "Elegí la unidad." }),
+    category: z.enum(DONATION_ITEM_CATEGORIES, { error: "Elegí la categoría." }),
     neededQuantity: positiveInt("cuántas hacen falta"),
     budgetItemId: optionalUuid,
     amount: z.string().optional(),
@@ -98,6 +99,7 @@ export async function saveDonationItem(
           title: data.title,
           description: data.description,
           unit: data.unit,
+          category: data.category,
           neededQuantity: data.neededQuantity,
           budgetItemId: data.budgetItemId,
           estimatedValue: data.money,

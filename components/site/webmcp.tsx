@@ -158,7 +158,7 @@ export const TOOLS: readonly ToolSpec[] = [
     name: "get_donation_catalog",
     path: "donation-catalog",
     description:
-      "Devuelve los ítems publicados de lo que le falta a la casa: título, descripción, unidad, cantidad necesaria y cantidad que todavía falta. No incluye nombres de quienes donan, ni el valor estimado, ni una forma de reservar.",
+      "Devuelve los ítems publicados de lo que le falta a la casa: categoría, título, descripción, unidad, cantidad necesaria y cantidad que todavía falta. No incluye nombres de quienes donan, ni el valor estimado, ni una forma de reservar.",
     inputSchema: EMPTY_SCHEMA,
   },
 ];

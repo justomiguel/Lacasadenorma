@@ -51,7 +51,7 @@ transporte.
 | `get_reconstruction_progress` | Hitos con estado y fecha, completados sobre total, rubros como % de lo cotizado | `/api/public/reconstruction-progress` |
 | `get_norma_story` | Nombre, rol, lugar y el relato publicado | `/api/public/norma-story` |
 | `get_transparency_summary` | Composición de lo recibido, gasto por categoría en %, cantidad de comprobantes | `/api/public/transparency-summary` |
-| `get_donation_catalog` | Qué le falta a la casa: título, unidad, necesarias y cuánto falta. Sin nombres, sin valor estimado, sin reservar | `/api/public/donation-catalog` |
+| `get_donation_catalog` | Qué le falta a la casa: categoría, título, unidad, necesarias y cuánto falta. Sin nombres, sin valor estimado, sin reservar | `/api/public/donation-catalog` |
 
 El slug del endpoint es el nombre sin `get_` y con guiones, derivado en la ruta. Un test compara los
 slugs contra el registro en las dos direcciones: una capacidad sin endpoint sería invisible, y un

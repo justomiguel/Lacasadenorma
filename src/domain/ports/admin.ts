@@ -4,6 +4,7 @@ import type {
   Campaign,
   ContributionAdminRecord,
   DonationItemAdminRecord,
+  DonationItemCategory,
   DonationUnit,
   DonorAccountAdminRecord,
   ExpenseAdminRecord,
@@ -167,6 +168,7 @@ export interface AdminCatalogPort {
     title: string;
     description: string | null;
     unit: DonationUnit;
+    category: DonationItemCategory;
     neededQuantity: number;
     budgetItemId: string | null;
     estimatedValue: Money | null;

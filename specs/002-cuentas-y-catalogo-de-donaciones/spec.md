@@ -288,6 +288,10 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
   la interfaz lo omite en lugar de estimarlo.
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
+- **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
+  (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
+  MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
+  arena, ripio y similares.
 
 **Reservas**
 

@@ -55,7 +55,7 @@ export function CatalogItem({
           priority={priority}
         />
       )}
-      <h2 className="mt-lg font-display text-heading">{item.title}</h2>
+      <h3 className="mt-lg font-display text-subheading font-medium">{item.title}</h3>
       {item.description === null ? null : (
         <p className="mt-sm max-w-measure text-body text-ink-muted">{item.description}</p>
       )}

@@ -6,6 +6,8 @@ import {
   canClaim,
   estimatedValueOf,
   isDonationUnit,
+  isDonationItemCategory,
+  groupCatalogByCategory,
 } from "./catalog";
 import { DomainError } from "./errors";
 import { money } from "./money";
@@ -79,6 +81,33 @@ describe("isDonationUnit", () => {
   it("acepta las unidades del catálogo y rechaza el resto", () => {
     expect(isDonationUnit("unidad")).toBe(true);
     expect(isDonationUnit("metro_cuadrado")).toBe(true);
+    expect(isDonationUnit("metro_cubico")).toBe(true);
     expect(isDonationUnit("kilo")).toBe(false);
+  });
+});
+
+describe("isDonationItemCategory", () => {
+  it("acepta el enum cerrado y rechaza una categoría libre", () => {
+    expect(isDonationItemCategory("materiales")).toBe(true);
+    expect(isDonationItemCategory("electrodomesticos")).toBe(true);
+    expect(isDonationItemCategory("otros")).toBe(false);
+  });
+});
+
+describe("groupCatalogByCategory", () => {
+  it("agrupa en el orden de la obra y omite las categorías vacías", () => {
+    const groups = groupCatalogByCategory([
+      { category: "ajuar", sortOrder: 2, title: "Toallas" },
+      { category: "materiales", sortOrder: 20, title: "Arena" },
+      { category: "materiales", sortOrder: 10, title: "Ladrillos" },
+      { category: "electrodomesticos", sortOrder: 1, title: "Heladera" },
+    ]);
+
+    expect(groups.map((group) => group.category)).toEqual([
+      "materiales",
+      "electrodomesticos",
+      "ajuar",
+    ]);
+    expect(groups[0]?.items.map((item) => item.title)).toEqual(["Ladrillos", "Arena"]);
   });
 });

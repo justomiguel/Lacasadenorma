@@ -1,4 +1,4 @@
-import { isDonationUnit, remaining } from "@/src/domain/catalog";
+import { isDonationItemCategory, isDonationUnit, remaining } from "@/src/domain/catalog";
 import type { DonationItem } from "@/src/domain/entities";
 import type { CatalogRepository } from "@/src/domain/ports/repositories";
 
@@ -18,7 +18,7 @@ import type { ServerSupabaseClient } from "./server-client";
  */
 
 const CATALOG_COLUMNS =
-  "id, campaign_id, budget_item_id, title, description, unit, needed_quantity, remaining_quantity, fulfilled_quantity, photo_media_id, sort_order";
+  "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, remaining_quantity, fulfilled_quantity, photo_media_id, sort_order";
 
 type CatalogRow = Database["public"]["Views"]["donation_catalog"]["Row"];
 
@@ -87,6 +87,7 @@ function toDonationItem(
     row.campaign_id === null ||
     row.title === null ||
     row.unit === null ||
+    row.category === null ||
     row.needed_quantity === null ||
     row.remaining_quantity === null ||
     row.fulfilled_quantity === null ||
@@ -98,6 +99,12 @@ function toDonationItem(
   if (!isDonationUnit(row.unit)) {
     throw new MappingError(
       `donation_catalog.${row.id}: unidad desconocida "${String(row.unit)}".`,
+    );
+  }
+
+  if (!isDonationItemCategory(row.category)) {
+    throw new MappingError(
+      `donation_catalog.${row.id}: categoría desconocida "${String(row.category)}".`,
     );
   }
 
@@ -114,6 +121,7 @@ function toDonationItem(
     title: row.title,
     description: row.description,
     unit: row.unit,
+    category: row.category,
     neededQuantity: row.needed_quantity,
     remainingQuantity: remaining(quantities),
     fulfilledQuantity: row.fulfilled_quantity,

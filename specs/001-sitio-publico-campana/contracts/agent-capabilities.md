@@ -122,7 +122,7 @@ Qué le falta a la casa, en especie.
 
 **Entrada**: ninguna.
 
-**Salida**: `{ items: [{ title, description, unit, needed, remaining }], updatedAt }`.
+**Salida**: `{ items: [{ title, description, unit, category, needed, remaining }], updatedAt }`.
 
 No incluye nombres de donantes, ni el valor estimado, ni una forma de reservar (FR-242). Corre el
 mismo caso de uso que `/catalogo`.

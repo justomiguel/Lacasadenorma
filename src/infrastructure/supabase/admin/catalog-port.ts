@@ -1,15 +1,20 @@
-import { estimatedValueOf, remaining } from "@/src/domain/catalog";
+import {
+  estimatedValueOf,
+  isDonationItemCategory,
+  remaining,
+} from "@/src/domain/catalog";
 import type { DonationItemAdminRecord } from "@/src/domain/entities";
 import { CatalogOversubscribedError } from "@/src/domain/errors";
 import type { AdminCatalogPort } from "@/src/domain/ports/admin";
 
 import { loadPhotos } from "../catalog-repository";
 import type { Database } from "../database.types";
+import { MappingError } from "../mappers";
 import type { ServerSupabaseClient } from "../server-client";
 import { QueryError } from "./query";
 
 const ITEM_COLUMNS =
-  "id, campaign_id, budget_item_id, title, description, unit, needed_quantity, reserved_quantity, fulfilled_quantity, estimated_unit_amount_minor, currency, photo_media_id, sort_order, published_at";
+  "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, reserved_quantity, fulfilled_quantity, estimated_unit_amount_minor, currency, photo_media_id, sort_order, published_at";
 
 type ItemRow = Pick<
   Database["public"]["Tables"]["donation_items"]["Row"],
@@ -19,6 +24,7 @@ type ItemRow = Pick<
   | "title"
   | "description"
   | "unit"
+  | "category"
   | "needed_quantity"
   | "reserved_quantity"
   | "fulfilled_quantity"
@@ -41,6 +47,12 @@ export function createCatalogPort(client: ServerSupabaseClient): AdminCatalogPor
     );
 
     return rows.map((row) => {
+      if (!isDonationItemCategory(row.category)) {
+        throw new MappingError(
+          `donation_items.${row.id}: categoría desconocida "${String(row.category)}".`,
+        );
+      }
+
       const quantities = {
         needed: row.needed_quantity,
         reserved: row.reserved_quantity,
@@ -54,6 +66,7 @@ export function createCatalogPort(client: ServerSupabaseClient): AdminCatalogPor
         title: row.title,
         description: row.description,
         unit: row.unit,
+        category: row.category,
         neededQuantity: row.needed_quantity,
         reservedQuantity: row.reserved_quantity,
         fulfilledQuantity: row.fulfilled_quantity,
@@ -89,6 +102,7 @@ export function createCatalogPort(client: ServerSupabaseClient): AdminCatalogPor
         title: input.title,
         description: input.description,
         unit: input.unit,
+        category: input.category,
         needed_quantity: input.neededQuantity,
         budget_item_id: input.budgetItemId,
         estimated_unit_amount_minor: input.estimatedValue?.amountMinor ?? null,

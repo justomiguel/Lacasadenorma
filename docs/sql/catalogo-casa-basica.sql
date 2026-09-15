@@ -1,4 +1,4 @@
--- Catálogo básico de una casa para una persona que vive sola.
+-- Catálogo de una casa de 60 m² para una persona que vive sola.
 --
 -- Producción: campaña `casa-de-norma`. Idempotente por título. Sin montos
 -- (estimated_unit_amount_minor y currency quedan nulos: D3 / ADR-031 / ADR-040).
@@ -8,6 +8,29 @@
 -- carga desde `/admin/catalogo`; no se inventa una ilustración.
 --
 -- No corre en el fixture local: ese entorno tiene su propio ítem de prueba.
+--
+-- ── Cálculo de mampostería y obra gris ──────────────────────────────────────
+-- Casa de 60 m², planta 6 × 10 m, altura de muro 2,60 m.
+-- Perímetro 32 m → muros exteriores brutos 83 m². Vanos ~10 m² → netos 73 m².
+-- Tabiques interiores ~50 m². Superficie de muro a cubrir ~123 m².
+--
+-- Ladrillo común a soga (12 cm): 60 u/m² (Red Materiales / corralones AR).
+-- 3000 comunes ÷ 60 = 50 m² de muro. Es el número pedido para simples.
+--
+-- Ladrillo hueco 18×18×33: 15 u/m² (cara 18×33, junta ~1,5 cm).
+-- Equivalente de esos 50 m²: 50 × 15 = 750. +8 % de rotura → 800 huecos.
+-- Si la obra va en hueco, estos 800 cubren la misma superficie que los 3000
+-- comunes. Quedan los dos cargados para que se pueda elegir sistema.
+--
+-- Cal, cemento y arena de la casa de 60 m² (no sólo de esos 50 m² de muro):
+-- contrapiso 10 cm 60 m² (APU Colegio de Arquitectos de Salta: 23,4 kg
+-- cemento/m², 0,05 m³ arena/m², 0,08 m³ ripio/m²) + carpeta + revoque
+-- exterior 73 m² e interior ~173 m² (0,03 m³ arena, 3,10 kg cal, 1,70–4,85 kg
+-- cemento por m²) + asiento de mampostería. Con 10 % de desperdicio, redondeado:
+--   cemento 55 bolsas de 50 kg
+--   cal hidratada 40 bolsas de 25 kg
+--   arena 13 m³
+--   ripio 5 m³ (el contrapiso lo pide; sin ripio no hay piso)
 
 do $$
 begin
@@ -17,138 +40,216 @@ begin
   end if;
 end $$;
 
-with items (
-  sort_order, title, description, unit, needed_quantity
-) as (
-  values
-    -- Cocina
-    (10, 'Cocina',
-     'Anafe con horno, a gas o eléctrico, para cocinar todos los días.',
-     'unidad'::public.donation_unit, 1),
-    (20, 'Heladera',
-     'Heladera con freezer chico. Formosa es calor: sin esto no se guarda comida.',
-     'unidad'::public.donation_unit, 1),
-    (30, 'Mesa de cocina',
-     'Una mesa para una persona, con lugar para que se siente alguien más.',
-     'unidad'::public.donation_unit, 1),
-    (40, 'Sillas',
-     'Dos sillas: una para quien vive ahí y otra para una visita.',
-     'unidad'::public.donation_unit, 2),
-    (50, 'Juego de ollas',
-     'Ollas de distintos tamaños para agua, guiso y arroz.',
-     'juego'::public.donation_unit, 1),
-    (60, 'Sartenes',
-     'Dos sartenes: una chica y una más grande.',
-     'unidad'::public.donation_unit, 2),
-    (70, 'Vajilla',
-     'Platos playos, hondos y tazas para una persona, con un juego de más.',
-     'juego'::public.donation_unit, 1),
-    (80, 'Cubiertos',
-     'Cuchillos, tenedores y cucharas para el día a día.',
-     'juego'::public.donation_unit, 1),
-    (90, 'Vasos y jarra',
-     'Vasos y una jarra para agua. En el calor se toma todo el tiempo.',
-     'juego'::public.donation_unit, 1),
-    (100, 'Utensilios de cocina',
-     'Cuchillo de cocina, cuchara de palo, colador, abrelatas.',
-     'juego'::public.donation_unit, 1),
-    (110, 'Tabla para picar',
-     'Una tabla de cocina, no la mesada.',
-     'unidad'::public.donation_unit, 1),
+drop table if exists catalog_seed;
+create temp table catalog_seed (
+  sort_order integer not null,
+  category public.donation_item_category not null,
+  title text not null,
+  description text not null,
+  unit public.donation_unit not null,
+  needed_quantity integer not null
+);
 
-    -- Dormitorio
-    (120, 'Cama plaza y media',
-     'Estructura de cama plaza y media. Sin esto no hay dónde dormir.',
-     'unidad'::public.donation_unit, 1),
-    (130, 'Colchón plaza y media',
-     'Colchón plaza y media. La cama sola no alcanza.',
-     'unidad'::public.donation_unit, 1),
-    (140, 'Almohadas',
-     'Dos almohadas. Una se lava, la otra se usa.',
-     'unidad'::public.donation_unit, 2),
-    (150, 'Sábanas plaza y media',
-     'Dos juegos: uno en la cama y otro en el tender.',
-     'juego'::public.donation_unit, 2),
-    (160, 'Acolchado',
-     'Un acolchado o frazada liviana. De noche baja la temperatura.',
-     'unidad'::public.donation_unit, 1),
-    (170, 'Ropero',
-     'Un ropero o placard chico para la ropa. Sin esto queda en bolsas.',
-     'unidad'::public.donation_unit, 1),
+insert into catalog_seed (
+  sort_order, category, title, description, unit, needed_quantity
+) values
+  -- Materiales
+  (10, 'materiales', 'Ladrillos comunes',
+   '3.000 ladrillos simples (comunes) a soga. A 60 u/m² cubren unos 50 m² de muro de 12 cm. Es el cálculo pedido para esta casa.',
+   'unidad', 3000),
+  (20, 'materiales', 'Ladrillos huecos 18x18x33',
+   '800 huecos de 18×18×33. Equivalente de esos 3.000 comunes: 15 u/m² cubren los mismos 50 m², con 8 % de rotura. Si la obra va en hueco, con estos alcanza para esa superficie.',
+   'unidad', 800),
+  (30, 'materiales', 'Cemento',
+   '55 bolsas de 50 kg para una casa de 60 m²: contrapiso, carpeta, revoques y asiento de ladrillo. No es un precio; es el cómputo de bolsas.',
+   'bolsa', 55),
+  (40, 'materiales', 'Cal hidratada',
+   '40 bolsas de 25 kg. Va en revoques y en el mortero de asiento. Dosificación de obra húmeda argentina.',
+   'bolsa', 40),
+  (50, 'materiales', 'Arena',
+   '13 m³ de arena mediana lavada: contrapiso, revoques y mampostería de 60 m².',
+   'metro_cubico', 13),
+  (60, 'materiales', 'Ripio',
+   '5 m³ para el contrapiso de 10 cm de 60 m². Sin esto no hay piso.',
+   'metro_cubico', 5),
+  (70, 'materiales', 'Hidrófugo',
+   '10 litros para el revoque exterior. El agua de lluvia no puede pasar al ladrillo.',
+   'litro', 10),
+  (80, 'materiales', 'Chapas de techo',
+   '70 m² de chapa. La casa tiene 60 m² cubiertos; el resto es recubrimiento y pendiente.',
+   'metro_cuadrado', 70),
+  (90, 'materiales', 'Cerámico de piso',
+   '70 m² de cerámico. 60 m² de planta más recortes y desperdicio.',
+   'metro_cuadrado', 70),
+  (100, 'materiales', 'Pintura',
+   '40 litros, látex interior y exterior. Dos manos sobre muros y cielorraso de 60 m².',
+   'litro', 40),
 
-    -- Baño
-    (180, 'Calefón o termotanque',
-     'Agua caliente para bañarse. En invierno el agua de red sale fría.',
-     'unidad'::public.donation_unit, 1),
-    (190, 'Toallas',
-     'Toallas de baño. Alcanzan para rotar mientras se secan.',
-     'unidad'::public.donation_unit, 4),
-    (200, 'Cortina de baño',
-     'Cortina para que el agua no inunde el piso.',
-     'unidad'::public.donation_unit, 1),
-    (210, 'Espejo de baño',
-     'Un espejo chico sobre la pileta.',
-     'unidad'::public.donation_unit, 1),
+  -- Aberturas
+  (110, 'aberturas', 'Puerta de entrada',
+   'Una puerta de entrada, con marco y cerradura. Sin esto la casa no cierra.',
+   'unidad', 1),
+  (120, 'aberturas', 'Puertas interiores',
+   'Tres puertas: dormitorio, baño y el vano que separe la cocina.',
+   'unidad', 3),
+  (130, 'aberturas', 'Ventanas',
+   'Cuatro ventanas. Luz y aire en Formosa no son un lujo.',
+   'unidad', 4),
 
-    -- Estar
-    (220, 'Sillón de dos cuerpos',
-     'Un lugar para sentarse que no sea la cama ni una silla de cocina.',
-     'unidad'::public.donation_unit, 1),
-    (230, 'Mesa ratona',
-     'Una mesa baja para un vaso, un plato, las llaves.',
-     'unidad'::public.donation_unit, 1),
-    (240, 'Cortinas',
-     'Cortinas para las ventanas: sombra de día, privacidad de noche.',
-     'juego'::public.donation_unit, 1),
+  -- Instalaciones
+  (200, 'instalaciones', 'Tanque de agua',
+   'Un tanque de 500 litros o el que entre en la losa. Sin reserva no hay agua cuando baja la presión.',
+   'unidad', 1),
+  (210, 'instalaciones', 'Inodoro',
+   'Inodoro con depósito. El baño no está armado sin esto.',
+   'unidad', 1),
+  (220, 'instalaciones', 'Lavatorio',
+   'Un lavatorio con pie o de colgar, para el baño.',
+   'unidad', 1),
+  (230, 'instalaciones', 'Pileta de cocina',
+   'Pileta simple de acero o loza, con escurridor.',
+   'unidad', 1),
+  (240, 'instalaciones', 'Grifería de baño',
+   'Grifería de ducha y de lavatorio. Un juego que cierre bien.',
+   'juego', 1),
+  (250, 'instalaciones', 'Caños de agua',
+   '40 metros de caño de agua (termofusión o el que use la obra) para cocina y baño.',
+   'metro', 40),
+  (260, 'instalaciones', 'Caños de desagüe',
+   '20 metros de desagüe cloacal y de pileta.',
+   'metro', 20),
+  (270, 'instalaciones', 'Cable eléctrico',
+   '100 metros de cable para luces y tomas de una casa de 60 m².',
+   'metro', 100),
+  (280, 'instalaciones', 'Llaves y tomacorrientes',
+   'Veinte: luces, heladera, lavarropas, ventiladores, cocina.',
+   'unidad', 20),
+  (290, 'instalaciones', 'Tablero eléctrico',
+   'Un tablero chico con termomagnéticas. No se conecta una casa directo al medidor.',
+   'unidad', 1),
 
-    -- Clima (Formosa)
-    (250, 'Ventiladores',
-     'Dos ventiladores de pie o de techo. El calor de Formosa no es un detalle.',
-     'unidad'::public.donation_unit, 2),
+  -- Electrodomésticos
+  (300, 'electrodomesticos', 'Cocina',
+   'Anafe con horno, a gas o eléctrico, para cocinar todos los días.',
+   'unidad', 1),
+  (310, 'electrodomesticos', 'Heladera',
+   'Heladera con freezer chico. Formosa es calor: sin esto no se guarda comida.',
+   'unidad', 1),
+  (320, 'electrodomesticos', 'Lavarropas',
+   'Uno, aunque sea semiautomático. Lavar a mano todo el tiempo no es una casa armada.',
+   'unidad', 1),
+  (330, 'electrodomesticos', 'Ventiladores',
+   'Dos ventiladores de pie o de techo. El calor de Formosa no es un detalle.',
+   'unidad', 2),
+  (340, 'electrodomesticos', 'Calefón o termotanque',
+   'Agua caliente para bañarse. En invierno el agua de red sale fría.',
+   'unidad', 1),
+  (350, 'electrodomesticos', 'Plancha',
+   'Una plancha chica.',
+   'unidad', 1),
 
-    -- Lavado y limpieza
-    (260, 'Lavarropas',
-     'Uno, aunque sea semiautomático. Lavar a mano todo el tiempo no es una casa armada.',
-     'unidad'::public.donation_unit, 1),
-    (270, 'Tender',
-     'Tender para secar la ropa. Al sol, afuera.',
-     'unidad'::public.donation_unit, 1),
-    (280, 'Balde y lampazo',
-     'Balde, palangana y lampazo para el piso y la ropa a mano.',
-     'juego'::public.donation_unit, 1),
-    (290, 'Escoba y palita',
-     'Escoba, palita y tacho de basura de cocina.',
-     'juego'::public.donation_unit, 1),
+  -- Muebles
+  (400, 'muebles', 'Cama plaza y media',
+   'Estructura de cama plaza y media. Sin esto no hay dónde dormir.',
+   'unidad', 1),
+  (410, 'muebles', 'Colchón plaza y media',
+   'Colchón plaza y media. La cama sola no alcanza.',
+   'unidad', 1),
+  (420, 'muebles', 'Ropero',
+   'Un ropero o placard chico para la ropa. Sin esto queda en bolsas.',
+   'unidad', 1),
+  (430, 'muebles', 'Mesa de luz',
+   'Una mesa de luz al lado de la cama. El teléfono y un vaso no van al piso.',
+   'unidad', 1),
+  (440, 'muebles', 'Mesa de cocina',
+   'Una mesa para una persona, con lugar para que se siente alguien más.',
+   'unidad', 1),
+  (450, 'muebles', 'Sillas',
+   'Dos sillas: una para quien vive ahí y otra para una visita.',
+   'unidad', 2),
+  (460, 'muebles', 'Sillón de dos cuerpos',
+   'Un lugar para sentarse que no sea la cama ni una silla de cocina.',
+   'unidad', 1),
+  (470, 'muebles', 'Mesa ratona',
+   'Una mesa baja para un vaso, un plato, las llaves.',
+   'unidad', 1),
 
-    -- Luz y corriente
-    (300, 'Lámparas',
-     'Focos para las habitaciones. Una casa a oscuras no se usa de noche.',
-     'unidad'::public.donation_unit, 6),
-    (310, 'Zapatillas eléctricas',
-     'Dos zapatillas para heladera, ventilador, celular, lamparita.',
-     'unidad'::public.donation_unit, 2),
+  -- Ajuar
+  (500, 'ajuar', 'Juego de ollas',
+   'Ollas de distintos tamaños para agua, guiso y arroz.',
+   'juego', 1),
+  (510, 'ajuar', 'Sartenes',
+   'Dos sartenes: una chica y una más grande.',
+   'unidad', 2),
+  (520, 'ajuar', 'Vajilla',
+   'Platos playos, hondos y tazas para una persona, con un juego de más.',
+   'juego', 1),
+  (530, 'ajuar', 'Cubiertos',
+   'Cuchillos, tenedores y cucharas para el día a día.',
+   'juego', 1),
+  (540, 'ajuar', 'Vasos y jarra',
+   'Vasos y una jarra para agua. En el calor se toma todo el tiempo.',
+   'juego', 1),
+  (550, 'ajuar', 'Utensilios de cocina',
+   'Cuchillo de cocina, cuchara de palo, colador, abrelatas.',
+   'juego', 1),
+  (560, 'ajuar', 'Tabla para picar',
+   'Una tabla de cocina, no la mesada.',
+   'unidad', 1),
+  (570, 'ajuar', 'Almohadas',
+   'Dos almohadas. Una se lava, la otra se usa.',
+   'unidad', 2),
+  (580, 'ajuar', 'Sábanas plaza y media',
+   'Dos juegos: uno en la cama y otro en el tender.',
+   'juego', 2),
+  (590, 'ajuar', 'Acolchado',
+   'Un acolchado o frazada liviana. De noche baja la temperatura.',
+   'unidad', 1),
+  (600, 'ajuar', 'Toallas',
+   'Toallas de baño. Alcanzan para rotar mientras se secan.',
+   'unidad', 4),
+  (610, 'ajuar', 'Cortina de baño',
+   'Cortina para que el agua no inunde el piso.',
+   'unidad', 1),
+  (620, 'ajuar', 'Espejo de baño',
+   'Un espejo chico sobre la pileta.',
+   'unidad', 1),
+  (630, 'ajuar', 'Cortinas',
+   'Cortinas para las ventanas: sombra de día, privacidad de noche.',
+   'juego', 1),
+  (640, 'ajuar', 'Tender',
+   'Tender para secar la ropa. Al sol, afuera.',
+   'unidad', 1),
+  (650, 'ajuar', 'Balde y lampazo',
+   'Balde, palangana y lampazo para el piso y la ropa a mano.',
+   'juego', 1),
+  (660, 'ajuar', 'Escoba y palita',
+   'Escoba, palita y tacho de basura de cocina.',
+   'juego', 1),
+  (670, 'ajuar', 'Lámparas',
+   'Focos para las habitaciones. Una casa a oscuras no se usa de noche.',
+   'unidad', 6),
+  (680, 'ajuar', 'Zapatillas eléctricas',
+   'Dos zapatillas para heladera, ventilador, celular, lamparita.',
+   'unidad', 2),
+  (690, 'ajuar', 'Perchas',
+   'Perchas para el ropero. Sin esto la ropa se apila.',
+   'juego', 1);
 
-    -- Ropa y arreglo
-    (320, 'Plancha',
-     'Una plancha chica.',
-     'unidad'::public.donation_unit, 1),
-    (330, 'Perchas',
-     'Perchas para el ropero. Sin esto la ropa se apila.',
-     'juego'::public.donation_unit, 1)
-)
 insert into public.donation_items (
-  campaign_id, title, description, unit, needed_quantity, sort_order, published_at
+  campaign_id, title, description, unit, category, needed_quantity, sort_order, published_at
 )
 select
   c.id,
   i.title,
   i.description,
   i.unit,
+  i.category,
   i.needed_quantity,
   i.sort_order,
   now()
 from public.campaigns c
-cross join items i
+cross join catalog_seed i
 where c.slug = 'casa-de-norma'
   and not exists (
     select 1
@@ -157,7 +258,25 @@ where c.slug = 'casa-de-norma'
        and d.title = i.title
   );
 
-select title, unit, needed_quantity, sort_order, published_at is not null as publicado
-  from public.donation_items
- where campaign_id = (select id from public.campaigns where slug = 'casa-de-norma')
- order by sort_order;
+update public.donation_items d
+set
+  category = i.category,
+  description = i.description,
+  unit = i.unit,
+  needed_quantity = greatest(i.needed_quantity, d.reserved_quantity + d.fulfilled_quantity),
+  sort_order = i.sort_order
+from catalog_seed i
+join public.campaigns c on c.slug = 'casa-de-norma'
+where d.campaign_id = c.id
+  and d.title = i.title;
+
+select
+  category,
+  title,
+  unit,
+  needed_quantity,
+  sort_order,
+  published_at is not null as publicado
+from public.donation_items
+where campaign_id = (select id from public.campaigns where slug = 'casa-de-norma')
+order by sort_order;
