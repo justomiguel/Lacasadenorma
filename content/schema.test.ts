@@ -138,11 +138,16 @@ describe("contenido publicado", () => {
     expect(help.contact.photo.url).toBe("/fotos/justo-miguel.jpg");
     expect(help.contact.photo.width).toBe(1220);
     expect(help.contact.photo.height).toBe(1454);
+    expect(help.contact.mapsUrl).toContain("google.com/maps");
+    expect(help.contact.mapsUrl).toContain("query=");
+    expect(help.contact.mapsUrl).toMatch(/Riacho/);
+    expect(help.contact.mapsUrl).not.toMatch(/\/@-?\d/);
 
     const en = getContent("en").help.contact;
 
     expect(en.phoneTel).toBe(help.contact.phoneTel);
     expect(en.photo.url).toBe(help.contact.photo.url);
+    expect(en.mapsUrl).toBe(help.contact.mapsUrl);
 
     const publicado = JSON.stringify([
       help,

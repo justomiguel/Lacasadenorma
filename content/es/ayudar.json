@@ -1,17 +1,17 @@
 {
   "title": "Cómo ayudar",
-  "lead": "Tres formas de ayudar: en el terreno, con materiales, o con un aporte.",
+  "lead": "Tres caminos. Elegí uno: ir, donar plata, o traer lo que falta.",
   "paragraphs": [],
   "afterTransfer": [
     "No hace falta avisar. Si preferís que tu aporte quede anónimo, ya lo está: no publicamos nombres ni montos individuales."
   ],
-  "materials": ["Cemento", "Cal", "Arena", "Chapa"],
   "contact": {
     "name": "Justo Miguel Vargas",
     "phoneDisplay": "+56 9 6578 9862",
     "phoneTel": "+56965789862",
     "email": "justomiguelvargas@gmail.com",
     "instagram": "justomiguelv",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Riacho+He+H%C3%A9%2C+Formosa%2C+Argentina",
     "photo": {
       "url": "/fotos/justo-miguel.jpg",
       "alt": "Retrato de Justo Miguel Vargas, de camisa rosa, sobre un fondo oscuro.",

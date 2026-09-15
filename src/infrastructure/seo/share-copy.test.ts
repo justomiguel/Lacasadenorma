@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { catalogMetadata } from "@/components/screens/catalog-screen";
 import { contactMetadata } from "@/components/screens/contact-screen";
+import { donateMetadata } from "@/components/screens/donate-screen";
 import { helpMetadata } from "@/components/screens/help-screen";
 import { legacyMetadata } from "@/components/screens/legacy-screen";
 import { legalMetadata } from "@/components/screens/legal-screen";
@@ -58,6 +59,7 @@ describe("shareCopy", () => {
       { path: "/catalogo", meta: catalogMetadata },
       { path: "/quienes-ayudaron", meta: wallMetadata },
       { path: "/ayudar", meta: helpMetadata },
+      { path: "/ayudar/dinero", meta: donateMetadata },
       {
         path: "/ayudar/paypal/completada",
         meta: (l) => paypalReturnMetadata(l, "completed"),

@@ -379,8 +379,9 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
    monto cuando existe, barra de progreso, monto recaudado, fecha de conciliación y avance de hitos.
    Estaban separadas por herencia del orden de las preguntas, no por una razón de lectura. Si no hay
    objetivo cargado, se muestra lo recaudado sin porcentaje.
-6. **Cómo ayudar.** Los tres países, con la cuenta del país detectado por idioma/región primero, y
-   copiado directo desde la home (SC-002: máximo tres toques).
+6. **Cómo ayudar.** Los tres caminos a la vista —ir, donar plata, traer lo que falta—, cada uno
+   un enlace. No hay pestañas ni tablero de donaciones en la home (ADR-045). Copiar un dato
+   argentino son tres toques: el CTA, Donar dinero, Copiar.
 7. **En qué se usó.** Tres cifras (recibido, gastado, saldo) y enlace a la transparencia completa.
 8. **Qué sigue.** El legado, en dos párrafos, y un solo enlace. Se dice que la fundación todavía no
    existe como organización, porque es verdad y porque decir lo contrario sería el primer dato falso
@@ -395,7 +396,10 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
 | `/norma` | La historia completa. Ensayo fotográfico. Es la página que hace que el proyecto sea de una persona, no de una causa |
 | `/que-paso` | El incendio, con respeto. Sin detalles gráficos. Termina en qué se necesita ahora, para que no cierre en la pérdida |
 | `/reconstruccion` | Qué hay que reparar, fotos del trabajo, y la última entrada del diario cuando existe (004) |
-| `/ayudar` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
+| `/ayudar` | Tres caminos a la vista: ir, donar plata, traer lo que falta (ADR-045) |
+| `/ayudar/dinero` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
+| `/contacto` | WhatsApp, correo e Instagram de Justo, y un enlace a Google Maps del pueblo |
+| `/catalogo` | Qué le falta a la casa, en especie |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |
 | `/novedades` y `/novedades/[slug]` | Diario de la obra: feed cronológico con fecha; cada entrada compartible con su propia vista previa (ADR-034) |
 | `/legado` | Fundación Norma: qué se propone, en qué estado está, y que todavía no existe como organización |

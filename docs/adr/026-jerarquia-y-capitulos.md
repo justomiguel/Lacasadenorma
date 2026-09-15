@@ -1,6 +1,7 @@
 # ADR-026 · Capítulos visibles, una sola clase de acción y las tres formas de ayudar en pestañas
 
-**Estado**: Aceptada · **Fecha**: 2026-09-13
+**Estado**: Reemplazada por ADR-032 en jerarquía, acciones y previas, y por
+ADR-045 en las tres formas de ayudar · **Fecha**: 2026-09-13
 
 Complementa ADR-025. El mockup sigue siendo la fuente de verdad para la paleta,
 la tipografía, los botones píldora, el header superpuesto y el orden del relato.

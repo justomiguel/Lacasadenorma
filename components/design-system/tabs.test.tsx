@@ -6,8 +6,8 @@ import { describe, expect, it } from "vitest";
 import { SectionTabs, type TabItem } from "./tabs";
 
 /**
- * Las tres formas de ayudar viven detrás de estas pestañas. Si el JavaScript no
- * llega, quien entró tiene que poder leer las tres igual: por eso el primer
+ * `SectionTabs` es el índice editorial de la cuenta. Si el JavaScript no llega,
+ * quien entró tiene que poder leer todos los paneles igual: por eso el primer
  * bloque mira el HTML del servidor y no el DOM ya hidratado.
  */
 

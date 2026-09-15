@@ -107,6 +107,7 @@ credenciales.
 - [x] T034 [US1] Secciones editoriales de la home según el orden de `ux.md`
 - [x] T035 [US1] Sección de apertura con retrato a sangrado y espacio reservado honesto si no hay foto
 - [x] T036 [US1] Página `/ayudar` con los tres países, instrucciones y copiado por campo
+- [x] T036b [US1] `/ayudar` es tres caminos a la vista; el dinero vive en `/ayudar/dinero` (ADR-045)
 - [x] T037 [US1] Página `/norma` con ensayo fotográfico
 - [x] T038 [US1] Página `/que-paso`, que cierra en qué se necesita ahora
 - [x] T039 [US1] Página `/reconstruccion` con rubros, hitos y avance

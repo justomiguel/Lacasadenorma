@@ -63,7 +63,7 @@ export function PaypalReturnScreen({
             {kind === "cancelled" ? (
               <HelpCta
                 origen="paypal-cancelada"
-                href={localizedHref("/ayudar", locale)}
+                href={localizedHref("/ayudar/dinero", locale)}
                 label={`${copy.cta} →`}
               />
             ) : (

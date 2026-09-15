@@ -40,7 +40,7 @@ carpetas.
 | `norma.json` | `/norma` y `/en/norma`, el capítulo de Norma en la home, y los datos estructurados | `bornOn` y `diedOn` son fechas ISO o `null`. Los capítulos y hasta tres testimonios salen de la obra conmemorativa. El PDF vive en `public/documentos/` y no se modifica |
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
-| `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
+| `ayudar.json` | `/ayudar` y `/ayudar/dinero` | `afterTransfer`: qué pasa después de transferir. `contact.mapsUrl` es el enlace a Google Maps del pueblo, no un pin del lote (ADR-045) |
 | `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla, con miniatura en Qué cuando hay foto; la ficha `/catalogo/[id]` lleva la foto completa con epígrafe. Acá van título, bajada, columnas y estados, sin prosa de introducción |
 | `catalogo-fotos.json` | Listado `/catalogo` y ficha `/catalogo/[id]` | Fotos de referencia por título (ADR-043). El archivo vive en `public/fotos/catalogo/`. El epígrafe dice que es solamente ilustrativa y que no representa el objeto real: en la ficha se lee entero; en el listado lo dice el caption de la tabla. La foto subida desde el backoffice pisa esta. El ítem del fixture también tiene entrada |
 | `quienes-ayudaron.json` | `/quienes-ayudaron` | Título, bajada y estados del muro (especie y plata). Los nombres viven en la base; acá no hay una lista de ejemplo ni prosa de introducción |

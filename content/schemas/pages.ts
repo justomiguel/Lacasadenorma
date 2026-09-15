@@ -83,8 +83,6 @@ export const reconstructionSchema = pageSchema.extend({
 export const helpSchema = pageSchema.extend({
   /** Qué hacer después de transferir. Es la parte que la gente pregunta. */
   afterTransfer: paragraphs,
-  /** Materiales útiles, sin cantidades ni precios. */
-  materials: z.array(z.string().min(1)).min(1),
   contact: z.object({
     name: z.string().min(1),
     phoneDisplay: z.string().min(1),
@@ -94,6 +92,11 @@ export const helpSchema = pageSchema.extend({
     /** Usuario de Instagram, sin @. */
     instagram: z.string().regex(/^[A-Za-z0-9._]{1,30}$/),
     photo: photoSchema,
+    /**
+     * Enlace a Google Maps del pueblo, no un pin del lote. Un lote sin
+     * verificar no se publica (ADR-045).
+     */
+    mapsUrl: z.string().url(),
   }),
   accounts: z.object({
     AR: z.object({

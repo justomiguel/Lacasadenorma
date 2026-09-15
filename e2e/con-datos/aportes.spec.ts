@@ -12,11 +12,11 @@ import { COUNTRY_NAMES } from "@/src/domain/entities";
  * contenido versionado, no de la base.
  */
 
-const { help, ui } = getContent("es");
+const { help, site, ui } = getContent("es");
 
 /**
- * El panel del país, no el de «Aportar». HelpTabs ya es un tablist, y el de
- * país vive adentro: `getByRole("tabpanel")` a secas cuenta los dos.
+ * El panel del país. `getByRole("tabpanel")` a secas alcanzaría, pero el
+ * localizador queda atado al tablist de países por si la página suma otro.
  */
 function panelDePais(page: Page) {
   return page
@@ -26,7 +26,7 @@ function panelDePais(page: Page) {
 
 test.describe("flujo 4 · elegir desde dónde aportar", () => {
   test("el selector de país es un tablist con teclado", async ({ page }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
 
@@ -56,7 +56,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
   test("Argentina y Chile muestran sus propios datos, y nada del otro", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
     const panel = panelDePais(page);
@@ -79,7 +79,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
   test("los datos que se copian llevan su acción, y los que se leen no", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const panel = panelDePais(page);
 
@@ -96,7 +96,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
   });
 
   test("Chile muestra Scotiabank con su logo", async ({ page }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
     const panel = panelDePais(page);
@@ -114,7 +114,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
   test("Mercado Pago distingue Argentina y Chile, y PayPal tiene su enlace", async ({
     page,
   }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     const paises = page.getByRole("tablist", { name: ui.home.donateTitle });
     const panel = panelDePais(page);
@@ -171,7 +171,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
 
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     for (const pais of ["AR", "CL"] as const) {
       await expect(
@@ -194,19 +194,19 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await context.close();
   });
 
-  test("desde la home se llega a los datos sin cambiar de página", async ({ page }) => {
+  test("desde la home se llega al CBU en tres toques", async ({ page }) => {
     await page.goto("/");
 
-    const seccion = page.locator("#donaciones");
+    await page
+      .getByRole("region", { name: site.name })
+      .getByRole("link", { name: /ayudar a reconstruir/i })
+      .click();
+    await expect(page).toHaveURL(/\/ayudar$/);
 
-    // HelpTabs se hidrata después: sin JS los países vienen apilados, con JS
-    // son un tablist. Lo que no puede faltar son los datos, en los dos casos.
-    await expect(
-      seccion.getByRole("heading", { name: ui.home.helpTitle.replaceAll("\n", " ") }),
-    ).toBeVisible();
-    await expect(
-      seccion.getByRole("button", { name: /^copiar$/i }).first(),
-    ).toBeVisible();
-    await expect(seccion.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
+    await page.getByRole("link", { name: ui.home.pathMoneyCta }).click();
+    await expect(page).toHaveURL(/\/ayudar\/dinero/);
+
+    await expect(page.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^copiar$/i }).first()).toBeVisible();
   });
 });

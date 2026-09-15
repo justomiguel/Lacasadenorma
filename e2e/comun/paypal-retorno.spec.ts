@@ -47,7 +47,7 @@ test.describe("retorno de PayPal", () => {
     await expect(page.getByText(/nos sería de mucha ayuda/i)).toBeVisible();
     await expect(
       page.getByRole("link", { name: `${ui.paypalReturn.cancelled.cta} →` }),
-    ).toHaveAttribute("href", "/ayudar");
+    ).toHaveAttribute("href", "/ayudar/dinero");
 
     const robots = await page
       .locator('meta[name="robots"]')

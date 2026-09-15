@@ -104,6 +104,7 @@ export async function setPaymentMethodPublishedAction(
     // aviso de "todavía no hay cuentas publicadas" cuando no hay ninguna.
     revalidatePath("/");
     revalidatePath("/ayudar");
+    revalidatePath("/ayudar/dinero");
   }
 
   return result;

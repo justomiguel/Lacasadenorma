@@ -3,7 +3,7 @@
  *
  * El orden es el del mockup aprobado (ADR-025): Historia, Cómo ayudar, Norma,
  * Lo que viene después, Contacto. La acción de ayudar no vive acá: es el CTA
- * del encabezado y apunta a `/ayudar#donaciones`.
+ * del encabezado y apunta a `/ayudar` (ADR-045).
  *
  * Las URLs están en castellano porque el sitio es en castellano (ADR-014).
  */
@@ -18,7 +18,7 @@ export const PRIMARY_NAV = [
     href: "/ayudar",
     label: "Cómo ayudar",
     shortLabel: "Cómo ayudar",
-    summary: "Tres formas de hacer la diferencia.",
+    summary: "Tres caminos: ir, donar plata, o traer lo que falta.",
   },
   {
     href: "/norma",
@@ -64,6 +64,7 @@ export const PUBLIC_ROUTES = [
   "/",
   ...PRIMARY_NAV.map((item) => item.href),
   ...SECONDARY_NAV.map((item) => item.href),
+  "/ayudar/dinero",
   "/transparencia",
   ...LEGAL_NAV.map((item) => item.href),
 ] as const;

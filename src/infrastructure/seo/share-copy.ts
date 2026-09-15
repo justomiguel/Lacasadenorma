@@ -118,6 +118,7 @@ function pages(locale: Locale): Record<string, ShareCopy> {
     "/catalogo": page(catalog.title, catalog.seoDescription),
     "/quienes-ayudaron": page(wall.title, wall.seoDescription),
     "/ayudar": page(help.title, ui.helpPage.seoDescription),
+    "/ayudar/dinero": page(ui.helpPage.moneyTitle, ui.helpPage.moneySeoDescription),
     "/ayudar/paypal/completada": page(
       ui.paypalReturn.completed.title,
       ui.paypalReturn.completed.seoDescription,

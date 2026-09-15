@@ -43,7 +43,7 @@
     "/ayudar": {
       "label": "Cómo ayudar",
       "shortLabel": "Cómo ayudar",
-      "summary": "Tres formas de hacer la diferencia."
+      "summary": "Tres caminos: ir, donar plata, o traer lo que falta."
     },
     "/norma": {
       "label": "Norma",
@@ -181,16 +181,19 @@
     "seeWork": "Ver el trabajo de la obra",
     "chapterHelp": "03. Cómo ayudar",
     "helpTitle": "Tu ayuda\ntambién suma",
-    "helpKicker": "Tres formas de hacer la diferencia",
-    "helpTabsLabel": "Formas de ayudar",
-    "tabDonate": "Aportar dinero",
-    "tabHands": "Dar una mano",
-    "tabMaterials": "Donar materiales",
+    "helpKicker": "Tres caminos. Elegí uno.",
+    "helpPathsLabel": "Tres caminos para ayudar",
+    "pathHands": "Dar una mano presencial",
+    "pathHandsLead": "Si estás cerca, Justo coordina. WhatsApp y el mapa del pueblo.",
+    "pathHandsCta": "Coordinar con Justo",
+    "pathMoney": "Donar dinero",
+    "pathMoneyLead": "Transferencia desde Argentina o Chile, Mercado Pago o PayPal.",
+    "pathMoneyCta": "Ver las cuentas",
+    "pathArticles": "Donar artículos",
+    "pathArticlesLead": "El listado de lo que falta, para no traer de más.",
+    "pathArticlesCta": "Ver qué falta",
     "debrisTitle": "Retirar escombros",
     "debrisBody": "Si querés dar una mano presencialmente, estamos organizando una cuadrilla para limpiar y retirar escombros.",
-    "materialsTitle": "Donaciones de materiales",
-    "materialsBody": "Cemento, cal, arena, chapa. Cualquier otro material útil para la futura casa también suma.",
-    "materialsContact": "Para coordinar la entrega, escribile a Justo.",
     "whatsapp": "WhatsApp",
     "call": "Llamar",
     "email": "Correo",
@@ -220,12 +223,15 @@
   },
   "contactPage": {
     "title": "Contacto",
-    "seoDescription": "WhatsApp, correo e Instagram de Justo Miguel Vargas para coordinar el retiro de escombros y las donaciones de materiales en Riacho He Hé, Formosa.",
+    "seoDescription": "WhatsApp, correo e Instagram de Justo Miguel Vargas para coordinar una ayuda en el terreno, en Riacho He Hé, Formosa. El mapa abre el pueblo.",
     "lead": "Para coordinar una ayuda en el terreno, el contacto publicado es Justo Miguel Vargas.",
     "whatsapp": "Escribir por WhatsApp",
     "call": "Llamar",
     "email": "Escribir un correo",
-    "instagram": "Instagram"
+    "instagram": "Instagram",
+    "mapsHeading": "Dónde está la casa",
+    "mapsLead": "La casa está en Riacho He Hé, Formosa. El mapa abre el pueblo. El lote exacto lo indica Justo cuando coordinás.",
+    "mapsCta": "Google Maps"
   },
   "notFoundPage": {
     "title": "Esta página no está",
@@ -252,10 +258,10 @@
       "paragraphs": [
         "PayPal nos devolvió a esta página porque el pago no se terminó. Gracias igual por haber llegado hasta acá.",
         "Si fue un cierre accidental, o un dato que no cerró, se puede volver a intentar. Nos sería de mucha ayuda: la prioridad es reconstruir la casa de la familia en Riacho He Hé.",
-        "Los canales están en Cómo ayudar: transferencia desde Argentina o Chile, Mercado Pago y PayPal. Elegí el que te quede más a mano. El sitio no pide datos de tarjeta ni procesa el pago: te lleva al medio y nada más.",
+        "Los canales están en Donar dinero: transferencia desde Argentina o Chile, Mercado Pago y PayPal. Elegí el que te quede más a mano. El sitio no pide datos de tarjeta ni procesa el pago: te lleva al medio y nada más.",
         "Si preferís no usar PayPal, la transferencia llega entera. Los datos verificados están en esa misma página."
       ],
-      "cta": "Volver a Cómo ayudar"
+      "cta": "Volver a donar dinero"
     }
   },
   "normaPage": {
@@ -302,7 +308,10 @@
     "helpLead": "Cada aporte suma a reconstruir la casa. Los datos para transferir están en la página de cómo ayudar."
   },
   "helpPage": {
-    "seoDescription": "Datos para transferir desde Argentina o Chile, WhatsApp de Justo y donaciones de materiales. Esta página no cobra ni pide datos de tarjeta.",
+    "seoDescription": "Tres caminos para ayudar: ir, donar plata, o traer lo que falta. Esta página no cobra ni pide datos de tarjeta.",
+    "moneyTitle": "Donar dinero",
+    "moneyLead": "Transferencia desde Argentina o Chile, Mercado Pago o PayPal. Elegí desde dónde aportás y copiá los datos.",
+    "moneySeoDescription": "Datos para transferir desde Argentina o Chile, Mercado Pago y PayPal. Esta página no cobra ni pide datos de tarjeta.",
     "accountsHeading": "Elegí desde dónde transferís",
     "afterHeading": "Qué pasa cuando transferís",
     "afterLinkLead": "Cómo se lleva la cuenta está explicado en",

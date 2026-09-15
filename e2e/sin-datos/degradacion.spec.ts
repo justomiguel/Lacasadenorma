@@ -77,7 +77,7 @@ test.describe("sin base de datos · el sitio funciona igual", () => {
   });
 
   test("ayudar publica las cuentas verificadas aunque no haya base", async ({ page }) => {
-    await page.goto("/ayudar");
+    await page.goto("/ayudar/dinero");
 
     await expect(page.getByText("justomiguelvargas", { exact: true })).toBeVisible();
     await expect(page.getByText("1430001713005033120017", { exact: true })).toBeVisible();
