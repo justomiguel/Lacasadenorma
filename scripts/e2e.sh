@@ -135,27 +135,51 @@ huella() {
 # respondiendo 200 sobre el esquema viejo y devuelve cero filas. Un build contra eso no
 # falla —no hay error de red que registrar— y hornea las once páginas con la rama del
 # dato ausente, que es el modo de falla más caro de diagnosticar que tiene este script.
-api_local_ve_el_fixture() {
-  local sonda="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1"
+#
+# Recarga el caché de tipos de PostgREST. Después de un `db:reset` una instancia que
+# ya estaba levantada sigue contestando 200 sobre `campaigns.slug` y explota en la
+# primera lectura de un objeto nuevo (ADR-042: la vista `contribution_wall`).
+# `NOTIFY pgrst` es lo que PostgREST escucha; si el proceso no está, no pasa nada.
+recargar_esquema_postgrest() {
+  PGPASSWORD="${PGPASSWORD:-norma_local}" psql \
+    -h "${PGHOST:-127.0.0.1}" \
+    -p "${PGPORT:-5432}" \
+    -U "${PGUSER:-norma_local}" \
+    -d "${PGDATABASE:-norma_dev}" \
+    -c "NOTIFY pgrst, 'reload schema';" >/dev/null 2>&1 || true
+}
 
-  curl --fail --silent "$sonda" 2>/dev/null | grep -q '"slug"'
+api_local_ve_el_fixture() {
+  local camp="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug,publish_contribution_share&limit=1"
+  # La vista del muro es la canaria del esquema actual: si PostgREST todavía
+  # tiene el caché de antes del reset, este SELECT falla aunque `campaigns.slug`
+  # siga existiendo.
+  local muro="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/contribution_wall?select=id&limit=1"
+
+  curl --fail --silent "$camp" 2>/dev/null | grep -q '"publish_contribution_share"' || return 1
+  curl --fail --silent --output /dev/null "$muro" 2>/dev/null
 }
 
 levantar_api_local() {
   local registro="${TMPDIR:-/tmp}/e2e-api-local.log"
 
-  if api_local_ve_el_fixture; then
-    say "La API local ya estaba levantada y ve el fixture: se reusa"
-    return
-  fi
+  recargar_esquema_postgrest
 
-  # Algo contesta en el puerto pero no devuelve la campaña. Es una instancia vieja
+  for _ in $(seq 1 5); do
+    if api_local_ve_el_fixture; then
+      say "La API local ya estaba levantada y ve el fixture: se reusa"
+      return
+    fi
+    sleep 1
+  done
+
+  # Algo contesta en el puerto pero no ve el esquema actual. Es una instancia vieja
   # —de una corrida anterior, con el esquema de antes del reset en su caché—, y
-  # reusarla produce un sitio construido sin cifras. Se dice qué pasa y qué hacer, en
-  # lugar de seguir y dejar el diagnóstico para después (principio XII).
+  # reusarla produce un sitio construido sin el muro de aportes. Se dice qué pasa
+  # y qué hacer, en lugar de seguir y dejar el diagnóstico para después (principio XII).
   if curl --fail --silent --output /dev/null \
     "http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1" 2>/dev/null; then
-    echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve la campaña del fixture." >&2
+    echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve el esquema actual." >&2
     echo "Es de antes del reset y tiene el esquema viejo en caché. Bajala y volvé a correr:" >&2
     echo "  fuser -k ${LOCAL_API_PORT}/tcp 54331/tcp" >&2
     exit 1
