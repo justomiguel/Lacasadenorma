@@ -132,8 +132,8 @@ export function Panel({
  * Por qué una pantalla no tiene nada que mostrar.
  *
  * Los dos motivos se resuelven de maneras distintas —uno con variables de entorno,
- * el otro cargando una campaña— así que se dicen distinto. Nunca se muestra una lista
- * vacía sin explicación (FR-035).
+ * el otro cargando una campaña desde Objetivo— así que se dicen distinto. Nunca se
+ * muestra una lista vacía sin explicación (FR-035).
  */
 export function SinDatos({ state }: { state: "sin-base" | "sin-campana" }) {
   if (state === "sin-base") {
@@ -151,8 +151,11 @@ export function SinDatos({ state }: { state: "sin-base" | "sin-campana" }) {
     <Callout tone="danger" title="Sin campaña cargada">
       <p>
         Todavía no hay una campaña en la base, así que no hay a qué asociar lo que se
-        cargue acá. La primera campaña se crea con una migración o desde el panel de
-        Supabase.
+        cargue acá.{" "}
+        <Link href="/admin/objetivos" className="text-aqua underline underline-offset-2">
+          Creala en Objetivo
+        </Link>
+        , y después volvé a esta pantalla para anotar gastos, aportes o lo que hace falta.
       </p>
     </Callout>
   );

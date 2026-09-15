@@ -11,7 +11,7 @@
 export { perform } from "./core";
 export type { Actor, AdminDeps, AdminResult, AuditTrail, FieldErrors } from "./core";
 
-export { saveBudgetItem, updateGoal } from "./campaign";
+export { createCampaign, saveBudgetItem, updateGoal } from "./campaign";
 export { markReconciled, recordContribution, voidContribution } from "./contributions";
 export {
   attachExpenseReceipt,

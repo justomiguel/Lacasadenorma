@@ -1,3 +1,4 @@
+import type { Campaign } from "@/src/domain/entities";
 import type { AdminGateway, AuditEntry } from "@/src/domain/ports/admin";
 
 /**
@@ -21,6 +22,7 @@ export function fakeAdminGateway(
     failWith: Error;
     auditFailsWith: Error;
     newId: string;
+    campaign: Campaign | null;
   }> = {},
 ): FakeGateway {
   const calls: { name: string; input: unknown }[] = [];
@@ -39,7 +41,13 @@ export function fakeAdminGateway(
 
   const gateway: AdminGateway = {
     campaign: {
-      getCampaign: () => record("getCampaign", null, null),
+      getCampaign: () =>
+        record(
+          "getCampaign",
+          null,
+          overrides.campaign === undefined ? null : overrides.campaign,
+        ),
+      createCampaign: (input) => record("createCampaign", input, id),
       listBudgetItems: () => record("listBudgetItems", null, []),
       updateGoal: (input) => record("updateGoal", input, undefined),
       saveBudgetItem: (input) => record("saveBudgetItem", input, id),

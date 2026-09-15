@@ -2,13 +2,70 @@ import { describe, expect, it } from "vitest";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
 import { fakeLogger } from "../test-support/fake-data-layer";
-import { saveBudgetItem, updateGoal } from "./campaign";
+import { createCampaign, saveBudgetItem, updateGoal } from "./campaign";
 import { recordExpense } from "./expenses";
 import { saveMilestone } from "./milestones";
 import { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
 import { CAMPAIGN, RECORD, deps, validExpense } from "./admin-test-helpers";
 
 // ── Objetivo, rubros e hitos ────────────────────────────────────────────────
+
+describe("crear la campaña", () => {
+  const alta = {
+    title: "Reconstrucción de la casa",
+    summary: "La casa de Norma en Riacho He Hé.",
+    publish: "on",
+  };
+
+  it("crea la primera campaña publicada y deja rastro", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await createCampaign(admin, alta);
+
+    expect(result.status).toBe("ok");
+    expect(fake.calls).toContainEqual({
+      name: "createCampaign",
+      input: {
+        slug: "casa-de-norma",
+        title: alta.title,
+        summary: alta.summary,
+        publish: true,
+      },
+    });
+    expect(fake.audit[0]).toMatchObject({
+      action: "campaign.created",
+      entityTable: "campaigns",
+      diff: { title: alta.title, published: true },
+    });
+  });
+
+  it("rechaza crear una segunda y no toca el puerto de alta", async () => {
+    const gateway = fakeAdminGateway({
+      campaign: {
+        id: CAMPAIGN,
+        slug: "casa-de-norma",
+        title: "Ya está",
+        summary: "Resumen",
+        goal: null,
+        goalCurrency: "ARS",
+        status: "active",
+        reconciledAt: null,
+      },
+    });
+    const { deps: admin, fake } = deps("admin", gateway);
+    const result = await createCampaign(admin, alta);
+
+    expect(result.status).toBe("invalid");
+    expect(fake.calls.map((call) => call.name)).not.toContain("createCampaign");
+  });
+
+  it("rechaza a un editor: crear la campaña es de admin u owner", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const result = await createCampaign(editor, alta);
+
+    expect(result.status).toBe("rejected");
+    expect(fake.calls).toEqual([]);
+  });
+});
 
 describe("objetivo y presupuesto", () => {
   it("acepta un objetivo vacío, que significa que todavía no hay meta", async () => {

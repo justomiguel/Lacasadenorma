@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  CampaignExistsError,
   CatalogOversubscribedError,
   DomainError,
   NotAuthorizedError,
@@ -68,6 +69,17 @@ describe("PledgeUnavailableError", () => {
     expect(error).toBeInstanceOf(DomainError);
     expect(error.name).toBe("PledgeUnavailableError");
     expect(error.message).toBe("Alguien se adelantó.");
+  });
+});
+
+describe("CampaignExistsError", () => {
+  it("dice que no se crea otra, y nombra a qué se imputa lo que sigue", () => {
+    const error = new CampaignExistsError();
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("CampaignExistsError");
+    expect(error.message).toContain("Ya hay una campaña");
+    expect(error.message).toContain("no se crea otra");
   });
 });
 

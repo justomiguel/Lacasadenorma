@@ -47,6 +47,16 @@ import type { AdminDonationsPort } from "./donations";
 export interface AdminCampaignPort {
   /** La campaña sin filtrar por estado: el backoffice ve borradores. */
   getCampaign(): Promise<Campaign | null>;
+  /**
+   * La primera y única campaña. El caso de uso rechaza si ya hay una: este
+   * sitio no administra varias en paralelo.
+   */
+  createCampaign(input: {
+    slug: string;
+    title: string;
+    summary: string;
+    publish: boolean;
+  }): Promise<string>;
   listBudgetItems(campaignId: string): Promise<BudgetItemAdminRecord[]>;
   updateGoal(input: { campaignId: string; goal: Money | null }): Promise<void>;
   saveBudgetItem(input: {

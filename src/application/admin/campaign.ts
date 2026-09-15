@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { CampaignExistsError } from "@/src/domain/errors";
 import { formatMoney } from "@/src/domain/money";
 
 import { perform, type AdminDeps, type AdminResult } from "./core";
@@ -13,6 +14,12 @@ import {
   toMoney,
   uuid,
 } from "./fields";
+
+/**
+ * El slug canónico de este sitio. El modelo lo nombra (`data-model.md`) y no se
+ * le pide a quien crea la campaña: una sola campaña, una sola dirección.
+ */
+export const FIRST_CAMPAIGN_SLUG = "casa-de-norma";
 
 /**
  * Objetivo de recaudación y rubros del presupuesto.
@@ -45,6 +52,46 @@ const goalSchema = z
 
     return money === null ? z.NEVER : { ...rest, money };
   });
+
+const createCampaignSchema = z.object({
+  title: requiredText("el título", 140),
+  summary: requiredText("el resumen", 500),
+  publish: checkbox,
+});
+
+export async function createCampaign(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<{ id: string }>> {
+  return perform({
+    deps,
+    permission: "campana.escribir",
+    describe: "crear la campaña",
+    schema: createCampaignSchema,
+    input,
+    run: async (data) => {
+      if ((await deps.gateway.campaign.getCampaign()) !== null) {
+        throw new CampaignExistsError();
+      }
+
+      return {
+        id: await deps.gateway.campaign.createCampaign({
+          slug: FIRST_CAMPAIGN_SLUG,
+          title: data.title,
+          summary: data.summary,
+          publish: data.publish,
+        }),
+      };
+    },
+    success: () => "Campaña creada. Ya se pueden cargar gastos, aportes y el catálogo.",
+    audit: (data, output) => ({
+      action: "campaign.created",
+      entityTable: "campaigns",
+      entityId: output.id,
+      diff: { title: data.title, published: data.publish },
+    }),
+  });
+}
 
 export async function updateGoal(
   deps: AdminDeps,
