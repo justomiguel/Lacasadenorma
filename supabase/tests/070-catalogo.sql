@@ -4,7 +4,7 @@
 -- Fase D: reservas concurrentes, tope por cuenta, vencimiento sin cron (FR-218).
 
 begin;
-select plan(56);
+select plan(61);
 
 insert into public.campaigns (id, slug, title, summary, status, published_at) values
   ('c7000000-0000-4000-8000-000000000001', 'obra-catalogo', 'Obra del catálogo', 'Resumen', 'active', now());
@@ -65,12 +65,22 @@ insert into public.donation_items (
   0,
   0,
   now()
+), (
+  'ab700000-0000-4000-8000-000000000008',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para pendiente',
+  'unidad',
+  2,
+  0,
+  0,
+  now()
 );
 
 insert into auth.users (id, email) values
   ('ab710000-0000-4000-8000-0000000000a1', 'reserva.a@ejemplo.invalid'),
   ('ab710000-0000-4000-8000-0000000000a2', 'reserva.b@ejemplo.invalid'),
   ('ab710000-0000-4000-8000-0000000000b1', 'reserva.pendiente@ejemplo.invalid'),
+  ('ab710000-0000-4000-8000-0000000000b2', 'reserva.rechazada@ejemplo.invalid'),
   ('ab710000-0000-4000-8000-0000000000c1', 'reserva.se.va@ejemplo.invalid'),
   ('ab710000-0000-4000-8000-0000000000ff', 'reserva.admin@ejemplo.invalid');
 
@@ -95,6 +105,11 @@ insert into public.donor_profiles (
   (
     'ab710000-0000-4000-8000-0000000000b1',
     null, 'es', true, 'pending', null, null
+  ),
+  (
+    'ab710000-0000-4000-8000-0000000000b2',
+    null, 'es', true, 'declined', now(),
+    'ab710000-0000-4000-8000-0000000000ff'
   );
 
 insert into public.contributions (
@@ -102,6 +117,27 @@ insert into public.contributions (
 ) values (
   'c7000000-0000-4000-8000-000000000001', 100000, 'ARS', date '2026-08-01'
 );
+
+create function pg_temp.traer(
+  p_item uuid,
+  p_quantity integer default 1,
+  p_is_anonymous boolean default true,
+  p_display_name text default null,
+  p_note text default null
+) returns public.donation_pledges
+language sql
+as $$
+  select *
+    from public.claim_donation_item(
+      p_item_id := p_item,
+      p_quantity := p_quantity,
+      p_is_anonymous := p_is_anonymous,
+      p_display_name := p_display_name,
+      p_note := p_note,
+      p_contact_name := 'Ana',
+      p_pickup_address := 'Riacho He Hé, Formosa'
+    );
+$$;
 
 -- ── Estructura ──────────────────────────────────────────────────────────────
 
@@ -291,9 +327,13 @@ select has_index(
 
 select has_function(
   'public', 'claim_donation_item',
-  array['uuid', 'integer', 'boolean', 'text', 'text', 'donation_cover_channel']::name[],
+  array['uuid', 'integer', 'boolean', 'text', 'text', 'donation_cover_channel', 'text', 'text', 'text']::name[],
   'existe claim_donation_item()'
 );
+
+select has_column('public', 'donation_pledges', 'contact_name', 'la reserva guarda el nombre de contacto');
+select has_column('public', 'donation_pledges', 'contact_phone', 'la reserva guarda el teléfono');
+select has_column('public', 'donation_pledges', 'pickup_address', 'la reserva guarda la dirección de retiro');
 
 select has_function(
   'public', 'cancel_donation_pledge',
@@ -348,18 +388,40 @@ select throws_ok(
   'un insert directo en donation_pledges falla por falta de privilegio'
 );
 
--- ── Cuenta pendiente no reserva (ADR-033) ───────────────────────────────────
+-- ── Cuenta pendiente reserva; rechazada no (ADR-046) ─────────────────────────
 
 reset role;
 set local role authenticated;
 set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000b1", "role": "authenticated", "app_metadata": {}}';
 
+select lives_ok(
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000008') $q$,
+  'una cuenta pendiente con datos de retiro sí reserva (ADR-046)'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000b2", "role": "authenticated", "app_metadata": {}}';
+
 select throws_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000003') $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000008') $q$,
   '42501',
   'sin_habilitacion',
-  'una cuenta pendiente no reserva: confirmar el correo no habilita'
+  'una cuenta rechazada no reserva'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000004') $q$,
+  '23514',
+  'datos_de_retiro',
+  'traer un bien sin nombre y dirección se rechaza'
 );
 
 -- ── Dos reservas secuenciales por la última unidad ──────────────────────────
@@ -370,7 +432,7 @@ set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
 
 select lives_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000003') $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000003') $q$,
   'la primera sesión se lleva el último ejemplar'
 );
 
@@ -380,7 +442,7 @@ set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000a2", "role": "authenticated", "app_metadata": {}}';
 
 select throws_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000003') $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000003') $q$,
   '23514',
   'sin_disponibilidad',
   'la segunda sesión por el último ejemplar ve sin_disponibilidad'
@@ -395,14 +457,14 @@ set local "request.jwt.claims" =
 
 select lives_ok(
   $q$
-    select public.claim_donation_item('ab700000-0000-4000-8000-000000000004', 1)
+    select pg_temp.traer('ab700000-0000-4000-8000-000000000004', 1)
       from generate_series(1, 5)
   $q$,
   'cinco reservas activas es el tope, y se alcanzan'
 );
 
 select throws_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000004', 1) $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000004', 1) $q$,
   'P0001',
   'demasiadas_reservas',
   'la sexta reserva activa por cuenta se rechaza (FR-219)'
@@ -463,7 +525,7 @@ set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
 
 select lives_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000005', 1) $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000005', 1) $q$,
   'claim_donation_item libera lo vencido del ítem que va a tocar y se lo lleva'
 );
 
@@ -510,7 +572,7 @@ set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
 
 select lives_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000006', 1) $q$,
+  $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000006', 1) $q$,
   'se reserva una unidad para confirmar llegada'
 );
 
@@ -576,7 +638,7 @@ set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000c1", "role": "authenticated", "app_metadata": {}}';
 
 select lives_ok(
-  $q$ select public.claim_donation_item(
+  $q$ select pg_temp.traer(
     'ab700000-0000-4000-8000-000000000004',
     1,
     false,
@@ -600,14 +662,14 @@ reset role;
 
 select results_eq(
   $q$
-    select is_anonymous, donor_display_name, user_id is null
+    select is_anonymous, donor_display_name, user_id is null, contact_name, pickup_address
       from public.donation_pledges
      where item_id = 'ab700000-0000-4000-8000-000000000004'
        and status = 'reserved'
        and user_id is null
   $q$,
-  $q$ values (true, null::text, true) $q$,
-  'al borrar la cuenta, la reserva queda anónima, sin nombre y sin user_id (FR-240)'
+  $q$ values (true, null::text, true, null::text, null::text) $q$,
+  'al borrar la cuenta, la reserva queda anónima, sin nombre, sin dirección y sin user_id (FR-240)'
 );
 
 -- ── Dos sesiones concurrentes por la última unidad (SC-202) ─────────────────
@@ -681,12 +743,18 @@ begin
   perform 1
     from dblink(
       'sess_a',
-      format('select 1 from public.claim_donation_item(%L)', v_item)
+      format(
+        'select 1 from public.claim_donation_item(%L, 1, true, null, null, ''bring'', %L, null, %L)',
+        v_item, 'Ana', 'Riacho He Hé, Formosa'
+      )
     ) as t(ok integer);
 
   perform dblink_send_query(
     'sess_b',
-    format('select 1 from public.claim_donation_item(%L)', v_item)
+    format(
+      'select 1 from public.claim_donation_item(%L, 1, true, null, null, ''bring'', %L, null, %L)',
+      v_item, 'Ana', 'Riacho He Hé, Formosa'
+    )
   );
 
   perform pg_sleep(0.2);
@@ -809,7 +877,17 @@ set local "request.jwt.claims" =
 select is(
   (
     select cover_channel::text
-      from public.claim_donation_item('ab700000-0000-4000-8000-000000000007', 1)
+      from public.claim_donation_item(
+        'ab700000-0000-4000-8000-000000000007',
+        1,
+        true,
+        null,
+        null,
+        'bring',
+        'Ana',
+        null,
+        'Riacho He Hé, Formosa'
+      )
   ),
   'bring',
   'sin canal, la reserva es traer el objeto'

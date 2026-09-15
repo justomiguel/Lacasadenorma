@@ -84,7 +84,11 @@ export async function AccountScreen({
       <p className="max-w-measure font-ui text-small text-ink-muted">
         {copy.approvedNote}
       </p>
-    ) : null;
+    ) : (
+      <p className="max-w-measure font-ui text-small text-ink-muted">
+        {copy.pendingNote}
+      </p>
+    );
   const initial = resolveAccountSection(section, pledges.length > 0);
 
   return (

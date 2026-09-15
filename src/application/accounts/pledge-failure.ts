@@ -54,6 +54,10 @@ function codeOf(
     return { code: "displayNameRequired", field: "displayName" };
   }
 
+  if (message.includes("datos_de_retiro")) {
+    return { code: "pickupAddressRequired", field: "pickupAddress" };
+  }
+
   if (message.includes("cantidad_invalida")) {
     return { code: "quantityInvalid", field: "quantity" };
   }

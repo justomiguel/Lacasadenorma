@@ -333,7 +333,7 @@ De `approved` no se sale (ADR-033).
 El correo de `auth.users`, o nulo. `can_read_donors()` por dentro: para el resto es un oráculo mudo,
 no un error que delate que la fila existe.
 
-### `claim_donation_item(item_id, quantity, is_anonymous, display_name, note, cover_channel) → donation_pledges`
+### `claim_donation_item(item_id, quantity, is_anonymous, display_name, note, cover_channel, contact_name, contact_phone, pickup_address) → donation_pledges`
 
 `grant execute to authenticated`. En una transacción:
 
@@ -341,9 +341,11 @@ no un error que delate que la fila existe.
    correo confirmado, porque `enable_confirmations = true` impide iniciar sesión sin confirmar. No se
    mira `user_metadata.email_verified`, que lo escribe la propia persona (`research.md` §4). El
    comentario de la función lo dice, para que nadie "refuerce" el chequeo con el campo equivocado.
-2. `release_expired_holds(item_id)` — el vencimiento auto-sanante de FR-218.
-3. Tope de reservas activas por cuenta, o error (FR-219).
-4. El `update` condicional que resuelve la concurrencia:
+2. El perfil no está `declined`. `pending` y `approved` reservan (ADR-046).
+3. Si el canal es `bring`: nombre de contacto y dirección de retiro, o error `datos_de_retiro`.
+4. `release_expired_holds(item_id)` — el vencimiento auto-sanante de FR-218.
+5. Tope de reservas activas por cuenta, o error (FR-219).
+6. El `update` condicional que resuelve la concurrencia:
 
 ```sql
 update public.donation_items
@@ -359,7 +361,8 @@ end if;
 ```
 
 5. Inserta la reserva con `user_id = auth.uid()` — no con un parámetro, así que **no se puede reservar
-   a nombre de otro** — y `cover_channel` (default `bring`).
+   a nombre de otro** — y, si el canal es `bring`, los datos de retiro. El formulario público no llama
+   esta función para cubrir con plata (ADR-046).
 
 Probado con dos sesiones concurrentes: la segunda espera el lock, reevalúa, y pierde (`research.md`
 §8).

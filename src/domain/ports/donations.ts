@@ -20,6 +20,9 @@ export interface ClaimInput {
   readonly displayName: string | null;
   readonly note: string | null;
   readonly coverChannel: CoverChannel;
+  readonly contactName: string | null;
+  readonly contactPhone: string | null;
+  readonly pickupAddress: string | null;
 }
 
 export interface OwnAppearance {

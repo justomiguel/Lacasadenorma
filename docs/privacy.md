@@ -16,7 +16,7 @@ Vale empezar por acá porque es la mayor parte de la respuesta.
 
 | No existe | Consecuencia |
 |---|---|
-| Ningún formulario público **que no sea el de la cuenta** | Fuera de registrarse, no hay nada que una visita pueda escribir y que quede guardado |
+| Ningún formulario público **salvo el de la cuenta y el de anotarse a traer un bien** | Cubrir con plata no guarda nada. Traer un bien pide nombre, teléfono optativo y dirección de retiro, y exige sesión |
 | Newsletter, lista de correo, envíos masivos | Un correo del sistema es siempre sobre la propia cuenta o sobre algo que esa persona ofreció traer |
 | Procesamiento de pagos en el sitio | La transferencia se hace en el homebanking de cada uno; el sitio nunca ve un número de tarjeta, un CBU ajeno ni un monto |
 | Cookies de publicidad, píxeles sociales, servicios de perfilado | No hay `<script>` de terceros más que el de analítica, y sólo si se configura |
@@ -135,7 +135,8 @@ excepción y no debilitan nada: dependen de la sesión por definición y por eso
 ## 3.bis Cuentas del público (ADR-027)
 
 Crear una cuenta es opcional y sirve para una sola cosa: poder ofrecerse a traer algo y que quede
-anotado a nombre de esa persona.
+anotado a nombre de esa persona. Confirmar el correo no es la prueba de que la ayuda es real: es
+para escribirle y para que pueda cancelar. Los datos de retiro viven en la reserva (ADR-046).
 
 | Dato | Dónde vive | Quién lo escribe | Se publica |
 |---|---|---|---|
@@ -184,27 +185,31 @@ historial de lo que efectivamente llegó a la obra no es un dato personal.
 
 **Qué guarda una reserva.** Anotarse para traer un material agrega filas en `donation_pledges`. No
 viven en `donor_profiles`, y por eso esta tabla no las cubría: son el motivo por el que una cuenta
-existe.
+existe. Desde ADR-046 también guardan cómo encontrar a esa persona para ir a buscar el bien.
 
 | Dato | Dónde vive | Se publica |
 |---|---|---|
 | Cuánto, de qué ítem, estado y vencimiento | `donation_pledges` | **No.** Lo que se publica, si llega y la persona eligió aparecer, es una línea en `/quienes-ayudaron`: nombre, qué trajo, cuándo |
+| Nombre de contacto (`contact_name`) | `donation_pledges` | **Nunca.** Privilegio de columna |
+| Teléfono (`contact_phone`) | `donation_pledges` | **Nunca.** Privilegio de columna. Optativo: el correo de la cuenta ya es un canal |
+| Dirección de retiro (`pickup_address`) | `donation_pledges` | **Nunca.** Privilegio de columna |
 | Nota para la familia (`donor_note`) | `donation_pledges` | **Nunca.** Privilegio de columna: `anon` no puede nombrar el campo |
 | Si aparece con nombre (`is_anonymous`) | `donation_pledges` | No. Lo que se publica es su efecto, y sólo en entregas cumplidas |
 | `user_id` | `donation_pledges` | **No.** Privilegio de columna |
 
 Los correos del sistema sobre una reserva —que quedó anotada, que se acerca el vencimiento, que llegó
 o que se canceló— son sobre esa reserva, no difusión. Borrar la cuenta deja las entregas cumplidas
-como un hecho sobre la obra, sin correo y sin nombre.
+como un hecho sobre la obra, sin correo, sin nombre, sin teléfono y sin dirección.
 
 ---
 
 ## 4. Datos personales en la base
 
-Fuera de `donor_profiles`, el proyecto **no tiene** ninguna columna de correo electrónico, dirección
-IP ni user-agent. Se puede verificar leyendo `supabase/migrations/`: no aparecen. Los correos —de
-quienes administran y de quienes se registran— existen sólo en `auth.users`, que lo gestiona Supabase
-y a lo que la aplicación nunca escribe.
+Fuera de `donor_profiles` y de las columnas de retiro de `donation_pledges` (ADR-046), el proyecto
+**no tiene** ninguna columna de correo electrónico, dirección IP ni user-agent. Se puede verificar
+leyendo `supabase/migrations/`: no aparecen. Los correos —de quienes administran y de quienes se
+registran— existen sólo en `auth.users`, que lo gestiona Supabase y a lo que la aplicación nunca
+escribe.
 
 Lo único identificable que la aplicación guarda es lo que una persona del equipo escribe a mano en
 el backoffice:
@@ -294,8 +299,9 @@ los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta
   no apilar los formularios; el contenido es el mismo.
 - **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
   cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
-- **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo
-  y el nombre; lo que haya donado queda como donación anónima (FR-240).
+- **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo,
+  el nombre, el teléfono y la dirección de retiro; lo que haya donado queda como donación anónima
+  (FR-240).
 - **Quien aportó y no quiere figurar en el registro interno.** Hoy ya no figura: los aportes se
   registran anónimos y el nombre no se guarda. Lo único que queda de la operación es la referencia
   de conciliación con el banco, que es lo que permite cuadrar el total.

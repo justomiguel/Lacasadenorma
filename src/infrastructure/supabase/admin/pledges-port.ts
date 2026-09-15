@@ -8,7 +8,7 @@ import type { ServerSupabaseClient } from "../server-client";
 import { QueryError } from "./query";
 
 const COLUMNS =
-  "id, item_id, user_id, quantity, status, is_anonymous, donor_display_name, donor_note, cover_channel, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
+  "id, item_id, user_id, quantity, status, is_anonymous, donor_display_name, donor_note, cover_channel, contact_name, contact_phone, pickup_address, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
 
 type PledgeRow = Pick<
   Database["public"]["Tables"]["donation_pledges"]["Row"],
@@ -21,6 +21,9 @@ type PledgeRow = Pick<
   | "donor_display_name"
   | "donor_note"
   | "cover_channel"
+  | "contact_name"
+  | "contact_phone"
+  | "pickup_address"
   | "expires_at"
   | "reminded_at"
   | "fulfilled_at"
@@ -123,6 +126,9 @@ function mapAdminPledge(row: PledgeWithItem, email: string | null): AdminPledgeR
     isAnonymous: row.is_anonymous,
     donorDisplayName: row.donor_display_name,
     donorNote: row.donor_note,
+    contactName: row.contact_name,
+    contactPhone: row.contact_phone,
+    pickupAddress: row.pickup_address,
     expiresAt: row.expires_at,
     remindedAt: row.reminded_at,
     fulfilledAt: row.fulfilled_at,

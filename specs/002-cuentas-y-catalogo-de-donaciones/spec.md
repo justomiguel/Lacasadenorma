@@ -74,13 +74,16 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    cuenta.
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
-6. **Given** alguien sin sesión que toca "pedir donar esto", **When** llega a la pantalla de cuenta,
-   **Then** después de ingresar o registrarse vuelve a la ficha del mismo ítem y completa la reserva
-   sin buscarlo de nuevo.
+6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
+   **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y completa la reserva
+   con nombre, un teléfono si lo hay y la dirección de retiro, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta.
 7. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
-   reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y el
-   formulario para reservar si todavía falta algo.
-8. **Given** un ítem publicado con foto de referencia o subida, **When** alguien abre `/catalogo`,
+   reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y
+   cómo donarlo: traer el bien (formulario de retiro) o cubrirlo con plata (datos de pago, sin reserva).
+8. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
+   **Then** ve los datos de pago y **no** un formulario de reserva ni un pedido de cuenta. El nombre, si quiere aparecer,
+   se pide cuando el equipo anota la transacción.
+9. **Given** un ítem publicado con foto de referencia o subida, **When** alguien abre `/catalogo`,
    **Then** ve una miniatura de esa foto junto al título, en la misma celda Qué. **Given** un ítem
    sin ninguna de las dos, **When** abre el listado, **Then** no ve un hueco reservado en esa fila:
    el título alcanza.
@@ -328,13 +331,18 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   (estimado más 10%, con la posibilidad de sumar más) y PayPal (estimado neto). MUST NOT
   convertir monedas. MUST decir que el monto es estimado, no fijo. MUST NOT mostrar los datos de
   un medio (CBU, alias, link, recargo) hasta que ese medio esté elegido.
-- **FR-257**: Anotarse a cubrir con plata MUST reservar unidades igual que anotarse a traer el
-  ítem. MUST NOT sumar el estimado a los totales de dinero de la campaña.
+- **FR-257**: Cubrir un ítem con plata MUST mostrar transferencia, Mercado Pago y PayPal y MUST NOT
+  crear una reserva ni pedir cuenta. MUST NOT sumar el estimado a los totales de dinero de la campaña.
+  El nombre, si la persona quiere aparecer, MUST pedirse cuando el equipo anota la transacción, no
+  antes.
 
 **Reservas**
 
-- **FR-216**: Una persona con sesión MUST poder reservar una o más unidades de un ítem disponible, y
-  la reserva MUST quedar asignada a su cuenta.
+- **FR-216**: Una persona con sesión y correo confirmado MUST poder reservar una o más unidades de un
+  ítem disponible para **traerlo**, y la reserva MUST quedar asignada a su cuenta. MUST NOT exigir
+  que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
+  Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
+  a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
 - **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
   catálogo.
 - **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
@@ -534,8 +542,11 @@ el listado y la ficha lo publican etiquetado como estimado, no fijo. El libro no
 - Sin captcha en esta versión. La confirmación de correo más el tope de reservas activas son la
   defensa. Queda escrito como riesgo aceptado, con el disparador para revisarlo: la primera reserva
   de mala fe.
-- La entrega física se coordina fuera del sitio, por los canales que ya están publicados en
-  `/contacto`. El sitio dice qué falta y quién se comprometió; no organiza logística ni direcciones.
+- La entrega física se coordina con los datos de retiro de la reserva (nombre, correo o teléfono,
+  dirección). Los canales de `/contacto` siguen publicados. El sitio ya no asume que la logística
+  vive sólo afuera: guarda la dirección para que el equipo pueda ir a buscar (ADR-046).
+- Cubrir un ítem con plata no reserva. La transacción (transferencia, PayPal, Mercado Pago) es la
+  prueba. El nombre se pide si la transacción se hace, cuando el equipo la anota.
 - Una donación en especie no es plata y no entra en el libro. Si alguien prefiere transferir el monto
   para que la familia compre, eso es un aporte y sigue el camino que ya existe.
 - El catálogo lo carga la familia. Nadie del público puede proponer ítems en esta versión.

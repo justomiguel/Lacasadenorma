@@ -6,7 +6,8 @@ import type { PledgeStatus } from "../pledge-status";
  *
  * Lo que una persona se anotó a llevar, hasta cuándo, y si quiere aparecer.
  * El correo **no está acá**: vive en `auth.users` y el backoffice lo lee con
- * `donor_contact()`. La nota es privada para la familia y nunca pública.
+ * `donor_contact()`. La nota, el teléfono y la dirección de retiro son
+ * privados para la familia y nunca públicos (ADR-046).
  */
 
 export interface DonationPledge {
@@ -18,6 +19,9 @@ export interface DonationPledge {
   readonly isAnonymous: boolean;
   readonly donorDisplayName: string | null;
   readonly donorNote: string | null;
+  readonly contactName: string | null;
+  readonly contactPhone: string | null;
+  readonly pickupAddress: string | null;
   readonly expiresAt: string;
   readonly remindedAt: string | null;
   readonly fulfilledAt: string | null;

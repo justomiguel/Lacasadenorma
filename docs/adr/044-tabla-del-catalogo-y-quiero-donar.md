@@ -47,15 +47,17 @@ internet, con Formosa primero cuando hay un número de esa plaza.
    nulo. No se scrapea en runtime.
 5. **`formatMoney` en público: `components/catalog/money.ts` y
    `cover-amount.tsx`.** ESLint sigue vedando el resto (ADR-040).
-6. **En la ficha, un solo formulario.** Cuatro canales en radios: traer el
-   mismo bien (default), transferencia, Mercado Pago, PayPal. Los datos de un
-   medio —CBU, link, extra de Mercado Pago— se muestran **sólo** cuando ese
-   canal está elegido. Sin JavaScript lo hace `:has()` sobre el radio.
+6. **En la ficha, cuatro canales en radios.** Traer el mismo bien (default),
+   transferencia, Mercado Pago, PayPal. Los datos de un medio —CBU, link,
+   extra de Mercado Pago— se muestran **sólo** cuando ese canal está elegido.
+   Sin JavaScript lo hace `:has()` sobre el radio. Enmenda ADR-046: el
+   formulario de reserva aparece **sólo** en traer el bien, con nombre,
+   teléfono optativo y dirección de retiro. Cubrir con plata no reserva.
 7. **El aviso al equipo es el de siempre.** Quien completa «Quiero donar»
-   reserva, y `notifyPledgeClaimed` manda `staff.new_pledge` a
+   **a traer** reserva, y `notifyPledgeClaimed` manda `staff.new_pledge` a
    `EMAIL_STAFF_ADDRESS` (el buzón del owner). Un click en el listado no
    manda correo: todavía no hay compromiso. Un fallo de correo no deshace la
-   reserva (FR-233).
+   reserva (FR-233). Transferir no manda ese correo: no hay reserva.
 
 ## Alternativas descartadas
 

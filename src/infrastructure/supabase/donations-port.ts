@@ -7,7 +7,7 @@ import type { Database } from "./database.types";
 import type { ServerSupabaseClient } from "./server-client";
 
 const PLEDGE_COLUMNS =
-  "id, item_id, quantity, status, is_anonymous, donor_display_name, donor_note, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
+  "id, item_id, quantity, status, is_anonymous, donor_display_name, donor_note, contact_name, contact_phone, pickup_address, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
 
 type PledgeRow = Pick<
   Database["public"]["Tables"]["donation_pledges"]["Row"],
@@ -18,6 +18,9 @@ type PledgeRow = Pick<
   | "is_anonymous"
   | "donor_display_name"
   | "donor_note"
+  | "contact_name"
+  | "contact_phone"
+  | "pickup_address"
   | "expires_at"
   | "reminded_at"
   | "fulfilled_at"
@@ -72,6 +75,9 @@ export function createDonationsPort(client: ServerSupabaseClient): DonationsPort
         p_display_name: input.displayName as string,
         p_note: input.note as string,
         p_cover_channel: input.coverChannel,
+        p_contact_name: input.contactName as string,
+        p_contact_phone: input.contactPhone as string,
+        p_pickup_address: input.pickupAddress as string,
       });
 
       if (error !== null) {
@@ -150,6 +156,9 @@ function mapPledge(row: PledgeRow, itemTitle: string): DonationPledge {
     isAnonymous: row.is_anonymous,
     donorDisplayName: row.donor_display_name,
     donorNote: row.donor_note,
+    contactName: row.contact_name,
+    contactPhone: row.contact_phone,
+    pickupAddress: row.pickup_address,
     expiresAt: row.expires_at,
     remindedAt: row.reminded_at,
     fulfilledAt: row.fulfilled_at,

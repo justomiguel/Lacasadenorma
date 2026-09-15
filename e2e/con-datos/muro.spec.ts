@@ -5,9 +5,9 @@ import {
   articuloDelCatalogo,
   abrirItemDelCatalogo,
   cargarItemPublicado,
+  completarTraer,
   confirmarLlegada,
   formularioDeTraer,
-  habilitarCuenta,
   idDeItem,
   ocultarItemSiExiste,
 } from "../soporte/catalogo";
@@ -49,17 +49,13 @@ test.describe("fase E · muro", () => {
       try {
         await crearCuenta(paginaSi, request, emailVisible);
         await crearCuenta(paginaNo, request, emailOculto);
-        await habilitarCuenta(staffPage, emailVisible);
-        await habilitarCuenta(staffPage, emailOculto);
 
         await paginaSi.goto("/catalogo");
         await abrirItemDelCatalogo(paginaSi, titulo);
         const articuloSi = articuloDelCatalogo(paginaSi);
         await expect(articuloSi).toHaveCount(1);
         const traerSi = formularioDeTraer(articuloSi);
-        await traerSi.getByLabel(/quiero aparecer con nombre/i).check();
-        await traerSi.getByLabel(/nombre para mostrar/i).fill(visible);
-        await traerSi.getByRole("button", { name: /quiero donar/i }).click();
+        await completarTraer(traerSi, { aparecer: visible });
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
 
         await paginaNo.goto("/catalogo");
@@ -67,8 +63,7 @@ test.describe("fase E · muro", () => {
         const articuloNo = articuloDelCatalogo(paginaNo);
         await expect(articuloNo).toHaveCount(1);
         const traerNo = formularioDeTraer(articuloNo);
-        await traerNo.getByLabel(/nombre para mostrar/i).fill(oculto);
-        await traerNo.getByRole("button", { name: /quiero donar/i }).click();
+        await completarTraer(traerNo);
         await expect(paginaNo).toHaveURL(/\/cuenta$/);
 
         await confirmarLlegada(staffPage, titulo);

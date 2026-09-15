@@ -1,11 +1,11 @@
 {
   "accountReceived": {
     "subject": "Recibimos tu pedido de cuenta",
-    "preheader": "El equipo la revisa y te avisa. Mientras tanto no se reserva nada.",
+    "preheader": "Confirmaste el correo. Ya podés anotarte a traer un bien.",
     "body": [
-      "Confirmaste el correo, así que el pedido quedó anotado. El equipo de la campaña lo revisa a mano: no es automático, y no es un trámite eterno.",
-      "Mientras tanto podés entrar a tu cuenta, elegir cómo aparecer y, si te arrepentís, borrarla. Reservar materiales viene después, cuando te habiliten.",
-      "Si tarda más de lo razonable, respondé este correo."
+      "Confirmaste el correo, así que la cuenta quedó anotada. Ya podés entrar al catálogo y decir qué vas a traer, con el nombre, un teléfono si lo hay y la dirección donde ir a buscar.",
+      "El equipo se entera cuando te anotás, no ahora. Si hace falta frenar la cuenta, lo hacen a mano.",
+      "Si preferís no aparecer en la lista de quienes ayudaron, se elige desde tu cuenta. El default es no aparecer."
     ],
     "action": "Ver tu cuenta",
     "why": "Recibís este correo porque creaste una cuenta en el sitio de la reconstrucción de la casa de Norma."
@@ -14,7 +14,7 @@
     "subject": "Ya podés ofrecer lo que vas a traer",
     "preheader": "El equipo habilitó tu cuenta. El catálogo está abierto para vos.",
     "body": [
-      "El equipo revisó tu pedido y habilitó la cuenta. A partir de ahora podés entrar al catálogo y anotar lo que vas a traer, para que no lo traiga otra persona.",
+      "El equipo revisó tu pedido y dejó la cuenta habilitada. Seguí pudiendo anotarte a traer un bien desde el catálogo.",
       "Si preferís no aparecer en la lista de quienes ayudaron, se elige desde tu cuenta. El default es no aparecer."
     ],
     "action": "Ver tu cuenta",
@@ -65,19 +65,19 @@
   },
   "staffNewAccount": {
     "subject": "Hay una cuenta para revisar",
-    "preheader": "Alguien confirmó el correo y espera que habiliten la cuenta.",
+    "preheader": "Alguien confirmó el correo. Ya puede anotarse a traer un bien.",
     "body": [
-      "Alguien confirmó su correo y pidió una cuenta para ofrecerse a traer material.",
-      "Los datos están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
+      "Alguien confirmó su correo. Ya puede anotarse a traer un bien, con nombre y dirección de retiro.",
+      "Los datos están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada. Si hay que frenar la cuenta, se rechaza desde ahí."
     ],
     "action": "Abrir las cuentas del público",
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   },
   "staffNewPledge": {
     "subject": "Reserva nueva en el catálogo",
-    "preheader": "Hay que coordinar la entrega. El contacto está en el backoffice.",
+    "preheader": "Hay que ir a buscar. El contacto y la dirección están en el backoffice.",
     "body": [
-      "Alguien quiere donar {what}.",
+      "Alguien quiere donar {what}. Dejó nombre y dirección de retiro.",
       "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
     ],
     "action": "Abrir las donaciones",

@@ -43,6 +43,9 @@ describe("HowToDonate", () => {
     expect(screen.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /quiero donar/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/^nombre$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeInTheDocument();
+    expect(screen.getByText(/confirmar el correo no es una prueba/i)).toBeInTheDocument();
   });
 
   it("al elegir transferencia no muestra el recargo de Mercado Pago", async () => {
@@ -55,6 +58,10 @@ describe("HowToDonate", () => {
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/el sugerido es/i)).not.toBeInTheDocument();
     expect(screen.getByText(/por transferencia o paypal/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /quiero donar/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/no hace falta cuenta ni anotarse/i)).toBeInTheDocument();
   });
 
   it("al elegir Mercado Pago muestra el extra y no el texto de transferencia", async () => {

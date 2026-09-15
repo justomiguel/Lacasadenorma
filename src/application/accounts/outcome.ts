@@ -27,6 +27,12 @@ export const ACCOUNT_ERROR_CODES = [
   "rateLimited",
   /** Pidió aparecer con nombre y no escribió ninguno. */
   "displayNameRequired",
+  /** Traer un bien sin nombre de contacto. */
+  "contactNameRequired",
+  /** Traer un bien sin dirección de retiro. */
+  "pickupAddressRequired",
+  /** Cubrir con plata no reserva: la transacción es la prueba (ADR-046). */
+  "coverIsNotAPledge",
   /** `/cuenta/clave` sin la sesión que crea el enlace de recuperación. */
   "noRecoverySession",
   /** El enlace del correo venció o ya se usó. */
@@ -57,7 +63,15 @@ export type AccountErrorCode = (typeof ACCOUNT_ERROR_CODES)[number];
 
 /** El campo del formulario que hay que señalar, cuando hay uno. */
 export type AccountField =
-  "email" | "password" | "confirmPassword" | "displayName" | "quantity" | "portrait";
+  | "email"
+  | "password"
+  | "confirmPassword"
+  | "displayName"
+  | "quantity"
+  | "portrait"
+  | "contactName"
+  | "contactPhone"
+  | "pickupAddress";
 
 export type AccountOutcome<T> =
   | { readonly status: "ok"; readonly value: T }
