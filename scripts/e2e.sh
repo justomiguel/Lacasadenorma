@@ -225,17 +225,15 @@ levantar_api_local() {
 # servidor arranca, y la corrida gasta seis minutos para devolver veinte pruebas rojas
 # que parecen defectos de la aplicación y son del harness. Ya pasó.
 #
-# `data-figure` marca los datos bancarios copiables. Están en la home y en
-# `/ayudar`. Transparencia y reconstrucción ya no publican cifras (ADR-025).
+# `data-figure` marca los datos bancarios copiables. Desde ADR-045 viven en
+# `/ayudar/dinero`, no en la home ni en la pantalla de los tres caminos.
+# Transparencia y reconstrucción ya no publican cifras (ADR-025).
 verificar_que_el_build_tiene_datos() {
   local sin_datos=()
-  local pagina
 
-  for pagina in index ayudar; do
-    if ! grep -q 'data-figure' ".next/server/app/${pagina}.html" 2>/dev/null; then
-      sin_datos+=("$pagina")
-    fi
-  done
+  if ! grep -q 'data-figure' ".next/server/app/ayudar/dinero.html" 2>/dev/null; then
+    sin_datos+=("ayudar/dinero")
+  fi
 
   if ! grep -q 'Empezó el montaje del techo' ".next/server/app/reconstruccion.html" 2>/dev/null; then
     sin_datos+=("reconstruccion")
