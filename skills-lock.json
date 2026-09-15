@@ -7,6 +7,12 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
     },
+    "loading-states": {
+      "source": "sanky369/vibe-building-skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/loading-states/SKILL.md",
+      "computedHash": "f976b175a922977e666fe4d98bec5b27b80d6ef92f2857605f1bdfdcb302d679"
+    },
     "supabase": {
       "source": "supabase/agent-skills",
       "sourceType": "github",

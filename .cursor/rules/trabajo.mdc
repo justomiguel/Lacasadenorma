@@ -6,7 +6,7 @@ alwaysApply: true
 # Reglas de trabajo — prevalecen sobre las Skills
 
 Estas son decisiones de la dueña del proyecto, no procedimientos. Las Skills instaladas
-(`frontend-design`, `supabase`, `speckit-*`, y las que traiga el entorno) son buenas y hay que
+(`frontend-design`, `loading-states`, `supabase`, `speckit-*`, y las que traiga el entorno) son buenas y hay que
 usarlas, pero describen cómo hacer las cosas **en general**. Esto describe cómo se hacen **acá**.
 
 **Si una Skill contradice este archivo, gana este archivo.** No se negocia y no se reinterpreta para

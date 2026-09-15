@@ -1,6 +1,13 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.2.0 → 1.2.1
+Tipo de cambio: PATCH — se nombra una Skill ya pinneada, sin cambiar un principio.
+Fecha: 2026-09-15
+
+Motivo: se instaló `loading-states` para auditar espera, vacío y error. En el
+punto donde pide spinner o skeleton se ignora (ADR-032); el resto se sigue.
+
 Cambio de versión: 1.1.0 → 1.2.0
 Tipo de cambio: MINOR — se agrega una restricción técnica con compuerta.
 Fecha: 2026-09-13
@@ -401,11 +408,12 @@ coherente con este archivo.
 3. `AGENTS.md` y las especificaciones de `specs/`;
 4. las Skills instaladas.
 
-Las Skills —`frontend-design`, `supabase`, `speckit-*`, y las que traiga el entorno— MUST usarse: son
-mejores que improvisar, y `skills-lock.json` las fija por hash justamente para poder confiar en ellas.
+Las Skills —`frontend-design`, `loading-states`, `supabase`, `speckit-*`, y las que traiga el
+entorno— MUST usarse: son mejores que improvisar, y `skills-lock.json` las fija por hash justamente
+para poder confiar en ellas.
 Pero describen cómo se hacen las cosas en general, y una decisión de este proyecto le gana a un
 procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, proponer un flujo de pull
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.2.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-13
+**Version**: 1.2.1 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-15
