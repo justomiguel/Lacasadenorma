@@ -24,7 +24,9 @@ estar igual en una fintech o en un panel, no va acá.
 
 - Paleta: verde bosque `#153A2E`, oliva, sage, beige/blanco roto, carbón. El verde se usa poco.
 - Display: Playfair Display. UI y prosa: Inter. Manuscrita (Caveat) sólo para notas de la familia.
-- Fotos reales de `public/fotos/`, sin radio ni borde. Prohibido stock, IA y placeholders.
+- Fotos reales de `public/fotos/`, sin radio ni borde. En el relato —Norma, incendio, obra—
+  prohibido stock, IA y placeholders. El catálogo puede mostrar una foto de referencia del tipo
+  en `public/fotos/catalogo/`, etiquetada como tal (ADR-043); la subida desde el backoffice gana.
 - **Marca propia.** El círculo 01 ORIGINAL (`content/marca.ts`, `DEFAULT_MARK`)
   es el símbolo del sitio: encabezado, menú, pie, favicon, login, cuenta,
   legales y tarjetas de compartir. Las otras variantes de la lámina están

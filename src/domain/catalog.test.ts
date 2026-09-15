@@ -9,6 +9,7 @@ import {
   isDonationUnit,
   isDonationItemCategory,
   groupCatalogByCategory,
+  catalogItemPhotograph,
 } from "./catalog";
 import { DomainError } from "./errors";
 import { money } from "./money";
@@ -171,5 +172,22 @@ describe("groupCatalogByCategory", () => {
       "ajuar",
     ]);
     expect(groups[0]?.items.map((item) => item.title)).toEqual(["Ladrillos", "Arena"]);
+  });
+});
+
+describe("catalogItemPhotograph", () => {
+  const uploaded = { url: "/storage/real.jpg" };
+  const reference = { url: "/fotos/catalogo/ladrillos.jpg" };
+
+  it("la foto subida pisa la de referencia (ADR-043)", () => {
+    expect(catalogItemPhotograph(uploaded, reference)).toBe(uploaded);
+  });
+
+  it("sin foto subida usa la de referencia del tipo", () => {
+    expect(catalogItemPhotograph(null, reference)).toBe(reference);
+  });
+
+  it("sin ninguna de las dos no inventa una", () => {
+    expect(catalogItemPhotograph(null, null)).toBeNull();
   });
 });

@@ -446,18 +446,24 @@ Viene por dos caminos, siguiendo la misma división por frecuencia de cambio que
 
 | Fuente | Qué fotos | Cómo se edita |
 |---|---|---|
-| `public/fotos/`, declaradas en `content/*.json` | Las editoriales: el retrato de Norma, el frente, el interior, el garage, la limpieza. Se eligen una vez | Commit y pull request |
-| Supabase Storage vía `/admin` | Las del avance de la obra —fotos y videos—, intercaladas en cada novedad y fechadas | Backoffice, sin despliegue |
+| `public/fotos/`, declaradas en `content/*.json` | Las editoriales: el retrato de Norma, el frente, el interior, el garage, la limpieza. Se eligen una vez | Commit |
+| `public/fotos/catalogo/`, declaradas en `catalogo-fotos.json` | Referencia del tipo, etiquetada como ilustrativa. No representa el objeto real (ADR-043) | Commit |
+| Supabase Storage vía `/admin` | Las del avance de la obra —fotos y videos—, intercaladas en cada novedad y fechadas; y la foto real de un ítem del catálogo cuando alguien la sube | Backoffice, sin despliegue |
 
 Las editoriales no van a la base porque son parte del relato, no un dato operativo, y tienen que estar
 en pantalla también cuando la base no responde. Una foto **no es una cifra** —no afirma un número—, así
 que publicarla sin base de datos no viola FR-034 ni la verificación del modo `sin-datos`, que sigue
 exigiendo cero `data-figure`.
 
-- Sin fotos reales, **no se usan ilustraciones ni imágenes de stock ni imágenes generadas**. Se
-  reserva el espacio con la proporción correcta y un texto honesto de qué va ahí. Un espacio vacío
-  con intención se lee como respeto; una foto de stock se lee como mentira. Pero es un **estado
-  transitorio**: si el material puede tardar, la página tiene que verse terminada sin él (sección 12).
+- En el relato —Norma, el incendio, la obra—, **no se usan ilustraciones ni imágenes de stock ni
+  imágenes generadas**. Se reserva el espacio con la proporción correcta y un texto honesto de
+  qué va ahí. Un espacio vacío con intención se lee como respeto; una foto de stock de una casa
+  que no es ésta se lee como mentira. Pero es un **estado transitorio**: si el material puede
+  tardar, la página tiene que verse terminada sin él (sección 12).
+- **El catálogo es la excepción** (ADR-043). Cada ficha puede mostrar una foto de referencia del
+  tipo de material, con epígrafe que dice que es solamente ilustrativa y que no representa el
+  objeto real. La foto subida desde el backoffice pisa esa referencia. Sin ninguna de las dos, se
+  reserva el hueco.
 - **La orientación del material manda.** Lo que se filmó con el teléfono en la mano es 9:16 y no se
   recorta a apaisado sin perder algo: va al ancho completo en teléfono, que es su formato nativo, y al
   margen en escritorio. Estirar una foto de 600 px a 1440 se ve peor que la misma foto chica y bien

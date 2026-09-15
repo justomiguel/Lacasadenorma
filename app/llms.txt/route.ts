@@ -38,7 +38,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   (un link de Argentina y otro de Chile) y **por PayPal**. El sitio **no procesa pagos** y **no
   pide datos de tarjeta** en ningún momento.
 - Las cuentas publicadas (titular, alias, CBU, cuenta chilena) viven en el contenido versionado.
-- Los aportes individuales y las identidades de quienes aportan **no se publican**.
+- Los montos de los aportes individuales **no se publican**. El nombre, sólo si esa persona eligió aparecer.
 - Los archivos de los comprobantes **no son públicos**: suelen tener datos de terceros.
 
 ## Lo que todavía no es verdad, y no hay que afirmar
@@ -63,8 +63,8 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   lo que cubrió la prensa y qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra, las fotos del trabajo y la última novedad publicada.
 - [Qué le falta a la casa](${siteUrl}/catalogo): materiales y cosas que todavía hacen falta, y
-  cuánto queda. Sin foto no se inventa una. Reservar una unidad se abre cuando la cuenta está
-  habilitada.
+  cuánto queda. La ficha muestra una foto ilustrativa del tipo; el epígrafe dice
+  que no representa el objeto real. Reservar una unidad se abre cuando la cuenta está habilitada.
 - [Quiénes ayudaron](${siteUrl}/quienes-ayudaron): los nombres de quienes trajeron algo o
   aportaron en plata y eligieron aparecer. Una reserva no figura. El monto de un aporte no
   se publica; el porcentaje, sólo si la familia lo prende.

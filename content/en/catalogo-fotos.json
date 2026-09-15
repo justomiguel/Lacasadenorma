@@ -1,0 +1,785 @@
+{
+  "Ladrillos comunes": {
+    "url": "/fotos/catalogo/ladrillos-comunes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ladrillos comunes.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Ladrillos huecos 18x18x33": {
+    "url": "/fotos/catalogo/ladrillos-huecos-18x18x33.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ladrillos huecos 18x18x33.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cemento": {
+    "url": "/fotos/catalogo/cemento.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cemento.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cal hidratada": {
+    "url": "/fotos/catalogo/cal-hidratada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cal hidratada.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Arena": {
+    "url": "/fotos/catalogo/arena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Arena.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Ripio": {
+    "url": "/fotos/catalogo/ripio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ripio.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Hidrófugo": {
+    "url": "/fotos/catalogo/hidrofugo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Hidrófugo.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Chapas de techo": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Chapas de techo.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cerámico de piso": {
+    "url": "/fotos/catalogo/ceramico-de-piso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cerámico de piso.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Azulejos de cocina": {
+    "url": "/fotos/catalogo/azulejos-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Azulejos de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Azulejos de baño": {
+    "url": "/fotos/catalogo/azulejos-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Azulejos de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Pintura": {
+    "url": "/fotos/catalogo/pintura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Pintura.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Hierro para estructura": {
+    "url": "/fotos/catalogo/hierro-para-estructura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Hierro para estructura.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tirantes de techo": {
+    "url": "/fotos/catalogo/tirantes-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tirantes de techo.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cielorraso": {
+    "url": "/fotos/catalogo/cielorraso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cielorraso.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Zócalos": {
+    "url": "/fotos/catalogo/zocalos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Zócalos.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Enduido": {
+    "url": "/fotos/catalogo/enduido.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Enduido.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Clavos y alambre": {
+    "url": "/fotos/catalogo/clavos-y-alambre.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Clavos y alambre.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Puerta de entrada": {
+    "url": "/fotos/catalogo/puerta-de-entrada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Puerta de entrada.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Puertas interiores": {
+    "url": "/fotos/catalogo/puertas-interiores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Puertas interiores.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Ventanas": {
+    "url": "/fotos/catalogo/ventanas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ventanas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Rejas": {
+    "url": "/fotos/catalogo/rejas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Rejas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Portón": {
+    "url": "/fotos/catalogo/porton.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Portón.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tanque de agua": {
+    "url": "/fotos/catalogo/tanque-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tanque de agua.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Bomba de agua": {
+    "url": "/fotos/catalogo/bomba-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Bomba de agua.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cámara séptica": {
+    "url": "/fotos/catalogo/camara-septica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cámara séptica.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Inodoro": {
+    "url": "/fotos/catalogo/inodoro.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Inodoro.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Bidet": {
+    "url": "/fotos/catalogo/bidet.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Bidet.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tina": {
+    "url": "/fotos/catalogo/tina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Receptáculo de ducha": {
+    "url": "/fotos/catalogo/receptaculo-de-ducha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Receptáculo de ducha.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Lavatorio": {
+    "url": "/fotos/catalogo/lavatorio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Lavatorio.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Vanitory": {
+    "url": "/fotos/catalogo/vanitory.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Vanitory.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Pileta de cocina": {
+    "url": "/fotos/catalogo/pileta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Pileta de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Mesada de cocina": {
+    "url": "/fotos/catalogo/mesada-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Mesada de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Grifería de baño": {
+    "url": "/fotos/catalogo/griferia-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Grifería de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Grifería de cocina": {
+    "url": "/fotos/catalogo/griferia-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Grifería de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Mampara": {
+    "url": "/fotos/catalogo/mampara.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Mampara.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Extractor de baño": {
+    "url": "/fotos/catalogo/extractor-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Extractor de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Caños de agua": {
+    "url": "/fotos/catalogo/canos-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Caños de agua.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Caños de desagüe": {
+    "url": "/fotos/catalogo/canos-de-desague.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Caños de desagüe.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Caños de gas": {
+    "url": "/fotos/catalogo/canos-de-gas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Caños de gas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Garrafa y regulador": {
+    "url": "/fotos/catalogo/garrafa-y-regulador.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Garrafa y regulador.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cable eléctrico": {
+    "url": "/fotos/catalogo/cable-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cable eléctrico.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Llaves y tomacorrientes": {
+    "url": "/fotos/catalogo/llaves-y-tomacorrientes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Llaves y tomacorrientes.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tablero eléctrico": {
+    "url": "/fotos/catalogo/tablero-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tablero eléctrico.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Accesorios de baño": {
+    "url": "/fotos/catalogo/accesorios-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Accesorios de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cocina": {
+    "url": "/fotos/catalogo/cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Heladera": {
+    "url": "/fotos/catalogo/heladera.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Heladera.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Lavarropas": {
+    "url": "/fotos/catalogo/lavarropas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Lavarropas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Ventiladores": {
+    "url": "/fotos/catalogo/ventiladores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ventiladores.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Calefón o termotanque": {
+    "url": "/fotos/catalogo/calefon-o-termotanque.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Calefón o termotanque.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Plancha": {
+    "url": "/fotos/catalogo/plancha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Plancha.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Microondas": {
+    "url": "/fotos/catalogo/microondas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Microondas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Pava eléctrica": {
+    "url": "/fotos/catalogo/pava-electrica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Pava eléctrica.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Campana extractora": {
+    "url": "/fotos/catalogo/campana-extractora.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Campana extractora.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cama plaza y media": {
+    "url": "/fotos/catalogo/cama-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cama plaza y media.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Colchón plaza y media": {
+    "url": "/fotos/catalogo/colchon-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Colchón plaza y media.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Ropero": {
+    "url": "/fotos/catalogo/ropero.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Ropero.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Mesa de luz": {
+    "url": "/fotos/catalogo/mesa-de-luz.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Mesa de luz.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Mesa de cocina": {
+    "url": "/fotos/catalogo/mesa-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Mesa de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Sillas": {
+    "url": "/fotos/catalogo/sillas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Sillas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Sillón de dos cuerpos": {
+    "url": "/fotos/catalogo/sillon-de-dos-cuerpos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Sillón de dos cuerpos.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Mesa ratona": {
+    "url": "/fotos/catalogo/mesa-ratona.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Mesa ratona.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Bajo mesada": {
+    "url": "/fotos/catalogo/bajo-mesada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Bajo mesada.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Alacena": {
+    "url": "/fotos/catalogo/alacena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Alacena.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Banqueta de cocina": {
+    "url": "/fotos/catalogo/banqueta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Banqueta de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Juego de ollas": {
+    "url": "/fotos/catalogo/juego-de-ollas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Juego de ollas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Sartenes": {
+    "url": "/fotos/catalogo/sartenes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Sartenes.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Vajilla": {
+    "url": "/fotos/catalogo/vajilla.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Vajilla.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cubiertos": {
+    "url": "/fotos/catalogo/cubiertos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cubiertos.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Vasos y jarra": {
+    "url": "/fotos/catalogo/vasos-y-jarra.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Vasos y jarra.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Utensilios de cocina": {
+    "url": "/fotos/catalogo/utensilios-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Utensilios de cocina.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tabla para picar": {
+    "url": "/fotos/catalogo/tabla-para-picar.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tabla para picar.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Almohadas": {
+    "url": "/fotos/catalogo/almohadas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Almohadas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Sábanas plaza y media": {
+    "url": "/fotos/catalogo/sabanas-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Sábanas plaza y media.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Acolchado": {
+    "url": "/fotos/catalogo/acolchado.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Acolchado.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Toallas": {
+    "url": "/fotos/catalogo/toallas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Toallas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cortina de baño": {
+    "url": "/fotos/catalogo/cortina-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cortina de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Espejo de baño": {
+    "url": "/fotos/catalogo/espejo-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Espejo de baño.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Cortinas": {
+    "url": "/fotos/catalogo/cortinas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Cortinas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Tender": {
+    "url": "/fotos/catalogo/tender.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Tender.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Balde y lampazo": {
+    "url": "/fotos/catalogo/balde-y-lampazo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Balde y lampazo.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Escoba y palita": {
+    "url": "/fotos/catalogo/escoba-y-palita.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Escoba y palita.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Lámparas": {
+    "url": "/fotos/catalogo/lamparas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Lámparas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Zapatillas eléctricas": {
+    "url": "/fotos/catalogo/zapatillas-electricas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Zapatillas eléctricas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Perchas": {
+    "url": "/fotos/catalogo/perchas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Perchas.",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  },
+  "Chapas del techo (datos de desarrollo)": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Illustrative photo of Chapas del techo (datos de desarrollo).",
+    "caption": "Illustrative photo only. It does not represent the actual item."
+  }
+}

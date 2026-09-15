@@ -5,11 +5,10 @@
 -- cargue un promedio verificado: ADR-041 no inventa precios).
 -- Publicado de entrada: `published_at = now()`.
 --
--- Cada ítem sale **sin foto**. La foto real se carga desde `/admin/catalogo` y
--- queda en `media` (no en `public/`). No se bajan fotos de internet ni se
--- generan: serían stock o IA, y este sitio no publica eso (ADR-021, FR-212).
--- El listado `/catalogo` es una tabla sin huecos; el espacio reservado vive
--- en la ficha `/catalogo/<id>`.
+-- Cada ítem sale **sin foto en Storage**. La ficha pública muestra la foto de
+-- referencia del título (public/fotos/catalogo/, ADR-043) hasta que el equipo
+-- suba la foto real desde `/admin/catalogo`. Esa, si existe, gana. El listado
+-- `/catalogo` es una tabla sin fotos; la foto vive en `/catalogo/<id>`.
 --
 -- No corre en el fixture local: ese entorno tiene su propio ítem de prueba.
 --

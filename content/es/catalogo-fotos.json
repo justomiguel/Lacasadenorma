@@ -1,0 +1,785 @@
+{
+  "Ladrillos comunes": {
+    "url": "/fotos/catalogo/ladrillos-comunes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ladrillos comunes.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Ladrillos huecos 18x18x33": {
+    "url": "/fotos/catalogo/ladrillos-huecos-18x18x33.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ladrillos huecos 18x18x33.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cemento": {
+    "url": "/fotos/catalogo/cemento.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cemento.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cal hidratada": {
+    "url": "/fotos/catalogo/cal-hidratada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cal hidratada.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Arena": {
+    "url": "/fotos/catalogo/arena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Arena.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Ripio": {
+    "url": "/fotos/catalogo/ripio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ripio.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Hidrófugo": {
+    "url": "/fotos/catalogo/hidrofugo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Hidrófugo.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Chapas de techo": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Chapas de techo.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cerámico de piso": {
+    "url": "/fotos/catalogo/ceramico-de-piso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cerámico de piso.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Azulejos de cocina": {
+    "url": "/fotos/catalogo/azulejos-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Azulejos de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Azulejos de baño": {
+    "url": "/fotos/catalogo/azulejos-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Azulejos de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Pintura": {
+    "url": "/fotos/catalogo/pintura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Pintura.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Hierro para estructura": {
+    "url": "/fotos/catalogo/hierro-para-estructura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Hierro para estructura.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tirantes de techo": {
+    "url": "/fotos/catalogo/tirantes-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tirantes de techo.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cielorraso": {
+    "url": "/fotos/catalogo/cielorraso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cielorraso.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Zócalos": {
+    "url": "/fotos/catalogo/zocalos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Zócalos.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Enduido": {
+    "url": "/fotos/catalogo/enduido.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Enduido.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Clavos y alambre": {
+    "url": "/fotos/catalogo/clavos-y-alambre.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Clavos y alambre.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Puerta de entrada": {
+    "url": "/fotos/catalogo/puerta-de-entrada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Puerta de entrada.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Puertas interiores": {
+    "url": "/fotos/catalogo/puertas-interiores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Puertas interiores.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Ventanas": {
+    "url": "/fotos/catalogo/ventanas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ventanas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Rejas": {
+    "url": "/fotos/catalogo/rejas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Rejas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Portón": {
+    "url": "/fotos/catalogo/porton.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Portón.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tanque de agua": {
+    "url": "/fotos/catalogo/tanque-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tanque de agua.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Bomba de agua": {
+    "url": "/fotos/catalogo/bomba-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Bomba de agua.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cámara séptica": {
+    "url": "/fotos/catalogo/camara-septica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cámara séptica.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Inodoro": {
+    "url": "/fotos/catalogo/inodoro.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Inodoro.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Bidet": {
+    "url": "/fotos/catalogo/bidet.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Bidet.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tina": {
+    "url": "/fotos/catalogo/tina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Receptáculo de ducha": {
+    "url": "/fotos/catalogo/receptaculo-de-ducha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Receptáculo de ducha.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Lavatorio": {
+    "url": "/fotos/catalogo/lavatorio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Lavatorio.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Vanitory": {
+    "url": "/fotos/catalogo/vanitory.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Vanitory.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Pileta de cocina": {
+    "url": "/fotos/catalogo/pileta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Pileta de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Mesada de cocina": {
+    "url": "/fotos/catalogo/mesada-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Mesada de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Grifería de baño": {
+    "url": "/fotos/catalogo/griferia-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Grifería de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Grifería de cocina": {
+    "url": "/fotos/catalogo/griferia-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Grifería de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Mampara": {
+    "url": "/fotos/catalogo/mampara.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Mampara.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Extractor de baño": {
+    "url": "/fotos/catalogo/extractor-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Extractor de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Caños de agua": {
+    "url": "/fotos/catalogo/canos-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Caños de agua.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Caños de desagüe": {
+    "url": "/fotos/catalogo/canos-de-desague.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Caños de desagüe.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Caños de gas": {
+    "url": "/fotos/catalogo/canos-de-gas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Caños de gas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Garrafa y regulador": {
+    "url": "/fotos/catalogo/garrafa-y-regulador.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Garrafa y regulador.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cable eléctrico": {
+    "url": "/fotos/catalogo/cable-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cable eléctrico.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Llaves y tomacorrientes": {
+    "url": "/fotos/catalogo/llaves-y-tomacorrientes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Llaves y tomacorrientes.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tablero eléctrico": {
+    "url": "/fotos/catalogo/tablero-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tablero eléctrico.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Accesorios de baño": {
+    "url": "/fotos/catalogo/accesorios-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Accesorios de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cocina": {
+    "url": "/fotos/catalogo/cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Heladera": {
+    "url": "/fotos/catalogo/heladera.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Heladera.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Lavarropas": {
+    "url": "/fotos/catalogo/lavarropas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Lavarropas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Ventiladores": {
+    "url": "/fotos/catalogo/ventiladores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ventiladores.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Calefón o termotanque": {
+    "url": "/fotos/catalogo/calefon-o-termotanque.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Calefón o termotanque.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Plancha": {
+    "url": "/fotos/catalogo/plancha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Plancha.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Microondas": {
+    "url": "/fotos/catalogo/microondas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Microondas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Pava eléctrica": {
+    "url": "/fotos/catalogo/pava-electrica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Pava eléctrica.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Campana extractora": {
+    "url": "/fotos/catalogo/campana-extractora.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Campana extractora.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cama plaza y media": {
+    "url": "/fotos/catalogo/cama-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cama plaza y media.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Colchón plaza y media": {
+    "url": "/fotos/catalogo/colchon-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Colchón plaza y media.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Ropero": {
+    "url": "/fotos/catalogo/ropero.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Ropero.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Mesa de luz": {
+    "url": "/fotos/catalogo/mesa-de-luz.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Mesa de luz.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Mesa de cocina": {
+    "url": "/fotos/catalogo/mesa-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Mesa de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Sillas": {
+    "url": "/fotos/catalogo/sillas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Sillas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Sillón de dos cuerpos": {
+    "url": "/fotos/catalogo/sillon-de-dos-cuerpos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Sillón de dos cuerpos.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Mesa ratona": {
+    "url": "/fotos/catalogo/mesa-ratona.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Mesa ratona.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Bajo mesada": {
+    "url": "/fotos/catalogo/bajo-mesada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Bajo mesada.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Alacena": {
+    "url": "/fotos/catalogo/alacena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Alacena.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Banqueta de cocina": {
+    "url": "/fotos/catalogo/banqueta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Banqueta de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Juego de ollas": {
+    "url": "/fotos/catalogo/juego-de-ollas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Juego de ollas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Sartenes": {
+    "url": "/fotos/catalogo/sartenes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Sartenes.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Vajilla": {
+    "url": "/fotos/catalogo/vajilla.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Vajilla.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cubiertos": {
+    "url": "/fotos/catalogo/cubiertos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cubiertos.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Vasos y jarra": {
+    "url": "/fotos/catalogo/vasos-y-jarra.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Vasos y jarra.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Utensilios de cocina": {
+    "url": "/fotos/catalogo/utensilios-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Utensilios de cocina.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tabla para picar": {
+    "url": "/fotos/catalogo/tabla-para-picar.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tabla para picar.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Almohadas": {
+    "url": "/fotos/catalogo/almohadas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Almohadas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Sábanas plaza y media": {
+    "url": "/fotos/catalogo/sabanas-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Sábanas plaza y media.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Acolchado": {
+    "url": "/fotos/catalogo/acolchado.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Acolchado.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Toallas": {
+    "url": "/fotos/catalogo/toallas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Toallas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cortina de baño": {
+    "url": "/fotos/catalogo/cortina-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cortina de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Espejo de baño": {
+    "url": "/fotos/catalogo/espejo-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Espejo de baño.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Cortinas": {
+    "url": "/fotos/catalogo/cortinas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Cortinas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Tender": {
+    "url": "/fotos/catalogo/tender.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Tender.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Balde y lampazo": {
+    "url": "/fotos/catalogo/balde-y-lampazo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Balde y lampazo.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Escoba y palita": {
+    "url": "/fotos/catalogo/escoba-y-palita.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Escoba y palita.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Lámparas": {
+    "url": "/fotos/catalogo/lamparas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Lámparas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Zapatillas eléctricas": {
+    "url": "/fotos/catalogo/zapatillas-electricas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Zapatillas eléctricas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Perchas": {
+    "url": "/fotos/catalogo/perchas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Perchas.",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  },
+  "Chapas del techo (datos de desarrollo)": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto ilustrativa de Chapas del techo (datos de desarrollo).",
+    "caption": "Foto solamente ilustrativa. No representa el objeto real."
+  }
+}

@@ -21,8 +21,7 @@ import {
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).
  *
  * Cada prueba crea su ítem por el backoffice y lo despublica al terminar: un
- * ítem sin foto en el fixture rompería el conteo exacto de huecos de
- * `revision-visual.spec.ts`.
+ * ítem de prueba extra ensucia `/catalogo` para la revisión visual.
  */
 
 const ITEM_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
@@ -36,6 +35,9 @@ test.describe("fase D · reservas", () => {
     await expect(
       page.getByRole("heading", { name: /cubrirlo con plata/i }),
     ).toBeVisible();
+    await expect(page.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
+    await expect(page.getByText(/solamente ilustrativa/i)).toBeVisible();
+    await expect(page.getByText(/no representa el objeto real/i)).toBeVisible();
     await expect(page.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
     await expect(page.getByLabel(/sumar más/i)).toBeVisible();
     await expect(
@@ -54,7 +56,7 @@ test.describe("fase D · reservas", () => {
     browser,
   }, info) => {
     // Alta, salida, catálogo e ingreso: 45 s cortaba en CI con el formulario
-    // de redes debajo, y el ítem sin foto quedaba publicado para la revisión visual.
+    // de redes debajo.
     test.setTimeout(90_000);
     const sufijo = sufijoUnico(info.project.name);
     const titulo = `Chapas para volver (${sufijo})`;

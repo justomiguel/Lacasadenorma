@@ -53,3 +53,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada; enmendada por ADR-041 (estimado de la ficha) y ADR-042 (porcentaje de un aporte en el muro) |
 | [041](./041-estimado-publico-y-cubrir-con-plata.md) | El estimado se publica en la ficha, y se puede cubrir con plata | Aceptada |
 | [042](./042-muro-de-aportes-con-porcentaje.md) | El muro de aportes publica el nombre, y el porcentaje sólo si se prende | Aceptada |
+| [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |

@@ -242,8 +242,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   número disponible en el mensaje.
 - **Una cuenta del público llama directamente al servidor** intentando escribir en la campaña, leer
   aportes o reservar a nombre de otro. La base lo niega, no la interfaz.
-- **Un ítem sin foto.** Se reserva el espacio y se dice qué foto va ahí; no se pone una imagen de
-  archivo (ADR-021).
+- **Un ítem sin foto subida.** La ficha muestra la foto de referencia del tipo, etiquetada como
+  tal (ADR-043). Si tampoco hay referencia, se reserva el espacio y se dice qué foto va ahí; no
+  se pone una imagen de archivo sin epígrafe (ADR-021).
 - **Alguien navega sólo con teclado, o con lector de pantalla.** Registrarse, reservar y cambiar el
   anonimato se completan igual, con foco visible y errores anunciados.
 - **La fuente de datos no está disponible.** El catálogo y el muro se omiten con aviso, como el resto
@@ -286,8 +287,12 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
   necesarias, incluso con pedidos simultáneos. La garantía MUST estar en la base de datos y MUST NOT
   depender de una comprobación previa en la aplicación.
-- **FR-212**: Un ítem MUST poder llevar una foto real con texto alternativo; sin foto, el espacio se
-  reserva y se declara qué va ahí, sin imagen de archivo.
+- **FR-212**: Un ítem MUST poder llevar una foto con texto alternativo. Si el equipo subió una
+  foto real desde el backoffice, esa MUST mostrarse. Si no, la ficha MUST mostrar una foto de
+  referencia del tipo de material, con epígrafe que diga que es solamente ilustrativa y que no
+  representa el objeto real (ADR-043). Sin ninguna de las dos, el espacio se reserva y se declara
+  qué va ahí, sin imagen de archivo. MUST NOT usar stock ni imagen generada en el relato (historia,
+  incendio, obra).
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
   y el presupuesto cuenten la misma obra.
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
@@ -298,10 +303,10 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
   MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
   arena, ripio y similares.
-- **FR-254**: Cada ítem publicado MUST tener una página propia con la foto real o el espacio
-  reservado, la descripción, las cantidades y, si queda algo, el formulario de reserva y, si hay
-  estimado, la forma de cubrirlo con plata. El listado MUST NOT repetir la foto: el hueco vive
-  en la ficha.
+- **FR-254**: Cada ítem publicado MUST tener una página propia con la foto (la subida, o la de
+  referencia del tipo, o el espacio reservado), la descripción, las cantidades y, si queda algo,
+  el formulario de reserva y, si hay estimado, la forma de cubrirlo con plata. El listado MUST
+  NOT repetir la foto: la foto vive en la ficha.
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
   reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.

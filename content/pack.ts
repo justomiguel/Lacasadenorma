@@ -2,6 +2,7 @@ import type { Locale } from "@/src/i18n/locale";
 
 import ayudarEn from "./en/ayudar.json";
 import catalogoEn from "./en/catalogo.json";
+import catalogoFotosEn from "./en/catalogo-fotos.json";
 import cuentaEn from "./en/cuenta.json";
 import emailsEn from "./en/emails.json";
 import legadoEn from "./en/legado.json";
@@ -16,6 +17,7 @@ import transparenciaEn from "./en/transparencia.json";
 import uiEn from "./en/ui.json";
 import ayudarEs from "./es/ayudar.json";
 import catalogoEs from "./es/catalogo.json";
+import catalogoFotosEs from "./es/catalogo-fotos.json";
 import cuentaEs from "./es/cuenta.json";
 import emailsEs from "./es/emails.json";
 import legadoEs from "./es/legado.json";
@@ -30,6 +32,7 @@ import transparenciaEs from "./es/transparencia.json";
 import uiEs from "./es/ui.json";
 import {
   accountSchema,
+  catalogPhotosSchema,
   catalogSchema,
   emailsSchema,
   faqSchema,
@@ -70,6 +73,7 @@ function pack(
     reconstruccion: unknown;
     ayudar: unknown;
     catalogo: unknown;
+    catalogoFotos: unknown;
     quienesAyudaron: unknown;
     transparencia: unknown;
     legado: unknown;
@@ -96,7 +100,14 @@ function pack(
       `${prefix}reconstruccion.json`,
     ),
     help: parseContent(helpSchema, files.ayudar, `${prefix}ayudar.json`),
-    catalog: parseContent(catalogSchema, files.catalogo, `${prefix}catalogo.json`),
+    catalog: {
+      ...parseContent(catalogSchema, files.catalogo, `${prefix}catalogo.json`),
+      referencePhotos: parseContent(
+        catalogPhotosSchema,
+        files.catalogoFotos,
+        `${prefix}catalogo-fotos.json`,
+      ),
+    },
     wall: parseContent(
       wallSchema,
       files.quienesAyudaron,
@@ -124,6 +135,7 @@ const packs = {
     reconstruccion: reconstruccionEs,
     ayudar: ayudarEs,
     catalogo: catalogoEs,
+    catalogoFotos: catalogoFotosEs,
     quienesAyudaron: quienesAyudaronEs,
     transparencia: transparenciaEs,
     legado: legadoEs,
@@ -140,6 +152,7 @@ const packs = {
     reconstruccion: reconstruccionEn,
     ayudar: ayudarEn,
     catalogo: catalogoEn,
+    catalogoFotos: catalogoFotosEn,
     quienesAyudaron: quienesAyudaronEn,
     transparencia: transparenciaEn,
     legado: legadoEn,
