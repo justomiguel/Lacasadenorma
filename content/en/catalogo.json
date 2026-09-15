@@ -1,6 +1,6 @@
 {
   "title": "What the house still needs",
-  "lead": "Materials and things that are still missing to rebuild. The table shows how much is left, an estimate per unit and the total still needed. The estimate is not a fixed price: it comes from an internet average. If a store in Formosa charges something else, that is what counts. “I want to donate” opens the item: you can bring the same good or cover it with money.",
+  "lead": "Materials and things that are still missing to rebuild. The table shows an illustrative photo when there is one, how much is left, an estimate per unit and the total still needed. The estimate is not a fixed price: it comes from an internet average. If a store in Formosa charges something else, that is what counts. The photos do not represent the real object. “I want to donate” opens the item: you can bring the same good or cover it with money.",
   "paragraphs": [],
   "seoDescription": "What materials and things Norma’s house still needs, and how much remains to be covered.",
   "emptyTitle": "No list has been published yet",
@@ -21,7 +21,7 @@
   "appearNamedHint": "If you leave this unchecked, what you bring is counted without your name. That is the default.",
   "conflictTitle": "Someone got there first",
   "conflictBody": "That unit is already reserved under someone else's name. The list was updated.",
-  "tableCaption": "What is still needed, how much, an estimate per unit and the total still needed. The estimate is not a fixed price. A name appears only if that person chose to be named.",
+  "tableCaption": "What is still needed, with an illustrative photo when there is one, how much, an estimate per unit and the total still needed. The estimate is not a fixed price. The photos do not represent the real object. A name appears only if that person chose to be named.",
   "columnItem": "What",
   "columnQuantity": "Quantity",
   "columnTaken": "Has someone taken it?",

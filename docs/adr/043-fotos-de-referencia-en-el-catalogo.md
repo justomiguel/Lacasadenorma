@@ -45,8 +45,12 @@ relato, no.**
    resto del contenido de baja frecuencia (ADR-007). Storage sigue siendo el
    camino de las fotos operativas: avance de la obra y la foto real de un
    ítem cuando alguien la sube.
-4. **El listado no las muestra.** FR-254 no cambia: `/catalogo` es una tabla;
-   la foto vive en `/catalogo/<id>`.
+4. **El listado muestra una miniatura en Qué.** Quien escanea `/catalogo` tiene
+   que reconocer el objeto sin abrir cada ficha: es para eso que están las fotos.
+   La miniatura (`w-5xl`) va en la misma celda que el título, no en una columna
+   nueva —una columna más desborda—. Sin foto no se reserva hueco en la tabla.
+   El epígrafe completo y el crédito viven en la ficha; el caption de la tabla
+   dice que las fotos son ilustrativas y no representan el objeto real.
 5. **Historia, incendio, Norma, obra, novedades: sin cambio.** Stock, IA e
    ilustración de relleno siguen prohibidos ahí. Una foto de una casa
    quemada que no es ésta, o un retrato generado de Norma, sigue siendo una
@@ -68,10 +72,10 @@ eso; un blob decorativo o una ilustración para «llenar» `/que-paso` sí.
 
 ## Consecuencias
 
-**Buenas.** Cada ficha del catálogo básico muestra qué se está pidiendo.
-Quien trae el objeto tiene una referencia visual. El relato de la familia
-sigue sin stock. La foto real, cuando alguien la suba, pisa la de
-referencia sin migrar nada.
+**Buenas.** El listado y cada ficha del catálogo básico muestran qué se
+está pidiendo. Quien trae el objeto lo reconoce sin abrir ochenta fichas.
+El relato de la familia sigue sin stock. La foto real, cuando alguien la
+suba, pisa la de referencia sin migrar nada.
 
 **Malas y aceptadas.**
 

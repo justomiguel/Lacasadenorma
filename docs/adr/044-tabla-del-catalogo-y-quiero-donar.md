@@ -29,8 +29,10 @@ internet, con Formosa primero cuando hay un número de esa plaza.
    `revision-visual.spec.ts`).
 2. **Columnas del listado:** qué, cantidad, si alguien la tomó, nombre,
    estimado por unidad, estimado total de lo que falta, y al final «Quiero
-   donar». El total es `netCoverAmount(unit, remaining)`: lo que queda, no lo
-   pedido original. Ítem cubierto: sin botón y sin total.
+   donar». En Qué, una miniatura de la foto (subida o de referencia) junto al
+   título, no una columna más (ADR-043). Sin foto, el título solo: MUST NOT
+   reservar un hueco. El total es `netCoverAmount(unit, remaining)`: lo que
+   queda, no lo pedido original. Ítem cubierto: sin botón y sin total.
 3. **«Quiero donar» es `SecondaryAction`.** Una primaria por pantalla, y esa
    sigue siendo «Ayudar a reconstruir». El CTA de fila abre la ficha
    (`/catalogo/{id}`). El HTML público es idéntico con o sin sesión
@@ -75,7 +77,8 @@ Mercado Pago. El owner se entera cuando alguien se anota de verdad.
 **Malas y aceptadas.**
 
 - Una tabla ancha en 360 px se desplaza de costado. Es una tabla, no una
-  tarjeta.
+  tarjeta. La miniatura en Qué hace la fila más alta; se queda adentro de
+  `max-w-quote` para no recortar estimado ni donar en 1440.
 - Los promedios de internet se vencen. Se actualizan en el SQL y en la nota
   de research, no en un comentario.
 - Un valor fiscal de Formosa no es el ticket del corralón. La etiqueta de
