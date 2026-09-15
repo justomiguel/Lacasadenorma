@@ -1,3 +1,4 @@
+import { BusyCue } from "@/components/design-system/busy";
 import { EditorialImage } from "@/components/design-system/editorial-image";
 import { ReservedSpace } from "@/components/design-system/photo";
 import type { AccountContent, CatalogContent } from "@/content/schema";
@@ -74,9 +75,9 @@ export function CatalogItem({
 
 export function CatalogLoading({ message }: { message: string }) {
   return (
-    <p className="max-w-measure text-body text-ink-muted" aria-busy="true">
-      {message}
-    </p>
+    <div aria-busy="true">
+      <BusyCue label={message} />
+    </div>
   );
 }
 
