@@ -214,6 +214,22 @@ describe("claimItem", () => {
     expect(donations.claimed).toBeNull();
   });
 
+  it("si el caché de PostgREST no tiene la función, no filtra el error de esquema", async () => {
+    const donations = new FakeDonationsPort();
+    donations.failWith = new Error(
+      "reservar el ítem: Could not find the function public.claim_donation_item(p_contact_name, p_pickup_address) in the schema cache (PGRST202)",
+    );
+
+    const result = await claimItem(ready(donations), {
+      itemId: ITEM,
+      quantity: 1,
+      anonymous: "si",
+      ...TRAER,
+    });
+
+    expect(result).toEqual({ status: "error", code: "schemaBehind", field: null });
+  });
+
   it("cubrir con plata no reserva: la transacción es la prueba", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {

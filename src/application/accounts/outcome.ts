@@ -33,6 +33,8 @@ export const ACCOUNT_ERROR_CODES = [
   "pickupAddressRequired",
   /** Cubrir con plata no reserva: la transacción es la prueba (ADR-046). */
   "coverIsNotAPledge",
+  /** El sitio llama una función que PostgREST todavía no tiene en el caché. */
+  "schemaBehind",
   /** `/cuenta/clave` sin la sesión que crea el enlace de recuperación. */
   "noRecoverySession",
   /** El enlace del correo venció o ya se usó. */

@@ -142,6 +142,7 @@
     "contactNameRequired": "Type a name so the team knows who they are talking to.",
     "pickupAddressRequired": "Type the address where the good can be picked up.",
     "coverIsNotAPledge": "Covering with money is not a reservation: transfer, and the team records it when it arrives.",
+    "schemaBehind": "The list was updated and this hold cannot be placed yet. You can try again in a little while.",
     "noRecoverySession": "This link doesn't open a recovery session. Ask for a new one.",
     "linkExpired": "That link has expired or has already been used. Ask for a new one.",
     "oauthFailed": "Couldn't sign in with that network. Try again or use your email.",

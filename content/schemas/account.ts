@@ -45,6 +45,7 @@ const errors = z.object({
   contactNameRequired: phrase,
   pickupAddressRequired: phrase,
   coverIsNotAPledge: phrase,
+  schemaBehind: phrase,
   noRecoverySession: phrase,
   linkExpired: phrase,
   oauthFailed: phrase,

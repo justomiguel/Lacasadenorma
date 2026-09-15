@@ -142,6 +142,7 @@
     "contactNameRequired": "Escribí un nombre para que el equipo sepa con quién habla.",
     "pickupAddressRequired": "Escribí la dirección donde ir a buscar el bien.",
     "coverIsNotAPledge": "Cubrir con plata no se anota: transferí, y el equipo lo registra cuando llega.",
+    "schemaBehind": "El listado se actualizó y esta reserva todavía no se puede anotar. En un rato se puede intentar de nuevo.",
     "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",
     "linkExpired": "Ese enlace ya venció o ya se usó. Pedí uno nuevo.",
     "oauthFailed": "No se pudo entrar con esa red. Probá de nuevo o usá el correo.",

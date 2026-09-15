@@ -16,10 +16,19 @@ test.describe("flujo 3 · ver el trabajo", () => {
   test("la home no publica recibido, gastado ni saldo", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.locator("[data-figure]").first()).toBeVisible();
     await expect(page.getByText(/^recibido$/i)).toHaveCount(0);
     await expect(page.getByText(/^gastado$/i)).toHaveCount(0);
     await expect(page.getByText(/^saldo$/i)).toHaveCount(0);
+  });
+
+  test("los datos para transferir están en donar dinero, no en la home", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("[data-figure]")).toHaveCount(0);
+
+    await page.goto("/ayudar/dinero");
+    await expect(page.locator("[data-figure]").first()).toBeVisible();
   });
 
   test("la reconstrucción muestra el trabajo y no un tablero de avance", async ({

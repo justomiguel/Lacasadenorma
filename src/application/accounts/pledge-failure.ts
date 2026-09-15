@@ -23,6 +23,10 @@ export function describePledgeFailure<T>(
   const mapped = codeOf(message);
 
   if (mapped !== null) {
+    if (mapped.code === "schemaBehind") {
+      deps.logger.error(`No se pudo ${describe}`, { error });
+    }
+
     return accountError(mapped.code, mapped.field);
   }
 
@@ -64,6 +68,10 @@ function codeOf(
 
   if (message.includes("no_encontrada")) {
     return { code: "alreadyGone", field: null };
+  }
+
+  if (message.includes("PGRST202") || message.includes("schema cache")) {
+    return { code: "schemaBehind", field: null };
   }
 
   return null;
