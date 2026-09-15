@@ -116,16 +116,10 @@ SEARCHES: dict[str, str] = {
     "Perchas": "clothes hangers",
 }
 
-CAPTION_ES = (
-    "Foto de referencia de {title}. Muestra el tipo de material u objeto, "
-    "no una compra de esta casa."
-)
-CAPTION_EN = (
-    "Reference photo of {title}. It shows the kind of item, not a purchase "
-    "for this house."
-)
-ALT_ES = "Foto de referencia: {title}."
-ALT_EN = "Reference photo: {title}."
+CAPTION_ES = "Foto solamente ilustrativa. No representa el objeto real."
+CAPTION_EN = "Illustrative photo only. It does not represent the actual item."
+ALT_ES = "Foto ilustrativa de {title}."
+ALT_EN = "Illustrative photo of {title}."
 
 
 def titles_from_sql() -> list[str]:

@@ -36,10 +36,11 @@ relato, no.**
    con el archivo en `public/fotos/catalogo/`. Si no hay ninguna de las dos,
    se reserva el hueco y se dice qué va ahí (FR-212).
 2. **El epígrafe es la frontera de honestidad.** Toda foto de referencia MUST
-   llevar un epígrafe que diga que es de referencia y que no es una compra de
-   esta casa, y un crédito de la fuente. El `alt` describe lo que se ve. No
-   se presenta como foto de *esta* casa ni de *esta* compra. La foto subida
-   desde el backoffice usa el epígrafe que cargó el equipo.
+   llevar un epígrafe que diga que es solamente ilustrativa y que no representa
+   el objeto real, y un crédito de la fuente. El `alt` describe lo que se ve,
+   como ilustración del tipo. No se presenta como foto de *esta* casa ni del
+   objeto que se va a comprar. La foto subida desde el backoffice usa el
+   epígrafe que cargó el equipo.
 3. **Viven en el repositorio, no en Storage.** Se eligen una vez, como el
    resto del contenido de baja frecuencia (ADR-007). Storage sigue siendo el
    camino de las fotos operativas: avance de la obra y la foto real de un

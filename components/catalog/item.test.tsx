@@ -34,9 +34,8 @@ const COPY = {
   referencePhotos: {
     Tina: {
       url: "/fotos/catalogo/tina.jpg",
-      alt: "Foto de referencia: Tina.",
-      caption:
-        "Foto de referencia de Tina. Muestra el tipo de material u objeto, no una compra de esta casa.",
+      alt: "Foto ilustrativa de Tina.",
+      caption: "Foto solamente ilustrativa. No representa el objeto real.",
       credit: "Alguien, vía Openverse (CC0)",
       width: 1200,
       height: 800,
@@ -98,9 +97,10 @@ describe("CatalogItem", () => {
     );
 
     expect(
-      screen.getByRole("img", { name: /foto de referencia: tina/i }),
+      screen.getByRole("img", { name: /foto ilustrativa de tina/i }),
     ).toHaveAttribute("src", "/fotos/catalogo/tina.jpg");
-    expect(screen.getByText(/foto de referencia de tina/i)).toBeInTheDocument();
+    expect(screen.getByText(/solamente ilustrativa/i)).toBeInTheDocument();
+    expect(screen.getByText(/no representa el objeto real/i)).toBeInTheDocument();
     expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
   });
 
@@ -122,7 +122,7 @@ describe("CatalogItem", () => {
       "/storage/tina-real.jpg",
     );
     expect(screen.getByText("La que se entregó.")).toBeInTheDocument();
-    expect(screen.queryByText(/foto de referencia de tina/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/solamente ilustrativa/i)).not.toBeInTheDocument();
   });
 
   it("sin foto subida ni de referencia reserva el hueco", () => {

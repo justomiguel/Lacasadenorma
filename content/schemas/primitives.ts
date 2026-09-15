@@ -84,6 +84,7 @@ export const photoGroupSchema = z.object({
  *
  * Vive en `public/fotos/catalogo/`, no junto a las de la familia. El epígrafe
  * y el crédito son obligatorios: sin ellos se leería como foto de esta casa.
+ * El epígrafe MUST decir que es ilustrativa y que no representa el objeto real.
  */
 export const catalogReferencePhotoSchema = photoSchema.extend({
   url: z
@@ -92,7 +93,15 @@ export const catalogReferencePhotoSchema = photoSchema.extend({
       "/fotos/catalogo/",
       "La foto de referencia tiene que vivir en public/fotos/catalogo/",
     ),
-  caption: z.string().min(1),
+  caption: z
+    .string()
+    .min(1)
+    .refine(
+      (value) =>
+        /ilustrativa|illustrative/i.test(value) &&
+        /no representa|does not represent/i.test(value),
+      "El epígrafe tiene que decir que la foto es ilustrativa y que no representa el objeto real.",
+    ),
   credit: z.string().min(1),
 });
 

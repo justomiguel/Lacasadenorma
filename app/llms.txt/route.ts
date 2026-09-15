@@ -63,8 +63,8 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
   lo que cubrió la prensa y qué se necesita ahora.
 - [La reconstrucción](${siteUrl}/reconstruccion): alcance de la obra, las fotos del trabajo y la última novedad publicada.
 - [Qué le falta a la casa](${siteUrl}/catalogo): materiales y cosas que todavía hacen falta, y
-  cuánto queda. La ficha muestra una foto de referencia del tipo, etiquetada como tal; no es la
-  foto de una compra de esta casa. Reservar una unidad se abre cuando la cuenta está habilitada.
+  cuánto queda. La ficha muestra una foto ilustrativa del tipo; el epígrafe dice
+  que no representa el objeto real. Reservar una unidad se abre cuando la cuenta está habilitada.
 - [Quiénes ayudaron](${siteUrl}/quienes-ayudaron): los nombres de quienes trajeron algo o
   aportaron en plata y eligieron aparecer. Una reserva no figura. El monto de un aporte no
   se publica; el porcentaje, sólo si la familia lo prende.

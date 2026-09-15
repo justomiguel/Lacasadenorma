@@ -18,8 +18,9 @@
  *
  * El catálogo (ADR-043) tiene una regla extra: cada título de
  * `docs/sql/catalogo-casa-basica.sql` y el del fixture tienen que tener una
- * foto de referencia en `catalogo-fotos.json`, con epígrafe que lo diga, y
- * esas fotos no pueden colarse en el relato.
+ * foto de referencia en `catalogo-fotos.json`, con epígrafe que dice que es
+ * ilustrativa y que no representa el objeto real, y esas fotos no pueden
+ * colarse en el relato.
  *
  * Corre en `npm run verify` y en CI.
  */
@@ -130,13 +131,13 @@ for (const file of jsonFiles) {
       }
 
       const caption = typeof photo.caption === "string" ? photo.caption : "";
-      const marker = file.includes(`${path.sep}en${path.sep}`)
-        ? /reference/i
-        : /referencia/i;
+      const english = file.includes(`${path.sep}en${path.sep}`);
+      const illustrative = english ? /illustrative/i : /ilustrativa/i;
+      const notReal = english ? /does not represent/i : /no representa/i;
 
-      if (!marker.test(caption)) {
+      if (!illustrative.test(caption) || !notReal.test(caption)) {
         problems.push(
-          `${file}: ${photo.url} no dice en el epígrafe que es de referencia.`,
+          `${file}: ${photo.url} no dice en el epígrafe que es ilustrativa y que no representa el objeto real.`,
         );
       }
     } else if (photo.url.startsWith("/fotos/catalogo/")) {

@@ -35,8 +35,9 @@ test.describe("fase D · reservas", () => {
     await expect(
       page.getByRole("heading", { name: /cubrirlo con plata/i }),
     ).toBeVisible();
-    await expect(page.getByRole("img", { name: /foto de referencia/i })).toBeVisible();
-    await expect(page.getByText(/no una compra de esta casa/i)).toBeVisible();
+    await expect(page.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
+    await expect(page.getByText(/solamente ilustrativa/i)).toBeVisible();
+    await expect(page.getByText(/no representa el objeto real/i)).toBeVisible();
     await expect(page.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
     await expect(page.getByLabel(/sumar más/i)).toBeVisible();
     await expect(
