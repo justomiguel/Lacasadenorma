@@ -32,45 +32,46 @@ test.describe("fase D · reservas", () => {
     page,
   }) => {
     await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
+    const articulo = articuloDelCatalogo(page);
 
-    await expect(page.getByRole("heading", { name: /cómo donar esto/i })).toBeVisible();
-    await expect(page.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
-    await expect(page.getByText(/solamente ilustrativa/i)).toBeVisible();
-    await expect(page.getByText(/no representa el objeto real/i)).toBeVisible();
-    await expect(page.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
+    await expect(articulo.getByRole("heading", { name: /cómo donar esto/i })).toBeVisible();
+    await expect(articulo.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
+    await expect(articulo.getByText(/solamente ilustrativa/i)).toBeVisible();
+    await expect(articulo.getByText(/no representa el objeto real/i)).toBeVisible();
+    await expect(articulo.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
     await expect(
-      page.getByText(/traer el mismo bien o cubrirlo con plata/i),
+      articulo.getByText(/traer el mismo bien o cubrirlo con plata/i),
     ).toBeVisible();
-    await expect(page.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
-    await expect(page.locator("[data-pay=transfer]")).toBeHidden();
-    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
-    await expect(page.locator("[data-pay=paypal]")).toBeHidden();
-    await expect(page.getByLabel(/^nombre$/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /quiero donar/i })).toBeVisible();
+    await expect(articulo.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
+    await expect(articulo.locator("[data-pay=transfer]")).toBeHidden();
+    await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
+    await expect(articulo.locator("[data-pay=paypal]")).toBeHidden();
+    await expect(articulo.getByLabel(/^nombre$/i)).toBeVisible();
+    await expect(articulo.getByRole("button", { name: /quiero donar/i })).toBeVisible();
 
-    await page.getByRole("radio", { name: /^transferencia$/i }).click();
-    await expect(page.locator("[data-pay=transfer]")).toBeVisible();
-    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
-    await expect(page.getByText(/^cbu$/i).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /quiero donar/i })).toBeHidden();
-    await expect(page.getByText(/no hace falta cuenta ni anotarse/i)).toBeVisible();
+    await articulo.getByRole("radio", { name: /^transferencia$/i }).click();
+    await expect(articulo.locator("[data-pay=transfer]")).toBeVisible();
+    await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
+    await expect(articulo.getByText(/^cbu$/i).first()).toBeVisible();
+    await expect(articulo.getByRole("button", { name: /quiero donar/i })).toBeHidden();
+    await expect(articulo.getByText(/no hace falta cuenta ni anotarse/i)).toBeVisible();
 
-    await page.getByRole("radio", { name: /mercado pago/i }).click();
-    await expect(page.locator("[data-pay=mercadopago]")).toBeVisible();
-    await expect(page.locator("[data-pay=transfer]")).toBeHidden();
-    await expect(page.getByLabel(/sumar más/i)).toBeVisible();
+    await articulo.getByRole("radio", { name: /mercado pago/i }).click();
+    await expect(articulo.locator("[data-pay=mercadopago]")).toBeVisible();
+    await expect(articulo.locator("[data-pay=transfer]")).toBeHidden();
+    await expect(articulo.getByLabel(/sumar más/i)).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /continuar con mercado pago/i }).first(),
+      articulo.getByRole("link", { name: /continuar con mercado pago/i }).first(),
     ).toBeVisible();
 
-    await page.getByLabel(/sumar más/i).fill("1000");
-    await expect(page.getByText(/total a enviar por mercado pago/i)).toBeVisible();
+    await articulo.getByLabel(/sumar más/i).fill("1000");
+    await expect(articulo.getByText(/total a enviar por mercado pago/i)).toBeVisible();
 
-    await page.getByRole("radio", { name: /paypal/i }).click();
-    await expect(page.locator("[data-pay=paypal]")).toBeVisible();
-    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
+    await articulo.getByRole("radio", { name: /paypal/i }).click();
+    await expect(articulo.locator("[data-pay=paypal]")).toBeVisible();
+    await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(
-      page.getByRole("link", { name: /continuar con paypal/i }).first(),
+      articulo.getByRole("link", { name: /continuar con paypal/i }).first(),
     ).toBeVisible();
   });
 
@@ -187,7 +188,9 @@ test.describe("fase D · reservas", () => {
 
           await expect(articulo).toHaveCount(1);
           await expect(articulo).toBeVisible();
-          await articulo.getByRole("button", { name: /quiero donar/i }).click();
+          // FR-216: el HTML no deja salir un envío vacío. Sin sesión se pide
+          // la cuenta después de tener nombre y dirección.
+          await completarTraer(formularioDeTraer(articulo));
 
           await expect(donantePage).toHaveURL(new RegExp(`/cuenta/ingresar\\?volver=`));
           await expect(donantePage).toHaveURL(new RegExp(itemId));
