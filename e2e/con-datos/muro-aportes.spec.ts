@@ -61,7 +61,9 @@ test.describe("fase · muro de aportes", () => {
     await interruptor.getByRole("button", { name: /^guardar$/i }).click();
     await expect(page.getByText(/va a mostrar el porcentaje/i).first()).toBeVisible();
 
-    await esperarQueAparezca(request, "/quienes-ayudaron", "de lo que ya llegó");
+    // «de lo que ya llegó» vive también en el chrome de cifras (ui.figures.ofGoal)
+    // y está en el HTML de cualquier página pública. La frase llena del muro no.
+    await esperarQueAparezca(request, "/quienes-ayudaron", "Representó el");
 
     await page.goto("/quienes-ayudaron");
 
@@ -70,11 +72,12 @@ test.describe("fase · muro de aportes", () => {
     await expect(page.getByText("$ 1.000.000")).toHaveCount(0);
 
     await page.goto("/admin/aportes");
+    await expect(interruptor.getByLabel(/mostrar el porcentaje/i)).toBeChecked();
     await interruptor.getByLabel(/mostrar el porcentaje/i).uncheck();
     await interruptor.getByRole("button", { name: /^guardar$/i }).click();
     await expect(page.getByText(/sólo el nombre/i).first()).toBeVisible();
 
-    await esperarQueNoAparezca(request, "/quienes-ayudaron", "de lo que ya llegó");
+    await esperarQueNoAparezca(request, "/quienes-ayudaron", "Representó el");
 
     await page.goto("/quienes-ayudaron");
     await expect(page.getByRole("heading", { name: visible })).toBeVisible();
