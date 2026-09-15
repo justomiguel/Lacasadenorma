@@ -225,12 +225,11 @@ export function articuloDelCatalogo(page: Page, _titulo?: string) {
 }
 
 /**
- * El formulario de traer el objeto. En la ficha hay otro para cubrirlo con
- * plata (ADR-041); los dos tienen las mismas etiquetas de nombre y de
- * aparecer, así que hay que acotar al que corresponde.
+ * El formulario de la ficha. Hay uno: traer el bien o cubrirlo con plata
+ * (ADR-044).
  */
 export function formularioDeTraer(articulo: Locator) {
-  return articulo.locator("form").filter({ hasText: /anotarme para traer esto/i });
+  return articulo.locator("form").filter({ hasText: /quiero donar/i });
 }
 
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {

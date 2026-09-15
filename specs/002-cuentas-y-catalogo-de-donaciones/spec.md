@@ -279,9 +279,12 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 **Catálogo**
 
-- **FR-209**: El sistema MUST publicar un catálogo de lo que falta como tabla, donde cada ítem tiene
-  qué es, cuántas unidades hacen falta, en qué unidad se cuenta, cuántas siguen faltando, si alguien
-  ya la tomó, y el nombre público o la ausencia de nombre.
+- **FR-209**: El sistema MUST publicar un catálogo de lo que falta como tabla en todo ancho de
+  pantalla (también en teléfono: MUST NOT apilar cada columna como lista). Cada ítem tiene qué es,
+  cuántas unidades hacen falta, en qué unidad se cuenta, cuántas siguen faltando, si alguien ya la
+  tomó, el nombre público o la ausencia de nombre, el estimado por unidad y el estimado total de lo
+  que falta cuando hay un valor cargado, y un control «Quiero donar» al final de la fila que abre la
+  ficha (ADR-044). MUST NOT usar una acción primaria en la fila.
 - **FR-210**: El sistema MUST calcular lo que falta descontando lo reservado y lo ya entregado, y
   MUST NOT ofrecer para reservar un ítem cubierto.
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
@@ -296,8 +299,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
   y el presupuesto cuenten la misma obra.
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
-  la interfaz lo omite en lugar de estimarlo. Si lo tiene, la ficha MUST publicarlo etiquetado como
-  estimado, no como precio fijo (ADR-041).
+  la interfaz lo omite en lugar de estimarlo (en el listado, un em dash; no un cero). Si lo tiene, el
+  listado y la ficha MUST publicarlo etiquetado como estimado, no como precio fijo (ADR-041, ADR-044).
+  El total del listado MUST ser el estimado de unidad por las unidades que siguen faltando.
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
 - **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
   (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
@@ -305,14 +309,15 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   arena, ripio y similares.
 - **FR-254**: Cada ítem publicado MUST tener una página propia con la foto (la subida, o la de
   referencia del tipo, o el espacio reservado), la descripción, las cantidades y, si queda algo,
-  el formulario de reserva y, si hay estimado, la forma de cubrirlo con plata. El listado MUST
-  NOT repetir la foto: la foto vive en la ficha.
+  un solo formulario que explique que se puede traer el mismo bien o cubrirlo con plata. El
+  listado MUST NOT repetir la foto: la foto vive en la ficha.
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
   reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.
 - **FR-256**: Cubrir un ítem con plata MUST ofrecer transferencia (estimado neto), Mercado Pago
   (estimado más 10%, con la posibilidad de sumar más) y PayPal (estimado neto). MUST NOT
-  convertir monedas. MUST decir que el monto es estimado, no fijo.
+  convertir monedas. MUST decir que el monto es estimado, no fijo. MUST NOT mostrar los datos de
+  un medio (CBU, alias, link, recargo) hasta que ese medio esté elegido.
 - **FR-257**: Anotarse a cubrir con plata MUST reservar unidades igual que anotarse a traer el
   ítem. MUST NOT sumar el estimado a los totales de dinero de la campaña.
 
@@ -496,13 +501,15 @@ Cambiar de automática a con aprobación después es agregar un estado: barato.
 
 ### D3 — ¿Se publica el valor estimado de cada ítem?
 
-Reabierta y resuelta en [ADR-041](../../docs/adr/041-estimado-publico-y-cubrir-con-plata.md):
-la ficha lo publica etiquetado como estimado, no fijo. El listado no. El libro no.
+Reabierta y resuelta en [ADR-041](../../docs/adr/041-estimado-publico-y-cubrir-con-plata.md),
+enmendada por [ADR-044](../../docs/adr/044-tabla-del-catalogo-y-quiero-donar.md):
+el listado y la ficha lo publican etiquetado como estimado, no fijo. El libro no.
 
 | Opción | Qué implica |
 |---|---|
 | No publicarlo | Se guarda para que la familia priorice, y no se muestra. Impide cubrir el ítem con plata |
-| **Publicarlo en la ficha, etiquetado (aplicada)** | Quien no puede traer el objeto puede transferir. El sitio no afirma que el estimado coincida con el mostrador |
+| Publicarlo sólo en la ficha | Hay que abrir cada renglón para saber cuánto sale. El pedido es verlo en la tabla |
+| **Publicarlo en el listado y la ficha, etiquetado (aplicada)** | Se escanea lo que falta y un estimado. El sitio no afirma que coincida con el mostrador |
 
 ---
 

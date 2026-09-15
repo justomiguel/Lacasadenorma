@@ -1,8 +1,8 @@
 -- Catálogo de una casa de 60 m² para una persona que vive sola.
 --
 -- Producción: campaña `casa-de-norma`. Idempotente por título. Sin montos
--- (estimated_unit_amount_minor y currency quedan nulos hasta que el equipo
--- cargue un promedio verificado: ADR-041 no inventa precios).
+-- (estimated_unit_amount_minor y currency: promedios de internet citados en
+-- docs/research/2026-09-precios-catalogo.md. Sin fuente, nulo: ADR-044).
 -- Publicado de entrada: `published_at = now()`.
 --
 -- Cada ítem sale **sin foto en Storage**. La ficha pública muestra la foto de
@@ -50,7 +50,9 @@ create temp table catalog_seed (
   title text not null,
   description text not null,
   unit public.donation_unit not null,
-  needed_quantity integer not null
+  needed_quantity integer not null,
+  estimated_unit_pesos integer,
+  check (estimated_unit_pesos is null or estimated_unit_pesos > 0)
 );
 
 insert into catalog_seed (
@@ -326,8 +328,95 @@ insert into catalog_seed (
    'Perchas para el ropero. Sin esto la ropa se apila.',
    'juego', 1);
 
+update catalog_seed as s
+set estimated_unit_pesos = v.pesos
+from (values
+  ('Ladrillos comunes', 145),
+  ('Ladrillos huecos 18x18x33', 480),
+  ('Cemento', 11858),
+  ('Cal hidratada', 3500),
+  ('Arena', 46585),
+  ('Ripio', 90145),
+  ('Hidrófugo', 2600),
+  ('Chapas de techo', 18000),
+  ('Cerámico de piso', 15730),
+  ('Azulejos de cocina', 15730),
+  ('Azulejos de baño', 15730),
+  ('Pintura', 6595),
+  ('Tirantes de techo', 26460),
+  ('Cielorraso', 5588),
+  ('Zócalos', 1101),
+  ('Enduido', 55418),
+  ('Cable eléctrico', 938),
+  ('Caños de agua', 5264),
+  ('Caños de desagüe', 7034),
+  ('Caños de gas', 6790),
+  ('Puerta de entrada', 425373),
+  ('Puertas interiores', 505220),
+  ('Ventanas', 386691),
+  ('Rejas', 185695),
+  ('Portón', 405490),
+  ('Tanque de agua', 140000),
+  ('Bomba de agua', 207561),
+  ('Cámara séptica', 335639),
+  ('Inodoro', 250439),
+  ('Bidet', 152356),
+  ('Tina', 366454),
+  ('Receptáculo de ducha', 120825),
+  ('Lavatorio', 62672),
+  ('Vanitory', 78806),
+  ('Pileta de cocina', 146940),
+  ('Mesada de cocina', 207787),
+  ('Grifería de baño', 226650),
+  ('Grifería de cocina', 39748),
+  ('Mampara', 224469),
+  ('Extractor de baño', 40003),
+  ('Garrafa y regulador', 45119),
+  ('Llaves y tomacorrientes', 2329),
+  ('Tablero eléctrico', 77283),
+  ('Accesorios de baño', 72881),
+  ('Cocina', 510000),
+  ('Heladera', 834950),
+  ('Lavarropas', 620000),
+  ('Ventiladores', 149900),
+  ('Calefón o termotanque', 475000),
+  ('Plancha', 24000),
+  ('Microondas', 169199),
+  ('Pava eléctrica', 53810),
+  ('Campana extractora', 290800),
+  ('Cama plaza y media', 220000),
+  ('Colchón plaza y media', 287140),
+  ('Ropero', 110000),
+  ('Mesa de luz', 40999),
+  ('Mesa de cocina', 59900),
+  ('Sillas', 60000),
+  ('Sillón de dos cuerpos', 502346),
+  ('Mesa ratona', 49999),
+  ('Banqueta de cocina', 61200),
+  ('Bajo mesada', 88125),
+  ('Alacena', 93132),
+  ('Juego de ollas', 135542),
+  ('Sartenes', 29050),
+  ('Vajilla', 18075),
+  ('Cubiertos', 26833),
+  ('Utensilios de cocina', 10999),
+  ('Tabla para picar', 13477),
+  ('Almohadas', 17535),
+  ('Sábanas plaza y media', 38746),
+  ('Acolchado', 68650),
+  ('Toallas', 16259),
+  ('Cortina de baño', 5950),
+  ('Espejo de baño', 12499),
+  ('Tender', 50924),
+  ('Balde y lampazo', 42350),
+  ('Zapatillas eléctricas', 16147),
+  ('Perchas', 60649)
+) as v(title, pesos)
+where s.title = v.title;
+
 insert into public.donation_items (
-  campaign_id, title, description, unit, category, needed_quantity, sort_order, published_at
+  campaign_id, title, description, unit, category, needed_quantity, sort_order,
+  estimated_unit_amount_minor, currency, published_at
 )
 select
   c.id,
@@ -337,6 +426,8 @@ select
   i.category,
   i.needed_quantity,
   i.sort_order,
+  i.estimated_unit_pesos * 100,
+  case when i.estimated_unit_pesos is null then null else 'ARS' end,
   now()
 from public.campaigns c
 cross join catalog_seed i
@@ -354,7 +445,9 @@ set
   description = i.description,
   unit = i.unit,
   needed_quantity = greatest(i.needed_quantity, d.reserved_quantity + d.fulfilled_quantity),
-  sort_order = i.sort_order
+  sort_order = i.sort_order,
+  estimated_unit_amount_minor = i.estimated_unit_pesos * 100,
+  currency = case when i.estimated_unit_pesos is null then null else 'ARS' end
 from catalog_seed i
 join public.campaigns c on c.slug = 'casa-de-norma'
 where d.campaign_id = c.id

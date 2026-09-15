@@ -51,6 +51,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [038](./038-portada-de-novedad.md) | La portada de una novedad es el primer visual, también al compartir | Aceptada |
 | [039](./039-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |
 | [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada; enmendada por ADR-041 (estimado de la ficha) y ADR-042 (porcentaje de un aporte en el muro) |
-| [041](./041-estimado-publico-y-cubrir-con-plata.md) | El estimado se publica en la ficha, y se puede cubrir con plata | Aceptada |
+| [041](./041-estimado-publico-y-cubrir-con-plata.md) | El estimado se publica en la ficha, y se puede cubrir con plata | Aceptada; enmendada por ADR-044 (listado y canal elegido) |
 | [042](./042-muro-de-aportes-con-porcentaje.md) | El muro de aportes publica el nombre, y el porcentaje sólo si se prende | Aceptada |
 | [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |
+| [044](./044-tabla-del-catalogo-y-quiero-donar.md) | El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar» | Aceptada |

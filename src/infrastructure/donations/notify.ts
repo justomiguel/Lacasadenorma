@@ -9,10 +9,11 @@ import { recordEmailDelivery } from "../email/deliveries";
 import { getSiteUrl } from "../site-url";
 
 /**
- * Avisa la reserva: a la persona y al equipo (ADR-028).
+ * Avisa la reserva: a la persona y al equipo (ADR-028, ADR-044).
  *
- * No lanza hacia afuera. Un fallo de correo no puede deshacer la reserva
- * (FR-233).
+ * El buzón del owner es `EMAIL_STAFF_ADDRESS`. El hecho es completar
+ * «Quiero donar», no el click en el listado. No lanza hacia afuera: un
+ * fallo de correo no puede deshacer la reserva (FR-233).
  */
 export async function notifyPledgeClaimed(
   pledge: DonationPledge,

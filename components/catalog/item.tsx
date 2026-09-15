@@ -17,8 +17,7 @@ import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import { fill } from "@/src/i18n/fill";
 import type { Locale } from "@/src/i18n/locale";
 
-import { ClaimForm } from "./claim-form";
-import { CoverWithMoney } from "./cover";
+import { HowToDonate } from "./cover";
 import { unitLabel } from "./units";
 
 /**
@@ -89,25 +88,16 @@ export function CatalogItem({
         {copy.columnName} {names.length === 0 ? copy.nameNone : names}
       </p>
       {canClaim(quantities) ? (
-        <>
-          <ClaimForm
-            itemId={item.id}
-            remaining={item.remainingQuantity}
-            copy={copy}
-            account={account}
-            locale={locale}
-          />
-          <CoverWithMoney
-            itemId={item.id}
-            remaining={item.remainingQuantity}
-            estimated={item.estimatedValue}
-            copy={copy}
-            account={account}
-            help={help}
-            ui={ui}
-            locale={locale}
-          />
-        </>
+        <HowToDonate
+          itemId={item.id}
+          remaining={item.remainingQuantity}
+          estimated={item.estimatedValue}
+          copy={copy}
+          account={account}
+          help={help}
+          ui={ui}
+          locale={locale}
+        />
       ) : null}
     </article>
   );

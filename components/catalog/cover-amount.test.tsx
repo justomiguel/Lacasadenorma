@@ -21,6 +21,7 @@ function Harness({ extra: initial = "" }: { extra?: string }) {
       onExtraChange={setExtra}
       copy={copy}
       locale="es"
+      channel="mercadopago"
     />
   );
 }
@@ -43,5 +44,23 @@ describe("CoverAmounts", () => {
     await user.type(screen.getByLabelText(/sumar más/i), "50");
 
     expect(screen.getByText(/\$ 160/)).toBeInTheDocument();
+  });
+
+  it("por transferencia no muestra el recargo ni el extra de Mercado Pago", () => {
+    render(
+      <CoverAmounts
+        unit={money(10_000, "ARS")}
+        quantity={1}
+        extra=""
+        onExtraChange={() => undefined}
+        copy={copy}
+        locale="es"
+        channel="transfer"
+      />,
+    );
+
+    expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/el sugerido es/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/por transferencia o paypal/i)).toBeInTheDocument();
   });
 });

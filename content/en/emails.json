@@ -77,7 +77,7 @@
     "subject": "Reserva nueva en el catálogo",
     "preheader": "Hay que coordinar la entrega. El contacto está en el backoffice.",
     "body": [
-      "Alguien se ofreció a traer {what}.",
+      "Alguien quiere donar {what}.",
       "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
     ],
     "action": "Abrir las donaciones",

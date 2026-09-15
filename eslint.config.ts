@@ -202,11 +202,11 @@ export default defineConfig([
   },
 
   /**
-   * ADR-041: la ficha del catálogo puede mostrar un estimado etiquetado.
-   * Un solo archivo. El resto del sitio público sigue sin montos.
+   * ADR-041 / ADR-044: el catálogo público puede mostrar un estimado
+   * etiquetado. Dos archivos. El resto del sitio público sigue sin montos.
    */
   {
-    files: ["components/catalog/cover-amount.tsx"],
+    files: ["components/catalog/cover-amount.tsx", "components/catalog/money.ts"],
     rules: {
       "no-restricted-imports": [
         "error",

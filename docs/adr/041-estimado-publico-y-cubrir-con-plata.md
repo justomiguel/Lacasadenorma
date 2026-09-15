@@ -43,13 +43,15 @@ aporte entra al libro cuando se concilia, por el camino que ya existe (ADR-006).
    esperar una caja o una transferencia.
 4. **El libro no se toca.** Cumplir una reserva, aunque el canal sea plata, no
    escribe en `campaign_totals`. SC-007 y ADR-031 siguen valiendo.
-5. **`formatMoney` en público sólo en `components/catalog/cover-amount.tsx`.**
-   El resto del sitio público sigue vedado por ESLint (ADR-040).
+5. **`formatMoney` en público sólo en `components/catalog/money.ts` y
+   `cover-amount.tsx`.** El resto del sitio público sigue vedado por ESLint
+   (ADR-040). Enmendado por ADR-044: el listado usa el mismo helper.
 6. **La capacidad `get_donation_catalog` cita el mismo estimado** que la ficha,
    etiquetado. Si la página no tiene número, el JSON tampoco (A5).
 
-Los precios de referencia los carga el equipo en el backoffice. El SQL de
-producción de la casa básica **no inventa** promedios de Mercado Libre.
+Los precios de referencia los carga el equipo en el backoffice o, para la casa
+básica, el seed de `docs/sql/catalogo-casa-basica.sql` con fuente citada
+(ADR-044). Un ítem sin fuente queda nulo: no se inventa.
 
 ## Alternativas descartadas
 

@@ -59,7 +59,7 @@ test.describe("fase E · muro", () => {
         const traerSi = formularioDeTraer(articuloSi);
         await traerSi.getByLabel(/quiero aparecer con nombre/i).check();
         await traerSi.getByLabel(/nombre para mostrar/i).fill(visible);
-        await traerSi.getByRole("button", { name: /anotarme para traer esto/i }).click();
+        await traerSi.getByRole("button", { name: /quiero donar/i }).click();
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
 
         await paginaNo.goto("/catalogo");
@@ -68,7 +68,7 @@ test.describe("fase E · muro", () => {
         await expect(articuloNo).toHaveCount(1);
         const traerNo = formularioDeTraer(articuloNo);
         await traerNo.getByLabel(/nombre para mostrar/i).fill(oculto);
-        await traerNo.getByRole("button", { name: /anotarme para traer esto/i }).click();
+        await traerNo.getByRole("button", { name: /quiero donar/i }).click();
         await expect(paginaNo).toHaveURL(/\/cuenta$/);
 
         await confirmarLlegada(staffPage, titulo);

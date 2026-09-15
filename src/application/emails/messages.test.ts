@@ -140,6 +140,7 @@ describe("los avisos al equipo", () => {
     });
 
     expect(message.subject).toBe(getContent("es").emails.staffNewPledge.subject);
+    expect(message.text).toMatch(/quiere donar/i);
   });
 });
 
