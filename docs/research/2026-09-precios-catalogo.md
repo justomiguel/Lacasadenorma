@@ -48,6 +48,7 @@ contrario. En la base se guardan en centavos (`pesos × 100`).
 | Cable eléctrico | metro | 938 | Obra Maestra jul 2026, unipolar 2,5 mm² 700–850 / m sin IVA → 775 × 1,21 |
 | Caños de agua | metro | 5.264 | Obra Maestra jul 2026, PVC 63 mm × 4 m 14.600–20.200 sin IVA → 17.400 / 4 × 1,21 |
 | Caños de desagüe | metro | 7.034 | Obra Maestra jul 2026, PVC 110 mm × 4 m 22.000–24.500 sin IVA → 23.250 / 4 × 1,21 |
+| Caños de gas | metro | 6.790 | Sigas 25 mm termofusión, cinco góndolas: Policuyo 25.756 / 4 m, Accesaniga 23.264 / 4 m, Santagal 29.300 / 4 m, Darsie 27.215 / 4 m, El Mejor 7.567 / m. Promedio por metro |
 
 ## Aberturas
 
@@ -69,12 +70,19 @@ contrario. En la base se guardan en centavos (`pesos × 100`).
 | Inodoro | unidad | 250.439 | Bairesmat, inodoro con mochila Piazza Domani |
 | Bidet | unidad | 152.356 | Ferrum Andina: El amigo 132.520 y Acon Materiales 172.191 → punto medio |
 | Tina | unidad | 366.454 | Accesaniga, bañera Ferrum acero enlozado 150 cm |
+| Receptáculo de ducha | unidad | 120.825 | Piazza acrílico 70×70: Santagal 97.550 y Broncesur 144.099 → punto medio. Es el box chico, no el de 120 cm |
 | Lavatorio | unidad | 62.672 | Ferrum Andina 3 agujeros: Riboldi 59.177, Ferrocons 63.607, Darsie 65.231 → promedio |
 | Vanitory | unidad | 78.806 | Dimora, vanitory Campo 50 cm + mesada marmolina |
+| Pileta de cocina | unidad | 146.940 | Tawak Delta 75 cm con escurridor 140.000 (SF Online) y Johnson Zn52/18 A simple 153.880 (Santagal) → punto medio. Las dos son pileta simple de acero |
 | Mesada de cocina | metro | 207.787 | Dimora, mesada de loza Schneider 100 cm. La unidad del catálogo es el metro; esa pieza mide 1 m |
 | Grifería de baño | juego | 226.650 | Dimora, línea Cd Turin: lavatorio 55.605 + bidet 66.667 + ducha 104.378. Tres góndolas de la misma línea, no un combo de marca |
 | Grifería de cocina | juego | 39.748 | Dimora, Cd Napoli monocomando de mesada |
+| Mampara | unidad | 224.469 | Hoja fija templada Camino 1 178.958 y mampara de bañera 1 hoja meimporto 269.980 → punto medio. Es cortina rígida de una hoja, no un box a medida |
+| Extractor de baño | unidad | 40.003 | Atenas, promedio de doce extractores 4″ y 5″ de góndola (31.079–52.089). El de 4″ 010P es el piso |
+| Garrafa y regulador | juego | 45.119 | Garrafa 10 kg en Formosa 31.000 (NEA Hoy, jul 2026, planta REFSA) + promedio de cuatro reguladores con manguera 11.095–18.400 |
 | Llaves y tomacorrientes | unidad | 2.329 | Eléctrica Mosconi, combo Jeluz 6 puntos 13.977 → 13.977 / 6. Punto completo (módulo + tapa), no el módulo suelto |
+| Tablero eléctrico | unidad | 77.283 | Suma de góndola, sin mano de obra: gabinete Sica 8 DIN promedio 8.646 + disyuntor 2×25 A 30 mA promedio 32.187 + tres térmicas Sica 12.150. Un tablero chico armado, no el servicio instalado |
+| Accesorios de baño | juego | 72.881 | Kit cromado 4 piezas Cintek 37.161 y set Peirano 6 piezas 108.600 → punto medio. Toallero, portarrollos y jabonera van en los dos |
 
 ## Electrodomésticos y línea blanca
 
@@ -103,26 +111,43 @@ contrario. En la base se guardan en centavos (`pesos × 100`).
 | Sillón de dos cuerpos | unidad | 502.346 | Susilla Lena 404.692 y Elementos Eco 600.000 → punto medio |
 | Mesa ratona | unidad | 49.999 | Frávega, mesa ratona auxiliar Home Make |
 | Banqueta de cocina | unidad | 61.200 | Susilla, taburete 3010 |
+| Bajo mesada | unidad | 88.125 | Orlandi Premium 80 cm: Llanos 75.000 y Centrogar 101.250 → punto medio. Módulo suelto, no una cocina entera |
+| Alacena | unidad | 93.132 | Alacena 80 cm 2 puertas: pino Ohventas 66.853 y melamina Carlitos 119.411 → punto medio |
 | Juego de ollas | juego | 135.542 | AZZA, Tramontina 10 piezas |
 | Sartenes | unidad | 29.050 | Mastersupply, sartén Hudson 28 cm antiadherente |
+| Vajilla | juego | 18.075 | Durax 12 piezas (4 playos, 4 hondos, 4 vasos): Fénix 12.900, Papuchi 16.500, Küchen 21.000, Baby Móvil 21.900 → promedio. El catálogo pide tazas; los juegos publicados traen vasos |
+| Cubiertos | juego | 26.833 | Tramontina New Kolor 24 piezas: Tienda Centro 18.060, Precialo 28.799, Tramontina 33.639 → promedio |
+| Utensilios de cocina | juego | 10.999 | Lesini, set bambú 5 piezas + porta. Cuchara, espátulas, tenedor y pinza. No incluye abrelatas suelto |
+| Tabla para picar | unidad | 13.477 | Madera 30×20 Donregalon 2.160 y vidrio 30×40 Sodimac 24.793 → punto medio |
+| Almohadas | unidad | 17.535 | 70×40: Merlín EntreSábanas 17.170 y Dormiclass Casa Simon 17.900 → punto medio. Cannon Exclusive queda afuera: es otra línea |
 | Sábanas plaza y media | juego | 38.746 | Pretahome, 1½ plaza: Jean Cartier 23.691 y Alcoyana 53.801 → punto medio |
+| Acolchado | unidad | 68.650 | Emmé, diez acolchados plaza y media 44.800–85.800 → promedio |
+| Toallas | unidad | 16.259 | Puraluz, toallón microfibra Kushiro 80×130, unidad. No es un pack |
+| Cortina de baño | unidad | 5.950 | PEVA con ganchos: Blanquería X 5.100 y la de 6.800 del mismo catálogo → punto medio |
+| Espejo de baño | unidad | 12.499 | Bodek, 40×50 con marco fino. Espejo chico, sin LED |
+| Tender | unidad | 50.924 | Nakan plegable Spiazzi 47.374 y Viva Home de piso 54.473 → punto medio |
+| Balde y lampazo | juego | 42.350 | Waggs Sensei 24.900 y Todo Mopas acero 59.800 → punto medio. El juego publicado es balde + mopa |
 | Zapatillas eléctricas | unidad | 16.147 | Electrovoltaje, zapatilla Candela 5 tomas 1,3 m |
+| Perchas | juego | 60.649 | Pack de 50 madera: Sodimac 51.899 y Gadnic 69.399 → punto medio. Es el pack publicado; no hay unitario suelto 2026 |
 
 ## Qué queda nulo a propósito
 
-Hierro en atados (Red Materiales publica **por barra** de 12 m, promedio 8 mm
-12.260 en sep 2026; el catálogo pide atados y Acindar vende a granel, no hay
-cuántas barras van en un atado), clavos y alambre (el índice es **por kilo**,
-promedio Red Materiales 5.054; el catálogo pide un juego de obra),
-receptáculo de ducha, pileta de cocina, mampara, extractor de baño, caños de
-gas, garrafa y regulador, tablero eléctrico (las cifras publicadas mezclan
-mano de obra o son sólo el gabinete), accesorios de baño, bajo mesada y
-alacena (hay combos de cocina entera, no el módulo suelto), vajilla /
-cubiertos / vasos / utensilios / tabla (los sets publicados los mezclan),
-almohadas, acolchado, toallas, cortina de baño, espejo, cortinas, tender,
-balde y lampazo, escoba y palita, lámparas y perchas: no hay un unitario 2026
-con la unidad del catálogo que se pueda citar sin inventar el modelo o el
-tamaño del kit.
+Seis títulos. La unidad del catálogo no coincide con lo publicado, o no hay
+un juego 2026 que se pueda citar sin armar el kit a ojo:
+
+- Hierro para estructura: Red Materiales publica **por barra** de 12 m
+  (promedio 8 mm 12.260 en sep 2026). El catálogo pide atados. Acindar vende
+  a granel; no hay cuántas barras van en un atado.
+- Clavos y alambre: el índice es **por kilo** (promedio Red Materiales
+  5.054). El catálogo pide un juego de obra.
+- Vasos y jarra: los juegos publicados mezclan vasos con la vajilla, o
+  venden la jarra suelta sin el juego. No hay un set 2026 de vasos + jarra.
+- Cortinas (ventanas): hay paños sueltos y blackout por medida; no un juego
+  para las cuatro ventanas del catálogo.
+- Escoba y palita: el catálogo pide escoba, palita **y tacho**. Los precios
+  publicados van por pieza, no hay un juego de los tres.
+- Lámparas: las cifras 2026 que aparecen son tiras RGB o focos Wi‑Fi, no un
+  foco LED común E27.
 
 Esos se cargan a mano desde `/admin/catalogo` cuando haya una cotización.
 
@@ -171,5 +196,58 @@ Esos se cargan a mano desde `/admin/catalogo` cuando haya una cotización.
 - Mastersupply, sartén Hudson. https://www.mastersupply.com.ar/productos/set-juego-bateria-ollas-tramontina-paris-negro-9-piezas/
 - Pretahome, sábanas 1½ plaza. https://www.pretahome.com/dormitorio/juegos-de-sabanas/1-1-2-plaza-twin/
 - Electrovoltaje, zapatilla Candela. https://www.electrovoltaje.com/productos/zapatilla-5-tomacorrientes-13mts-largo-candela-ilz76/
+- Policuyo, caño Sigas 25 mm × 4 m. https://www.policuyo.com.ar/productos/sigas-cano-tubo-termofusion-25-mm-x-4-mts/
+- Accesaniga, caño Sigas 25 mm. https://accesaniga.com.ar/producto/cano-25-mm-sigas-thermofusion/
+- Santagal, caño Sigas 25 mm × 4 m. https://santagal.com.ar/productos/instalacion/canerias/canos/cano-sigas-termofusion-25-mm-x-4-mts/
+- Darsie, caños termofusión gas. https://www.darsie.com/180-ca%C3%A3os-termofusi%C3%B3n-gas
+- Sanitarios El Mejor, caño Sigas 25 mm × m. https://ferreteriaelmejor.com.ar/producto/cano-sigas-25-mm-dema-x-mt/
+- Santagal, receptáculo Piazza 70×70. https://santagal.com.ar/productos/banos/receptaculos/receptaculo-de-ducha-piazza-acrilico-70x70-cm/
+- Broncesur, receptáculo Piazza 70×70. https://broncesur.com.ar/productos/receptaculo-de-ducha-piazza-acrilico-70-x-70-bano-sanitario/
+- SF Online, pileta Tawak Delta 75 cm. https://sfonline.com.ar/producto/bacha-pileta-cocina-75cm-acero-inox-304-pulido-delta-tawak-3/
+- Santagal, pileta Johnson Zn52/18 A. https://santagal.com.ar/productos/cocinas-y-lavaderos/bachas-de-cocina/encastrables/bacha-johnson-acero-304-zn52-18-a-sobre-mesada/
+- Pinturerías Camino 1, mampara 1 hoja. https://caminouno.com/products/mampara-para-bano-8mm-1-hoja-fij-anodizado-blanco
+- meimporto, mampara 1 hoja para bañera. https://meimporto.com.ar/producto/mampara-1-hoja-templada-para-banera-ajustable-diseno-calidad-transparente-plateado/
+- Atenas, extractores de baño. https://www.atenasventilacion.com.ar/extractores-de-bano/
+- NEA Hoy, garrafa 10 kg Formosa julio 2026. https://neahoy.com/2026/07/30/cuanto-cuesta-la-garrafa-de-10-kilos-en-formosa-durante-julio-de-2026/
+- Sanitarios Nusan, regulador 10 kg. https://sanitariosnusan.com.ar/producto/regulador-para-garrafa-de-10kg-con-manguera/
+- Abrafer, regulador Brogas 0,80 m. https://www.abrafersrl.com.ar/product/regulador-para-garrafa-de-10-kg-con-manguera-080-mts/
+- Casa Ratón, regulador Neogas 1,5 m. https://www.casaraton.com.ar/productos/regulador-gas-10kg-neogas-manguera-1-5m/
+- Del Sur, regulador Paz 1,5 m. https://delsur-repuestos.com.ar/producto/regulador-p-garrafa-10-kgs-paz-c-manguera-1-5-mt-3036/
+- Electromedina, gabinete Sica 8 DIN. https://www.electromedina.com.ar/presta17/inicio/1662-caja-tablero-para-embutir-8-din-sica-.html
+- Mukdise, Sica Prestige 8p. https://www.mukdise.com.ar/electricidad/8827-sica-caja-prestige-8p-blanco-fume-366318.html
+- Onled Mendoza, caja 8 módulos Sica. https://onledmendoza.com.ar/caja-para-termicas/145-caja-termica-8mod-embutir-linea-prestige-sica.html
+- Electricidad Total, caja 8 módulos. https://www.electricidadtotalsa.com/productos/caja-tablero-para-trmicas8-mdulos-bocas-din-embutir-pvc-tu9a/
+- Udachi, caja Sica 8 bocas. https://www.udachi.com.ar/productos/caja-tablero-para-termicas-embutir-8-bocas-sica/
+- ElectroAC, térmica Sica bipolar. https://www.electricidadac.com.ar/productos/termica-bipolar-2x6a-10a-16a-20a-25a-32a-6ka-sica-mv5b3/
+- Electricidad Centro, disyuntor Sica 25 A. https://www.electricidad-centro.com.ar/productos/disyuntor-sica-diferencial-bipolar-25a/
+- Casa Blanco, diferencial 2×25 A 30 mA. https://tiendacasablanco.com.ar/productos/interruptor-diferencial-2x25a-30ma-sica/
+- Cintek, kit accesorios baño 4 piezas. https://cintekshop.com.ar/productos/kit-de-accesorios-para-bano-4-piezas-cromado-juego-completo-organizador-ducha-toallero-portarrollo-perchero-porta-jabonera-acero-inoxidable-v3ot6/
+- Santagal, set Peirano 6 piezas. https://santagal.com.ar/productos/banos/accesorios/sets/set-accesorios-bano-peirano-linea-10000-6-piezas-metal/
+- Llanos, bajo mesada Orlandi 80 cm. https://www.llanos.com.ar/productos/bajo-mesada-orlandi-premium-linosa-80-cm/
+- Centrogar, bajo mesada Orlandi 80 cm. https://centrogar.com.ar/product/bajo-mesada-orlandi-623-premiun-80cm-jacaranda/
+- Ohventas, alacena pino 80 cm. https://www.ohventas.com.ar/productos/alacena-pino-80-cm/
+- Carlitos Hogar, alacena 0,80 m. https://www.carlitoshogar.com.ar/alacena-0.80-mts-2-puertas-almendra-3576
+- Distribuidora Fénix, vajilla Durax 12 piezas. https://distribuidorafenix.com.ar/producto/set-de-vajilla-durax-gema-12/
+- Küchen Bazar, vajilla Durax 12 piezas. https://www.kuchenbazar.com.ar/productos/vajilla-completa-durax-12-piezas-platos-playo-hondo-y-vasos/
+- Blanco Papuchi, vajilla Durax 12 piezas. https://blancopapuchi.com/set-de-vajilla-durax-por-12-piezas
+- Baby Móvil, vajilla Durax 12 piezas. https://www.babymovil.com.ar/productos/set-de-vajilla-x12-durax-4-platos-4-vasos-4-platos-hondos/
+- Tienda Centro, cubiertos Tramontina 24 pzas. https://tiendacentro.com/bazar/juego-de-cubiertos-tramontina-new-kolor-24-pzas/
+- Tramontina, New Kolor 24 piezas. https://www.tramontina.com.ar/juego-de-cubiertos-tramontina-new-kolor-con-laminas-de-acero-inoxidable-y-mangos-de-polipropileno-negro-24-piezas-23199062/p
+- Precialo, cubiertos New Kolor. https://precialo.com.ar/p/juego-de-cubiertos-24-piezas-acero-inox-new-kolor-tramontina-1
+- Lesini, set utensilios bambú 5 piezas. https://lesinistore.com.ar/productos/set-x5-utensilios-porta-cubiertos-madera-bambu-cocina/
+- Donregalon, tabla madera 30×20. https://www.donregalon.com.ar/productos/tabla-madera-30x20/
+- Sodimac, tabla vidrio 30×40. https://www.sodimac.com.ar/sodimac-ar/product/914711X/tabla-para-picar-de-vidrio-30-x-40-cm/914711X/
+- EntreSábanas, almohada Merlín 70×40. https://www.entresabanas.com/productos/almohada-merlin-70x40cm-fib/
+- Casa Simon, almohada Dormiclass 70×40. https://www.casasimon.com.ar/productos/almohada-dormiclass-basica-70x40/
+- Emmé Casa, acolchados plaza y media. https://emmecasaydecoracion.com.ar/index.php/tienda/acolchados
+- Puraluz, toallón Kushiro 80×130. https://puraluz.com.ar/productos/toallon-microfibra-secado-rapido-80x130cm-kushiro2/
+- Blanquería X, cortina de baño PEVA. https://blanqueriaxmayorista.com/productos/cortina-de-bano-peva-con-ganchos-menucha-r3p5t/
+- Bodek, espejo 40×50. https://www.bodek.com.ar/productos/espejo-40x50-cm-con-marco-fino-marron/
+- Spiazzi, tender Nakan. https://spiazziweb.com.ar/producto/tender-plegable-simple-tes9v-nakan/
+- Viva Home, tender de piso. https://www.vivahome.com.ar/productos/tender-de-piso-de-acero-alas-blanco/
+- Sensei, balde lampazo Waggs. https://sensei.com.ar/productos/mopa-lampazo-escurridor-waggs-msk-001-con-balde-centrifugador-negro/
+- Todo Mopas, balde lampazo acero. https://todomopas.com.ar/productos/balde-lampazo-centrifuga-acero-giratorio-todo-mopas-premium/
+- Sodimac, pack 50 perchas. https://www.sodimac.com.ar/sodimac-ar/product/903479X/pack-de-50-perchas-natural/903479X/
+- Gadnic, pack 50 perchas madera. https://www.gadnic.com.ar/perchas/perchas-gadnic-x50-madera-antideslizante
 - CASE, memoria descriptiva presupuesto vivienda, agosto 2025. https://www.casesgo.com.ar/docs/tecnicos/case_memoria_descriptiva.pdf
 - CAEDE, costo de construcción Formosa (flete 10–20 %, no aplicado). https://caede.com.ar/costos-construccion/costo-construccion-formosa/
