@@ -1,6 +1,6 @@
 # ADR-033 · Una cuenta del público no reserva nada hasta que el equipo la habilita
 
-**Estado**: Aceptada · **Fecha**: 2026-09-13
+**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md): confirmar el correo alcanza para anotarse a traer un bien. `declined` sigue sin reservar.
 
 ## Contexto
 
@@ -28,7 +28,7 @@ Estados, y ninguno más:
 
 | Estado | Qué puede hacer la persona | Qué hace el equipo |
 |---|---|---|
-| `pending` | Entrar a `/cuenta`, elegir nombre y anonimato, irse | Habilitar o rechazar |
+| `pending` | Entrar a `/cuenta`, elegir nombre y anonimato, anotarse a traer un bien con datos de retiro (ADR-046) | Habilitar o rechazar |
 | `approved` | Reservar, cancelar lo propio | Coordinar la entrega |
 | `declined` | Entrar a `/cuenta`, irse. No reservar | Reconsiderarlo: de `declined` se puede pasar a `approved` |
 
@@ -84,9 +84,9 @@ lugar y un correo para la decisión. La persona tiene un estado diseñado en `/c
 
 **Malas y aceptadas.**
 
-- Hay un tiempo muerto entre confirmar el correo y poder reservar. La pantalla lo
-  dice, y el correo también. Si el equipo no mira, la persona espera. Es el precio
-  de haber elegido habilitación a mano.
+- Confirmar el correo ya permite anotarse a traer. Si el equipo rechaza después,
+  las reservas activas se cancelan a mano, con motivo (ADR-046). El tiempo muerto
+  entre confirmar y habilitar ya no bloquea el catálogo.
 - Un rechazo queda en la fila hasta que la persona borra la cuenta. No se borra
   solo: borrar sin que lo pida es exactamente lo que FR-208 le reserva a ella.
 - Las plantillas HTML pesan más que un párrafo. Cada cliente de correo las va a

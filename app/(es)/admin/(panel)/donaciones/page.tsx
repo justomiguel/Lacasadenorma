@@ -113,14 +113,22 @@ function PledgeRow({
   const quien = pledge.isAnonymous
     ? "Prefirió no aparecer"
     : (pledge.donorDisplayName ?? "Sin nombre público");
-  const contacto = pledge.contactEmail ?? "sin correo";
+  const contacto = [pledge.contactName, pledge.contactEmail, pledge.contactPhone]
+    .filter((value): value is string => value !== null && value.length > 0)
+    .join(" · ");
+  const retiro = pledge.pickupAddress;
 
   return (
     <Record
       title={pledge.itemTitle}
-      meta={`${String(pledge.quantity)} · ${COVER_LABEL[pledge.coverChannel]} · ${quien} · ${contacto} · vence ${when}`}
+      meta={`${String(pledge.quantity)} · ${COVER_LABEL[pledge.coverChannel]} · ${quien} · ${contacto.length === 0 ? "sin contacto" : contacto} · vence ${when}`}
       status={STATUS_LABEL[pledge.status]}
     >
+      {retiro === null ? null : (
+        <p className="mb-md max-w-measure font-ui text-small text-ink-muted">
+          Retiro: {retiro}
+        </p>
+      )}
       {pledge.donorNote === null ? null : (
         <p className="mb-md max-w-measure font-ui text-small text-ink-muted">
           {pledge.donorNote}

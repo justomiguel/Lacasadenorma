@@ -48,6 +48,9 @@ export async function claimItemAction(
       displayName: textOf(formData, "nombre"),
       note: textOf(formData, "nota"),
       coverChannel: isCoverChannel(canal) ? canal : "bring",
+      contactName: textOf(formData, "contacto"),
+      contactPhone: textOf(formData, "telefono"),
+      pickupAddress: textOf(formData, "direccion"),
     },
   );
 

@@ -4,9 +4,10 @@ import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
   articuloDelCatalogo,
   abrirItemDelCatalogo,
+  completarTraer,
   conItemPublicado,
   filaDelCatalogo,
-  habilitarCuenta,
+  formularioDeTraer,
   ocultarItemSiExiste,
   vencerReserva,
 } from "../soporte/catalogo";
@@ -44,11 +45,15 @@ test.describe("fase D · reservas", () => {
     await expect(page.locator("[data-pay=transfer]")).toBeHidden();
     await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(page.locator("[data-pay=paypal]")).toBeHidden();
+    await expect(page.getByLabel(/^nombre$/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /quiero donar/i })).toBeVisible();
 
     await page.getByRole("radio", { name: /^transferencia$/i }).click();
     await expect(page.locator("[data-pay=transfer]")).toBeVisible();
     await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(page.getByText(/^cbu$/i).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /quiero donar/i })).toBeHidden();
+    await expect(page.getByText(/no hace falta cuenta ni anotarse/i)).toBeVisible();
 
     await page.getByRole("radio", { name: /mercado pago/i }).click();
     await expect(page.locator("[data-pay=mercadopago]")).toBeVisible();
@@ -156,8 +161,8 @@ test.describe("fase D · reservas", () => {
     request,
     browser,
   }, info) => {
-    // Dos altas del público, dos habilitaciones y el cruce: el muro ya pide 90 s
-    // para el mismo armado. 45 s cortaba en CI con el navegador ya cerrado.
+    // Dos altas del público y el cruce: el muro ya pide 90 s para el mismo
+    // armado. Confirmar el correo alcanza (ADR-046); no se espera habilitación.
     test.setTimeout(90_000);
     const sufijo = sufijoUnico(info.project.name);
     const titulo = `Última bolsa (${sufijo})`;
@@ -178,8 +183,7 @@ test.describe("fase D · reservas", () => {
           await crearCuenta(paginaA, request, emailA);
           await crearCuenta(paginaB, request, emailB);
 
-          await habilitarCuenta(staffPage, emailA);
-          await habilitarCuenta(staffPage, emailB);
+          // ADR-046: confirmar el correo alcanza. No se espera habilitación.
 
           // Las dos personas tienen que ver el formulario **antes** de que A
           // reserve: un ítem cubierto se sigue mostrando, pero ya no se ofrece
@@ -199,7 +203,7 @@ test.describe("fase D · reservas", () => {
           await expect(articuloA.getByRole("button", { name: reservar })).toBeVisible();
           await expect(articuloB.getByRole("button", { name: reservar })).toBeVisible();
 
-          await articuloA.getByRole("button", { name: reservar }).click();
+          await completarTraer(formularioDeTraer(articuloA));
           await expect(paginaA).toHaveURL(/\/cuenta$/);
           await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
             "aria-selected",
@@ -211,7 +215,7 @@ test.describe("fase D · reservas", () => {
           await expect(paginaA.getByText(titulo)).toBeVisible();
           await expect(paginaA.getByText(/vence el/i)).toBeVisible();
 
-          await articuloB.getByRole("button", { name: reservar }).click();
+          await completarTraer(formularioDeTraer(articuloB));
           await expect(paginaB).toHaveURL(
             new RegExp(`/catalogo/${itemId}\\?conflicto=1$`),
           );
@@ -249,13 +253,11 @@ test.describe("fase D · reservas", () => {
       try {
         await conItemPublicado(request, staffPage, titulo, 1, async () => {
           await crearCuenta(donantePage, request, email);
-          await habilitarCuenta(staffPage, email);
-
           await donantePage.goto("/catalogo");
           await abrirItemDelCatalogo(donantePage, titulo);
           const articulo = articuloDelCatalogo(donantePage);
           await expect(articulo).toHaveCount(1);
-          await articulo.getByRole("button", { name: /quiero donar/i }).click();
+          await completarTraer(formularioDeTraer(articulo));
           await expect(donantePage).toHaveURL(/\/cuenta$/);
           await expect(
             donantePage.getByRole("tab", { name: /reservas/i }),

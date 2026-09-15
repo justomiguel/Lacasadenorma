@@ -27,6 +27,9 @@ class FakeDonationsPort implements DonationsPort {
       isAnonymous: input.isAnonymous,
       donorDisplayName: input.displayName,
       donorNote: input.note,
+      contactName: input.contactName,
+      contactPhone: input.contactPhone,
+      pickupAddress: input.pickupAddress,
       expiresAt: "2026-09-27T00:00:00.000Z",
       remindedAt: null,
       fulfilledAt: null,
@@ -58,6 +61,12 @@ const silent: Logger = {
 
 const ITEM = "ab700000-0000-4000-8000-000000000003";
 
+const TRAER = {
+  contactName: "Ana",
+  contactPhone: null as string | null,
+  pickupAddress: "Riacho He Hé, Formosa",
+};
+
 function ready(donations: DonationsPort) {
   return {
     session: {
@@ -81,7 +90,7 @@ describe("claimItem", () => {
           avisos.push(pledge.id);
         },
       },
-      { itemId: ITEM, quantity: 1, anonymous: "si" },
+      { itemId: ITEM, quantity: 1, anonymous: "si", ...TRAER },
     );
 
     expect(result.status).toBe("ok");
@@ -90,6 +99,8 @@ describe("claimItem", () => {
       quantity: 1,
       isAnonymous: true,
       coverChannel: "bring",
+      contactName: "Ana",
+      pickupAddress: "Riacho He Hé, Formosa",
     });
     expect(avisos).toEqual(["30000000-0000-4000-8000-000000000001"]);
   });
@@ -103,7 +114,7 @@ describe("claimItem", () => {
           throw new Error("resend caído");
         },
       },
-      { itemId: ITEM, quantity: "1", anonymous: "si" },
+      { itemId: ITEM, quantity: "1", anonymous: "si", ...TRAER },
     );
 
     expect(result.status).toBe("ok");
@@ -129,6 +140,7 @@ describe("claimItem", () => {
       itemId: ITEM,
       quantity: 1,
       anonymous: "si",
+      ...TRAER,
     });
 
     expect(result).toEqual({ status: "error", code: "ahead", field: null });
@@ -141,6 +153,7 @@ describe("claimItem", () => {
       quantity: 1,
       anonymous: "no",
       displayName: "   ",
+      ...TRAER,
     });
 
     expect(result).toEqual({
@@ -167,7 +180,41 @@ describe("claimItem", () => {
     expect(donations.claimed).toBeNull();
   });
 
-  it("anotarse a cubrir con Mercado Pago queda en el canal, no como traer", async () => {
+  it("sin nombre de contacto no llega al puerto", async () => {
+    const donations = new FakeDonationsPort();
+    const result = await claimItem(ready(donations), {
+      itemId: ITEM,
+      quantity: 1,
+      anonymous: "si",
+      pickupAddress: TRAER.pickupAddress,
+    });
+
+    expect(result).toEqual({
+      status: "error",
+      code: "contactNameRequired",
+      field: "contactName",
+    });
+    expect(donations.claimed).toBeNull();
+  });
+
+  it("sin dirección de retiro no llega al puerto", async () => {
+    const donations = new FakeDonationsPort();
+    const result = await claimItem(ready(donations), {
+      itemId: ITEM,
+      quantity: 1,
+      anonymous: "si",
+      contactName: "Ana",
+    });
+
+    expect(result).toEqual({
+      status: "error",
+      code: "pickupAddressRequired",
+      field: "pickupAddress",
+    });
+    expect(donations.claimed).toBeNull();
+  });
+
+  it("cubrir con plata no reserva: la transacción es la prueba", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {
       itemId: ITEM,
@@ -176,7 +223,11 @@ describe("claimItem", () => {
       coverChannel: "mercadopago",
     });
 
-    expect(result.status).toBe("ok");
-    expect(donations.claimed?.coverChannel).toBe("mercadopago");
+    expect(result).toEqual({
+      status: "error",
+      code: "coverIsNotAPledge",
+      field: null,
+    });
+    expect(donations.claimed).toBeNull();
   });
 });

@@ -232,6 +232,24 @@ export function formularioDeTraer(articulo: Locator) {
   return articulo.locator("form").filter({ hasText: /quiero donar/i });
 }
 
+/** Nombre y dirección de retiro, y envío (ADR-046). */
+export async function completarTraer(
+  formulario: Locator,
+  extra?: { readonly aparecer?: string },
+): Promise<void> {
+  await formulario.getByLabel(/^nombre$/i).fill("Ana");
+  await formulario
+    .getByLabel(/dirección donde ir a buscar/i)
+    .fill("Riacho He Hé, Formosa");
+
+  if (extra?.aparecer !== undefined) {
+    await formulario.getByLabel(/quiero aparecer con nombre/i).check();
+    await formulario.getByLabel(/nombre para mostrar/i).fill(extra.aparecer);
+  }
+
+  await formulario.getByRole("button", { name: /quiero donar/i }).click();
+}
+
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
   const salir = page
     .locator("#contenido")

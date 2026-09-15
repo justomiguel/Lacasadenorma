@@ -46,7 +46,7 @@ export function TextField({
   defaultValue?: string;
   /** El mensaje ya traducido. Ausente cuando el error no es de este campo. */
   error?: string;
-  inputMode?: "text" | "numeric" | "decimal" | "email";
+  inputMode?: "text" | "numeric" | "decimal" | "email" | "tel";
 }) {
   const { pending } = useFormStatus();
   const id = useId();

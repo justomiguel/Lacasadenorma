@@ -310,6 +310,8 @@ export type Database = {
         Row: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          contact_name: string | null;
+          contact_phone: string | null;
           cover_channel: Database["public"]["Enums"]["donation_cover_channel"];
           created_at: string;
           donor_display_name: string | null;
@@ -319,6 +321,7 @@ export type Database = {
           id: string;
           is_anonymous: boolean;
           item_id: string;
+          pickup_address: string | null;
           quantity: number;
           reminded_at: string | null;
           status: Database["public"]["Enums"]["pledge_status"];
@@ -327,6 +330,8 @@ export type Database = {
         Insert: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          contact_name?: string | null;
+          contact_phone?: string | null;
           cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           created_at?: string;
           donor_display_name?: string | null;
@@ -336,6 +341,7 @@ export type Database = {
           id?: string;
           is_anonymous?: boolean;
           item_id: string;
+          pickup_address?: string | null;
           quantity: number;
           reminded_at?: string | null;
           status?: Database["public"]["Enums"]["pledge_status"];
@@ -344,6 +350,8 @@ export type Database = {
         Update: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          contact_name?: string | null;
+          contact_phone?: string | null;
           cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           created_at?: string;
           donor_display_name?: string | null;
@@ -353,6 +361,7 @@ export type Database = {
           id?: string;
           is_anonymous?: boolean;
           item_id?: string;
+          pickup_address?: string | null;
           quantity?: number;
           reminded_at?: string | null;
           status?: Database["public"]["Enums"]["pledge_status"];
@@ -1118,16 +1127,21 @@ export type Database = {
       };
       claim_donation_item: {
         Args: {
+          p_contact_name?: string;
+          p_contact_phone?: string;
           p_cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           p_display_name?: string;
           p_is_anonymous?: boolean;
           p_item_id: string;
           p_note?: string;
+          p_pickup_address?: string;
           p_quantity?: number;
         };
         Returns: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          contact_name: string | null;
+          contact_phone: string | null;
           cover_channel: Database["public"]["Enums"]["donation_cover_channel"];
           created_at: string;
           donor_display_name: string | null;
@@ -1137,6 +1151,7 @@ export type Database = {
           id: string;
           is_anonymous: boolean;
           item_id: string;
+          pickup_address: string | null;
           quantity: number;
           reminded_at: string | null;
           status: Database["public"]["Enums"]["pledge_status"];

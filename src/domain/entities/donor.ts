@@ -31,7 +31,7 @@ export interface DonorProfile {
 
 export const ANONYMOUS_BY_DEFAULT = true;
 
-/** Confirmar el correo no habilita la reserva. Habilitarla es una decisión del equipo (ADR-033). */
+/** Confirmar el correo no es habilitación. Habilitar o rechazar sigue siendo del equipo (ADR-033). */
 export const PENDING_BY_DEFAULT: ApprovalStatus = "pending";
 
 /**
@@ -69,9 +69,9 @@ export function canAppearNamed(profile: DonorProfile): boolean {
   return !profile.defaultAnonymous && displayNameOf(profile) !== null;
 }
 
-/** Reservar material pide una cuenta habilitada, no sólo una sesión. */
+/** Reservar un bien pide no estar rechazada. Confirmar el correo alcanza (ADR-046). */
 export function canReserve(profile: DonorProfile): boolean {
-  return profile.approvalStatus === "approved";
+  return profile.approvalStatus !== "declined";
 }
 
 export function isApprovalStatus(value: unknown): value is ApprovalStatus {

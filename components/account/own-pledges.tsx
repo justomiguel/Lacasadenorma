@@ -62,6 +62,21 @@ export function OwnPledges({
               {quantity}
             </p>
             <p className="mt-2xs font-ui text-small text-ink-muted">{status}</p>
+            {pledge.contactName === null ? null : (
+              <p className="mt-2xs font-ui text-small text-ink-muted">
+                {fill(copy.pledgeContact, { name: pledge.contactName })}
+              </p>
+            )}
+            {pledge.contactPhone === null ? null : (
+              <p className="mt-2xs font-ui text-small text-ink-muted">
+                {fill(copy.pledgePhone, { phone: pledge.contactPhone })}
+              </p>
+            )}
+            {pledge.pickupAddress === null ? null : (
+              <p className="mt-2xs font-ui text-small text-ink-muted">
+                {fill(copy.pledgeAddress, { address: pledge.pickupAddress })}
+              </p>
+            )}
             {isActivePledge(pledge) ? (
               <form action={cancelOwnPledgeAction} className="mt-md">
                 <LocaleField locale={locale} />

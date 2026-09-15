@@ -81,12 +81,12 @@ describe("canAppearNamed", () => {
 });
 
 describe("canReserve", () => {
-  it("una cuenta nueva no reserva: confirmar el correo no es habilitación", () => {
-    expect(canReserve(profile())).toBe(false);
+  it("una cuenta pendiente ya puede anotarse a traer: confirmar el correo alcanza", () => {
+    expect(canReserve(profile())).toBe(true);
     expect(canReserve(profile({ approvalStatus: "declined" }))).toBe(false);
   });
 
-  it("sólo la cuenta habilitada por el equipo puede reservar", () => {
+  it("una cuenta rechazada no reserva; habilitada sí", () => {
     expect(canReserve(profile({ approvalStatus: "approved" }))).toBe(true);
   });
 });

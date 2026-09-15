@@ -22,10 +22,10 @@ directo no lo paga. En Mercado Pago el sugerido es el estimado más ese 10%, y
 se puede **sumar más** —nunca menos—. PayPal no lleva ese recargo: el sugerido
 es el neto. El sitio no convierte monedas.
 
-Cubrir con plata reserva las mismas unidades que anotarse a traerlo. Cuando el
-equipo confirma que el dinero llegó, el ítem queda cubierto a nombre de esa
-persona si eligió aparecer. El estimado **no** se asienta como aporte: el
-aporte entra al libro cuando se concilia, por el camino que ya existe (ADR-006).
+Cubrir con plata **no reserva** desde el formulario público (ADR-046): la
+transacción es la prueba, y el nombre se pide cuando el equipo anota lo que
+llegó. El estimado **no** se asienta como aporte: el aporte entra al libro
+cuando se concilia, por el camino que ya existe (ADR-006).
 
 ## Decisión
 

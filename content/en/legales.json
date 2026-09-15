@@ -1,16 +1,16 @@
 {
-  "updatedOn": "2026-09-14",
+  "updatedOn": "2026-09-15",
   "privacy": {
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
     "paragraphs": [
-      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, if there are any, a name to show and a photo of you that is not published. We do not use third-party cookies and we do not follow you across other pages."
+      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, if there are any, a name to show and a photo of you that is not published. If you sign up to bring a good, we also keep the contact name, a phone number if you leave one, and the address to pick it up. We do not use third-party cookies and we do not follow you across other pages."
     ],
     "sections": [
       {
         "heading": "What we do not do",
         "paragraphs": [
-          "You do not need an account to browse the site, and browsing asks for nothing. There are no contact forms and no newsletter, and the site never asks for your phone or your payment details.",
+          "You do not need an account to browse the site, and browsing asks for nothing. There is no newsletter. Covering an item with money does not ask for an account or a phone: the transfer is the proof. Signing up to bring a good does ask for a name, a phone number if you prefer, and the address to pick it up.",
           "Payments are not processed on the site: you make the transfer from your bank, and that operation is between your bank and ours.",
           "We do not use advertising cookies, social-media pixels or services that build a profile of you."
         ]
@@ -18,7 +18,7 @@
       {
         "heading": "If you create an account",
         "paragraphs": [
-          "Creating an account is optional and serves one purpose: to be able to say \"I am bringing this one\" and have it written down as yours.",
+          "Creating an account is optional and serves one purpose: to be able to say \"I am bringing this one\" and have it written down as yours, so you can see it and cancel it. Confirming the email is not proof that the donation is real: it is so we can write to you.",
           "From you we keep your email, the language you prefer to be written in, and a name and a photo if there are any: you write them, or the network you signed in with brings them if those fields were still empty here. Your password is not kept: what is kept is an encrypted result that cannot be turned back into your password. If that address already had an account, signing in with Google (or another network) uses that one: a second account is not created.",
           "The name shown is the one you choose —or the one the network suggests, which you can change. It is never derived from your email. If there is none, there is none.",
           "The photo, if you upload one or if the network brought one, identifies you while you are signed in. It is not published on any page of the site, it does not appear in Who helped, and it is not shared.",
@@ -54,9 +54,9 @@
       {
         "heading": "If you offer to bring something",
         "paragraphs": [
-          "Signing up to bring a material stores, besides your email, how much you committed to bring and until when that hold is good. If you leave a note for the family, it stays in the internal record and is not published.",
+          "Signing up to bring a material stores, besides your email, your contact name, a phone number if you leave one, the address to pick it up, how much you committed to bring and until when that hold is good. If you leave a note for the family, it stays in the internal record. None of that is published.",
           "The name you want shown is optional, and the default is not to appear. If you write it and check that you want to appear, it is published on Who helped only when the material arrives. If you leave it unchecked, what you brought is counted without your name.",
-          "If you delete the account, your email, your name and your photo are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",
+          "If you delete the account, your email, your name, your photo, your phone and the pickup address are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",
           "The emails we send you are about your account or a hold of yours: that we received it, that it was written down, that expiry is near, that it arrived, or that it was cancelled. There is no list and no broadcast."
         ]
       },
