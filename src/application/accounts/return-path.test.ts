@@ -12,10 +12,16 @@ describe("safeAccountReturn", () => {
     expect(safeAccountReturn("/catalogo", "es")).toBe("/catalogo");
     expect(
       safeAccountReturn("/catalogo?item=ab700000-0000-4000-8000-000000000003", "es"),
-    ).toBe("/catalogo?item=ab700000-0000-4000-8000-000000000003");
+    ).toBe("/catalogo/ab700000-0000-4000-8000-000000000003");
     expect(
       safeAccountReturn("/en/catalogo?item=AB700000-0000-4000-8000-000000000003", "en"),
-    ).toBe("/en/catalogo?item=ab700000-0000-4000-8000-000000000003");
+    ).toBe("/en/catalogo/ab700000-0000-4000-8000-000000000003");
+    expect(
+      safeAccountReturn("/catalogo/ab700000-0000-4000-8000-000000000003", "es"),
+    ).toBe("/catalogo/ab700000-0000-4000-8000-000000000003");
+    expect(
+      safeAccountReturn("/en/catalogo/AB700000-0000-4000-8000-000000000003", "en"),
+    ).toBe("/en/catalogo/ab700000-0000-4000-8000-000000000003");
   });
 
   it("rechaza un origen, una ruta ajena y una query que no es el ítem", () => {

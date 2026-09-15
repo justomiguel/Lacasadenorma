@@ -8,7 +8,8 @@ Dos vistas, las dos con `security_invoker = true`, las dos legibles por `anon` y
 | Vista | Devuelve | No devuelve |
 |---|---|---|
 | `donation_catalog` | Ítems con `remaining_quantity` calculado en la base | El valor estimado (D3) |
-| `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Todo lo demás, por privilegio de columna |
+| `donation_catalog_claims` | Cinco columnas de reservas y entregas con nombre | Lo anónimo, correo, nota |
+| `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Una reserva, aunque tenga nombre |
 
 El repositorio de infraestructura consulta **las vistas, nunca las tablas**, y con lista de columnas
 explícita como el resto del proyecto.
@@ -45,8 +46,9 @@ diseñado.
   `donation_item.updated`, `donation_item.published`, `pledge.claimed`, `pledge.cancelled`,
   `pledge.fulfilled`.
 - La revalidación es explícita al publicar o al cambiar disponibilidad (ADR-017): `/catalogo`,
-  `/quienes-ayudaron` y sus equivalentes en `/en`. SC-212 —cinco minutos entre confirmar y ver el
-  nombre— se cumple por el ISR de cinco minutos incluso si la invalidación explícita falla.
+  `/catalogo/[id]`, `/quienes-ayudaron` y sus equivalentes en `/en`. SC-212 —cinco minutos entre
+  confirmar y ver el nombre— se cumple por el ISR de cinco minutos incluso si la invalidación
+  explícita falla.
 
 ## Capacidad de agente
 

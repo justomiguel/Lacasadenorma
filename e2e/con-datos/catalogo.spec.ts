@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
   articuloDelCatalogo,
+  abrirItemDelCatalogo,
   conItemPublicado,
+  filaDelCatalogo,
   habilitarCuenta,
   ocultarItemSiExiste,
   vencerReserva,
@@ -48,7 +50,8 @@ test.describe("fase D · reservas", () => {
           await cerrarSesion(donantePage);
 
           await donantePage.goto("/catalogo");
-          const articulo = articuloDelCatalogo(donantePage, titulo);
+          await abrirItemDelCatalogo(donantePage, titulo);
+          const articulo = articuloDelCatalogo(donantePage);
 
           await expect(articulo).toHaveCount(1);
           await expect(articulo).toBeVisible();
@@ -67,8 +70,8 @@ test.describe("fase D · reservas", () => {
           await acceso.getByLabel("Contraseña").fill(CLAVE_PUBLICA);
           await acceso.getByRole("button", { name: /^ingresar$/i }).click();
 
-          await expect(donantePage).toHaveURL(new RegExp(`/catalogo\\?item=${itemId}$`));
-          await expect(articulo.getByRole("heading", { name: titulo })).toBeVisible();
+          await expect(donantePage).toHaveURL(new RegExp(`/catalogo/${itemId}$`));
+          await expect(donantePage.getByRole("heading", { name: titulo })).toBeVisible();
         });
       } finally {
         await donante.close();
@@ -112,10 +115,12 @@ test.describe("fase D · reservas", () => {
           // reserve: un ítem cubierto se sigue mostrando, pero ya no se ofrece
           // (FR-210). Si B entra después, no hay botón que apretar.
           await paginaA.goto("/catalogo");
+          await abrirItemDelCatalogo(paginaA, titulo);
           await paginaB.goto("/catalogo");
+          await abrirItemDelCatalogo(paginaB, titulo);
 
-          const articuloA = articuloDelCatalogo(paginaA, titulo);
-          const articuloB = articuloDelCatalogo(paginaB, titulo);
+          const articuloA = articuloDelCatalogo(paginaA);
+          const articuloB = articuloDelCatalogo(paginaB);
           const reservar = /anotarme para traer esto/i;
 
           await expect(articuloA).toHaveCount(1);
@@ -137,7 +142,9 @@ test.describe("fase D · reservas", () => {
           await expect(paginaA.getByText(/vence el/i)).toBeVisible();
 
           await articuloB.getByRole("button", { name: reservar }).click();
-          await expect(paginaB).toHaveURL(new RegExp(`/catalogo\\?conflicto=${itemId}$`));
+          await expect(paginaB).toHaveURL(
+            new RegExp(`/catalogo/${itemId}\\?conflicto=1$`),
+          );
           await expect(paginaB.getByText(/alguien se adelantó/i).first()).toBeVisible();
           await expect(articuloB.getByText(/ya está cubierto/i)).toBeVisible();
 
@@ -175,7 +182,8 @@ test.describe("fase D · reservas", () => {
           await habilitarCuenta(staffPage, email);
 
           await donantePage.goto("/catalogo");
-          const articulo = articuloDelCatalogo(donantePage, titulo);
+          await abrirItemDelCatalogo(donantePage, titulo);
+          const articulo = articuloDelCatalogo(donantePage);
           await expect(articulo).toHaveCount(1);
           await articulo
             .getByRole("button", { name: /anotarme para traer esto/i })
@@ -195,9 +203,9 @@ test.describe("fase D · reservas", () => {
           await expect(donantePage.getByText(/venció el/i)).toBeVisible();
 
           await donantePage.goto("/catalogo");
-          await expect(articuloDelCatalogo(donantePage, titulo)).toHaveCount(1);
+          await expect(filaDelCatalogo(donantePage, titulo)).toHaveCount(1);
           await expect(
-            articuloDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
+            filaDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
           ).toBeVisible();
         });
       } finally {

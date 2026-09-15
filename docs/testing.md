@@ -447,8 +447,7 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
 | `/reconstruccion` muestra una novedad de prueba como lo último | El flujo 9 no volvió a borrador. Tiene que despublicar por el botón del backoffice, no por un `PATCH` a PostgREST |
-| `/catalogo` reserva 2 huecos de foto en lugar de 1 | Un ítem de prueba sigue publicado o la caché de ISR no se invalidó. `ocultarItem` espera a que el título desaparezca del HTML; en CI la revisión visual deja sólo el ítem del fixture |
-| `/catalogo` reserva 0 huecos de foto en lugar de 1 | WebKit midió `loading.tsx`. La revisión visual tiene que esperar a que desaparezca "Estamos cargando…" antes de contar |
+| `/catalogo` reserva un hueco de foto en el listado | Un ítem de prueba sigue publicado **y** alguien volvió a poner el hueco en la tabla. El listado no reserva foto; la ficha sí. `ocultarItem` espera a que el título desaparezca del HTML |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |

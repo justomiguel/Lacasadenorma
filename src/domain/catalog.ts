@@ -1,3 +1,4 @@
+import type { CatalogClaim } from "./entities/catalog-claim";
 import {
   DONATION_ITEM_CATEGORIES,
   DONATION_UNITS,
@@ -7,6 +8,7 @@ import {
 import { DomainError } from "./errors";
 import { isCurrencyCode, money, type Money } from "./money";
 
+export type { CatalogClaim } from "./entities/catalog-claim";
 export type {
   DonationItem,
   DonationItemAdminRecord,
@@ -43,6 +45,44 @@ export function isCovered(quantities: ItemQuantities): boolean {
 /** La interfaz ofrece reservar sólo cuando queda algo. */
 export function canClaim(quantities: ItemQuantities): boolean {
   return remaining(quantities) > 0;
+}
+
+/**
+ * Si alguien ya tomó unidades, y con qué nombres públicos.
+ *
+ * Lo anónimo no llega acá: la vista no lo nombra (FR-255). `taken` sale de las
+ * cantidades, que sí son públicas, así que una reserva sin nombre se ve como
+ * tomada y la columna de nombre queda vacía.
+ */
+export interface ItemTakenStatus {
+  readonly taken: boolean;
+  readonly names: readonly string[];
+}
+
+export function takenStatus(
+  item: {
+    readonly id: string;
+    readonly neededQuantity: number;
+    readonly remainingQuantity: number;
+  },
+  claims: readonly CatalogClaim[],
+): ItemTakenStatus {
+  const names: string[] = [];
+  const seen = new Set<string>();
+
+  for (const claim of claims) {
+    if (claim.itemId !== item.id || seen.has(claim.donorDisplayName)) {
+      continue;
+    }
+
+    seen.add(claim.donorDisplayName);
+    names.push(claim.donorDisplayName);
+  }
+
+  return {
+    taken: item.remainingQuantity < item.neededQuantity,
+    names: item.remainingQuantity < item.neededQuantity ? names : [],
+  };
 }
 
 /**

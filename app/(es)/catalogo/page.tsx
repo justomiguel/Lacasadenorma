@@ -1,8 +1,12 @@
 import { CatalogScreen, catalogMetadata } from "@/components/screens/catalog-screen";
+import { redirect } from "next/navigation";
 
 export const revalidate = 300;
 
 export const metadata = catalogMetadata("es");
+
+const ITEM_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
 export default async function CatalogoPage({
   searchParams,
@@ -13,11 +17,14 @@ export default async function CatalogoPage({
   const conflicto = params["conflicto"];
   const item = params["item"];
 
+  if (typeof item === "string" && ITEM_ID.test(item)) {
+    redirect(`/catalogo/${item.toLowerCase()}`);
+  }
+
   return (
     <CatalogScreen
       locale="es"
       conflictId={typeof conflicto === "string" ? conflicto : null}
-      focusId={typeof item === "string" ? item : null}
     />
   );
 }

@@ -203,13 +203,14 @@ falta en especie en `/admin/catalogo`.
 
 Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga una casa de 60 m²
 para una persona que vive sola, agrupada por categoría: materiales (ladrillos, cal, cemento, arena),
-aberturas, instalaciones, electrodomésticos, muebles y ajuar. **Sin montos.** Las cantidades de
+aberturas, instalaciones (baño y cocina desde cero: tina, inodoro, mesada, grifería de cocina), electrodomésticos, muebles y ajuar. **Sin montos.** Las cantidades de
 mampostería están calculadas en el encabezado del archivo. Es idempotente por título y pide la
 campaña `casa-de-norma`.
 
 Correrlo en el SQL Editor del proyecto, entero. El `select` del final lista lo que quedó. Cada ítem
-sale publicado y sin foto: `/catalogo` reserva un hueco hasta que se suba la imagen desde
-`/admin/catalogo`. No se pone una ilustración en el medio.
+sale publicado y sin foto: la ficha `/catalogo/<id>` reserva un hueco hasta que se suba la imagen
+desde `/admin/catalogo`. El listado es una tabla y no reserva huecos. No se pone una ilustración ni
+una foto bajada de internet.
 
 ### Correo: dominio, SPF y las plantillas que no viven en el repositorio
 

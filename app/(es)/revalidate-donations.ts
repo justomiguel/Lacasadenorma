@@ -8,8 +8,8 @@ import { revalidatePath } from "next/cache";
  * acciones del backoffice y las de `/cuenta` no se desfasen.
  */
 export function revalidateDonationPages(): void {
-  revalidatePath("/catalogo");
-  revalidatePath("/en/catalogo");
+  revalidatePath("/catalogo", "layout");
+  revalidatePath("/en/catalogo", "layout");
   revalidatePath("/ayudar");
   revalidatePath("/en/ayudar");
   revalidatePath("/quienes-ayudaron");

@@ -4,12 +4,9 @@ import { apiLocal, CUENTAS, entrar, primeraFila, tokenDe } from "./backoffice";
 import { esperarQueNoAparezca, revalidar } from "./revalidar";
 
 /**
- * El ítem sin foto de `supabase/fixtures/dev.sql`. Es el único hueco que
- * `revision-visual.spec.ts` cuenta en `/catalogo`. Cualquier otro publicado
- * suma uno de más.
- *
- * No se le pone foto a los ítems de prueba: el shim local no tiene Storage
- * (runbook §7). La aislación es despublicar y esperar a que el HTML lo deje
+ * El ítem sin foto de `supabase/fixtures/dev.sql`. El listado ya no reserva
+ * hueco: la ficha sí. Cualquier ítem de prueba que quede publicado ensucia
+ * el listado; la aislación es despublicar y esperar a que el HTML lo deje
  * de mostrar.
  */
 const ITEM_SIN_FOTO_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
@@ -17,8 +14,8 @@ const ITEM_SIN_FOTO_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
 /**
  * Cargar un ítem publicado desde el backoffice, como lo haría el equipo.
  *
- * No va en el fixture: un ítem sin foto suma un hueco en `/catalogo` y
- * `revision-visual.spec.ts` exige el número exacto. Cada prueba crea el suyo y
+ * No va en el fixture: un ítem de prueba extra queda en el listado y
+ * `revision-visual.spec.ts` recorre `/catalogo`. Cada prueba crea el suyo y
  * lo despublica al terminar.
  */
 export async function cargarItemPublicado(
@@ -85,7 +82,8 @@ export async function ocultarItem(
 }
 
 /**
- * Deja `/catalogo` como lo horneó el fixture: un ítem, un hueco.
+ * Deja `/catalogo` como lo horneó el fixture: un ítem publicado, sin hueco
+ * de foto en el listado (la ficha es la que reserva el espacio).
  *
  * Corre al empezar la revisión visual en CI, donde hay un solo worker y los
  * proyectos van en serie. En local la suite es paralela: despublicar acá
@@ -109,7 +107,7 @@ export async function dejarElCatalogoDelFixture(
 
   expect(respuesta.status(), "despublicar ítems que no son el del fixture").toBe(204);
   await revalidar(request, ["/catalogo", "/en/catalogo"]);
-  await esperarHuecosDelCatalogo(request, 1);
+  await esperarHuecosDelCatalogo(request, 0);
 }
 
 /**
@@ -198,14 +196,28 @@ export async function ocultarItemSiExiste(
   }
 }
 
-/** El renglón del catálogo, acotado al contenido: en WebKit a veces hay un nodo extra. */
-export function articuloDelCatalogo(page: Page, titulo: string) {
+/**
+ * El renglón de la tabla. En WebKit a veces hay un nodo extra: se acota al
+ * contenido.
+ */
+export function filaDelCatalogo(page: Page, titulo: string) {
   return page
     .locator("#contenido")
-    .getByRole("article")
-    .filter({
-      has: page.getByRole("heading", { name: titulo, exact: true }),
-    });
+    .getByRole("row")
+    .filter({ has: page.getByRole("link", { name: titulo, exact: true }) });
+}
+
+/** Abre la ficha desde el listado. */
+export async function abrirItemDelCatalogo(page: Page, titulo: string): Promise<void> {
+  await filaDelCatalogo(page, titulo)
+    .getByRole("link", { name: titulo, exact: true })
+    .click();
+  await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
+}
+
+/** La ficha: foto o hueco, cantidades y el formulario. */
+export function articuloDelCatalogo(page: Page, _titulo?: string) {
+  return page.locator("#contenido").getByRole("article");
 }
 
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {

@@ -1,5 +1,5 @@
 import { isDonationItemCategory, isDonationUnit, remaining } from "@/src/domain/catalog";
-import type { DonationItem } from "@/src/domain/entities";
+import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import type { CatalogRepository } from "@/src/domain/ports/repositories";
 
 import { MEDIA_COLUMNS } from "./admin/columns";
@@ -20,7 +20,10 @@ import type { ServerSupabaseClient } from "./server-client";
 const CATALOG_COLUMNS =
   "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, remaining_quantity, fulfilled_quantity, photo_media_id, sort_order";
 
+const CLAIM_COLUMNS = "id, item_id, quantity, donor_display_name, fulfilled_at";
+
 type CatalogRow = Database["public"]["Views"]["donation_catalog"]["Row"];
+type ClaimRow = Database["public"]["Views"]["donation_catalog_claims"]["Row"];
 
 export function createCatalogRepository(client: ServerSupabaseClient): CatalogRepository {
   const publicUrlFor = (bucketId: string, storagePath: string): string =>
@@ -45,6 +48,46 @@ export function createCatalogRepository(client: ServerSupabaseClient): CatalogRe
       );
 
       return data.map((row) => toDonationItem(row, photos));
+    },
+
+    async findPublishedItem(
+      campaignId: string,
+      itemId: string,
+    ): Promise<DonationItem | null> {
+      const { data, error } = await client
+        .from("donation_catalog")
+        .select(CATALOG_COLUMNS)
+        .eq("campaign_id", campaignId)
+        .eq("id", itemId)
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new Error(`leer el ítem del catálogo: ${error.message}`);
+      }
+
+      if (data === null) {
+        return null;
+      }
+
+      const photos = await loadPhotos(client, [data.photo_media_id], publicUrlFor);
+
+      return toDonationItem(data, photos);
+    },
+
+    async listNamedClaims(): Promise<CatalogClaim[]> {
+      const { data, error } = await client
+        .from("donation_catalog_claims")
+        .select(CLAIM_COLUMNS);
+
+      if (error !== null) {
+        throw new Error(`leer quién tomó del catálogo: ${error.message}`);
+      }
+
+      return data.flatMap((row) => {
+        const claim = toClaim(row);
+
+        return claim === null ? [] : [claim];
+      });
     },
   };
 }
@@ -127,5 +170,24 @@ function toDonationItem(
     fulfilledQuantity: row.fulfilled_quantity,
     photo: row.photo_media_id === null ? null : (photos.get(row.photo_media_id) ?? null),
     sortOrder: row.sort_order,
+  };
+}
+
+function toClaim(row: ClaimRow): CatalogClaim | null {
+  if (
+    row.id === null ||
+    row.item_id === null ||
+    row.quantity === null ||
+    row.donor_display_name === null
+  ) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    itemId: row.item_id,
+    quantity: row.quantity,
+    donorDisplayName: row.donor_display_name,
+    fulfilledAt: row.fulfilled_at,
   };
 }

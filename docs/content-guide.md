@@ -41,7 +41,7 @@ carpetas.
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
-| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base; acá van título, bajada y estados, sin prosa de introducción |
+| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla; la ficha `/catalogo/[id]` lleva la foto o el hueco. Acá van título, bajada, columnas y estados, sin prosa de introducción |
 | `quienes-ayudaron.json` | `/quienes-ayudaron` | Título, bajada y estados del muro. Los nombres viven en la base; acá no hay una lista de ejemplo ni prosa de introducción |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
 | `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |

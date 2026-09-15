@@ -4,6 +4,7 @@ import {
   remaining,
   isCovered,
   canClaim,
+  takenStatus,
   estimatedValueOf,
   isDonationUnit,
   isDonationItemCategory,
@@ -52,6 +53,67 @@ describe("canClaim", () => {
   it("no ofrece reservar un ítem cubierto", () => {
     expect(canClaim({ needed: 10, reserved: 4, fulfilled: 6 })).toBe(false);
     expect(canClaim({ needed: 10, reserved: 3, fulfilled: 6 })).toBe(true);
+  });
+});
+
+describe("takenStatus", () => {
+  const item = {
+    id: "item-1",
+    neededQuantity: 5,
+    remainingQuantity: 5,
+  };
+
+  it("libre: nadie tomó y no hay nombres", () => {
+    expect(takenStatus(item, [])).toEqual({ taken: false, names: [] });
+  });
+
+  it("tomada sin nombre: las cantidades dicen que falta menos, y lo anónimo no se nombra", () => {
+    expect(takenStatus({ ...item, remainingQuantity: 3 }, [])).toEqual({
+      taken: true,
+      names: [],
+    });
+  });
+
+  it("tomada con nombre: lista una vez cada quien eligió aparecer", () => {
+    expect(
+      takenStatus({ ...item, remainingQuantity: 2 }, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 2,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+        },
+        {
+          id: "b",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: "2026-09-14T00:00:00.000Z",
+        },
+        {
+          id: "c",
+          itemId: "item-2",
+          quantity: 1,
+          donorDisplayName: "Ajeno",
+          fulfilledAt: null,
+        },
+      ]),
+    ).toEqual({ taken: true, names: ["María"] });
+  });
+
+  it("si volvió a estar libre, no publica nombres viejos", () => {
+    expect(
+      takenStatus(item, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+        },
+      ]),
+    ).toEqual({ taken: false, names: [] });
   });
 });
 

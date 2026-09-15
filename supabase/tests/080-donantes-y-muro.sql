@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(56);
+select plan(60);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -719,6 +719,26 @@ select ok(
   'la vista no nombra status ni is_anonymous: el filtro está en la policy (ADR-030)'
 );
 
+select has_view('public', 'donation_catalog_claims', 'existe la vista pública de quién tomó del catálogo');
+
+select isnt_empty(
+  $q$
+    select 1
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = 'donation_catalog_claims'
+       and coalesce(array_to_string(c.reloptions, ','), '') ~ 'security_invoker=(true|on)'
+  $q$,
+  'donation_catalog_claims declara security_invoker: sin eso bypasea RLS (I3)'
+);
+
+select ok(
+  pg_get_viewdef('public.donation_catalog_claims'::regclass, true) !~ 'is_anonymous'
+  and pg_get_viewdef('public.donation_catalog_claims'::regclass, true) !~ 'status',
+  'la vista del catálogo no nombra status ni is_anonymous: el filtro está en la policy (ADR-030)'
+);
+
 select is(
   (
     select coalesce(array_agg(column_name::text order by column_name), '{}')
@@ -789,6 +809,12 @@ select is_empty(
      where donor_display_name = 'Todavía no llegó'
   $q$,
   'una reserva con nombre no aparece en el muro: el muro dice quién ayudó, no quién prometió (D2)'
+);
+
+select results_eq(
+  $q$ select donor_display_name from public.donation_catalog_claims order by donor_display_name $q$,
+  $q$ values ('Todavía no llegó'::text), ('Vecina de la esquina'::text) $q$,
+  'el catálogo nombra reservas y entregas con nombre; la anónima no existe (FR-255)'
 );
 
 reset role;
