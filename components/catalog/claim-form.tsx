@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useActionState } from "react";
 
 import { claimItemAction } from "@/app/(es)/catalogo/actions";
@@ -28,21 +29,32 @@ export function ClaimForm({
   copy,
   account,
   locale,
+  submitLabel,
+  pendingLabel,
+  children,
 }: {
   itemId: string;
   remaining: number;
   copy: CatalogContent;
   account: AccountContent;
   locale: Locale;
+  submitLabel?: string;
+  pendingLabel?: string;
+  children?: ReactNode;
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(
     claimItemAction,
     IDLE,
   );
   const general = generalError(state, account.errors);
+  const label = submitLabel ?? copy.claim;
 
   return (
-    <form action={formAction} className="mt-lg max-w-measure space-y-lg">
+    <form
+      action={formAction}
+      aria-label={label}
+      className="mt-lg max-w-measure space-y-lg"
+    >
       <LocaleField locale={locale} />
       <input type="hidden" name="itemId" value={itemId} />
 
@@ -77,9 +89,11 @@ export function ClaimForm({
 
       <TextField name="nota" label={copy.note} hint={copy.noteHint} required={false} />
 
+      {children}
+
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={copy.claiming}>{copy.claim}</SubmitButton>
+      <SubmitButton pendingLabel={pendingLabel ?? copy.claiming}>{label}</SubmitButton>
     </form>
   );
 }

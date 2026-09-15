@@ -71,6 +71,7 @@ export function createDonationsPort(client: ServerSupabaseClient): DonationsPort
         p_is_anonymous: input.isAnonymous,
         p_display_name: input.displayName as string,
         p_note: input.note as string,
+        p_cover_channel: input.coverChannel,
       });
 
       if (error !== null) {

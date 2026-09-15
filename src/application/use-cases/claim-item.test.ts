@@ -89,6 +89,7 @@ describe("claimItem", () => {
       itemId: ITEM,
       quantity: 1,
       isAnonymous: true,
+      coverChannel: "bring",
     });
     expect(avisos).toEqual(["30000000-0000-4000-8000-000000000001"]);
   });
@@ -164,5 +165,18 @@ describe("claimItem", () => {
       field: "quantity",
     });
     expect(donations.claimed).toBeNull();
+  });
+
+  it("anotarse a cubrir con Mercado Pago queda en el canal, no como traer", async () => {
+    const donations = new FakeDonationsPort();
+    const result = await claimItem(ready(donations), {
+      itemId: ITEM,
+      quantity: 1,
+      anonymous: "si",
+      coverChannel: "mercadopago",
+    });
+
+    expect(result.status).toBe("ok");
+    expect(donations.claimed?.coverChannel).toBe("mercadopago");
   });
 });

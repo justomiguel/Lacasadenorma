@@ -7,7 +7,7 @@ Dos vistas, las dos con `security_invoker = true`, las dos legibles por `anon` y
 
 | Vista | Devuelve | No devuelve |
 |---|---|---|
-| `donation_catalog` | Ítems con `remaining_quantity` calculado en la base | El valor estimado (D3) |
+| `donation_catalog` | Ítems con `remaining_quantity` y el estimado de la ficha (ADR-041) | Borradores, nombres |
 | `donation_catalog_claims` | Cinco columnas de reservas y entregas con nombre | Lo anónimo, correo, nota |
 | `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Una reserva, aunque tenga nombre |
 
@@ -70,6 +70,7 @@ El nombre para una persona es «catálogo de donaciones». El identificador regi
       "unit": "unidad",
       "needed": 40,
       "remaining": 35
+      "estimated": null
     }
   ],
   "updatedAt": "2026-09-13T18:00:00.000Z"
@@ -81,7 +82,7 @@ Lo que **no** devuelve, y por qué:
 | Ausencia | Motivo |
 |---|---|
 | Nombres del muro | FR-242 y FR-031 de la feature 001: ninguna capacidad devuelve datos personales. Que el dato sea público en una página no lo vuelve apto para una API que un agente puede recorrer entero |
-| El valor estimado | No se publica (D3) |
+| El valor estimado | La ficha lo publica etiquetado (ADR-041). Sin estimado cargado, se omite |
 | Cualquier forma de reservar | Reservar compromete a una persona real frente a una familia. Ninguna herramienta de agente inicia ni facilita eso, por la misma razón por la que ninguna mueve plata |
 
 Corre por el mismo `runCapability()` y por el mismo caso de uso que la página, así que no hay dos

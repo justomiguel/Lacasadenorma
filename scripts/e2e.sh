@@ -135,10 +135,11 @@ huella() {
 # respondiendo 200 sobre el esquema viejo y devuelve cero filas. Un build contra eso no
 # falla —no hay error de red que registrar— y hornea las once páginas con la rama del
 # dato ausente, que es el modo de falla más caro de diagnosticar que tiene este script.
-#
-# Recarga el caché de tipos de PostgREST. Después de un `db:reset` una instancia que
-# ya estaba levantada sigue contestando 200 sobre `campaigns.slug` y explota en la
-# primera lectura de un objeto nuevo (ADR-042: la vista `contribution_wall`).
+# Recarga el caché de tipos de PostgREST. Después de un `db:reset` los OID de
+# los enum cambian y aparecen objetos nuevos; una instancia que ya estaba
+# levantada sigue contestando 200 sobre `campaigns.slug` y explota en la
+# primera lectura de un tipo o de una vista que el caché no tiene (ADR-041:
+# `donation_cover_channel`; ADR-042: la vista `contribution_wall`).
 # `NOTIFY pgrst` es lo que PostgREST escucha; si el proceso no está, no pasa nada.
 recargar_esquema_postgrest() {
   PGPASSWORD="${PGPASSWORD:-norma_local}" psql \
@@ -151,12 +152,13 @@ recargar_esquema_postgrest() {
 
 api_local_ve_el_fixture() {
   local camp="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug,publish_contribution_share&limit=1"
-  # La vista del muro es la canaria del esquema actual: si PostgREST todavía
-  # tiene el caché de antes del reset, este SELECT falla aunque `campaigns.slug`
-  # siga existiendo.
+  # Canarias del esquema actual: si PostgREST todavía tiene el caché de antes
+  # del reset, estos SELECT fallan aunque `campaigns.slug` siga existiendo.
+  local item="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/donation_catalog?select=estimated_unit_amount_minor&id=eq.dddddddd-0000-4000-8000-000000000001"
   local muro="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/contribution_wall?select=id&limit=1"
 
   curl --fail --silent "$camp" 2>/dev/null | grep -q '"publish_contribution_share"' || return 1
+  curl --fail --silent "$item" 2>/dev/null | grep -q '"estimated_unit_amount_minor"' || return 1
   curl --fail --silent --output /dev/null "$muro" 2>/dev/null
 }
 
@@ -175,8 +177,8 @@ levantar_api_local() {
 
   # Algo contesta en el puerto pero no ve el esquema actual. Es una instancia vieja
   # —de una corrida anterior, con el esquema de antes del reset en su caché—, y
-  # reusarla produce un sitio construido sin el muro de aportes. Se dice qué pasa
-  # y qué hacer, en lugar de seguir y dejar el diagnóstico para después (principio XII).
+  # reusarla produce `cache lookup failed for type` o un sitio construido sin el
+  # muro de aportes. Se dice qué pasa y qué hacer, en lugar de seguir (principio XII).
   if curl --fail --silent --output /dev/null \
     "http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1" 2>/dev/null; then
     echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve el esquema actual." >&2
@@ -255,6 +257,10 @@ if [[ "${E2E_REUSAR:-}" == "1" ]]; then
     echo "El build que hay en .next no es el de modo ${modo}." >&2
     echo "Corré de nuevo sin E2E_REUSAR=1." >&2
     exit 1
+  fi
+
+  if [[ "$modo" == "con-datos" ]]; then
+    recargar_esquema_postgrest
   fi
 
   say "Reusando el build y la base que ya están (E2E_REUSAR=1)"

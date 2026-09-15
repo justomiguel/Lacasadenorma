@@ -25,7 +25,30 @@ import {
  * `revision-visual.spec.ts`.
  */
 
+const ITEM_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
+
 test.describe("fase D · reservas", () => {
+  test("la ficha dice que el monto es estimado y se puede cubrir por Mercado Pago o PayPal", async ({
+    page,
+  }) => {
+    await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
+
+    await expect(
+      page.getByRole("heading", { name: /cubrirlo con plata/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
+    await expect(page.getByLabel(/sumar más/i)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /continuar con mercado pago/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /continuar con paypal/i }).first(),
+    ).toBeVisible();
+
+    await page.getByLabel(/sumar más/i).fill("1000");
+    await expect(page.getByText(/total a enviar por mercado pago/i)).toBeVisible();
+  });
+
   test("pedir donar sin sesión vuelve al mismo ítem después de ingresar", async ({
     request,
     browser,
