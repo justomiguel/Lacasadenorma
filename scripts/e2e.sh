@@ -135,29 +135,51 @@ huella() {
 # respondiendo 200 sobre el esquema viejo y devuelve cero filas. Un build contra eso no
 # falla —no hay error de red que registrar— y hornea las once páginas con la rama del
 # dato ausente, que es el modo de falla más caro de diagnosticar que tiene este script.
-api_local_ve_el_fixture() {
-  local sonda="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1"
+# Recarga el caché de tipos de PostgREST. Después de un `db:reset` los OID de
+# los enum cambian; una instancia que ya estaba levantada sigue contestando 200
+# sobre `campaigns` y explota con `cache lookup failed for type …` en la
+# primera lectura que toca un tipo nuevo (ADR-041: `donation_cover_channel`).
+# `NOTIFY pgrst` es lo que PostgREST escucha; si el proceso no está, no pasa nada.
+recargar_esquema_postgrest() {
+  PGPASSWORD="${PGPASSWORD:-norma_local}" psql \
+    -h "${PGHOST:-127.0.0.1}" \
+    -p "${PGPORT:-5432}" \
+    -U "${PGUSER:-norma_local}" \
+    -d "${PGDATABASE:-norma_dev}" \
+    -c "NOTIFY pgrst, 'reload schema';" >/dev/null 2>&1 || true
+}
 
-  curl --fail --silent "$sonda" 2>/dev/null | grep -q '"slug"'
+api_local_ve_el_fixture() {
+  local camp="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1"
+  # La columna del estimado es la canaria del esquema actual: si PostgREST
+  # todavía tiene el caché de antes del reset, este SELECT falla aunque
+  # `campaigns.slug` siga existiendo.
+  local item="http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/donation_catalog?select=estimated_unit_amount_minor&id=eq.dddddddd-0000-4000-8000-000000000001"
+
+  curl --fail --silent "$camp" 2>/dev/null | grep -q '"slug"' || return 1
+  curl --fail --silent "$item" 2>/dev/null | grep -q '"estimated_unit_amount_minor"'
 }
 
 levantar_api_local() {
   local registro="${TMPDIR:-/tmp}/e2e-api-local.log"
+
+  recargar_esquema_postgrest
+  sleep 1
 
   if api_local_ve_el_fixture; then
     say "La API local ya estaba levantada y ve el fixture: se reusa"
     return
   fi
 
-  # Algo contesta en el puerto pero no devuelve la campaña. Es una instancia vieja
-  # —de una corrida anterior, con el esquema de antes del reset en su caché—, y
-  # reusarla produce un sitio construido sin cifras. Se dice qué pasa y qué hacer, en
-  # lugar de seguir y dejar el diagnóstico para después (principio XII).
+  # Algo contesta en el puerto pero no ve el esquema actual. Es una instancia
+  # vieja —de una corrida anterior, con el caché de tipos de antes del reset—, y
+  # reusarla produce `cache lookup failed for type` o un sitio construido sin
+  # cifras. Se dice qué pasa y qué hacer, en lugar de seguir (principio XII).
   if curl --fail --silent --output /dev/null \
     "http://127.0.0.1:${LOCAL_API_PORT}/rest/v1/campaigns?select=slug&limit=1" 2>/dev/null; then
-    echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve la campaña del fixture." >&2
-    echo "Es de antes del reset y tiene el esquema viejo en caché. Bajala y volvé a correr:" >&2
-    echo "  fuser -k ${LOCAL_API_PORT}/tcp 54331/tcp" >&2
+    echo "Hay una API local en el puerto ${LOCAL_API_PORT} que no ve el esquema actual." >&2
+    echo "Es de antes del reset y tiene el caché de tipos viejo. Bajala y volvé a correr:" >&2
+    echo "  fuser -k ${LOCAL_API_PORT}/tcp" >&2
     exit 1
   fi
 
@@ -231,6 +253,10 @@ if [[ "${E2E_REUSAR:-}" == "1" ]]; then
     echo "El build que hay en .next no es el de modo ${modo}." >&2
     echo "Corré de nuevo sin E2E_REUSAR=1." >&2
     exit 1
+  fi
+
+  if [[ "$modo" == "con-datos" ]]; then
+    recargar_esquema_postgrest
   fi
 
   say "Reusando el build y la base que ya están (E2E_REUSAR=1)"

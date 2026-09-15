@@ -41,7 +41,9 @@ test.describe("fase D · reservas", () => {
     await expect(
       page.getByRole("link", { name: /continuar con mercado pago/i }).first(),
     ).toBeVisible();
-    await expect(page.getByRole("link", { name: /continuar con paypal/i })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /continuar con paypal/i }).first(),
+    ).toBeVisible();
 
     await page.getByLabel(/sumar más/i).fill("1000");
     await expect(page.getByText(/total a enviar por mercado pago/i)).toBeVisible();

@@ -445,6 +445,7 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | Falla en `safari` o `movil` y no en `escritorio` | Si la página se está sirviendo con estilos. Un fallo de CSP o de assets se ve como docenas de violaciones de axe |
 | Fallan los tests de canónica y nada más | El build. Corré sin `E2E_REUSAR=1` |
 | `EADDRINUSE` en 54321 | Ya hay una API local levantada. Está bien: se reusa. Si no responde, `ss -ltnp \| grep 54321` |
+| `cache lookup failed for type` al leer el catálogo o la campaña | PostgREST quedó con el caché de tipos de antes de `db:reset`. `scripts/e2e.sh` manda `NOTIFY pgrst, 'reload schema'` y la sonda pide `estimated_unit_amount_minor`; si igual falla: `fuser -k 54321/tcp` y volvé a correr |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
 | `/reconstruccion` muestra una novedad de prueba como lo último | El flujo 9 no volvió a borrador. Tiene que despublicar por el botón del backoffice, no por un `PATCH` a PostgREST |
 | `/catalogo` reserva un hueco de foto en el listado | Un ítem de prueba sigue publicado **y** alguien volvió a poner el hueco en la tabla. El listado no reserva foto; la ficha sí. `ocultarItem` espera a que el título desaparezca del HTML |
