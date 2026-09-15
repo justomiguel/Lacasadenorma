@@ -8,11 +8,15 @@ import { localizeHref, type Locale } from "@/src/i18n/locale";
  * acceso en un trampolín para phishing.
  *
  * Sólo se acepta el catálogo, con un ítem opcional. El resto cae en `/cuenta`.
- * El ítem tiene que ser un UUID: cualquier otra query se descarta entera.
+ * El ítem tiene que ser un UUID: cualquier otra cosa se descarta.
  */
 
-const ITEM =
+export const CATALOG_ITEM_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+
+export function catalogItemHref(itemId: string, locale: Locale): string {
+  return `${localizeHref("/catalogo", locale)}/${itemId.toLowerCase()}`;
+}
 
 export function safeAccountReturn(candidate: string | undefined, locale: Locale): string {
   const cuenta = localizeHref("/cuenta", locale);
@@ -26,7 +30,19 @@ export function safeAccountReturn(candidate: string | undefined, locale: Locale)
   }
 
   const catalog = localizeHref("/catalogo", locale);
-  const [path, query] = candidate.split("?");
+  const parts = candidate.split("?");
+  const path = parts[0] ?? "";
+  const query = parts[1];
+
+  if (path.startsWith(`${catalog}/`)) {
+    const itemId = path.slice(`${catalog}/`.length);
+
+    if (itemId.includes("/") || !CATALOG_ITEM_ID.test(itemId)) {
+      return catalog;
+    }
+
+    return catalogItemHref(itemId, locale);
+  }
 
   if (path !== catalog) {
     return cuenta;
@@ -45,9 +61,9 @@ export function safeAccountReturn(candidate: string | undefined, locale: Locale)
 
   const item = params.get("item");
 
-  if (item === null || !ITEM.test(item)) {
+  if (item === null || !CATALOG_ITEM_ID.test(item)) {
     return catalog;
   }
 
-  return `${catalog}?item=${item.toLowerCase()}`;
+  return catalogItemHref(item, locale);
 }

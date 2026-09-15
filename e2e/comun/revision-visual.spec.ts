@@ -54,9 +54,9 @@ const MAX_ACENTOS = 3;
 const ESPACIOS_RESERVADOS = new Map<string, number>(
   process.env.E2E_MODO === "con-datos"
     ? [
-        // Un ítem del fixture se publica sin foto a propósito: el hueco es
-        // honesto, y este número exacto obliga a bajarlo cuando esa foto exista.
-        ["/catalogo", 1],
+        // El ítem del fixture se publica sin foto a propósito: el hueco vive
+        // en la ficha `/catalogo/[id]`, no en el listado. Esta lista no recorre
+        // fichas, así que el número exacto del listado es cero.
       ]
     : [
         // Vacío: sin base no hay ítems, y el mapa se queda para anotar un hueco

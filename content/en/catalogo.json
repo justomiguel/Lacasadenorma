@@ -1,6 +1,6 @@
 {
   "title": "What the house still needs",
-  "lead": "Materials and things that are still missing to rebuild. If someone has already pledged to bring an item, it stops being offered here.",
+  "lead": "Materials and things that are still missing to rebuild. The table shows how much is left and whether someone already signed up; a name appears only if they chose to be named.",
   "paragraphs": [],
   "seoDescription": "What materials and things Norma’s house still needs, and how much remains to be covered.",
   "emptyTitle": "No list has been published yet",
@@ -20,13 +20,32 @@
   "appearNamed": "I want to appear by name",
   "appearNamedHint": "If you leave this unchecked, what you bring is counted without your name. That is the default.",
   "conflictTitle": "Someone got there first",
-  "conflictBody": "That unit is already reserved under someone else's name. The list below is the updated one.",
+  "conflictBody": "That unit is already reserved under someone else's name. The list was updated.",
+  "tableCaption": "What is still needed, how much, and whether someone already signed up. A name appears only if that person chose to be named.",
+  "columnItem": "What",
+  "columnQuantity": "Quantity",
+  "columnTaken": "Has someone taken it?",
+  "columnName": "Name",
+  "takenYes": "Yes",
+  "takenNo": "No",
+  "nameNone": "—",
+  "quantityOf": "{remaining} of {needed} {unit} still needed.",
+  "backToList": "Back to the list",
   "units": {
     "unidad": { "one": "unit", "other": "units" },
     "metro": { "one": "metre", "other": "metres" },
     "metro_cuadrado": { "one": "square metre", "other": "square metres" },
+    "metro_cubico": { "one": "cubic metre", "other": "cubic metres" },
     "bolsa": { "one": "bag", "other": "bags" },
     "litro": { "one": "litre", "other": "litres" },
     "juego": { "one": "set", "other": "sets" }
+  },
+  "categories": {
+    "materiales": "Materials",
+    "aberturas": "Doors and windows",
+    "instalaciones": "Installations",
+    "electrodomesticos": "Appliances",
+    "muebles": "Furniture",
+    "ajuar": "Household goods"
   }
 }

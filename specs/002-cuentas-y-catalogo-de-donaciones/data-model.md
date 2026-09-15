@@ -28,7 +28,7 @@ campaigns
 email_deliveries             (cada intento de envío; sólo se agrega)
 ```
 
-Vistas: `donation_catalog` (lo que falta, público) y `donation_wall` (quién ayudó, público).
+Vistas: `donation_catalog` (lo que falta, público), `donation_catalog_claims` (quién tomó y eligió aparecer) y `donation_wall` (quién ayudó, público).
 
 Funciones: `claim_donation_item`, `cancel_donation_pledge`, `fulfill_donation_pledge`,
 `release_expired_holds`, `record_email_delivery`.
@@ -76,7 +76,8 @@ aplicación y se refuerza en la reserva, que es donde importa.
 | `budget_item_id` | `uuid` **nullable** → `budget_items` `on delete set null` | Para que el catálogo y el presupuesto hablen de la misma obra (FR-213) |
 | `title` | `text` | "Chapas del techo" |
 | `description` | `text` nullable | Qué sirve y qué no: medida, material, calidad |
-| `unit` | enum `donation_unit` | `unidad` \| `metro` \| `metro_cuadrado` \| `bolsa` \| `litro` \| `juego` |
+| `unit` | enum `donation_unit` | `unidad` \| `metro` \| `metro_cuadrado` \| `metro_cubico` \| `bolsa` \| `litro` \| `juego` |
+| `category` | enum `donation_item_category` | `materiales` \| `aberturas` \| `instalaciones` \| `electrodomesticos` \| `muebles` \| `ajuar` (FR-253) |
 | `needed_quantity` | `integer not null` | |
 | `reserved_quantity` | `integer not null default 0` | **Derivada, y la mueven sólo tres funciones** |
 | `fulfilled_quantity` | `integer not null default 0` | Ídem |
@@ -183,7 +184,7 @@ select
   i.id, i.campaign_id, i.budget_item_id, i.title, i.description, i.unit,
   i.needed_quantity,
   i.needed_quantity - i.reserved_quantity - i.fulfilled_quantity as remaining_quantity,
-  i.fulfilled_quantity, i.photo_media_id, i.sort_order
+  i.fulfilled_quantity, i.photo_media_id, i.sort_order, i.category
 from public.donation_items i
 where i.published_at is not null;
 ```
@@ -197,14 +198,26 @@ camino.
 ```sql
 create view public.donation_wall with (security_invoker = true) as
 select p.id, p.item_id, p.quantity, p.donor_display_name, p.fulfilled_at
+from public.donation_pledges p
+where p.fulfilled_at is not null;
+```
+
+Cinco columnas, las mismas cinco del `grant`. La vista no nombra `status` ni `is_anonymous`:
+`anon` no tiene privilegio para esas columnas. El recorte a lo **entregado** usa `fulfilled_at`,
+que sí está otorgado, para que una reserva con nombre no llegue al muro (D2) aunque la policy de
+`anon` ahora admita reservas con nombre —las necesita el catálogo (FR-255). Lo anónimo lo sigue
+filtrando la policy.
+
+```sql
+create view public.donation_catalog_claims with (security_invoker = true) as
+select p.id, p.item_id, p.quantity, p.donor_display_name, p.fulfilled_at
 from public.donation_pledges p;
 ```
 
-Cinco columnas, las mismas cinco del `grant`. La vista no filtra por `status` ni por `is_anonymous`:
-**no podría**, porque `anon` no tiene privilegio para nombrar esas columnas. El filtro lo hace la
-policy de filas, que es donde corresponde.
+Las mismas cinco columnas. `fulfilled_at` nulo es reserva; con fecha, ya llegó. Lo anónimo no
+existe para `anon`.
 
-`security_invoker = true` en las dos, y no es opcional: sin eso la vista corre con los privilegios de
+`security_invoker = true` en las tres, y no es opcional: sin eso la vista corre con los privilegios de
 su dueño y sortea RLS (`research.md` §6).
 
 ---
@@ -218,9 +231,10 @@ leer con atención, porque es la que antes no existía.
 |---|---|---|---|---|---|---|
 | `donor_profiles` | nada | **su propia fila: leer; escribir nombre, idioma y anonimato. No el estado** | leer | nada | leer + habilitar | leer + habilitar |
 | `donation_items` | leer publicados | leer publicados | leer todo | crear/editar | CRUD | CRUD |
-| `donation_pledges` | **5 columnas de las entregadas no anónimas** | **las propias, completas** | leer todas | **nada** | leer + operar | leer + operar |
+| `donation_pledges` | **5 columnas de reservas y entregas con nombre** | **las propias, completas** | leer todas | **nada** | leer + operar | leer + operar |
 | `email_deliveries` | nada | nada | leer | nada | leer | leer |
 | `donation_catalog` (vista) | leer | leer | leer | leer | leer | leer |
+| `donation_catalog_claims` (vista) | leer | leer | leer | leer | leer | leer |
 | `donation_wall` (vista) | leer | leer | leer | leer | leer | leer |
 | Todo lo de la feature 001 | como estaba | **lo mismo que `anon`, y nada de escritura** | como estaba | como estaba | como estaba | como estaba |
 
@@ -255,7 +269,7 @@ Cuatro decisiones que hay que notar:
 ### Privilegios de tabla y de columna
 
 ```sql
-grant select on public.donation_items, public.donation_catalog, public.donation_wall
+grant select on public.donation_items, public.donation_catalog, public.donation_catalog_claims, public.donation_wall
   to anon, authenticated;
 
 -- INSERT/UPDATE por columna: `reserved_quantity` y `fulfilled_quantity` no se

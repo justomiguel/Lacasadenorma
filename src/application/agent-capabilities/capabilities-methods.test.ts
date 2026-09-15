@@ -67,19 +67,19 @@ describe("get_donation_methods", () => {
 });
 
 describe("get_campaign_status", () => {
-  it("devuelve el total conciliado y el porcentaje sobre el objetivo", async () => {
-    const { output } = esperarOk(
+  it("devuelve la composición de lo ya recibido, no montos", async () => {
+    const { output, text } = esperarOk(
       await runCapability("get_campaign_status", {}, context()),
     );
 
     expect(output).toMatchObject({
-      goalMinor: 100_000_000,
-      raisedMinor: TOTAL_RECIBIDO,
-      percent: 24,
-      currency: "ARS",
+      spentPercent: (10_000_000 / TOTAL_RECIBIDO) * 100,
+      remainingPercent: (14_000_000 / TOTAL_RECIBIDO) * 100,
       reconciledAt: "2026-09-08T00:00:00.000Z",
     });
     expect(typeof output.updatedAt).toBe("string");
+    expect(text).not.toMatch(/\$/);
+    expect(JSON.stringify(output)).not.toContain(String(TOTAL_RECIBIDO));
   });
 });
 
@@ -97,8 +97,8 @@ describe("get_reconstruction_progress", () => {
       percentComplete: 50,
     });
     expect(output.budgetItems).toEqual([
-      { title: "Materiales", estimatedMinor: 40_000_000, currency: "ARS" },
-      { title: "Mano de obra", estimatedMinor: null, currency: null },
+      { title: "Materiales", percentOfQuoted: 100 },
+      { title: "Mano de obra", percentOfQuoted: null },
     ]);
   });
 });

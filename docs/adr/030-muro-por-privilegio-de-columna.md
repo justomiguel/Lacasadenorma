@@ -41,9 +41,10 @@ consulta no los pida: es que si los pidiera, Postgres la rechazaría. Un `select
 en un repositorio dentro de seis meses falla con "permission denied for column" en lugar de publicar
 un correo.
 
-Sobre eso, una policy para `anon` que sólo admite las filas publicables —entregada, no anónima, no
-cancelada— y una vista `public.donation_wall` con `security_invoker = true`, que por lo tanto se
-evalúa con los privilegios de quien consulta y hereda las dos barreras.
+Sobre eso, una policy para `anon` que admite las filas publicables —reservada o entregada, no
+anónima— y dos vistas con `security_invoker = true`: `donation_wall` recorta a `fulfilled_at is not
+null` (quien ayudó, D2) y `donation_catalog_claims` muestra también la reserva con nombre (FR-255).
+Las dos se evalúan con los privilegios de quien consulta y heredan las dos barreras.
 
 Las tres capas responden a tres preguntas distintas, y por eso están las tres: la policy dice **qué
 filas**, el privilegio de columna dice **qué columnas**, y `security_invoker` dice **que la vista no

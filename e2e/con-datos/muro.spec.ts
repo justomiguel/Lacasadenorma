@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { apiLocal, sufijoUnico, tokenDe } from "../soporte/backoffice";
 import {
   articuloDelCatalogo,
+  abrirItemDelCatalogo,
   cargarItemPublicado,
   confirmarLlegada,
   habilitarCuenta,
@@ -51,7 +52,8 @@ test.describe("fase E · muro", () => {
         await habilitarCuenta(staffPage, emailOculto);
 
         await paginaSi.goto("/catalogo");
-        const articuloSi = articuloDelCatalogo(paginaSi, titulo);
+        await abrirItemDelCatalogo(paginaSi, titulo);
+        const articuloSi = articuloDelCatalogo(paginaSi);
         await expect(articuloSi).toHaveCount(1);
         await articuloSi.getByLabel(/quiero aparecer con nombre/i).check();
         await articuloSi.getByLabel(/nombre para mostrar/i).fill(visible);
@@ -61,7 +63,8 @@ test.describe("fase E · muro", () => {
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
 
         await paginaNo.goto("/catalogo");
-        const articuloNo = articuloDelCatalogo(paginaNo, titulo);
+        await abrirItemDelCatalogo(paginaNo, titulo);
+        const articuloNo = articuloDelCatalogo(paginaNo);
         await expect(articuloNo).toHaveCount(1);
         await articuloNo.getByLabel(/nombre para mostrar/i).fill(oculto);
         await articuloNo

@@ -1,6 +1,7 @@
 import type {
   BudgetItem,
   Campaign,
+  CatalogClaim,
   DonationItem,
   DonationWallEntry,
   ExpenseRecord,
@@ -63,6 +64,13 @@ export interface UpdateRepository {
 export interface CatalogRepository {
   /** Ítems publicados de la campaña, en orden editorial. Los borradores no existen acá. */
   listPublishedItems(campaignId: string): Promise<DonationItem[]>;
+  /** Un ítem publicado, o `null` si no existe o no está publicado. */
+  findPublishedItem(campaignId: string, itemId: string): Promise<DonationItem | null>;
+  /**
+   * Anotaciones con nombre: reservas y entregas de quien eligió aparecer.
+   * Lo anónimo no existe en este puerto (FR-255).
+   */
+  listNamedClaims(): Promise<CatalogClaim[]>;
 }
 
 export interface DonationWallRepository {

@@ -59,8 +59,9 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 
 **Acceptance Scenarios**:
 
-1. **Given** un catálogo con ítems publicados, **When** alguien lo abre sin sesión, **Then** ve cada
-   ítem con qué es, cuántos faltan y un llamado a pedir donarlo, sin ver quién reservó nada.
+1. **Given** un catálogo con ítems publicados, **When** alguien lo abre sin sesión, **Then** ve una
+   tabla por categoría: qué es, cuántos faltan de los que hacen falta, si alguien ya la tomó, y el
+   nombre **sólo** si esa persona eligió aparecer. Una reserva anónima se ve como tomada, sin nombre.
 2. **Given** un ítem cuya cantidad necesaria ya está cubierta entre lo reservado y lo entregado,
    **When** se renderiza el catálogo, **Then** ese ítem aparece marcado como cubierto y **no** ofrece
    la acción de reservar.
@@ -74,8 +75,11 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
 6. **Given** alguien sin sesión que toca "pedir donar esto", **When** llega a la pantalla de cuenta,
-   **Then** después de ingresar o registrarse vuelve al mismo ítem y completa la reserva sin buscarlo
-   de nuevo.
+   **Then** después de ingresar o registrarse vuelve a la ficha del mismo ítem y completa la reserva
+   sin buscarlo de nuevo.
+7. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
+   reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y el
+   formulario para reservar si todavía falta algo.
 
 ---
 
@@ -274,8 +278,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 **Catálogo**
 
-- **FR-209**: El sistema MUST publicar un catálogo de lo que falta, donde cada ítem tiene qué es,
-  cuántas unidades hacen falta, en qué unidad se cuenta, y cuántas siguen faltando.
+- **FR-209**: El sistema MUST publicar un catálogo de lo que falta como tabla, donde cada ítem tiene
+  qué es, cuántas unidades hacen falta, en qué unidad se cuenta, cuántas siguen faltando, si alguien
+  ya la tomó, y el nombre público o la ausencia de nombre.
 - **FR-210**: El sistema MUST calcular lo que falta descontando lo reservado y lo ya entregado, y
   MUST NOT ofrecer para reservar un ítem cubierto.
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
@@ -288,6 +293,16 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
   la interfaz lo omite en lugar de estimarlo.
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
+- **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
+  (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
+  MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
+  arena, ripio y similares.
+- **FR-254**: Cada ítem publicado MUST tener una página propia con la foto real o el espacio
+  reservado, la descripción, las cantidades y, si queda algo, el formulario de reserva. El
+  listado MUST NOT repetir la foto: el hueco vive en la ficha.
+- **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
+  esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
+  reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.
 
 **Reservas**
 

@@ -1,5 +1,5 @@
-import { formatMoney } from "@/src/domain/money";
 import type { FundraisingProgress, MilestoneProgress } from "@/src/domain/progress";
+import type { TransparencySummary } from "@/src/domain/transparency";
 import type { UiContent } from "@/content/schema";
 import { fill } from "@/src/i18n/fill";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
@@ -9,17 +9,14 @@ import { Callout } from "@/components/design-system/callout";
 import { ProgressBar } from "@/components/design-system/figures";
 
 /**
- * Cómo va la campaña: plata y obra, en ese orden y por separado.
+ * Cómo va la campaña: plata como composición de lo ya conocido, y obra aparte.
  *
- * Son dos medidas distintas y presentarlas como una sola sería engañoso: un 60%
- * de la plata no es un 60% de la casa. La barra mide dinero; la línea de abajo
- * mide hitos.
- *
- * La fecha de conciliación va siempre pegada a la cifra. Un número sin fecha no
- * es un dato, es una afirmación.
+ * Un 60% de lo que llegó no es un 60% de la casa. El 100% de la obra no está
+ * publicado (ADR-040).
  */
 export function CampaignProgress({
   fundraising,
+  transparency,
   milestones,
   reconciledAt,
   reconciliationIsStale,
@@ -28,6 +25,7 @@ export function CampaignProgress({
   className,
 }: {
   fundraising: FundraisingProgress;
+  transparency: TransparencySummary;
   milestones: MilestoneProgress;
   reconciledAt: string | null;
   reconciliationIsStale: boolean;
@@ -36,13 +34,13 @@ export function CampaignProgress({
   className?: string;
 }) {
   const intl = intlLocale(locale);
+  const otherCurrencies = fundraising.otherCurrencies.map((amount) => amount.currency);
 
   return (
     <div className={className}>
       <ProgressBar
-        raised={fundraising.raised}
-        goal={fundraising.goal}
-        percent={fundraising.percent}
+        spentPercent={transparency.primary.executedPercent}
+        remainingPercent={transparency.primary.remainingPercent}
         locale={locale}
         figures={ui.figures}
       />
@@ -55,12 +53,10 @@ export function CampaignProgress({
             })}
       </p>
 
-      {fundraising.otherCurrencies.length === 0 ? null : (
-        <p className="mt-xs max-w-measure font-ui text-small text-ink-muted" data-figure>
+      {otherCurrencies.length === 0 ? null : (
+        <p className="mt-xs max-w-measure font-ui text-small text-ink-muted">
           {fill(ui.progress.otherCurrencies, {
-            amounts: fundraising.otherCurrencies
-              .map((amount) => formatMoney(amount, intl))
-              .join(locale === "en" ? " and " : " y "),
+            currencies: otherCurrencies.join(locale === "en" ? " and " : " y "),
           })}
         </p>
       )}

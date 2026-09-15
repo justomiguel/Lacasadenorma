@@ -1,16 +1,18 @@
 import { Unavailable } from "@/components/campaign/unavailable";
-import { CatalogFocus } from "@/components/catalog/focus";
-import { CatalogItem } from "@/components/catalog/item";
+import { CatalogTable } from "@/components/catalog/table";
 import { ConflictNotice } from "@/components/catalog/conflict-notice";
 import { WallPreview } from "@/components/catalog/wall-preview";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
 import { Container, Section } from "@/components/design-system/layout";
+import { SectionHeading } from "@/components/design-system/typography";
 import { PageHeader } from "@/components/site/page-header";
 import { getContent } from "@/content";
 import { keepStaleOnError } from "@/src/application/result";
 import { getCatalog } from "@/src/application/use-cases/get-catalog";
+import { getCatalogClaims } from "@/src/application/use-cases/get-catalog-claims";
 import { getDonationWall } from "@/src/application/use-cases/get-donation-wall";
+import { groupCatalogByCategory } from "@/src/domain/catalog";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -33,19 +35,19 @@ export function catalogMetadata(locale: Locale) {
 export async function CatalogScreen({
   locale,
   conflictId,
-  focusId,
 }: {
   locale: Locale;
   conflictId: string | null;
-  focusId: string | null;
 }) {
-  const { catalog, account, ui } = getContent(locale);
+  const { catalog, ui } = getContent(locale);
   const dataLayer = getPublicDataLayer();
-  const [result, wall] = await Promise.all([
+  const [result, claimsResult, wall] = await Promise.all([
     getCatalog({ dataLayer, logger }).then(keepStaleOnError),
+    getCatalogClaims({ dataLayer, logger }).then(keepStaleOnError),
     getDonationWall({ dataLayer, logger }).then(keepStaleOnError),
   ]);
   const wallEntries = wall.status === "ok" ? wall.data : [];
+  const claims = claimsResult.status === "ok" ? claimsResult.data : [];
 
   return (
     <>
@@ -66,16 +68,22 @@ export async function CatalogScreen({
           ) : (
             <div>
               {conflictId === null ? null : <ConflictNotice copy={catalog} />}
-              <CatalogFocus itemId={focusId} />
-              {result.data.map((item, index) => (
-                <CatalogItem
-                  key={item.id}
-                  item={item}
-                  copy={catalog}
-                  account={account}
-                  locale={locale}
-                  priority={index === 0}
-                />
+              {groupCatalogByCategory(result.data).map((group, groupIndex) => (
+                <section
+                  key={group.category}
+                  className={groupIndex === 0 ? undefined : "mt-3xl"}
+                >
+                  <SectionHeading
+                    title={catalog.categories[group.category]}
+                    id={group.category}
+                  />
+                  <CatalogTable
+                    items={group.items}
+                    claims={claims}
+                    copy={catalog}
+                    locale={locale}
+                  />
+                </section>
               ))}
             </div>
           )}

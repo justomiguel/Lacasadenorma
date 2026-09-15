@@ -221,7 +221,7 @@ describe("el registro en el navegador", () => {
 describe("lo que una herramienta le devuelve al modelo", () => {
   it("devuelve el cuerpo del endpoint como texto, sin la envoltura de MCP", async () => {
     const registradas = conModelContext();
-    const cuerpo = { goalMinor: null, raisedMinor: 24_000_000, currency: "ARS" };
+    const cuerpo = { spentPercent: 42, remainingPercent: 58 };
 
     vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json(cuerpo));
 

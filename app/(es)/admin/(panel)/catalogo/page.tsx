@@ -13,6 +13,8 @@ import { NoRecords, Record, RecordList, RowAction } from "@/components/admin/rec
 import { AdminHeading, Panel, SinDatos } from "@/components/admin/shell";
 import { Callout } from "@/components/design-system/callout";
 import {
+  DONATION_ITEM_CATEGORIES,
+  DONATION_ITEM_CATEGORY_LABELS,
   DONATION_UNIT_LABELS,
   DONATION_UNITS,
   type DonationItemAdminRecord,
@@ -60,6 +62,10 @@ export default async function AdminCatalogoPage() {
     value: unit,
     label: DONATION_UNIT_LABELS[unit],
   }));
+  const categoryOptions = DONATION_ITEM_CATEGORIES.map((category) => ({
+    value: category,
+    label: DONATION_ITEM_CATEGORY_LABELS[category],
+  }));
   const currencyOptions = CURRENCIES.map((code) => ({ value: code, label: code }));
   const budgetOptions = [
     { value: "", label: "Sin rubro asociado" },
@@ -97,12 +103,21 @@ export default async function AdminCatalogoPage() {
         />
         <div className="grid gap-lg sm:grid-cols-2">
           <SelectField
+            name="category"
+            label="Categoría"
+            required
+            options={categoryOptions}
+            defaultValue={item?.category ?? "materiales"}
+          />
+          <SelectField
             name="unit"
             label="Unidad"
             required
             options={unitOptions}
             defaultValue={item?.unit ?? "unidad"}
           />
+        </div>
+        <div className="grid gap-lg sm:grid-cols-2">
           <TextField
             name="neededQuantity"
             label="Cuántas hacen falta"
@@ -200,7 +215,7 @@ export default async function AdminCatalogoPage() {
               <Record
                 key={item.id}
                 title={item.title}
-                meta={`${String(item.remainingQuantity)} de ${String(item.neededQuantity)} ${DONATION_UNIT_LABELS[item.unit]}`}
+                meta={`${DONATION_ITEM_CATEGORY_LABELS[item.category]} · ${String(item.remainingQuantity)} de ${String(item.neededQuantity)} ${DONATION_UNIT_LABELS[item.unit]}`}
                 amount={
                   item.estimatedValue === null
                     ? "Sin valor estimado"

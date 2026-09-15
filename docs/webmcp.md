@@ -46,12 +46,12 @@ transporte.
 
 | Nombre | Qué devuelve | Endpoint |
 |---|---|---|
-| `get_campaign_status` | Objetivo, recaudado, porcentaje, moneda, fecha de la última conciliación | `/api/public/campaign-status` |
+| `get_campaign_status` | Parte usada y parte que sigue de lo ya recibido, fecha de conciliación. Sin montos. El 100% de la obra no está publicado | `/api/public/campaign-status` |
 | `get_donation_methods` | Cuentas publicadas y verificadas, con instrucciones. Filtra por país | `/api/public/donation-methods` |
-| `get_reconstruction_progress` | Hitos con estado y fecha, completados sobre total, rubros del presupuesto | `/api/public/reconstruction-progress` |
+| `get_reconstruction_progress` | Hitos con estado y fecha, completados sobre total, rubros como % de lo cotizado | `/api/public/reconstruction-progress` |
 | `get_norma_story` | Nombre, rol, lugar y el relato publicado | `/api/public/norma-story` |
-| `get_transparency_summary` | Recibido, gastado, saldo, ejecutado, gasto por categoría, cantidad de comprobantes | `/api/public/transparency-summary` |
-| `get_donation_catalog` | Qué le falta a la casa: título, unidad, necesarias y cuánto falta. Sin nombres, sin valor estimado, sin reservar | `/api/public/donation-catalog` |
+| `get_transparency_summary` | Composición de lo recibido, gasto por categoría en %, cantidad de comprobantes | `/api/public/transparency-summary` |
+| `get_donation_catalog` | Qué le falta a la casa: categoría, título, unidad, necesarias y cuánto falta. Sin nombres, sin valor estimado, sin reservar | `/api/public/donation-catalog` |
 
 El slug del endpoint es el nombre sin `get_` y con guiones, derivado en la ruta. Un test compara los
 slugs contra el registro en las dos direcciones: una capacidad sin endpoint sería invisible, y un

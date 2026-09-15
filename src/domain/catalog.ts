@@ -1,14 +1,27 @@
-import { DONATION_UNITS, type ItemQuantities } from "./entities/donation-item";
+import type { CatalogClaim } from "./entities/catalog-claim";
+import {
+  DONATION_ITEM_CATEGORIES,
+  DONATION_UNITS,
+  type DonationItemCategory,
+  type ItemQuantities,
+} from "./entities/donation-item";
 import { DomainError } from "./errors";
 import { isCurrencyCode, money, type Money } from "./money";
 
+export type { CatalogClaim } from "./entities/catalog-claim";
 export type {
   DonationItem,
   DonationItemAdminRecord,
+  DonationItemCategory,
   DonationUnit,
   ItemQuantities,
 } from "./entities/donation-item";
-export { DONATION_UNITS, DONATION_UNIT_LABELS } from "./entities/donation-item";
+export {
+  DONATION_ITEM_CATEGORIES,
+  DONATION_ITEM_CATEGORY_LABELS,
+  DONATION_UNITS,
+  DONATION_UNIT_LABELS,
+} from "./entities/donation-item";
 
 /**
  * Cuánto falta de un ítem.
@@ -32,6 +45,44 @@ export function isCovered(quantities: ItemQuantities): boolean {
 /** La interfaz ofrece reservar sólo cuando queda algo. */
 export function canClaim(quantities: ItemQuantities): boolean {
   return remaining(quantities) > 0;
+}
+
+/**
+ * Si alguien ya tomó unidades, y con qué nombres públicos.
+ *
+ * Lo anónimo no llega acá: la vista no lo nombra (FR-255). `taken` sale de las
+ * cantidades, que sí son públicas, así que una reserva sin nombre se ve como
+ * tomada y la columna de nombre queda vacía.
+ */
+export interface ItemTakenStatus {
+  readonly taken: boolean;
+  readonly names: readonly string[];
+}
+
+export function takenStatus(
+  item: {
+    readonly id: string;
+    readonly neededQuantity: number;
+    readonly remainingQuantity: number;
+  },
+  claims: readonly CatalogClaim[],
+): ItemTakenStatus {
+  const names: string[] = [];
+  const seen = new Set<string>();
+
+  for (const claim of claims) {
+    if (claim.itemId !== item.id || seen.has(claim.donorDisplayName)) {
+      continue;
+    }
+
+    seen.add(claim.donorDisplayName);
+    names.push(claim.donorDisplayName);
+  }
+
+  return {
+    taken: item.remainingQuantity < item.neededQuantity,
+    names: item.remainingQuantity < item.neededQuantity ? names : [],
+  };
 }
 
 /**
@@ -59,6 +110,48 @@ export function estimatedValueOf(
 
 export function isDonationUnit(value: string): value is (typeof DONATION_UNITS)[number] {
   return (DONATION_UNITS as readonly string[]).includes(value);
+}
+
+export function isDonationItemCategory(
+  value: string,
+): value is (typeof DONATION_ITEM_CATEGORIES)[number] {
+  return (DONATION_ITEM_CATEGORIES as readonly string[]).includes(value);
+}
+
+/**
+ * Agrupa el catálogo público en el orden de las categorías (FR-253).
+ * Una categoría sin ítems no aparece: no se reserva un hueco vacío.
+ */
+export interface CatalogCategoryGroup<T> {
+  readonly category: DonationItemCategory;
+  readonly items: readonly T[];
+}
+
+export function groupCatalogByCategory<
+  T extends { readonly category: string; readonly sortOrder: number },
+>(items: readonly T[]): readonly CatalogCategoryGroup<T>[] {
+  const grouped = new Map<string, T[]>();
+
+  for (const item of items) {
+    const current = grouped.get(item.category) ?? [];
+    current.push(item);
+    grouped.set(item.category, current);
+  }
+
+  return DONATION_ITEM_CATEGORIES.flatMap((category) => {
+    const members = grouped.get(category);
+
+    if (members === undefined || members.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        category,
+        items: [...members].sort((left, right) => left.sortOrder - right.sortOrder),
+      },
+    ];
+  });
 }
 
 function assertQuantities({ needed, reserved, fulfilled }: ItemQuantities): void {

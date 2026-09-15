@@ -41,7 +41,7 @@ carpetas.
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
-| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base; acá van título, bajada y estados, sin prosa de introducción |
+| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla; la ficha `/catalogo/[id]` lleva la foto o el hueco. Acá van título, bajada, columnas y estados, sin prosa de introducción |
 | `quienes-ayudaron.json` | `/quienes-ayudaron` | Título, bajada y estados del muro. Los nombres viven en la base; acá no hay una lista de ejemplo ni prosa de introducción |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
 | `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
@@ -263,7 +263,8 @@ lista de enlaces de la página y leerla fuera de contexto; varios enlaces que di
 enlaces entre los que no se puede elegir. Si una pregunta no tiene página propia, van en `null` los
 dos campos —el esquema los exige juntos— y la pregunta se responde y ahí termina.
 
-Las respuestas no prometen una rendición de cifras que el sitio todavía no muestra.
+Las respuestas no prometen montos. En público la plata se habla en porcentajes de lo ya
+conocido; el 100% de la obra no está publicado (ADR-040).
 
 ---
 
@@ -281,9 +282,9 @@ Qué hace buena a una novedad:
 - **Qué sigue.** Una línea. La pregunta que todos tienen es "¿y ahora?".
 - **Sin balance emocional.** El agradecimiento va una vez, al principio de la campaña, no en cada
   actualización.
-- **Sin cifras escritas a mano.** Los totales salen de la base y se calculan; escribir "ya juntamos
-  $2.400.000" en el cuerpo de una novedad crea un número que no se actualiza nunca y que dentro de un
-  mes va a contradecir a la página de transparencia.
+- **Sin cifras escritas a mano.** Los porcentajes salen de la base y se calculan; escribir "ya
+  juntamos $2.400.000" o "vamos el 40%" en el cuerpo de una novedad crea un número que no se
+  actualiza nunca y que dentro de un mes va a contradecir a la página de transparencia.
 
 Una novedad breve publicada a tiempo vale más que una larga que espera a que haya algo importante que
 contar. El silencio, en una campaña de plata, se lee como que algo salió mal.

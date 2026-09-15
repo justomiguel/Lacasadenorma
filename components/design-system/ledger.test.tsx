@@ -24,6 +24,7 @@ const CAPTION = "Cada gasto ejecutado, con su fecha y su comprobante.";
  */
 interface ExpenseConRuta extends ExpenseRecord {
   readonly storagePath: string;
+  readonly percentOfSpent: number | null;
 }
 
 const RUTA_PRIVADA = "comprobantes/2026/09/chapas.pdf";
@@ -38,10 +39,11 @@ const conComprobantes: ExpenseConRuta = {
   budgetItemId: null,
   receiptCount: 2,
   voidedAt: null,
+  percentOfSpent: 95.2,
   storagePath: RUTA_PRIVADA,
 };
 
-const sinComprobante: ExpenseRecord = {
+const sinComprobante: ExpenseRecord & { percentOfSpent: number | null } = {
   id: "e2",
   amount: money(500_000, "ARS"),
   spentAt: "2026-08-28",
@@ -51,6 +53,7 @@ const sinComprobante: ExpenseRecord = {
   budgetItemId: null,
   receiptCount: 0,
   voidedAt: null,
+  percentOfSpent: 4.8,
 };
 
 describe("Ledger", () => {
@@ -75,7 +78,7 @@ describe("Ledger", () => {
       "Concepto",
       "Categoría",
       "Comprobante",
-      "Monto",
+      "Del gastado",
     ]);
 
     for (const th of encabezados) {
@@ -88,8 +91,8 @@ describe("Ledger", () => {
 
     const encabezadoDeFila = screen.getByRole("rowheader");
 
-    // Con `scope="row"`, cada celda se anuncia como "Concepto: Chapas, Monto:
-    // $100.000". Sin él, se anuncian cinco valores sueltos por fila.
+    // Con `scope="row"`, cada celda se anuncia como "Concepto: Chapas, Del
+    // gastado: 95%". Sin él, se anuncian cinco valores sueltos por fila.
     expect(encabezadoDeFila).toHaveAttribute("scope", "row");
     expect(encabezadoDeFila).toHaveTextContent("Chapas para el techo");
   });
@@ -139,5 +142,15 @@ describe("Ledger", () => {
     rerender(<Ledger expenses={[sinComprobante]} caption={CAPTION} />);
 
     expect(screen.getByRole("rowheader")).toHaveTextContent("Flete");
+  });
+
+  it("publica el porcentaje del total gastado y no el monto", () => {
+    const { container } = render(
+      <Ledger expenses={[conComprobantes]} caption={CAPTION} />,
+    );
+
+    expect(container.textContent).toMatch(/95\s*%/);
+    expect(container.textContent).not.toMatch(/\$/);
+    expect(container.textContent).not.toContain("10.000.000");
   });
 });

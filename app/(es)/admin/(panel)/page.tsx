@@ -5,6 +5,7 @@ import { AdminHeading, Panel } from "@/components/admin/shell";
 import { Callout } from "@/components/design-system/callout";
 import { getTransparencyReport } from "@/src/application/use-cases/get-transparency-report";
 import { formatMoney } from "@/src/domain/money";
+import { formatPercentage } from "@/src/domain/percentage";
 import { can } from "@/src/domain/permissions";
 import { getAdminContext } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
@@ -14,11 +15,12 @@ import { logger } from "@/src/infrastructure/logging/logger";
 /**
  * El tablero.
  *
- * Muestra **las cifras que el sitio está publicando en este momento**, leídas con el
- * mismo caso de uso que la página pública de transparencia y no con una consulta
- * propia. Es a propósito: la pregunta que trae a alguien acá es "¿lo que se ve afuera
- * está bien?", y dos consultas distintas para la misma cifra terminan divergiendo
- * justo cuando importa.
+ * Muestra **el libro en pesos** y, al lado, **los porcentajes que el sitio público
+ * está publicando**, leídos con el mismo caso de uso que `/transparencia`. Es a
+ * propósito: la pregunta que trae a alguien acá es "¿lo que se ve afuera está
+ * bien?", y dos consultas distintas para la misma cifra terminan divergiendo justo
+ * cuando importa. El objetivo de recaudación, si está cargado, queda acá: afuera
+ * no se publica (ADR-040).
  *
  * Lo que sigue después son las secciones que el rol de quien mira puede usar. Un rol
  * de auditoría ve las de lectura y ninguna de escritura, y la diferencia se nota en la
@@ -40,7 +42,8 @@ export default async function AdminPanelPage() {
   return (
     <>
       <AdminHeading title="Estado de la campaña">
-        Esto es lo que el sitio está publicando ahora mismo.
+        El libro está en pesos. El sitio público lo traduce a porcentajes de lo ya
+        recibido; este objetivo, si lo cargás, no se publica.
       </AdminHeading>
 
       {context === null ? (
@@ -73,7 +76,7 @@ export default async function AdminPanelPage() {
       ) : null}
 
       {report.status === "ok" ? (
-        <Panel id="cifras" title="Las cifras públicas" tone="sunk">
+        <Panel id="cifras" title="El libro y lo que ve el sitio" tone="sunk">
           <dl className="grid gap-lg sm:grid-cols-3">
             <div>
               <dt className="font-ui text-label uppercase tracking-label text-ink-muted">
@@ -102,9 +105,15 @@ export default async function AdminPanelPage() {
           </dl>
 
           <p className="mt-lg font-ui text-small text-ink-muted">
+            {report.data.summary.primary.executedPercent === null ||
+            report.data.summary.primary.remainingPercent === null
+              ? "Todavía no hay recibido conciliado, así que el sitio no publica porcentajes."
+              : `El sitio público dice que se usó el ${formatPercentage(report.data.summary.primary.executedPercent)} de lo que ya llegó y que el ${formatPercentage(report.data.summary.primary.remainingPercent)} sigue en la cuenta.`}
+          </p>
+          <p className="mt-sm font-ui text-small text-ink-muted">
             {report.data.campaign.goal === null
-              ? "Todavía no hay objetivo cargado, así que el sitio muestra el avance sin porcentaje."
-              : `Objetivo publicado: ${formatMoney(report.data.campaign.goal)}.`}{" "}
+              ? "Todavía no hay objetivo interno. Si lo cargás en Objetivo, queda acá: el sitio público no lo usa como 100%."
+              : `Objetivo interno (no se publica): ${formatMoney(report.data.campaign.goal)}.`}{" "}
             {report.data.summary.reconciledAt === null
               ? "Nunca se marcó una conciliación bancaria."
               : `Última conciliación: ${report.data.summary.reconciledAt.slice(0, 10)}.`}
@@ -131,9 +140,9 @@ export default async function AdminPanelPage() {
           ) : null}
         </Panel>
       ) : (
-        <Panel id="cifras" title="Las cifras públicas">
+        <Panel id="cifras" title="El libro y lo que ve el sitio">
           <p className="max-w-measure font-ui text-small text-ink-muted">
-            Ahora mismo el sitio no está publicando cifras. Puede ser que la campaña
+            Ahora mismo el sitio no está publicando porcentajes. Puede ser que la campaña
             todavía no esté publicada o que la base no responda; en cualquier caso, las
             páginas públicas muestran el aviso correspondiente en lugar de un cero.
           </p>

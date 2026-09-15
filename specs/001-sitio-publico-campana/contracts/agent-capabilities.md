@@ -45,15 +45,13 @@ Estado de la recaudación.
 
 | Campo | Tipo | Nota |
 |---|---|---|
-| `goalMinor` | entero \| `null` | `null` si el objetivo no está verificado |
-| `raisedMinor` | entero | Excluye anulados |
-| `percent` | número \| `null` | `null` si no hay objetivo. **Nunca `0` por falta de dato** |
-| `currency` | `"ARS"` \| … | |
+| `spentPercent` | número \| `null` | Parte de lo recibido que ya se usó. `null` si no hay recibido. **Nunca `0` por falta de dato** |
+| `remainingPercent` | número \| `null` | Parte de lo recibido que sigue en la cuenta. `null` si no hay recibido |
 | `reconciledAt` | fecha ISO \| `null` | Última conciliación bancaria |
 | `updatedAt` | fecha ISO | |
 
-**Texto**: `"Se recaudaron $X de un objetivo de $Y (Z%). Cifras conciliadas al D de M."`
-Si falta el objetivo: `"Se recaudaron $X. El objetivo todavía no está publicado."`
+**Texto**: `"De lo que ya llegó se usó el X%. El Y% sigue en la cuenta. El 100% de la obra no está publicado. Cifras conciliadas al D de M."`
+Si no hay recibido: `"Todavía no hay aportes conciliados. El 100% de la obra no está publicado."`
 
 ---
 
@@ -77,10 +75,11 @@ Avance de la obra.
 **Entrada**: ninguna.
 
 **Salida**: `{ milestones: [{ title, status, happenedOn }], completedCount, totalCount,
-percentComplete, budgetItems: [{ title, estimatedMinor, currency }] }`.
+percentComplete, budgetItems: [{ title, percentOfQuoted }] }`.
 
 `percentComplete` se calcula sobre hitos completados, no sobre dinero: son dos medidas distintas y
-confundirlas sería engañoso.
+confundirlas sería engañoso. `percentOfQuoted` es la parte de la suma de rubros ya cotizados; nulo
+si el rubro no está cotizado. Esa suma no es el 100% de la obra.
 
 ---
 
@@ -107,11 +106,9 @@ Resumen de la rendición.
 
 | Campo | Nota |
 |---|---|
-| `receivedMinor`, `spentMinor`, `balanceMinor` | Por moneda; sin conversión |
-| `currency` | |
-| `executedPercent` | `null` si no hay objetivo |
+| `spentPercent`, `remainingPercent` | Sobre lo recibido. `null` si no hay recibido. El 100% de la obra no se usa como denominador |
 | `expenseCount`, `receiptCount` | Cantidades, no los archivos |
-| `byCategory` | `[{ category, amountMinor }]` |
+| `byCategory` | `[{ category, percent }]` sobre lo gastado |
 | `reconciledAt` | |
 | `detailUrl` | Enlace a la página pública, para que el agente pueda citarla |
 
@@ -125,7 +122,7 @@ Qué le falta a la casa, en especie.
 
 **Entrada**: ninguna.
 
-**Salida**: `{ items: [{ title, description, unit, needed, remaining }], updatedAt }`.
+**Salida**: `{ items: [{ title, description, unit, category, needed, remaining }], updatedAt }`.
 
 No incluye nombres de donantes, ni el valor estimado, ni una forma de reservar (FR-242). Corre el
 mismo caso de uso que `/catalogo`.

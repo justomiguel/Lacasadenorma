@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { PUBLIC_ROUTES } from "@/components/site/navigation";
 import { keepStaleOnError } from "@/src/application/result";
+import { getCatalog } from "@/src/application/use-cases/get-catalog";
 import { listUpdates } from "@/src/application/use-cases/get-updates";
 import { languageAlternates, localizeHref } from "@/src/i18n/locale";
 import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
@@ -64,5 +65,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
       : [];
 
-  return [...staticEntries, ...updateEntries];
+  const catalog = keepStaleOnError(
+    await getCatalog({ dataLayer: getPublicDataLayer(), logger }),
+  );
+
+  const catalogEntries =
+    catalog.status === "ok"
+      ? catalog.data.flatMap((item) => {
+          const path = `/catalogo/${item.id}`;
+          const alternates = { languages: languages(siteUrl, path) };
+
+          return (["es", "en"] as const).map((locale) => ({
+            url: absolute(siteUrl, localizeHref(path, locale)),
+            alternates,
+          }));
+        })
+      : [];
+
+  return [...staticEntries, ...updateEntries, ...catalogEntries];
 }

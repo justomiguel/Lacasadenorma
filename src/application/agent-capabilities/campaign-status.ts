@@ -1,4 +1,3 @@
-import { formatMoney, money, type CurrencyCode } from "@/src/domain/money";
 import { formatPercentage } from "@/src/domain/percentage";
 
 import { getCampaignOverview } from "../use-cases/get-campaign-overview";
@@ -6,10 +5,8 @@ import { formatDate, noInput, unavailableOutcome } from "./capability-helpers";
 import type { AgentCapability } from "./types";
 
 export interface CampaignStatusOutput {
-  readonly goalMinor: number | null;
-  readonly raisedMinor: number;
-  readonly percent: number | null;
-  readonly currency: CurrencyCode;
+  readonly spentPercent: number | null;
+  readonly remainingPercent: number | null;
   readonly reconciledAt: string | null;
   readonly updatedAt: string;
 }
@@ -21,7 +18,7 @@ export const getCampaignStatus: AgentCapability<
   name: "get_campaign_status",
   title: "Estado de la recaudación",
   description:
-    "Devuelve el objetivo, el monto recaudado, el porcentaje alcanzado, la moneda y la fecha de la última conciliación bancaria de la campaña de reconstrucción de La Casa de Norma. El porcentaje es nulo cuando el objetivo no está publicado.",
+    "Devuelve qué parte de lo ya recibido se usó y cuál sigue en la cuenta, y la fecha de la última conciliación. Los porcentajes son nulos cuando no hay recibido conciliado. El 100% de la obra no está publicado: no hay un porcentaje contra una meta.",
   input: noInput,
   readOnly: true,
   async run(_input, context) {
@@ -34,33 +31,31 @@ export const getCampaignStatus: AgentCapability<
       return unavailableOutcome(result.reason);
     }
 
-    const { campaign, fundraising } = result.data;
+    const { campaign, transparency } = result.data;
 
     return {
       ok: true,
       output: {
-        goalMinor: campaign.goal?.amountMinor ?? null,
-        raisedMinor: fundraising.raised.amountMinor,
-        percent: fundraising.percent,
-        currency: fundraising.raised.currency,
+        spentPercent: transparency.primary.executedPercent,
+        remainingPercent: transparency.primary.remainingPercent,
         reconciledAt: campaign.reconciledAt,
         updatedAt: new Date().toISOString(),
       },
     };
   },
   format(output) {
-    const raised = formatMoney(money(output.raisedMinor, output.currency));
     const reconciled =
       output.reconciledAt === null
         ? "Todavía no hubo una conciliación bancaria."
         : `Cifras conciliadas al ${formatDate(output.reconciledAt)}.`;
 
-    if (output.goalMinor === null || output.percent === null) {
-      return `Se recaudaron ${raised}. El objetivo todavía no está publicado. ${reconciled}`;
+    if (output.spentPercent === null || output.remainingPercent === null) {
+      return `Todavía no hay aportes conciliados. El 100% de la obra no está publicado. ${reconciled}`;
     }
 
-    const goal = formatMoney(money(output.goalMinor, output.currency));
+    const used = formatPercentage(output.spentPercent);
+    const left = formatPercentage(output.remainingPercent);
 
-    return `Se recaudaron ${raised} de un objetivo de ${goal} (${formatPercentage(output.percent)}). ${reconciled}`;
+    return `De lo que ya llegó se usó el ${used}. El ${left} sigue en la cuenta. El 100% de la obra no está publicado. ${reconciled}`;
   },
 };

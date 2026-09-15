@@ -1,4 +1,4 @@
-import type { CurrencyCode } from "@/src/domain/money";
+import { quotedBudgetShares } from "@/src/domain/shares";
 
 import { getReconstructionProgress } from "../use-cases/get-reconstruction-progress";
 import { noInput, unavailableOutcome } from "./capability-helpers";
@@ -15,8 +15,7 @@ export interface ReconstructionProgressOutput {
   readonly percentComplete: number | null;
   readonly budgetItems: readonly {
     readonly title: string;
-    readonly estimatedMinor: number | null;
-    readonly currency: CurrencyCode | null;
+    readonly percentOfQuoted: number | null;
   }[];
 }
 
@@ -27,7 +26,7 @@ export const getReconstructionProgressCapability: AgentCapability<
   name: "get_reconstruction_progress",
   title: "Avance de la obra",
   description:
-    "Devuelve los hitos publicados de la reconstrucción con su estado y su fecha, la cantidad de hitos completados sobre el total, y los rubros del presupuesto con su monto estimado cuando ya está cotizado. El porcentaje se calcula sobre hitos, no sobre dinero.",
+    "Devuelve los hitos publicados de la reconstrucción con su estado y su fecha, la cantidad de hitos completados sobre el total, y los rubros del presupuesto como porcentaje de lo ya cotizado. El porcentaje de obra se calcula sobre hitos, no sobre dinero. El 100% de la obra no está publicado.",
   input: noInput,
   readOnly: true,
   async run(_input, context) {
@@ -53,10 +52,9 @@ export const getReconstructionProgressCapability: AgentCapability<
         completedCount: milestones.completedCount,
         totalCount: milestones.totalCount,
         percentComplete: milestones.percentComplete,
-        budgetItems: budgetItems.map((item) => ({
-          title: item.title,
-          estimatedMinor: item.estimatedAmount?.amountMinor ?? null,
-          currency: item.estimatedAmount?.currency ?? null,
+        budgetItems: quotedBudgetShares(budgetItems).map((share, index) => ({
+          title: budgetItems[index]?.title ?? "",
+          percentOfQuoted: share.percentOfQuoted,
         })),
       },
     };

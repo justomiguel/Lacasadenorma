@@ -140,16 +140,14 @@ describe("get_campaign_status", () => {
     if (!result.ok) return;
 
     expect(result.output).toEqual({
-      goalMinor: 100_000_000,
-      raisedMinor: 25_000_000,
-      percent: 25,
-      currency: "ARS",
+      spentPercent: 0,
+      remainingPercent: 100,
       reconciledAt: "2026-09-08T00:00:00.000Z",
       updatedAt: expect.any(String),
     });
   });
 
-  it("sin objetivo cargado el porcentaje es nulo y el texto lo dice", async () => {
+  it("sin recibido el porcentaje es nulo y el texto dice que el 100% no está publicado", async () => {
     const result = await runCapability(
       "get_campaign_status",
       {},
@@ -159,8 +157,12 @@ describe("get_campaign_status", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(result.output).toMatchObject({ goalMinor: null, percent: null });
-    expect(result.text).toMatch(/objetivo todav[ií]a no est[aá] publicado/i);
+    expect(result.output).toMatchObject({
+      spentPercent: null,
+      remainingPercent: null,
+    });
+    expect(result.text).toMatch(/100%/);
+    expect(result.text).not.toMatch(/\$/);
   });
 });
 
@@ -225,9 +227,8 @@ describe("get_transparency_summary", () => {
     expect(serialized).not.toContain("storagePath");
     expect(serialized).not.toContain("c1");
     expect(result.output).toMatchObject({
-      receivedMinor: 25_000_000,
-      spentMinor: 10_000_000,
-      balanceMinor: 15_000_000,
+      spentPercent: 40,
+      remainingPercent: 60,
       expenseCount: 1,
       receiptCount: 2,
     });

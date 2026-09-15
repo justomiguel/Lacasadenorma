@@ -4,8 +4,11 @@ import {
   remaining,
   isCovered,
   canClaim,
+  takenStatus,
   estimatedValueOf,
   isDonationUnit,
+  isDonationItemCategory,
+  groupCatalogByCategory,
 } from "./catalog";
 import { DomainError } from "./errors";
 import { money } from "./money";
@@ -53,6 +56,67 @@ describe("canClaim", () => {
   });
 });
 
+describe("takenStatus", () => {
+  const item = {
+    id: "item-1",
+    neededQuantity: 5,
+    remainingQuantity: 5,
+  };
+
+  it("libre: nadie tomó y no hay nombres", () => {
+    expect(takenStatus(item, [])).toEqual({ taken: false, names: [] });
+  });
+
+  it("tomada sin nombre: las cantidades dicen que falta menos, y lo anónimo no se nombra", () => {
+    expect(takenStatus({ ...item, remainingQuantity: 3 }, [])).toEqual({
+      taken: true,
+      names: [],
+    });
+  });
+
+  it("tomada con nombre: lista una vez cada quien eligió aparecer", () => {
+    expect(
+      takenStatus({ ...item, remainingQuantity: 2 }, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 2,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+        },
+        {
+          id: "b",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: "2026-09-14T00:00:00.000Z",
+        },
+        {
+          id: "c",
+          itemId: "item-2",
+          quantity: 1,
+          donorDisplayName: "Ajeno",
+          fulfilledAt: null,
+        },
+      ]),
+    ).toEqual({ taken: true, names: ["María"] });
+  });
+
+  it("si volvió a estar libre, no publica nombres viejos", () => {
+    expect(
+      takenStatus(item, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+        },
+      ]),
+    ).toEqual({ taken: false, names: [] });
+  });
+});
+
 describe("estimatedValueOf", () => {
   it("un ítem sin valor estimado no inventa ninguno (FR-214)", () => {
     expect(estimatedValueOf(null, null)).toBeNull();
@@ -79,6 +143,33 @@ describe("isDonationUnit", () => {
   it("acepta las unidades del catálogo y rechaza el resto", () => {
     expect(isDonationUnit("unidad")).toBe(true);
     expect(isDonationUnit("metro_cuadrado")).toBe(true);
+    expect(isDonationUnit("metro_cubico")).toBe(true);
     expect(isDonationUnit("kilo")).toBe(false);
+  });
+});
+
+describe("isDonationItemCategory", () => {
+  it("acepta el enum cerrado y rechaza una categoría libre", () => {
+    expect(isDonationItemCategory("materiales")).toBe(true);
+    expect(isDonationItemCategory("electrodomesticos")).toBe(true);
+    expect(isDonationItemCategory("otros")).toBe(false);
+  });
+});
+
+describe("groupCatalogByCategory", () => {
+  it("agrupa en el orden de la obra y omite las categorías vacías", () => {
+    const groups = groupCatalogByCategory([
+      { category: "ajuar", sortOrder: 2, title: "Toallas" },
+      { category: "materiales", sortOrder: 20, title: "Arena" },
+      { category: "materiales", sortOrder: 10, title: "Ladrillos" },
+      { category: "electrodomesticos", sortOrder: 1, title: "Heladera" },
+    ]);
+
+    expect(groups.map((group) => group.category)).toEqual([
+      "materiales",
+      "electrodomesticos",
+      "ajuar",
+    ]);
+    expect(groups[0]?.items.map((item) => item.title)).toEqual(["Ladrillos", "Arena"]);
   });
 });

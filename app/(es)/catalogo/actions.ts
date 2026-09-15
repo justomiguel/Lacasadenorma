@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { catalogItemHref, CATALOG_ITEM_ID } from "@/src/application/accounts/return-path";
 import { claimItem } from "@/src/application/use-cases/claim-item";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { notifyPledgeClaimed } from "@/src/infrastructure/donations/notify";
@@ -13,9 +14,9 @@ import { failure, localeOf, textOf, type AccountFormState } from "../cuenta/form
 /**
  * Anotarse a traer un ítem.
  *
- * Sin sesión redirige a ingresar con `volver` validado, para volver al mismo
- * renglón (US1 escenario 6). Si alguien se adelantó, redirige al catálogo con
- * el aviso diseñado y el listado ya revalidado.
+ * Sin sesión redirige a ingresar con `volver` validado, para volver a la
+ * ficha (US1 escenario 6). Si alguien se adelantó, redirige a la ficha con
+ * el aviso diseñado.
  */
 export async function claimItemAction(
   _state: AccountFormState,
@@ -24,10 +25,11 @@ export async function claimItemAction(
   const locale = localeOf(formData);
   const itemId = textOf(formData, "itemId");
   const catalog = localizeHref("/catalogo", locale);
+  const ficha = CATALOG_ITEM_ID.test(itemId) ? catalogItemHref(itemId, locale) : catalog;
   const deps = await getAccountDeps();
 
   if (deps.session.status === "anonymous") {
-    const volver = encodeURIComponent(`${catalog}?item=${itemId}`);
+    const volver = encodeURIComponent(ficha);
 
     redirect(`${localizeHref("/cuenta/ingresar", locale)}?volver=${volver}`);
   }
@@ -48,15 +50,15 @@ export async function claimItemAction(
 
   if (result.status === "error") {
     if (result.code === "ahead") {
-      revalidatePath(catalog);
-      revalidatePath(localizeHref("/catalogo", locale === "es" ? "en" : "es"));
-      redirect(`${catalog}?conflicto=${itemId}`);
+      revalidatePath(catalog, "layout");
+      revalidatePath(localizeHref("/catalogo", locale === "es" ? "en" : "es"), "layout");
+      redirect(`${ficha}?conflicto=1`);
     }
 
     return failure(result.code, result.field);
   }
 
-  revalidatePath(catalog);
+  revalidatePath(catalog, "layout");
   revalidatePath(localizeHref("/cuenta", locale));
   redirect(localizeHref("/cuenta", locale));
 }
@@ -76,7 +78,7 @@ export async function cancelOwnPledgeAction(formData: FormData): Promise<void> {
     );
   }
 
-  revalidatePath(localizeHref("/catalogo", locale));
+  revalidatePath(localizeHref("/catalogo", locale), "layout");
   revalidatePath(localizeHref("/cuenta", locale));
   redirect(localizeHref("/cuenta", locale));
 }

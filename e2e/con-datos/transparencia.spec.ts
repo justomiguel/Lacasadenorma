@@ -1,21 +1,28 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * La rendición pública de cifras se rechazó. Quedan el método, las novedades
- * y que lo no publicado no se filtra. Los comprobantes siguen siendo internos.
+ * La rendición pública habla de plata en porcentajes, no en montos (ADR-040).
+ * El 100% de la obra no está publicado. Los comprobantes siguen siendo internos.
  */
 
 test.describe("flujo 7 · transparencia y novedades", () => {
-  test("transparencia no publica totales, libro ni avisos de cifras", async ({
+  test("transparencia publica composición de lo recibido, sin montos", async ({
     page,
   }) => {
     await page.goto("/transparencia");
 
-    await expect(page.locator("[data-figure]")).toHaveCount(0);
-    await expect(page.getByRole("table")).toHaveCount(0);
-    await expect(page.getByText(/cuánto entró y cuánto salió/i)).toHaveCount(0);
-    await expect(page.getByText(/cada gasto, uno por uno/i)).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByText(/de lo que ya llegó/i).first()).toBeVisible();
+    await expect(page.getByRole("progressbar")).toBeVisible();
+    await expect(page.getByRole("table")).toBeVisible();
+    await expect(page.locator("[data-figure]").first()).toBeVisible();
+
+    const texto = await page.locator("main").innerText();
+
+    expect(texto).toMatch(/%/);
+    expect(texto).toMatch(/100\s*%/);
+    expect(texto).not.toMatch(/\$\s*\d/);
+    expect(texto).not.toMatch(/\bARS\b/);
   });
 
   test("dice cuántos comprobantes hay no se afirma en público, y el archivo no se publica", async ({

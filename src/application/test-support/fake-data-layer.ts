@@ -1,6 +1,7 @@
 import type {
   BudgetItem,
   Campaign,
+  CatalogClaim,
   DonationItem,
   DonationWallEntry,
   ExpenseRecord,
@@ -31,6 +32,7 @@ export interface FakeData {
   paymentMethods?: PaymentMethod[];
   updates?: UpdateRecord[];
   catalog?: DonationItem[];
+  claims?: CatalogClaim[];
   wall?: DonationWallEntry[];
   /** Cuando está definido, todas las lecturas fallan con este error. */
   failWith?: Error;
@@ -100,6 +102,9 @@ export function fakeSupabaseLayer(
     },
     catalog: {
       listPublishedItems: () => guard(data.catalog ?? []),
+      findPublishedItem: (_campaignId, itemId) =>
+        guard(data.catalog?.find((entry) => entry.id === itemId) ?? null),
+      listNamedClaims: () => guard(data.claims ?? []),
     },
     wall: {
       listEntries: () => guard(data.wall ?? []),

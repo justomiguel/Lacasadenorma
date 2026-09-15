@@ -21,17 +21,15 @@ Reglas transversales:
 
 ```json
 {
-  "goalMinor": null,
-  "raisedMinor": 0,
-  "percent": null,
-  "currency": "ARS",
+  "spentPercent": null,
+  "remainingPercent": null,
   "reconciledAt": null,
   "updatedAt": "2026-09-09T19:00:00.000Z"
 }
 ```
 
-`null` significa "no verificado todavía", y es distinto de `0`. Quien consuma esto **no** debe
-mostrar `0%` cuando `percent` es `null`.
+`null` significa "no hay recibido conciliado", y es distinto de `0`. Quien consuma esto **no** debe
+mostrar `0%` cuando `spentPercent` es `null`. El 100% de la obra no está publicado.
 
 ## `GET /api/public/donation-methods?country=AR`
 
@@ -71,11 +69,8 @@ Lista vacía significa que ningún método está publicado. No es un error.
 
 ```json
 {
-  "receivedMinor": 0,
-  "spentMinor": 0,
-  "balanceMinor": 0,
-  "currency": "ARS",
-  "executedPercent": null,
+  "spentPercent": null,
+  "remainingPercent": null,
   "expenseCount": 0,
   "receiptCount": 0,
   "byCategory": [],
