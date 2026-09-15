@@ -1,6 +1,15 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.2.1 → 1.2.2
+Tipo de cambio: PATCH — se nombra una Skill ya pinneada, sin cambiar un principio.
+Fecha: 2026-09-15
+
+Motivo: se instaló `animate` (emilkowalski/skills) para el revelado al
+descubrir. Donde pide clip-path, una curva paralela o movimiento reducido
+«más suave», gana ADR-032 (opacidad y escala o traslación, `--ease-editorial`,
+nada con `prefers-reduced-motion: reduce`).
+
 Cambio de versión: 1.2.0 → 1.2.1
 Tipo de cambio: PATCH — se nombra una Skill ya pinneada, sin cambiar un principio.
 Fecha: 2026-09-15
@@ -408,7 +417,7 @@ coherente con este archivo.
 3. `AGENTS.md` y las especificaciones de `specs/`;
 4. las Skills instaladas.
 
-Las Skills —`frontend-design`, `loading-states`, `supabase`, `speckit-*`, y las que traiga el
+Las Skills —`frontend-design`, `loading-states`, `animate`, `supabase`, `speckit-*`, y las que traiga el
 entorno— MUST usarse: son mejores que improvisar, y `skills-lock.json` las fija por hash justamente
 para poder confiar en ellas.
 Pero describen cómo se hacen las cosas en general, y una decisión de este proyecto le gana a un
@@ -416,4 +425,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.2.1 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-15
+**Version**: 1.2.2 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-15
