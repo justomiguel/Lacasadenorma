@@ -103,10 +103,12 @@ Los puertos viven en `src/domain/ports/`: `repositories.ts` (lectura pública), 
 backoffice completo), `logger.ts` y `analytics.ts`. Los adaptadores viven en `src/infrastructure/`.
 
 El puerto de lectura pública tiene una particularidad que vale más que su forma: **no existe ningún
-método que devuelva el detalle de aportes**. `TransparencyRepository` ofrece `listReceivedTotals()`,
-que devuelve totales por moneda ya agregados por una vista de la base. La ausencia es la garantía —un
-aporte individual puede identificar a una persona (FR-014, amenaza I2)—, y está más arriba en la
-cadena que cualquier comprobación: no se puede olvidar de filtrar lo que no se puede pedir.
+método que devuelva el monto de un aporte**. `TransparencyRepository` ofrece `listReceivedTotals()`,
+que devuelve totales por moneda ya agregados por una vista de la base. El nombre, con consentimiento,
+sale de `contribution_wall` (ADR-042): nombre, fecha y un porcentaje opcional, nunca `amount_minor`.
+`anon` sigue sin `SELECT` sobre `contributions`. La ausencia del monto es la garantía —un importe con
+fecha puede identificar a una persona (FR-014, amenaza I2)—, y está más arriba en la cadena que
+cualquier comprobación: no se puede olvidar de filtrar lo que no se puede pedir.
 
 Lo mismo con los borradores: los métodos se llaman `listPublishedMilestones`,
 `findPublishedUpdateBySlug`, `listPublishedMethods`. No hay una bandera `incluirBorradores` que

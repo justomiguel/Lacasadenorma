@@ -15,7 +15,7 @@ Diseñado para auditoría, no para conveniencia. Dos decisiones lo gobiernan:
 ```
 campaigns
    ├── budget_items      (rubros de obra con monto estimado)
-   ├── contributions     (aportes conciliados; NO públicos individualmente)
+   ├── contributions     (aportes conciliados; el monto NUNCA es público; el nombre, con consentimiento)
    ├── expenses ──── expense_receipts   (archivo en bucket privado)
    ├── milestones        (hitos con estado)
    ├── updates ──── update_media        (novedades publicables)
@@ -49,6 +49,7 @@ público no lo ve.
 | `goal_currency` | `char(3)` | `ARS` |
 | `status` | enum `campaign_status` | `draft` \| `active` \| `paused` \| `completed` |
 | `reconciled_at` | `timestamptz` nullable | Última conciliación bancaria. Se muestra al público (FR-010) |
+| `publish_contribution_share` | `boolean not null default false` | Si el muro de aportes muestra el % sobre lo ya recibido (ADR-042) |
 | `published_at` | `timestamptz` nullable | |
 
 **Invariante**: `goal_amount_minor` nulo o `> 0`. Nunca `0`, que sería ambiguo entre "no hay
@@ -79,12 +80,17 @@ y ofrece el alta, no manda al panel de Postgres.
 | `received_at` | `date` | |
 | `payment_method_id` | `uuid` nullable → `payment_methods` | Por dónde entró |
 | `source_note` | `text` nullable | Referencia interna de conciliación. **Nunca pública** |
-| `is_anonymous` | `boolean not null default true` | |
-| `contributor_display_name` | `text` nullable | Sólo con consentimiento explícito. No se usa en esta versión |
+| `is_anonymous` | `boolean not null default true` | El default es el anonimato (FR-014, ADR-042) |
+| `contributor_display_name` | `text` nullable | Sólo con consentimiento explícito. Vacío si `is_anonymous` |
 | `voided_at`, `void_reason` | | |
 | `recorded_by` | `uuid` → `auth.users` | |
 
-**Invariantes**: `amount_minor > 0`; `voided_at` no nulo implica `void_reason` no nulo.
+**Invariantes**: `amount_minor > 0`; `voided_at` no nulo implica `void_reason` no nulo;
+`is_anonymous or contributor_display_name is not null`.
+
+Lo público de un aporte no sale de esta tabla: sale de `contribution_wall` (ADR-042), que
+nombra y, si el interruptor está prendido, el porcentaje sobre lo ya recibido. Nunca el
+monto. `anon` no tiene `SELECT` sobre `contributions`.
 
 ### `expenses` — gastos ejecutados (públicos)
 
@@ -257,6 +263,7 @@ separado; una conversión requiere tipo de cambio explícito y fechado, que hoy 
 | `expenses` | leer publicados | leer todo | — | CRUD | CRUD |
 | `expense_receipts` | **nada** | **leer** | — | CRUD | CRUD |
 | `contributions` | **nada** | **leer** | — | CRUD | CRUD |
+| `contribution_wall` (vista) | leer | leer | leer | leer | leer |
 | `payment_methods` | leer publicados | leer todo | — | — | **CRUD** |
 | `people` | leer publicadas | leer todo | editar | CRUD | CRUD |
 | `user_roles` | nada | nada | nada | leer | **CRUD** |

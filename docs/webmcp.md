@@ -225,7 +225,7 @@ Esta es la parte del documento que importa.
 | No puede | Qué lo impide |
 |---|---|
 | Iniciar, confirmar o facilitar una transferencia | No existe ninguna capacidad que lo haga, y `readOnly: true` como tipo literal hace que agregarla no se pueda hacer sin querer |
-| Ver un aporte individual o el nombre de quien aportó | El camino de lectura pública no llega a la tabla: el total sale de una vista agregada (ADR-016) y RLS niega la tabla al rol anónimo |
+| Ver el monto de un aporte o el nombre de quien aportó | El camino de lectura pública no llega a la tabla: el total sale de una vista agregada (ADR-016) y RLS niega la tabla al rol anónimo. El nombre consentido está en `/quienes-ayudaron` y no entra a ninguna capacidad (FR-242, ADR-042) |
 | Descargar un comprobante | Los archivos están en un bucket privado; el enlace firmado lo emite el servidor sólo para rol `auditor` |
 | Ver el nombre de quien donó en especie | Que el nombre esté en `/quienes-ayudaron` no lo vuelve apto para una API. `get_donation_catalog` no lo devuelve (FR-242) |
 | Ver el valor estimado de un ítem | No se publica (D3). No está en la vista ni en la capacidad |

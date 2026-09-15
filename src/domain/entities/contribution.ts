@@ -1,10 +1,10 @@
 import type { Money } from "../money";
 
 /**
- * Un aporte recibido. **Nunca es público individualmente** (FR-014): esta forma
- * existe para calcular agregados y para el backoffice. No lleva el nombre de
- * quien aportó ni la nota interna de conciliación, justamente para que no pueda
- * filtrarse desde la capa pública por descuido.
+ * Un aporte recibido. El monto **nunca es público** (FR-014): esta forma existe
+ * para calcular agregados y para el backoffice. El nombre público, si hay
+ * consentimiento, vive en `contribution_wall` y no acá, justamente para que no
+ * pueda filtrarse desde la capa de totales por descuido.
  */
 export interface ContributionRecord {
   readonly id: string;
@@ -18,6 +18,7 @@ export interface ContributionAdminRecord extends ContributionRecord {
   readonly paymentMethodId: string | null;
   readonly sourceNote: string | null;
   readonly isAnonymous: boolean;
+  readonly contributorDisplayName: string | null;
   readonly voidReason: string | null;
   readonly recordedBy: string | null;
 }

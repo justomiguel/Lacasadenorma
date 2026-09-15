@@ -26,7 +26,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [013](./013-base-datos-local.md) | Desarrollo y testing de base de datos sin Docker | Aceptada |
 | [014](./014-idioma.md) | Castellano para producto y documentación, inglés para el código | Aceptada |
 | [015](./015-fixture-de-desarrollo.md) | Un fixture de desarrollo, separado y explícito | Aceptada |
-| [016](./016-totales-recibidos-agregados.md) | El total recibido viene de una vista agregada, no del detalle de aportes | Aceptada |
+| [016](./016-totales-recibidos-agregados.md) | El total recibido viene de una vista agregada, no del detalle de aportes | Aceptada; enmendada por ADR-042 para el nombre con consentimiento |
 | [017](./017-revalidacion.md) | Revalidación: ISR de cinco minutos más invalidación explícita al publicar | Aceptada |
 | [018](./018-presupuestos-de-performance.md) | Los presupuestos de Lighthouse se fijan sobre lo medido, no sobre lo deseado | Aceptada |
 | [019](./019-auditoria-por-funcion.md) | El rastro de auditoría se escribe por una función `security definer`, no por privilegio de tabla | Aceptada |
@@ -50,4 +50,5 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [037](./037-chrome-de-cuenta.md) | El chrome de cuenta no personaliza las páginas públicas | Aceptada |
 | [038](./038-portada-de-novedad.md) | La portada de una novedad es el primer visual, también al compartir | Aceptada |
 | [039](./039-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |
-| [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada |
+| [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada; enmendada por ADR-042 para el porcentaje de un aporte en el muro |
+| [042](./042-muro-de-aportes-con-porcentaje.md) | El muro de aportes publica el nombre, y el porcentaje sólo si se prende | Aceptada |

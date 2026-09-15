@@ -140,8 +140,9 @@ values
    null, 'pendiente', null, 7, now());
 
 -- ── Aportes ─────────────────────────────────────────────────────────────────
--- Nunca son públicos individualmente: existen para que los totales tengan algo
--- que sumar. Uno está anulado, para verificar que no cuenta.
+-- Nunca son públicos en monto: existen para que los totales tengan algo
+-- que sumar. Uno está anulado, para verificar que no cuenta. Los nombres
+-- del muro no se inventan acá: se cargan desde el backoffice con consentimiento.
 
 insert into public.contributions
   (campaign_id, amount_minor, currency, received_at, is_anonymous, voided_at, void_reason)

@@ -1,6 +1,6 @@
 # ADR-040 · En público la plata se habla en porcentajes, y el 100% no se publica
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-042](./042-muro-de-aportes-con-porcentaje.md): un aporte en el muro puede mostrar el % sobre lo ya recibido, nunca el monto.
 
 ## Contexto
 

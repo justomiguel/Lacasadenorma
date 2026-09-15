@@ -65,8 +65,9 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [Qué le falta a la casa](${siteUrl}/catalogo): materiales y cosas que todavía hacen falta, y
   cuánto queda. Sin foto no se inventa una. Reservar una unidad se abre cuando la cuenta está
   habilitada.
-- [Quiénes ayudaron](${siteUrl}/quienes-ayudaron): los nombres de quienes trajeron algo y
-  eligieron aparecer. Una reserva no figura. Una donación anónima no aparece en ninguna parte.
+- [Quiénes ayudaron](${siteUrl}/quienes-ayudaron): los nombres de quienes trajeron algo o
+  aportaron en plata y eligieron aparecer. Una reserva no figura. El monto de un aporte no
+  se publica; el porcentaje, sólo si la familia lo prende.
 - [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
   Chile.
 - [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.

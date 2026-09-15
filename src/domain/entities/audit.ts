@@ -20,9 +20,12 @@ export const AUDIT_ACTION_LABELS = {
   "campaign.created": "creó la campaña",
   "campaign.goal_updated": "cambió el objetivo de recaudación",
   "campaign.reconciled": "marcó la conciliación bancaria",
+  "campaign.contribution_share_toggled":
+    "cambió si el muro muestra el porcentaje de cada aporte",
   "budget_item.created": "agregó un rubro al presupuesto",
   "budget_item.updated": "editó un rubro del presupuesto",
   "contribution.created": "registró un aporte",
+  "contribution.appearance_updated": "cambió el nombre público de un aporte",
   "contribution.voided": "anuló un aporte",
   "expense.created": "registró un gasto",
   "expense.voided": "anuló un gasto",

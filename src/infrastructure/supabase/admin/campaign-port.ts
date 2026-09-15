@@ -108,5 +108,16 @@ export function createCampaignPort(client: ServerSupabaseClient): AdminCampaignP
 
       return data.id;
     },
+
+    async setPublishContributionShare({ campaignId, publishShare }): Promise<void> {
+      const { error } = await client
+        .from("campaigns")
+        .update({ publish_contribution_share: publishShare })
+        .eq("id", campaignId);
+
+      if (error !== null) {
+        throw new QueryError("actualizar la publicación del porcentaje", error);
+      }
+    },
   };
 }

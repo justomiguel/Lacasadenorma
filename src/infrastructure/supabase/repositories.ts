@@ -62,7 +62,7 @@ class QueryError extends Error {
 }
 
 const CAMPAIGN_COLUMNS =
-  "id, slug, title, summary, goal_amount_minor, goal_currency, status, reconciled_at";
+  "id, slug, title, summary, goal_amount_minor, goal_currency, status, reconciled_at, publish_contribution_share";
 
 const BUDGET_ITEM_COLUMNS =
   "id, title, description, estimated_amount_minor, currency, sort_order";

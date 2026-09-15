@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { markReconciled, recordContribution, voidContribution } from "./contributions";
+import {
+  markReconciled,
+  recordContribution,
+  updateContributionAppearance,
+  voidContribution,
+} from "./contributions";
 import { CAMPAIGN, RECORD, deps } from "./admin-test-helpers";
 
 // ── Aportes ─────────────────────────────────────────────────────────────────
@@ -37,7 +42,61 @@ describe("aportes", () => {
     });
 
     expect(JSON.stringify(fake.audit)).not.toContain("Marta");
-    expect(fake.audit[0]).toMatchObject({ diff: { hasSourceNote: true } });
+    expect(fake.audit[0]).toMatchObject({
+      diff: { hasSourceNote: true, appeared: false },
+    });
+  });
+
+  it("registra el nombre público cuando hay consentimiento y no lo copia a la auditoría", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await recordContribution(admin, {
+      campaignId: CAMPAIGN,
+      amount: "500.000",
+      currency: "ARS",
+      receivedAt: "2026-08-01",
+      appearOnWall: "on",
+      contributorDisplayName: "Vecina que aportó",
+    });
+
+    expect(result.status).toBe("ok");
+    expect(fake.calls[0]).toMatchObject({
+      input: {
+        isAnonymous: false,
+        contributorDisplayName: "Vecina que aportó",
+      },
+    });
+    expect(JSON.stringify(fake.audit)).not.toContain("Vecina");
+    expect(fake.audit[0]).toMatchObject({ diff: { appeared: true } });
+  });
+
+  it("rechaza aparecer en el muro sin nombre", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await recordContribution(admin, {
+      campaignId: CAMPAIGN,
+      amount: "500.000",
+      currency: "ARS",
+      receivedAt: "2026-08-01",
+      appearOnWall: "on",
+    });
+
+    expect(result.status).toBe("invalid");
+    expect(fake.calls).toEqual([]);
+  });
+
+  it("actualiza el nombre público sin copiarlo a la auditoría", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await updateContributionAppearance(admin, {
+      id: RECORD,
+      appearOnWall: "on",
+      contributorDisplayName: "Vecina que aportó",
+    });
+
+    expect(result.status).toBe("ok");
+    expect(fake.calls[0]).toMatchObject({
+      name: "updateContributionAppearance",
+      input: { isAnonymous: false, contributorDisplayName: "Vecina que aportó" },
+    });
+    expect(JSON.stringify(fake.audit)).not.toContain("Vecina");
   });
 
   it("marca la conciliación con la fecha dada", async () => {

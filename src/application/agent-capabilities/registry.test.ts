@@ -256,5 +256,6 @@ function fakeCampaignWithoutGoal() {
     goalCurrency: "ARS" as const,
     status: "active" as const,
     reconciledAt: null,
+    publishContributionShare: false,
   };
 }
