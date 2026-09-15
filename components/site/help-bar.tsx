@@ -20,8 +20,9 @@ import { track } from "@/src/infrastructure/analytics/browser";
  *
  * No aparece en `/ayudar` ni en sus retornos de PayPal, que son el mismo flujo.
  * Tampoco en `/cuenta`: ahí la acción es guardar, salir o borrar, y la barra
- * tapaba los formularios. Reserva su alto en el flujo para no tapar el final de
- * las páginas donde sí está.
+ * tapaba los formularios. Ni en `/catalogo` ni en cada ficha: la acción es
+ * donar ese ítem, y la barra tapaba el formulario de retiro. Reserva su alto
+ * en el flujo para no tapar el final de las páginas donde sí está.
  */
 
 export function helpBarIsOffRoute(canonical: string): boolean {
@@ -29,9 +30,12 @@ export function helpBarIsOffRoute(canonical: string): boolean {
     canonical === "/ayudar" ||
     canonical.startsWith("/ayudar/") ||
     canonical === "/cuenta" ||
-    canonical.startsWith("/cuenta/")
+    canonical.startsWith("/cuenta/") ||
+    canonical === "/catalogo" ||
+    canonical.startsWith("/catalogo/")
   );
 }
+
 export function HelpBar({
   href = localizedHref("/ayudar", "es"),
   label = "Ayudar a reconstruir",

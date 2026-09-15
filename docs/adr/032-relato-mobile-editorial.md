@@ -97,7 +97,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
     ancho completo y `env(safe-area-inset-bottom)`. Baja con una transición de 420 ms
     cuando `#donaciones` o una primaria de la página están a la vista y queda inerte;
     vuelve a subir cuando salen. En la home arranca abajo, porque la apertura ya trae
-    la acción.
+    la acción. **No aparece** en `/ayudar` (y sus retornos), en `/cuenta` ni en
+    `/catalogo` ni en `/catalogo/[id]`: en el catálogo la acción es donar ese ítem,
+    y la barra tapaba el formulario de retiro.
 
 12. **El pie es un colofón.** El nombre, el lugar, una fila de enlaces chicos y la
     línea legal, sobre papel. Las preguntas de la home se comprimen a una lista con

@@ -427,7 +427,9 @@ menos hay, y ya hay una barra fija abajo. Dos barras fijas en 360 px dejan una v
 nada.
 
 La acción de ayudar es persistente en mobile como una barra inferior compacta, que **no** tapa
-contenido (el `body` reserva su altura) y que desaparece en la propia página de aportes.
+contenido (el `body` reserva su altura) y que desaparece en la propia página de aportes, en la
+cuenta y en el catálogo (`/catalogo` y cada ficha): ahí la acción es donar ese ítem, no ir a
+`/ayudar`.
 
 **Y se retira mientras la acción primaria ya está en pantalla.** La barra existe para que ayudar esté
 a un toque cuando la persona se alejó de la apertura; sobre el pliegue de la home no cumple ninguna

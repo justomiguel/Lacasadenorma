@@ -87,12 +87,14 @@ describe("HelpBar sin JavaScript", () => {
 });
 
 describe("helpBarIsOffRoute", () => {
-  it("cubre aportar y la cuenta, no el relato", () => {
+  it("cubre aportar, la cuenta y el catálogo, no el relato", () => {
     expect(helpBarIsOffRoute("/ayudar")).toBe(true);
     expect(helpBarIsOffRoute("/ayudar/dinero")).toBe(true);
     expect(helpBarIsOffRoute("/ayudar/paypal/completada")).toBe(true);
     expect(helpBarIsOffRoute("/cuenta")).toBe(true);
     expect(helpBarIsOffRoute("/cuenta/ingresar")).toBe(true);
+    expect(helpBarIsOffRoute("/catalogo")).toBe(true);
+    expect(helpBarIsOffRoute("/catalogo/item-tina")).toBe(true);
     expect(helpBarIsOffRoute("/norma")).toBe(false);
     expect(helpBarIsOffRoute("/")).toBe(false);
   });
@@ -109,6 +111,24 @@ describe("HelpBar", () => {
 
   it("tampoco se muestra en /en/ayudar: es la misma página, en el otro idioma", () => {
     mockDePathname.mockReturnValue("/en/ayudar");
+
+    const { container } = render(
+      <HelpBar href={localizedHref("/ayudar", "en")} label="Help rebuild" />,
+    );
+
+    expect(within(container).queryByRole("link", { name: /help rebuild/i })).toBeNull();
+  });
+
+  it("tampoco se muestra en /catalogo: ahí la acción es donar el ítem", () => {
+    mockDePathname.mockReturnValue("/catalogo");
+
+    const { container } = render(<HelpBar />);
+
+    expect(barra(container)).toBeNull();
+  });
+
+  it("ni en una ficha del catálogo", () => {
+    mockDePathname.mockReturnValue("/en/catalogo/item-tina");
 
     const { container } = render(
       <HelpBar href={localizedHref("/ayudar", "en")} label="Help rebuild" />,
