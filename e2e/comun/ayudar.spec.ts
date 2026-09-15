@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { getContent } from "@/content/pack";
 
-const { help, ui } = getContent("es");
+const { help, site, ui } = getContent("es");
 
 /**
  * Flujo de ADR-045: «Ayudar a reconstruir» presenta tres caminos a la vista.
@@ -43,7 +43,7 @@ test.describe("cómo ayudar · tres caminos", () => {
       "Google lleva su logo al lado del nombre",
     ).toHaveAttribute("src", /google/);
     await expect(page.locator("iframe")).toHaveCount(0);
-    await expect(page.getByText(/Riacho He Hé/)).toBeVisible();
+    await expect(page.getByText("Riacho He Hé, Formosa", { exact: true })).toBeVisible();
   });
 
   test("donar dinero lleva a las cuentas de los tres países", async ({ page }) => {
@@ -71,8 +71,8 @@ test.describe("cómo ayudar · tres caminos", () => {
   }) => {
     await page.goto("/");
     await page
+      .getByRole("region", { name: site.name })
       .getByRole("link", { name: /ayudar a reconstruir/i })
-      .first()
       .click();
 
     await expect(page).toHaveURL(/\/ayudar$/);

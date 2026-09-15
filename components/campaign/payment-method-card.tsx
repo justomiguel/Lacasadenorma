@@ -22,9 +22,9 @@ export function PaymentMethodCard({
     <section
       className={cn("min-w-0 rounded-md border border-rule bg-paper p-md", className)}
     >
-      <h4 className="flex min-w-0 items-center gap-sm font-ui text-body-large font-medium">
+      <h3 className="flex min-w-0 items-center gap-sm font-ui text-body-large font-medium">
         {title}
-      </h4>
+      </h3>
       <div className="mt-md border-t border-rule pt-sm">{children}</div>
     </section>
   );

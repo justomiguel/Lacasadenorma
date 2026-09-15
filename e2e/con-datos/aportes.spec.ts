@@ -12,7 +12,7 @@ import { COUNTRY_NAMES } from "@/src/domain/entities";
  * contenido versionado, no de la base.
  */
 
-const { help, ui } = getContent("es");
+const { help, site, ui } = getContent("es");
 
 /**
  * El panel del país. `getByRole("tabpanel")` a secas alcanzaría, pero el
@@ -198,8 +198,8 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
     await page.goto("/");
 
     await page
+      .getByRole("region", { name: site.name })
       .getByRole("link", { name: /ayudar a reconstruir/i })
-      .first()
       .click();
     await expect(page).toHaveURL(/\/ayudar$/);
 
