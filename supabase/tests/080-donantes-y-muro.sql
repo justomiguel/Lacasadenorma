@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(60);
+select plan(61);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -787,6 +787,13 @@ select throws_ok(
   '42501',
   null,
   'nombrar donor_note falla: el mensaje a la familia no es público'
+);
+
+select throws_ok(
+  $s$ select cover_channel from public.donation_pledges $s$,
+  '42501',
+  null,
+  'nombrar cover_channel falla: cómo se cubre no es público (ADR-041)'
 );
 
 select throws_ok(

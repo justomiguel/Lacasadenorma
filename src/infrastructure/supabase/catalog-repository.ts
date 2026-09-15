@@ -1,4 +1,9 @@
-import { isDonationItemCategory, isDonationUnit, remaining } from "@/src/domain/catalog";
+import {
+  estimatedValueOf,
+  isDonationItemCategory,
+  isDonationUnit,
+  remaining,
+} from "@/src/domain/catalog";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import type { CatalogRepository } from "@/src/domain/ports/repositories";
 
@@ -8,9 +13,8 @@ import { MappingError, mapMedia, type MediaRow } from "./mappers";
 import type { ServerSupabaseClient } from "./server-client";
 
 /**
- * Lectura pública del catálogo. Consulta **la vista**, nunca la tabla, y enumera
- * las columnas: el valor estimado no puede colarse por existir en `donation_items`
- * (D3, contrato del catálogo).
+ * Lectura pública del catálogo. Consulta **la vista**, nunca la tabla. El
+ * estimado entra a la vista para la ficha (ADR-041); el listado no lo muestra.
  *
  * El filtro de publicación está en la vista (`where published_at is not null`).
  * Esta consulta corre con el cliente anónimo, así que un editor con sesión en el
@@ -18,7 +22,7 @@ import type { ServerSupabaseClient } from "./server-client";
  */
 
 const CATALOG_COLUMNS =
-  "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, remaining_quantity, fulfilled_quantity, photo_media_id, sort_order";
+  "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, remaining_quantity, fulfilled_quantity, estimated_unit_amount_minor, currency, photo_media_id, sort_order";
 
 const CLAIM_COLUMNS = "id, item_id, quantity, donor_display_name, fulfilled_at";
 
@@ -168,6 +172,7 @@ function toDonationItem(
     neededQuantity: row.needed_quantity,
     remainingQuantity: remaining(quantities),
     fulfilledQuantity: row.fulfilled_quantity,
+    estimatedValue: estimatedValueOf(row.estimated_unit_amount_minor, row.currency),
     photo: row.photo_media_id === null ? null : (photos.get(row.photo_media_id) ?? null),
     sortOrder: row.sort_order,
   };

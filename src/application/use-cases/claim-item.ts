@@ -27,6 +27,10 @@ const inputSchema = z.object({
   anonymous: z.enum(["si", "no"]).optional(),
   displayName: z.string().nullable().optional(),
   note: z.string().max(500).optional(),
+  coverChannel: z
+    .enum(["bring", "transfer", "mercadopago", "paypal"])
+    .optional()
+    .default("bring"),
 });
 
 export interface ClaimDeps {
@@ -88,6 +92,7 @@ export async function claimItem(
       isAnonymous,
       displayName,
       note,
+      coverChannel: parsed.data.coverChannel,
     });
 
     if (deps.afterClaim !== undefined) {

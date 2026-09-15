@@ -1,6 +1,6 @@
 # ADR-040 · En público la plata se habla en porcentajes, y el 100% no se publica
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md): la ficha del catálogo puede mostrar un estimado etiquetado. El resto del sitio público sigue sin montos.
 
 ## Contexto
 

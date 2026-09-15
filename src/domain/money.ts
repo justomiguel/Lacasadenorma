@@ -101,6 +101,30 @@ export function isPositive(amount: Money): boolean {
 }
 
 /**
+ * Un monto por un entero positivo. Para «dos unidades a este estimado», no
+ * para un tipo de cambio.
+ */
+export function scaleMoney<C extends CurrencyCode>(
+  amount: Money<C>,
+  factor: number,
+): Money<C> {
+  if (!Number.isInteger(factor) || factor <= 0) {
+    throw new DomainError("La cantidad tiene que ser un entero positivo.");
+  }
+
+  if (
+    amount.amountMinor !== 0 &&
+    Math.abs(amount.amountMinor) > Math.floor(Number.MAX_SAFE_INTEGER / factor)
+  ) {
+    throw new DomainError(
+      "Ese producto excedería el entero seguro de JavaScript y perdería precisión.",
+    );
+  }
+
+  return money(amount.amountMinor * factor, amount.currency);
+}
+
+/**
  * Formato de moneda. Por omisión es-AR, que es el del sitio en castellano y el
  * del backoffice. Las páginas en inglés pasan `en-US`: `$1,240,000` y no
  * `$ 1.240.000` (ADR-023).

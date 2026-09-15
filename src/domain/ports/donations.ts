@@ -1,3 +1,4 @@
+import type { CoverChannel } from "../cover";
 import type {
   AdminPledgeRecord,
   DonationPledge,
@@ -18,6 +19,7 @@ export interface ClaimInput {
   readonly isAnonymous: boolean;
   readonly displayName: string | null;
   readonly note: string | null;
+  readonly coverChannel: CoverChannel;
 }
 
 export interface OwnAppearance {

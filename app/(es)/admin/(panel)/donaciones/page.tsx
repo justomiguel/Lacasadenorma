@@ -25,6 +25,13 @@ const STATUS_LABEL = {
   expired: "Vencida",
 } as const;
 
+const COVER_LABEL = {
+  bring: "Lo trae",
+  transfer: "Transferencia",
+  mercadopago: "Mercado Pago",
+  paypal: "PayPal",
+} as const;
+
 /**
  * Las reservas: confirmar que el material llegó, o cancelarlas con motivo.
  *
@@ -111,7 +118,7 @@ function PledgeRow({
   return (
     <Record
       title={pledge.itemTitle}
-      meta={`${String(pledge.quantity)} · ${quien} · ${contacto} · vence ${when}`}
+      meta={`${String(pledge.quantity)} · ${COVER_LABEL[pledge.coverChannel]} · ${quien} · ${contacto} · vence ${when}`}
       status={STATUS_LABEL[pledge.status]}
     >
       {pledge.donorNote === null ? null : (

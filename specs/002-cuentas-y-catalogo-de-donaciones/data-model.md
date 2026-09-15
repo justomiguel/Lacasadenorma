@@ -81,7 +81,7 @@ aplicación y se refuerza en la reserva, que es donde importa.
 | `needed_quantity` | `integer not null` | |
 | `reserved_quantity` | `integer not null default 0` | **Derivada, y la mueven sólo tres funciones** |
 | `fulfilled_quantity` | `integer not null default 0` | Ídem |
-| `estimated_unit_amount_minor` | `bigint` **nullable** | Valor de referencia interno. No se publica (D3) |
+| `estimated_unit_amount_minor` | `bigint` **nullable** | Valor de referencia. La ficha lo publica etiquetado (ADR-041); el listado y el libro no |
 | `currency` | `char(3)` **nullable** | Nula exactamente cuando el monto es nulo |
 | `photo_media_id` | `uuid` nullable → `media` | Sin foto se reserva el espacio (FR-212, ADR-021) |
 | `sort_order` | `integer` | Orden editorial: primero lo que más falta |
@@ -122,6 +122,7 @@ cancelar, vencer y entregar (ADR-029, consecuencias).
 | `is_anonymous` | `boolean not null default true` | **El default es el anonimato** (FR-225) |
 | `donor_display_name` | `text` nullable | Copia al momento de reservar, editable por su dueña |
 | `donor_note` | `text` nullable | Mensaje privado a la familia. **Nunca público** |
+| `cover_channel` | enum `donation_cover_channel` `not null default 'bring'` | `bring` \| `transfer` \| `mercadopago` \| `paypal`. No se publica (ADR-041) |
 | `expires_at` | `timestamptz not null` | `now() + 14 días`, en un solo lugar del código |
 | `reminded_at` | `timestamptz` nullable | Que el recordatorio salga una sola vez (FR-235) |
 | `fulfilled_at`, `cancelled_at`, `cancel_reason` | | |
@@ -184,16 +185,16 @@ select
   i.id, i.campaign_id, i.budget_item_id, i.title, i.description, i.unit,
   i.needed_quantity,
   i.needed_quantity - i.reserved_quantity - i.fulfilled_quantity as remaining_quantity,
-  i.fulfilled_quantity, i.photo_media_id, i.sort_order, i.category
+  i.fulfilled_quantity, i.photo_media_id, i.sort_order, i.category,
+  i.estimated_unit_amount_minor, i.currency
 from public.donation_items i
 where i.published_at is not null;
 ```
 
 `remaining_quantity` se calcula en la base (FR-210) y **nunca** es negativo, porque el `check` de la
-tabla lo impide. `estimated_unit_amount_minor` **no está en la vista**: es la aplicación de D3 en el
-único lugar donde no depende de que nadie se acuerde. El `where published_at is not null` es FR-215
-en la vista, además de la policy sobre la tabla: un editor con sesión no ve borradores por este
-camino.
+tabla lo impide. El estimado entra a la vista para la ficha (ADR-041); sigue fuera del libro. El
+`where published_at is not null` es FR-215 en la vista, además de la policy sobre la tabla: un
+editor con sesión no ve borradores por este camino.
 
 ```sql
 create view public.donation_wall with (security_invoker = true) as
@@ -332,7 +333,7 @@ De `approved` no se sale (ADR-033).
 El correo de `auth.users`, o nulo. `can_read_donors()` por dentro: para el resto es un oráculo mudo,
 no un error que delate que la fila existe.
 
-### `claim_donation_item(item_id, quantity, is_anonymous, display_name, note) → donation_pledges`
+### `claim_donation_item(item_id, quantity, is_anonymous, display_name, note, cover_channel) → donation_pledges`
 
 `grant execute to authenticated`. En una transacción:
 
@@ -358,7 +359,7 @@ end if;
 ```
 
 5. Inserta la reserva con `user_id = auth.uid()` — no con un parámetro, así que **no se puede reservar
-   a nombre de otro**.
+   a nombre de otro** — y `cover_channel` (default `bring`).
 
 Probado con dos sesiones concurrentes: la segunda espera el lock, reevalúa, y pierde (`research.md`
 §8).

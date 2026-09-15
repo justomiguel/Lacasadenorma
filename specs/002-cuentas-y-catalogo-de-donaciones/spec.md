@@ -291,18 +291,25 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
   y el presupuesto cuenten la misma obra.
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
-  la interfaz lo omite en lugar de estimarlo.
+  la interfaz lo omite en lugar de estimarlo. Si lo tiene, la ficha MUST publicarlo etiquetado como
+  estimado, no como precio fijo (ADR-041).
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
 - **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
   (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
   MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
   arena, ripio y similares.
 - **FR-254**: Cada ítem publicado MUST tener una página propia con la foto real o el espacio
-  reservado, la descripción, las cantidades y, si queda algo, el formulario de reserva. El
-  listado MUST NOT repetir la foto: el hueco vive en la ficha.
+  reservado, la descripción, las cantidades y, si queda algo, el formulario de reserva y, si hay
+  estimado, la forma de cubrirlo con plata. El listado MUST NOT repetir la foto: el hueco vive
+  en la ficha.
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
   reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.
+- **FR-256**: Cubrir un ítem con plata MUST ofrecer transferencia (estimado neto), Mercado Pago
+  (estimado más 10%, con la posibilidad de sumar más) y PayPal (estimado neto). MUST NOT
+  convertir monedas. MUST decir que el monto es estimado, no fijo.
+- **FR-257**: Anotarse a cubrir con plata MUST reservar unidades igual que anotarse a traer el
+  ítem. MUST NOT sumar el estimado a los totales de dinero de la campaña.
 
 **Reservas**
 
@@ -484,10 +491,13 @@ Cambiar de automática a con aprobación después es agregar un estado: barato.
 
 ### D3 — ¿Se publica el valor estimado de cada ítem?
 
+Reabierta y resuelta en [ADR-041](../../docs/adr/041-estimado-publico-y-cubrir-con-plata.md):
+la ficha lo publica etiquetado como estimado, no fijo. El listado no. El libro no.
+
 | Opción | Qué implica |
 |---|---|
-| **No publicarlo (recomendada, aplicada)** | Se guarda para que la familia priorice, y no se muestra. Un valor estimado que se muestra es un precio que alguien va a comparar con el del negocio de la esquina, y la diferencia se lee como un dato mal puesto |
-| Publicarlo | Ayuda a elegir según el bolsillo, y obliga a mantener precios al día en un país donde cambian todos los meses |
+| No publicarlo | Se guarda para que la familia priorice, y no se muestra. Impide cubrir el ítem con plata |
+| **Publicarlo en la ficha, etiquetado (aplicada)** | Quien no puede traer el objeto puede transferir. El sitio no afirma que el estimado coincida con el mostrador |
 
 ---
 
