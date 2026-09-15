@@ -122,7 +122,10 @@ function CatalogRow({
 
   return (
     <tr id={`item-${item.id}`} className="scroll-mt-xl border-b border-rule">
-      <th scope="row" className="max-w-measure py-sm pr-md text-left text-body font-normal">
+      <th
+        scope="row"
+        className="max-w-measure py-sm pr-md text-left text-body font-normal"
+      >
         <InlineLink href={href}>{item.title}</InlineLink>
       </th>
       <td
