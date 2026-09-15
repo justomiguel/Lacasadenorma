@@ -12,9 +12,14 @@
  * que sea *ese* entero. Así que se comprueba acá, leyendo el encabezado del JPEG.
  *
  * También avisa de las fotos que están en `public/fotos/` o `public/medios/` y
- * nadie declara. Un archivo que no se muestra en ninguna página es peso muerto
- * en el repositorio, y si es una foto de una persona, es peso muerto que no
- * debería estar guardado.
+ * nadie declara, **incluyendo subcarpetas**. Un archivo que no se muestra en
+ * ninguna página es peso muerto en el repositorio, y si es una foto de una
+ * persona, es peso muerto que no debería estar guardado.
+ *
+ * El catálogo (ADR-042) tiene una regla extra: cada título de
+ * `docs/sql/catalogo-casa-basica.sql` y el del fixture tienen que tener una
+ * foto de referencia en `catalogo-fotos.json`, con epígrafe que lo diga, y
+ * esas fotos no pueden colarse en el relato.
  *
  * Corre en `npm run verify` y en CI.
  */
@@ -114,9 +119,31 @@ await collectJson(CONTENT_DIR);
 
 for (const file of jsonFiles) {
   const photos = declaredPhotos(JSON.parse(await readFile(file, "utf8")));
+  const isCatalog = file.endsWith(`${path.sep}catalogo-fotos.json`);
 
   for (const photo of photos) {
     declared.add(photo.url);
+
+    if (isCatalog) {
+      if (!photo.url.startsWith("/fotos/catalogo/")) {
+        problems.push(`${file}: ${photo.url} no vive en /fotos/catalogo/ (ADR-042).`);
+      }
+
+      const caption = typeof photo.caption === "string" ? photo.caption : "";
+      const marker = file.includes(`${path.sep}en${path.sep}`)
+        ? /reference/i
+        : /referencia/i;
+
+      if (!marker.test(caption)) {
+        problems.push(
+          `${file}: ${photo.url} no dice en el epígrafe que es de referencia.`,
+        );
+      }
+    } else if (photo.url.startsWith("/fotos/catalogo/")) {
+      problems.push(
+        `${file}: una foto editorial no puede vivir en /fotos/catalogo/ (ADR-042).`,
+      );
+    }
 
     const onDisk = path.join("public", photo.url);
     let buffer;
@@ -144,16 +171,61 @@ for (const file of jsonFiles) {
   }
 }
 
-for (const { dir, prefix } of MEDIA_DIRS) {
-  for (const name of await readdir(dir)) {
-    if (!name.endsWith(".jpg") && !name.endsWith(".jpeg")) {
+async function listJpeg(dir, prefix, relative = "") {
+  const names = await readdir(path.join(dir, relative), { withFileTypes: true });
+  const found = [];
+
+  for (const name of names) {
+    const rel = path.join(relative, name.name);
+
+    if (name.isDirectory()) {
+      found.push(...(await listJpeg(dir, prefix, rel)));
       continue;
     }
 
-    if (!declared.has(`${prefix}${name}`)) {
+    if (!name.name.endsWith(".jpg") && !name.name.endsWith(".jpeg")) {
+      continue;
+    }
+
+    found.push(`${prefix}${rel.split(path.sep).join("/")}`);
+  }
+
+  return found;
+}
+
+for (const { dir, prefix } of MEDIA_DIRS) {
+  for (const url of await listJpeg(dir, prefix)) {
+    if (!declared.has(url)) {
       problems.push(
-        `${path.join(dir, name)}: está en el repositorio y ningún contenido ` +
+        `${path.join("public", url.replace(/^\//, ""))}: está en el repositorio y ningún contenido ` +
           `la declara. Publicala o borrala.`,
+      );
+    }
+  }
+}
+
+const FIXTURE_TITLE = "Chapas del techo (datos de desarrollo)";
+const sql = await readFile(path.join("docs", "sql", "catalogo-casa-basica.sql"), "utf8");
+const seedTitles = [...sql.matchAll(/\(\d+,\s*'[a-z_]+',\s*'([^']+)'/g)].map(
+  (match) => match[1],
+);
+const requiredTitles = [...seedTitles, FIXTURE_TITLE];
+
+for (const locale of ["es", "en"]) {
+  const file = path.join("content", locale, "catalogo-fotos.json");
+  const photos = JSON.parse(await readFile(file, "utf8"));
+  const keys = Object.keys(photos);
+
+  for (const title of requiredTitles) {
+    if (photos[title] === undefined) {
+      problems.push(`${file}: falta la foto de referencia de «${title}» (ADR-042).`);
+    }
+  }
+
+  for (const title of keys) {
+    if (!requiredTitles.includes(title)) {
+      problems.push(
+        `${file}: «${title}» no está en el catálogo básico ni en el fixture.`,
       );
     }
   }

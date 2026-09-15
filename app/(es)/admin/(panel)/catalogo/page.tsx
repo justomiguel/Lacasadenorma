@@ -162,7 +162,7 @@ export default async function AdminCatalogoPage() {
           name="file"
           label="Foto"
           accept={ALLOWED_IMAGE_TYPES.join(",")}
-          hint="JPEG, PNG o WebP. Sin foto se reserva el espacio en el sitio."
+          hint="JPEG, PNG o WebP. Si no subís una, la ficha pública muestra la foto de referencia del tipo, etiquetada. Esta pisa esa."
         />
         <TextField
           name="alt"

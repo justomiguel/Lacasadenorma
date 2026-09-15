@@ -41,7 +41,8 @@ carpetas.
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` | `afterTransfer`: qué pasa después de transferir |
-| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla; la ficha `/catalogo/[id]` lleva la foto o el hueco. Acá van título, bajada, columnas y estados, sin prosa de introducción |
+| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla; la ficha `/catalogo/[id]` lleva la foto. Acá van título, bajada, columnas y estados, sin prosa de introducción |
+| `catalogo-fotos.json` | Ficha `/catalogo/[id]` | Fotos de referencia por título (ADR-042). El archivo vive en `public/fotos/catalogo/`. El epígrafe dice que no es una compra de esta casa. La foto subida desde el backoffice pisa esta. El ítem del fixture también tiene entrada |
 | `quienes-ayudaron.json` | `/quienes-ayudaron` | Título, bajada y estados del muro. Los nombres viven en la base; acá no hay una lista de ejemplo ni prosa de introducción |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
 | `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
@@ -106,10 +107,14 @@ respuesta frecuente que contradecía a `/que-paso`— y ninguno tenía un marcad
 encontrar. La prueba que sí funciona es preguntarle a cada oración **quién la dijo**: si la respuesta no
 es la familia, un documento del proyecto o la base de datos, no va.
 
-Cuando el hueco es una **foto**, el sitio no lo esconde: reserva el espacio con su proporción final y
-dice qué va a ir ahí. El espacio reservado tiene dos ventajas sobre no poner nada: cuando llegue la
-foto no habrá salto de layout, y mientras tanto la ausencia se lee como una espera y no como un
-descuido.
+Cuando el hueco es una **foto del relato** —Norma, el incendio, la obra—, el sitio no lo esconde:
+reserva el espacio con su proporción final y dice qué va ahí. Un espacio vacío con intención se lee
+como respeto; una foto de stock de una casa que no es ésta se lee como mentira.
+
+El catálogo es otra cosa (ADR-042). Cada ficha puede mostrar una foto de referencia del tipo de
+material, con epígrafe que lo dice. No afirma que esa heladera es la que se va a comprar: muestra
+cómo se ve el objeto que se pide. Si el equipo sube la foto real, esa pisa la de referencia. Si no
+hay ninguna, se reserva el hueco.
 
 ---
 
@@ -144,12 +149,12 @@ vez y en pasado, el trabajo se muestra siempre y en presente.
 | Durante la limpieza | **Las piezas del taller rescatadas**, clasificadas en el piso y en la mesa — `limpieza-taller.jpg`, 1125 × 1300 | `/reconstruccion` | Recortada para excluir las caras |
 
 Las fotos editoriales viven en `public/fotos/` y se declaran en `content/{es,en}/*.json` con `width`,
-`height`, `alt` y, si corresponde, epígrafe y crédito. El esquema de Zod las valida al importar, igual
-que el resto del contenido, y `npm run check:fotos` comprueba lo que Zod no puede: que el archivo
-exista y que **mida lo que dice**. Los números declarados son los que reservan el espacio antes de que
-la imagen llegue; si no son los del archivo, el texto salta cuando llega. Las del **avance de la
-obra** siguen viniendo de la base: se suben desde `/admin` con cada novedad, así que aparecen fechadas
-y sin despliegue.
+`height`, `alt` y, si corresponde, epígrafe y crédito. Las de referencia del catálogo viven en
+`public/fotos/catalogo/` y se declaran en `catalogo-fotos.json`. El esquema de Zod las valida al
+importar, igual que el resto del contenido, y `npm run check:fotos` comprueba lo que Zod no puede:
+que el archivo exista, que **mida lo que dice**, y que cada título del catálogo básico tenga
+epígrafe de referencia. Las del **avance de la obra** siguen viniendo de la base: se suben desde
+`/admin` con cada novedad, así que aparecen fechadas y sin despliegue.
 
 El `alt` describe lo que se ve para alguien que no puede verlo, y no repite el epígrafe.
 

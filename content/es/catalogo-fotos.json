@@ -1,0 +1,785 @@
+{
+  "Ladrillos comunes": {
+    "url": "/fotos/catalogo/ladrillos-comunes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ladrillos comunes.",
+    "caption": "Foto de referencia de Ladrillos comunes. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Ladrillos huecos 18x18x33": {
+    "url": "/fotos/catalogo/ladrillos-huecos-18x18x33.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ladrillos huecos 18x18x33.",
+    "caption": "Foto de referencia de Ladrillos huecos 18x18x33. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cemento": {
+    "url": "/fotos/catalogo/cemento.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cemento.",
+    "caption": "Foto de referencia de Cemento. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cal hidratada": {
+    "url": "/fotos/catalogo/cal-hidratada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cal hidratada.",
+    "caption": "Foto de referencia de Cal hidratada. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Arena": {
+    "url": "/fotos/catalogo/arena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Arena.",
+    "caption": "Foto de referencia de Arena. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Ripio": {
+    "url": "/fotos/catalogo/ripio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ripio.",
+    "caption": "Foto de referencia de Ripio. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Hidrófugo": {
+    "url": "/fotos/catalogo/hidrofugo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Hidrófugo.",
+    "caption": "Foto de referencia de Hidrófugo. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Chapas de techo": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Chapas de techo.",
+    "caption": "Foto de referencia de Chapas de techo. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cerámico de piso": {
+    "url": "/fotos/catalogo/ceramico-de-piso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cerámico de piso.",
+    "caption": "Foto de referencia de Cerámico de piso. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Azulejos de cocina": {
+    "url": "/fotos/catalogo/azulejos-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Azulejos de cocina.",
+    "caption": "Foto de referencia de Azulejos de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Azulejos de baño": {
+    "url": "/fotos/catalogo/azulejos-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Azulejos de baño.",
+    "caption": "Foto de referencia de Azulejos de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Pintura": {
+    "url": "/fotos/catalogo/pintura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Pintura.",
+    "caption": "Foto de referencia de Pintura. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Hierro para estructura": {
+    "url": "/fotos/catalogo/hierro-para-estructura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Hierro para estructura.",
+    "caption": "Foto de referencia de Hierro para estructura. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tirantes de techo": {
+    "url": "/fotos/catalogo/tirantes-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tirantes de techo.",
+    "caption": "Foto de referencia de Tirantes de techo. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cielorraso": {
+    "url": "/fotos/catalogo/cielorraso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cielorraso.",
+    "caption": "Foto de referencia de Cielorraso. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Zócalos": {
+    "url": "/fotos/catalogo/zocalos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Zócalos.",
+    "caption": "Foto de referencia de Zócalos. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Enduido": {
+    "url": "/fotos/catalogo/enduido.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Enduido.",
+    "caption": "Foto de referencia de Enduido. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Clavos y alambre": {
+    "url": "/fotos/catalogo/clavos-y-alambre.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Clavos y alambre.",
+    "caption": "Foto de referencia de Clavos y alambre. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Puerta de entrada": {
+    "url": "/fotos/catalogo/puerta-de-entrada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Puerta de entrada.",
+    "caption": "Foto de referencia de Puerta de entrada. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Puertas interiores": {
+    "url": "/fotos/catalogo/puertas-interiores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Puertas interiores.",
+    "caption": "Foto de referencia de Puertas interiores. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Ventanas": {
+    "url": "/fotos/catalogo/ventanas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ventanas.",
+    "caption": "Foto de referencia de Ventanas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Rejas": {
+    "url": "/fotos/catalogo/rejas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Rejas.",
+    "caption": "Foto de referencia de Rejas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Portón": {
+    "url": "/fotos/catalogo/porton.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Portón.",
+    "caption": "Foto de referencia de Portón. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tanque de agua": {
+    "url": "/fotos/catalogo/tanque-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tanque de agua.",
+    "caption": "Foto de referencia de Tanque de agua. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Bomba de agua": {
+    "url": "/fotos/catalogo/bomba-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Bomba de agua.",
+    "caption": "Foto de referencia de Bomba de agua. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cámara séptica": {
+    "url": "/fotos/catalogo/camara-septica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cámara séptica.",
+    "caption": "Foto de referencia de Cámara séptica. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Inodoro": {
+    "url": "/fotos/catalogo/inodoro.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Inodoro.",
+    "caption": "Foto de referencia de Inodoro. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Bidet": {
+    "url": "/fotos/catalogo/bidet.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Bidet.",
+    "caption": "Foto de referencia de Bidet. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tina": {
+    "url": "/fotos/catalogo/tina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tina.",
+    "caption": "Foto de referencia de Tina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Receptáculo de ducha": {
+    "url": "/fotos/catalogo/receptaculo-de-ducha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Receptáculo de ducha.",
+    "caption": "Foto de referencia de Receptáculo de ducha. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Lavatorio": {
+    "url": "/fotos/catalogo/lavatorio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Lavatorio.",
+    "caption": "Foto de referencia de Lavatorio. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Vanitory": {
+    "url": "/fotos/catalogo/vanitory.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Vanitory.",
+    "caption": "Foto de referencia de Vanitory. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Pileta de cocina": {
+    "url": "/fotos/catalogo/pileta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Pileta de cocina.",
+    "caption": "Foto de referencia de Pileta de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Mesada de cocina": {
+    "url": "/fotos/catalogo/mesada-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Mesada de cocina.",
+    "caption": "Foto de referencia de Mesada de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Grifería de baño": {
+    "url": "/fotos/catalogo/griferia-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Grifería de baño.",
+    "caption": "Foto de referencia de Grifería de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Grifería de cocina": {
+    "url": "/fotos/catalogo/griferia-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Grifería de cocina.",
+    "caption": "Foto de referencia de Grifería de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Mampara": {
+    "url": "/fotos/catalogo/mampara.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Mampara.",
+    "caption": "Foto de referencia de Mampara. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Extractor de baño": {
+    "url": "/fotos/catalogo/extractor-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Extractor de baño.",
+    "caption": "Foto de referencia de Extractor de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Caños de agua": {
+    "url": "/fotos/catalogo/canos-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Caños de agua.",
+    "caption": "Foto de referencia de Caños de agua. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Caños de desagüe": {
+    "url": "/fotos/catalogo/canos-de-desague.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Caños de desagüe.",
+    "caption": "Foto de referencia de Caños de desagüe. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Caños de gas": {
+    "url": "/fotos/catalogo/canos-de-gas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Caños de gas.",
+    "caption": "Foto de referencia de Caños de gas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Garrafa y regulador": {
+    "url": "/fotos/catalogo/garrafa-y-regulador.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Garrafa y regulador.",
+    "caption": "Foto de referencia de Garrafa y regulador. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cable eléctrico": {
+    "url": "/fotos/catalogo/cable-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cable eléctrico.",
+    "caption": "Foto de referencia de Cable eléctrico. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Llaves y tomacorrientes": {
+    "url": "/fotos/catalogo/llaves-y-tomacorrientes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Llaves y tomacorrientes.",
+    "caption": "Foto de referencia de Llaves y tomacorrientes. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tablero eléctrico": {
+    "url": "/fotos/catalogo/tablero-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tablero eléctrico.",
+    "caption": "Foto de referencia de Tablero eléctrico. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Accesorios de baño": {
+    "url": "/fotos/catalogo/accesorios-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Accesorios de baño.",
+    "caption": "Foto de referencia de Accesorios de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cocina": {
+    "url": "/fotos/catalogo/cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cocina.",
+    "caption": "Foto de referencia de Cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Heladera": {
+    "url": "/fotos/catalogo/heladera.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Heladera.",
+    "caption": "Foto de referencia de Heladera. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Lavarropas": {
+    "url": "/fotos/catalogo/lavarropas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Lavarropas.",
+    "caption": "Foto de referencia de Lavarropas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Ventiladores": {
+    "url": "/fotos/catalogo/ventiladores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ventiladores.",
+    "caption": "Foto de referencia de Ventiladores. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Calefón o termotanque": {
+    "url": "/fotos/catalogo/calefon-o-termotanque.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Calefón o termotanque.",
+    "caption": "Foto de referencia de Calefón o termotanque. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Plancha": {
+    "url": "/fotos/catalogo/plancha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Plancha.",
+    "caption": "Foto de referencia de Plancha. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Microondas": {
+    "url": "/fotos/catalogo/microondas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Microondas.",
+    "caption": "Foto de referencia de Microondas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Pava eléctrica": {
+    "url": "/fotos/catalogo/pava-electrica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Pava eléctrica.",
+    "caption": "Foto de referencia de Pava eléctrica. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Campana extractora": {
+    "url": "/fotos/catalogo/campana-extractora.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Campana extractora.",
+    "caption": "Foto de referencia de Campana extractora. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cama plaza y media": {
+    "url": "/fotos/catalogo/cama-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cama plaza y media.",
+    "caption": "Foto de referencia de Cama plaza y media. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Colchón plaza y media": {
+    "url": "/fotos/catalogo/colchon-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Colchón plaza y media.",
+    "caption": "Foto de referencia de Colchón plaza y media. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Ropero": {
+    "url": "/fotos/catalogo/ropero.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Ropero.",
+    "caption": "Foto de referencia de Ropero. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Mesa de luz": {
+    "url": "/fotos/catalogo/mesa-de-luz.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Mesa de luz.",
+    "caption": "Foto de referencia de Mesa de luz. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Mesa de cocina": {
+    "url": "/fotos/catalogo/mesa-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Mesa de cocina.",
+    "caption": "Foto de referencia de Mesa de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Sillas": {
+    "url": "/fotos/catalogo/sillas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Sillas.",
+    "caption": "Foto de referencia de Sillas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Sillón de dos cuerpos": {
+    "url": "/fotos/catalogo/sillon-de-dos-cuerpos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Sillón de dos cuerpos.",
+    "caption": "Foto de referencia de Sillón de dos cuerpos. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Mesa ratona": {
+    "url": "/fotos/catalogo/mesa-ratona.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Mesa ratona.",
+    "caption": "Foto de referencia de Mesa ratona. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Bajo mesada": {
+    "url": "/fotos/catalogo/bajo-mesada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Bajo mesada.",
+    "caption": "Foto de referencia de Bajo mesada. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Alacena": {
+    "url": "/fotos/catalogo/alacena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Alacena.",
+    "caption": "Foto de referencia de Alacena. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Banqueta de cocina": {
+    "url": "/fotos/catalogo/banqueta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Banqueta de cocina.",
+    "caption": "Foto de referencia de Banqueta de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Juego de ollas": {
+    "url": "/fotos/catalogo/juego-de-ollas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Juego de ollas.",
+    "caption": "Foto de referencia de Juego de ollas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Sartenes": {
+    "url": "/fotos/catalogo/sartenes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Sartenes.",
+    "caption": "Foto de referencia de Sartenes. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Vajilla": {
+    "url": "/fotos/catalogo/vajilla.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Vajilla.",
+    "caption": "Foto de referencia de Vajilla. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cubiertos": {
+    "url": "/fotos/catalogo/cubiertos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cubiertos.",
+    "caption": "Foto de referencia de Cubiertos. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Vasos y jarra": {
+    "url": "/fotos/catalogo/vasos-y-jarra.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Vasos y jarra.",
+    "caption": "Foto de referencia de Vasos y jarra. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Utensilios de cocina": {
+    "url": "/fotos/catalogo/utensilios-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Utensilios de cocina.",
+    "caption": "Foto de referencia de Utensilios de cocina. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tabla para picar": {
+    "url": "/fotos/catalogo/tabla-para-picar.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tabla para picar.",
+    "caption": "Foto de referencia de Tabla para picar. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Almohadas": {
+    "url": "/fotos/catalogo/almohadas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Almohadas.",
+    "caption": "Foto de referencia de Almohadas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Sábanas plaza y media": {
+    "url": "/fotos/catalogo/sabanas-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Sábanas plaza y media.",
+    "caption": "Foto de referencia de Sábanas plaza y media. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Acolchado": {
+    "url": "/fotos/catalogo/acolchado.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Acolchado.",
+    "caption": "Foto de referencia de Acolchado. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Toallas": {
+    "url": "/fotos/catalogo/toallas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Toallas.",
+    "caption": "Foto de referencia de Toallas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cortina de baño": {
+    "url": "/fotos/catalogo/cortina-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cortina de baño.",
+    "caption": "Foto de referencia de Cortina de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Espejo de baño": {
+    "url": "/fotos/catalogo/espejo-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Espejo de baño.",
+    "caption": "Foto de referencia de Espejo de baño. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Cortinas": {
+    "url": "/fotos/catalogo/cortinas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Cortinas.",
+    "caption": "Foto de referencia de Cortinas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Tender": {
+    "url": "/fotos/catalogo/tender.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Tender.",
+    "caption": "Foto de referencia de Tender. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Balde y lampazo": {
+    "url": "/fotos/catalogo/balde-y-lampazo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Balde y lampazo.",
+    "caption": "Foto de referencia de Balde y lampazo. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Escoba y palita": {
+    "url": "/fotos/catalogo/escoba-y-palita.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Escoba y palita.",
+    "caption": "Foto de referencia de Escoba y palita. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Lámparas": {
+    "url": "/fotos/catalogo/lamparas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Lámparas.",
+    "caption": "Foto de referencia de Lámparas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Zapatillas eléctricas": {
+    "url": "/fotos/catalogo/zapatillas-electricas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Zapatillas eléctricas.",
+    "caption": "Foto de referencia de Zapatillas eléctricas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Perchas": {
+    "url": "/fotos/catalogo/perchas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Perchas.",
+    "caption": "Foto de referencia de Perchas. Muestra el tipo de material u objeto, no una compra de esta casa."
+  },
+  "Chapas del techo (datos de desarrollo)": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Imagen de referencia generada",
+    "takenOn": null,
+    "alt": "Foto de referencia: Chapas del techo (datos de desarrollo).",
+    "caption": "Foto de referencia de Chapas del techo (datos de desarrollo). Muestra el tipo de material u objeto, no una compra de esta casa."
+  }
+}

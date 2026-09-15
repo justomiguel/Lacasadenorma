@@ -1,13 +1,18 @@
 import { BusyCue } from "@/components/design-system/busy";
 import { EditorialImage } from "@/components/design-system/editorial-image";
-import { ReservedSpace } from "@/components/design-system/photo";
+import { ReservedSpace, type Photograph } from "@/components/design-system/photo";
 import type {
   AccountContent,
   CatalogContent,
   HelpContent,
   UiContent,
 } from "@/content/schema";
-import { canClaim, isCovered, takenStatus } from "@/src/domain/catalog";
+import {
+  canClaim,
+  catalogItemPhotograph,
+  isCovered,
+  takenStatus,
+} from "@/src/domain/catalog";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import { fill } from "@/src/i18n/fill";
 import type { Locale } from "@/src/i18n/locale";
@@ -59,21 +64,20 @@ export function CatalogItem({
         unit,
       });
   const names = taken.names.join(", ");
+  const photo = catalogItemPhotograph<Photograph>(
+    item.photo,
+    copy.referencePhotos[item.title] ?? null,
+  );
 
   return (
     <article id={`item-${item.id}`} className="scroll-mt-xl">
-      {item.photo === null ? (
+      {photo === null ? (
         <ReservedSpace
           ratio="landscape"
           description={fill(copy.reservedPhoto, { title: item.title })}
         />
       ) : (
-        <EditorialImage
-          media={item.photo}
-          variant="documentary"
-          caption={false}
-          priority={priority}
-        />
+        <EditorialImage media={photo} variant="documentary" caption priority={priority} />
       )}
       {item.description === null ? null : (
         <p className="mt-lg max-w-measure text-body text-ink-muted">{item.description}</p>

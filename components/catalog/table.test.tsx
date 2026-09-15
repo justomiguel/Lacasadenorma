@@ -26,6 +26,7 @@ const COPY = {
     litro: { one: "litro", other: "litros" },
     juego: { one: "juego", other: "juegos" },
   },
+  referencePhotos: {},
 } as CatalogContent;
 
 function item(partial: Partial<DonationItem> = {}): DonationItem {

@@ -510,7 +510,7 @@ Están todas listadas campo por campo en `docs/content-guide.md`.
 | D2 | **Presupuesto de la reconstrucción**: total y desglose por rubro, con moneda | Se muestran los rubros sin monto y se omite el porcentaje |
 | D3 | **Monto ya recaudado** y fecha de la última conciliación | Se omite la barra de progreso |
 | D4 | **Fechas de Norma** (nacimiento, fallecimiento) y cómo la familia quiere que se cuente el accidente | El texto se escribe sin fechas y se omite `deathDate` del JSON-LD |
-| D5 | **Fotografías reales**, con crédito y autorización de la familia | Se reserva el espacio con proporción correcta; no se generan imágenes sintéticas ni se usan bancos de stock |
+| D5 | **Fotografías reales**, con crédito y autorización de la familia | En el relato se reserva el espacio; no se generan ni se usa stock. El catálogo puede mostrar una foto de referencia del tipo, etiquetada (ADR-042) |
 | D6 | **Dominio definitivo** | Se asume `lacasadenorma.org`, configurable con una variable de entorno |
 
 ### Bloquean features, no el lanzamiento

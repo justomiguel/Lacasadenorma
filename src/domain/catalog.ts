@@ -154,6 +154,19 @@ export function groupCatalogByCategory<
   });
 }
 
+/**
+ * La foto de la ficha: la subida desde el backoffice gana; si no hay, la de
+ * referencia del tipo (ADR-042). El epígrafe —no esta función— es lo que
+ * impide presentarla como foto de esta casa.
+ */
+
+export function catalogItemPhotograph<T>(
+  uploaded: T | null,
+  reference: T | null,
+): T | null {
+  return uploaded ?? reference;
+}
+
 function assertQuantities({ needed, reserved, fulfilled }: ItemQuantities): void {
   if (!Number.isInteger(needed) || needed <= 0) {
     throw new DomainError("La cantidad necesaria tiene que ser un entero positivo.");

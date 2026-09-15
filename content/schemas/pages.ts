@@ -7,6 +7,7 @@ import {
   photoGroupSchema,
   photoSchema,
   pressItemSchema,
+  type CatalogPhotos,
 } from "./primitives";
 
 export const pageSchema = z.object({
@@ -250,7 +251,9 @@ export type WhatHappenedContent = z.infer<typeof whatHappenedSchema>;
 export type ReconstructionContent = z.infer<typeof reconstructionSchema>;
 export type HelpContent = z.infer<typeof helpSchema>;
 export type TransparencyContent = z.infer<typeof transparencySchema>;
-export type CatalogContent = z.infer<typeof catalogSchema>;
+export type CatalogContent = z.infer<typeof catalogSchema> & {
+  readonly referencePhotos: CatalogPhotos;
+};
 export type WallContent = z.infer<typeof wallSchema>;
 export type FaqContent = z.infer<typeof faqSchema>;
 export type LegalContent = z.infer<typeof legalSchema>;

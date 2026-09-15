@@ -1,0 +1,785 @@
+{
+  "Ladrillos comunes": {
+    "url": "/fotos/catalogo/ladrillos-comunes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ladrillos comunes.",
+    "caption": "Reference photo of Ladrillos comunes. It shows the kind of item, not a purchase for this house."
+  },
+  "Ladrillos huecos 18x18x33": {
+    "url": "/fotos/catalogo/ladrillos-huecos-18x18x33.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ladrillos huecos 18x18x33.",
+    "caption": "Reference photo of Ladrillos huecos 18x18x33. It shows the kind of item, not a purchase for this house."
+  },
+  "Cemento": {
+    "url": "/fotos/catalogo/cemento.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cemento.",
+    "caption": "Reference photo of Cemento. It shows the kind of item, not a purchase for this house."
+  },
+  "Cal hidratada": {
+    "url": "/fotos/catalogo/cal-hidratada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cal hidratada.",
+    "caption": "Reference photo of Cal hidratada. It shows the kind of item, not a purchase for this house."
+  },
+  "Arena": {
+    "url": "/fotos/catalogo/arena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Arena.",
+    "caption": "Reference photo of Arena. It shows the kind of item, not a purchase for this house."
+  },
+  "Ripio": {
+    "url": "/fotos/catalogo/ripio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ripio.",
+    "caption": "Reference photo of Ripio. It shows the kind of item, not a purchase for this house."
+  },
+  "Hidrófugo": {
+    "url": "/fotos/catalogo/hidrofugo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Hidrófugo.",
+    "caption": "Reference photo of Hidrófugo. It shows the kind of item, not a purchase for this house."
+  },
+  "Chapas de techo": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Chapas de techo.",
+    "caption": "Reference photo of Chapas de techo. It shows the kind of item, not a purchase for this house."
+  },
+  "Cerámico de piso": {
+    "url": "/fotos/catalogo/ceramico-de-piso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cerámico de piso.",
+    "caption": "Reference photo of Cerámico de piso. It shows the kind of item, not a purchase for this house."
+  },
+  "Azulejos de cocina": {
+    "url": "/fotos/catalogo/azulejos-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Azulejos de cocina.",
+    "caption": "Reference photo of Azulejos de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Azulejos de baño": {
+    "url": "/fotos/catalogo/azulejos-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Azulejos de baño.",
+    "caption": "Reference photo of Azulejos de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Pintura": {
+    "url": "/fotos/catalogo/pintura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Pintura.",
+    "caption": "Reference photo of Pintura. It shows the kind of item, not a purchase for this house."
+  },
+  "Hierro para estructura": {
+    "url": "/fotos/catalogo/hierro-para-estructura.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Hierro para estructura.",
+    "caption": "Reference photo of Hierro para estructura. It shows the kind of item, not a purchase for this house."
+  },
+  "Tirantes de techo": {
+    "url": "/fotos/catalogo/tirantes-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tirantes de techo.",
+    "caption": "Reference photo of Tirantes de techo. It shows the kind of item, not a purchase for this house."
+  },
+  "Cielorraso": {
+    "url": "/fotos/catalogo/cielorraso.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cielorraso.",
+    "caption": "Reference photo of Cielorraso. It shows the kind of item, not a purchase for this house."
+  },
+  "Zócalos": {
+    "url": "/fotos/catalogo/zocalos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Zócalos.",
+    "caption": "Reference photo of Zócalos. It shows the kind of item, not a purchase for this house."
+  },
+  "Enduido": {
+    "url": "/fotos/catalogo/enduido.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Enduido.",
+    "caption": "Reference photo of Enduido. It shows the kind of item, not a purchase for this house."
+  },
+  "Clavos y alambre": {
+    "url": "/fotos/catalogo/clavos-y-alambre.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Clavos y alambre.",
+    "caption": "Reference photo of Clavos y alambre. It shows the kind of item, not a purchase for this house."
+  },
+  "Puerta de entrada": {
+    "url": "/fotos/catalogo/puerta-de-entrada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Puerta de entrada.",
+    "caption": "Reference photo of Puerta de entrada. It shows the kind of item, not a purchase for this house."
+  },
+  "Puertas interiores": {
+    "url": "/fotos/catalogo/puertas-interiores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Puertas interiores.",
+    "caption": "Reference photo of Puertas interiores. It shows the kind of item, not a purchase for this house."
+  },
+  "Ventanas": {
+    "url": "/fotos/catalogo/ventanas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ventanas.",
+    "caption": "Reference photo of Ventanas. It shows the kind of item, not a purchase for this house."
+  },
+  "Rejas": {
+    "url": "/fotos/catalogo/rejas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Rejas.",
+    "caption": "Reference photo of Rejas. It shows the kind of item, not a purchase for this house."
+  },
+  "Portón": {
+    "url": "/fotos/catalogo/porton.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Portón.",
+    "caption": "Reference photo of Portón. It shows the kind of item, not a purchase for this house."
+  },
+  "Tanque de agua": {
+    "url": "/fotos/catalogo/tanque-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tanque de agua.",
+    "caption": "Reference photo of Tanque de agua. It shows the kind of item, not a purchase for this house."
+  },
+  "Bomba de agua": {
+    "url": "/fotos/catalogo/bomba-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Bomba de agua.",
+    "caption": "Reference photo of Bomba de agua. It shows the kind of item, not a purchase for this house."
+  },
+  "Cámara séptica": {
+    "url": "/fotos/catalogo/camara-septica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cámara séptica.",
+    "caption": "Reference photo of Cámara séptica. It shows the kind of item, not a purchase for this house."
+  },
+  "Inodoro": {
+    "url": "/fotos/catalogo/inodoro.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Inodoro.",
+    "caption": "Reference photo of Inodoro. It shows the kind of item, not a purchase for this house."
+  },
+  "Bidet": {
+    "url": "/fotos/catalogo/bidet.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Bidet.",
+    "caption": "Reference photo of Bidet. It shows the kind of item, not a purchase for this house."
+  },
+  "Tina": {
+    "url": "/fotos/catalogo/tina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tina.",
+    "caption": "Reference photo of Tina. It shows the kind of item, not a purchase for this house."
+  },
+  "Receptáculo de ducha": {
+    "url": "/fotos/catalogo/receptaculo-de-ducha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Receptáculo de ducha.",
+    "caption": "Reference photo of Receptáculo de ducha. It shows the kind of item, not a purchase for this house."
+  },
+  "Lavatorio": {
+    "url": "/fotos/catalogo/lavatorio.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Lavatorio.",
+    "caption": "Reference photo of Lavatorio. It shows the kind of item, not a purchase for this house."
+  },
+  "Vanitory": {
+    "url": "/fotos/catalogo/vanitory.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Vanitory.",
+    "caption": "Reference photo of Vanitory. It shows the kind of item, not a purchase for this house."
+  },
+  "Pileta de cocina": {
+    "url": "/fotos/catalogo/pileta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Pileta de cocina.",
+    "caption": "Reference photo of Pileta de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Mesada de cocina": {
+    "url": "/fotos/catalogo/mesada-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Mesada de cocina.",
+    "caption": "Reference photo of Mesada de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Grifería de baño": {
+    "url": "/fotos/catalogo/griferia-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Grifería de baño.",
+    "caption": "Reference photo of Grifería de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Grifería de cocina": {
+    "url": "/fotos/catalogo/griferia-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Grifería de cocina.",
+    "caption": "Reference photo of Grifería de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Mampara": {
+    "url": "/fotos/catalogo/mampara.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Mampara.",
+    "caption": "Reference photo of Mampara. It shows the kind of item, not a purchase for this house."
+  },
+  "Extractor de baño": {
+    "url": "/fotos/catalogo/extractor-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Extractor de baño.",
+    "caption": "Reference photo of Extractor de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Caños de agua": {
+    "url": "/fotos/catalogo/canos-de-agua.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Caños de agua.",
+    "caption": "Reference photo of Caños de agua. It shows the kind of item, not a purchase for this house."
+  },
+  "Caños de desagüe": {
+    "url": "/fotos/catalogo/canos-de-desague.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Caños de desagüe.",
+    "caption": "Reference photo of Caños de desagüe. It shows the kind of item, not a purchase for this house."
+  },
+  "Caños de gas": {
+    "url": "/fotos/catalogo/canos-de-gas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Caños de gas.",
+    "caption": "Reference photo of Caños de gas. It shows the kind of item, not a purchase for this house."
+  },
+  "Garrafa y regulador": {
+    "url": "/fotos/catalogo/garrafa-y-regulador.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Garrafa y regulador.",
+    "caption": "Reference photo of Garrafa y regulador. It shows the kind of item, not a purchase for this house."
+  },
+  "Cable eléctrico": {
+    "url": "/fotos/catalogo/cable-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cable eléctrico.",
+    "caption": "Reference photo of Cable eléctrico. It shows the kind of item, not a purchase for this house."
+  },
+  "Llaves y tomacorrientes": {
+    "url": "/fotos/catalogo/llaves-y-tomacorrientes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Llaves y tomacorrientes.",
+    "caption": "Reference photo of Llaves y tomacorrientes. It shows the kind of item, not a purchase for this house."
+  },
+  "Tablero eléctrico": {
+    "url": "/fotos/catalogo/tablero-electrico.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tablero eléctrico.",
+    "caption": "Reference photo of Tablero eléctrico. It shows the kind of item, not a purchase for this house."
+  },
+  "Accesorios de baño": {
+    "url": "/fotos/catalogo/accesorios-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Accesorios de baño.",
+    "caption": "Reference photo of Accesorios de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Cocina": {
+    "url": "/fotos/catalogo/cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cocina.",
+    "caption": "Reference photo of Cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Heladera": {
+    "url": "/fotos/catalogo/heladera.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Heladera.",
+    "caption": "Reference photo of Heladera. It shows the kind of item, not a purchase for this house."
+  },
+  "Lavarropas": {
+    "url": "/fotos/catalogo/lavarropas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Lavarropas.",
+    "caption": "Reference photo of Lavarropas. It shows the kind of item, not a purchase for this house."
+  },
+  "Ventiladores": {
+    "url": "/fotos/catalogo/ventiladores.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ventiladores.",
+    "caption": "Reference photo of Ventiladores. It shows the kind of item, not a purchase for this house."
+  },
+  "Calefón o termotanque": {
+    "url": "/fotos/catalogo/calefon-o-termotanque.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Calefón o termotanque.",
+    "caption": "Reference photo of Calefón o termotanque. It shows the kind of item, not a purchase for this house."
+  },
+  "Plancha": {
+    "url": "/fotos/catalogo/plancha.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Plancha.",
+    "caption": "Reference photo of Plancha. It shows the kind of item, not a purchase for this house."
+  },
+  "Microondas": {
+    "url": "/fotos/catalogo/microondas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Microondas.",
+    "caption": "Reference photo of Microondas. It shows the kind of item, not a purchase for this house."
+  },
+  "Pava eléctrica": {
+    "url": "/fotos/catalogo/pava-electrica.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Pava eléctrica.",
+    "caption": "Reference photo of Pava eléctrica. It shows the kind of item, not a purchase for this house."
+  },
+  "Campana extractora": {
+    "url": "/fotos/catalogo/campana-extractora.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Campana extractora.",
+    "caption": "Reference photo of Campana extractora. It shows the kind of item, not a purchase for this house."
+  },
+  "Cama plaza y media": {
+    "url": "/fotos/catalogo/cama-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cama plaza y media.",
+    "caption": "Reference photo of Cama plaza y media. It shows the kind of item, not a purchase for this house."
+  },
+  "Colchón plaza y media": {
+    "url": "/fotos/catalogo/colchon-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Colchón plaza y media.",
+    "caption": "Reference photo of Colchón plaza y media. It shows the kind of item, not a purchase for this house."
+  },
+  "Ropero": {
+    "url": "/fotos/catalogo/ropero.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Ropero.",
+    "caption": "Reference photo of Ropero. It shows the kind of item, not a purchase for this house."
+  },
+  "Mesa de luz": {
+    "url": "/fotos/catalogo/mesa-de-luz.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Mesa de luz.",
+    "caption": "Reference photo of Mesa de luz. It shows the kind of item, not a purchase for this house."
+  },
+  "Mesa de cocina": {
+    "url": "/fotos/catalogo/mesa-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Mesa de cocina.",
+    "caption": "Reference photo of Mesa de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Sillas": {
+    "url": "/fotos/catalogo/sillas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Sillas.",
+    "caption": "Reference photo of Sillas. It shows the kind of item, not a purchase for this house."
+  },
+  "Sillón de dos cuerpos": {
+    "url": "/fotos/catalogo/sillon-de-dos-cuerpos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Sillón de dos cuerpos.",
+    "caption": "Reference photo of Sillón de dos cuerpos. It shows the kind of item, not a purchase for this house."
+  },
+  "Mesa ratona": {
+    "url": "/fotos/catalogo/mesa-ratona.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Mesa ratona.",
+    "caption": "Reference photo of Mesa ratona. It shows the kind of item, not a purchase for this house."
+  },
+  "Bajo mesada": {
+    "url": "/fotos/catalogo/bajo-mesada.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Bajo mesada.",
+    "caption": "Reference photo of Bajo mesada. It shows the kind of item, not a purchase for this house."
+  },
+  "Alacena": {
+    "url": "/fotos/catalogo/alacena.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Alacena.",
+    "caption": "Reference photo of Alacena. It shows the kind of item, not a purchase for this house."
+  },
+  "Banqueta de cocina": {
+    "url": "/fotos/catalogo/banqueta-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Banqueta de cocina.",
+    "caption": "Reference photo of Banqueta de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Juego de ollas": {
+    "url": "/fotos/catalogo/juego-de-ollas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Juego de ollas.",
+    "caption": "Reference photo of Juego de ollas. It shows the kind of item, not a purchase for this house."
+  },
+  "Sartenes": {
+    "url": "/fotos/catalogo/sartenes.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Sartenes.",
+    "caption": "Reference photo of Sartenes. It shows the kind of item, not a purchase for this house."
+  },
+  "Vajilla": {
+    "url": "/fotos/catalogo/vajilla.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Vajilla.",
+    "caption": "Reference photo of Vajilla. It shows the kind of item, not a purchase for this house."
+  },
+  "Cubiertos": {
+    "url": "/fotos/catalogo/cubiertos.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cubiertos.",
+    "caption": "Reference photo of Cubiertos. It shows the kind of item, not a purchase for this house."
+  },
+  "Vasos y jarra": {
+    "url": "/fotos/catalogo/vasos-y-jarra.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Vasos y jarra.",
+    "caption": "Reference photo of Vasos y jarra. It shows the kind of item, not a purchase for this house."
+  },
+  "Utensilios de cocina": {
+    "url": "/fotos/catalogo/utensilios-de-cocina.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Utensilios de cocina.",
+    "caption": "Reference photo of Utensilios de cocina. It shows the kind of item, not a purchase for this house."
+  },
+  "Tabla para picar": {
+    "url": "/fotos/catalogo/tabla-para-picar.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tabla para picar.",
+    "caption": "Reference photo of Tabla para picar. It shows the kind of item, not a purchase for this house."
+  },
+  "Almohadas": {
+    "url": "/fotos/catalogo/almohadas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Almohadas.",
+    "caption": "Reference photo of Almohadas. It shows the kind of item, not a purchase for this house."
+  },
+  "Sábanas plaza y media": {
+    "url": "/fotos/catalogo/sabanas-plaza-y-media.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Sábanas plaza y media.",
+    "caption": "Reference photo of Sábanas plaza y media. It shows the kind of item, not a purchase for this house."
+  },
+  "Acolchado": {
+    "url": "/fotos/catalogo/acolchado.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Acolchado.",
+    "caption": "Reference photo of Acolchado. It shows the kind of item, not a purchase for this house."
+  },
+  "Toallas": {
+    "url": "/fotos/catalogo/toallas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Toallas.",
+    "caption": "Reference photo of Toallas. It shows the kind of item, not a purchase for this house."
+  },
+  "Cortina de baño": {
+    "url": "/fotos/catalogo/cortina-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cortina de baño.",
+    "caption": "Reference photo of Cortina de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Espejo de baño": {
+    "url": "/fotos/catalogo/espejo-de-bano.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Espejo de baño.",
+    "caption": "Reference photo of Espejo de baño. It shows the kind of item, not a purchase for this house."
+  },
+  "Cortinas": {
+    "url": "/fotos/catalogo/cortinas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Cortinas.",
+    "caption": "Reference photo of Cortinas. It shows the kind of item, not a purchase for this house."
+  },
+  "Tender": {
+    "url": "/fotos/catalogo/tender.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Tender.",
+    "caption": "Reference photo of Tender. It shows the kind of item, not a purchase for this house."
+  },
+  "Balde y lampazo": {
+    "url": "/fotos/catalogo/balde-y-lampazo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Balde y lampazo.",
+    "caption": "Reference photo of Balde y lampazo. It shows the kind of item, not a purchase for this house."
+  },
+  "Escoba y palita": {
+    "url": "/fotos/catalogo/escoba-y-palita.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Escoba y palita.",
+    "caption": "Reference photo of Escoba y palita. It shows the kind of item, not a purchase for this house."
+  },
+  "Lámparas": {
+    "url": "/fotos/catalogo/lamparas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Lámparas.",
+    "caption": "Reference photo of Lámparas. It shows the kind of item, not a purchase for this house."
+  },
+  "Zapatillas eléctricas": {
+    "url": "/fotos/catalogo/zapatillas-electricas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Zapatillas eléctricas.",
+    "caption": "Reference photo of Zapatillas eléctricas. It shows the kind of item, not a purchase for this house."
+  },
+  "Perchas": {
+    "url": "/fotos/catalogo/perchas.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Perchas.",
+    "caption": "Reference photo of Perchas. It shows the kind of item, not a purchase for this house."
+  },
+  "Chapas del techo (datos de desarrollo)": {
+    "url": "/fotos/catalogo/chapas-de-techo.jpg",
+    "width": 1152,
+    "height": 864,
+    "credit": "Generated reference image",
+    "takenOn": null,
+    "alt": "Reference photo: Chapas del techo (datos de desarrollo).",
+    "caption": "Reference photo of Chapas del techo (datos de desarrollo). It shows the kind of item, not a purchase for this house."
+  }
+}

@@ -8,11 +8,12 @@ import { cn } from "./cn";
  * La fotografía es el elemento que **estructura** el sitio: el resto se ordena
  * alrededor de ella (ADR-021). No es un adorno que se agrega al final.
  *
- * Mientras no haya foto real **no se usan ilustraciones, ni imágenes de stock, ni
- * imágenes generadas**: se reserva el espacio con la proporción correcta y se dice
- * qué va ahí. Un espacio vacío con intención se lee como respeto; una foto de
- * stock se lee como mentira. Pero es un estado **transitorio**: si el material
- * puede tardar, la página tiene que verse terminada sin él.
+ * En el relato —Norma, el incendio, la obra— **no se usan ilustraciones, ni
+ * imágenes de stock, ni imágenes generadas**: se reserva el espacio con la
+ * proporción correcta y se dice qué va ahí. Un espacio vacío con intención se
+ * lee como respeto; una foto de stock de una casa que no es ésta se lee como
+ * mentira. El catálogo es la excepción (ADR-042): una foto de referencia del
+ * tipo, etiquetada, nunca presentada como foto de esta casa.
  *
  * El mockup (ADR-025) redondea las fotos. El recorte sigue siendo el del archivo:
  * `object-cover` no deforma.

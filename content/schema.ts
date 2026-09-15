@@ -32,8 +32,13 @@ export type {
 } from "./schemas/pages";
 export { personSchema } from "./schemas/person";
 export type { PersonContent } from "./schemas/person";
-export { photoGroupSchema, photoSchema, pressItemSchema } from "./schemas/primitives";
-export type { Photo, PhotoGroup, PressItem } from "./schemas/primitives";
+export {
+  photoGroupSchema,
+  photoSchema,
+  pressItemSchema,
+  catalogPhotosSchema,
+} from "./schemas/primitives";
+export type { Photo, PhotoGroup, PressItem, CatalogPhotos } from "./schemas/primitives";
 export { siteSchema } from "./schemas/site";
 export type { SiteContent } from "./schemas/site";
 

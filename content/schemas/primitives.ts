@@ -18,7 +18,10 @@ import { z } from "zod";
  * ([ADR-021](../../docs/adr/021-segunda-direccion-visual.md)): las **editoriales**
  * —el retrato de Norma, el incendio, la limpieza— se eligen una vez y viven acá,
  * con el archivo en `public/fotos/`. Las del **avance de la obra** cambian con
- * cada novedad y siguen viniendo de la base, subidas desde el backoffice.
+ * cada novedad y siguen viniendo de la base, subidas desde el backoffice. Las
+ * de **referencia del catálogo** (ADR-042) también se eligen una vez y viven en
+ * `public/fotos/catalogo/`, con epígrafe que dice que no son una compra de esta
+ * casa.
  */
 
 /** Prosa: párrafos sueltos, sin HTML. Cada elemento es un `<p>`. */
@@ -75,6 +78,30 @@ export const photoGroupSchema = z.object({
   note: z.string().min(1).nullable(),
   photos: z.array(photoSchema).min(1),
 });
+
+/**
+ * Foto de referencia de un ítem del catálogo (ADR-042).
+ *
+ * Vive en `public/fotos/catalogo/`, no junto a las de la familia. El epígrafe
+ * y el crédito son obligatorios: sin ellos se leería como foto de esta casa.
+ */
+export const catalogReferencePhotoSchema = photoSchema.extend({
+  url: z
+    .string()
+    .startsWith(
+      "/fotos/catalogo/",
+      "La foto de referencia tiene que vivir en public/fotos/catalogo/",
+    ),
+  caption: z.string().min(1),
+  credit: z.string().min(1),
+});
+
+export const catalogPhotosSchema = z.record(
+  z.string().min(1),
+  catalogReferencePhotoSchema,
+);
+
+export type CatalogPhotos = z.infer<typeof catalogPhotosSchema>;
 
 /**
  * Vista previa de una nota de prensa. Vive en `public/medios/`, no en
