@@ -464,10 +464,10 @@ exigiendo cero `data-figure`.
   qué va ahí. Un espacio vacío con intención se lee como respeto; una foto de stock de una casa
   que no es ésta se lee como mentira. Pero es un **estado transitorio**: si el material puede
   tardar, la página tiene que verse terminada sin él (sección 12).
-- **El catálogo es la excepción** (ADR-043). Cada ficha puede mostrar una foto de referencia del
-  tipo de material, con epígrafe que dice que es solamente ilustrativa y que no representa el
-  objeto real. La foto subida desde el backoffice pisa esa referencia. Sin ninguna de las dos, se
-  reserva el hueco.
+- **El catálogo es la excepción** (ADR-043). El listado muestra una miniatura en la celda Qué
+  cuando hay foto. Cada ficha muestra la foto completa, con epígrafe que dice que es solamente
+  ilustrativa y que no representa el objeto real. La foto subida desde el backoffice pisa esa
+  referencia. Sin ninguna de las dos, la ficha reserva el hueco; el listado no.
 - **La orientación del material manda.** Lo que se filmó con el teléfono en la mano es 9:16 y no se
   recorta a apaisado sin perder algo: va al ancho completo en teléfono, que es su formato nativo, y al
   margen en escritorio. Estirar una foto de 600 px a 1440 se ve peor que la misma foto chica y bien

@@ -83,6 +83,10 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 8. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
    **Then** ve los datos de pago y **no** un formulario de reserva ni un pedido de cuenta. El nombre, si quiere aparecer,
    se pide cuando el equipo anota la transacción.
+9. **Given** un ítem publicado con foto de referencia o subida, **When** alguien abre `/catalogo`,
+   **Then** ve una miniatura de esa foto junto al título, en la misma celda Qué. **Given** un ítem
+   sin ninguna de las dos, **When** abre el listado, **Then** no ve un hueco reservado en esa fila:
+   el título alcanza.
 
 ---
 
@@ -245,9 +249,11 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   número disponible en el mensaje.
 - **Una cuenta del público llama directamente al servidor** intentando escribir en la campaña, leer
   aportes o reservar a nombre de otro. La base lo niega, no la interfaz.
-- **Un ítem sin foto subida.** La ficha muestra la foto de referencia del tipo, etiquetada como
-  tal (ADR-043). Si tampoco hay referencia, se reserva el espacio y se dice qué foto va ahí; no
-  se pone una imagen de archivo sin epígrafe (ADR-021).
+- **Un ítem sin foto subida.** El listado y la ficha muestran la foto de referencia del tipo
+  (ADR-043). En la ficha, etiquetada con epígrafe y crédito. En el listado, miniatura en Qué,
+  sin epígrafe por fila: el caption de la tabla dice que es ilustrativa. Si tampoco hay
+  referencia, la ficha reserva el espacio y dice qué foto va ahí; el listado omite la foto y
+  no reserva un hueco (ADR-021).
 - **Alguien navega sólo con teclado, o con lector de pantalla.** Registrarse, reservar y cambiar el
   anonimato se completan igual, con foco visible y errores anunciados.
 - **La fuente de datos no está disponible.** El catálogo y el muro se omiten con aviso, como el resto
@@ -284,21 +290,24 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 - **FR-209**: El sistema MUST publicar un catálogo de lo que falta como tabla en todo ancho de
   pantalla (también en teléfono: MUST NOT apilar cada columna como lista). Cada ítem tiene qué es,
-  cuántas unidades hacen falta, en qué unidad se cuenta, cuántas siguen faltando, si alguien ya la
-  tomó, el nombre público o la ausencia de nombre, el estimado por unidad y el estimado total de lo
-  que falta cuando hay un valor cargado, y un control «Quiero donar» al final de la fila que abre la
-  ficha (ADR-044). MUST NOT usar una acción primaria en la fila.
+  una foto compacta del tipo en la misma celda que el título cuando hay una (la subida o la de
+  referencia; MUST NOT reservar un hueco de foto en la fila), cuántas unidades hacen falta, en qué
+  unidad se cuenta, cuántas siguen faltando, si alguien ya la tomó, el nombre público o la ausencia
+  de nombre, el estimado por unidad y el estimado total de lo que falta cuando hay un valor
+  cargado, y un control «Quiero donar» al final de la fila que abre la ficha (ADR-043, ADR-044).
+  MUST NOT usar una acción primaria en la fila. MUST NOT agregar una columna sólo para la foto.
 - **FR-210**: El sistema MUST calcular lo que falta descontando lo reservado y lo ya entregado, y
   MUST NOT ofrecer para reservar un ítem cubierto.
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
   necesarias, incluso con pedidos simultáneos. La garantía MUST estar en la base de datos y MUST NOT
   depender de una comprobación previa en la aplicación.
 - **FR-212**: Un ítem MUST poder llevar una foto con texto alternativo. Si el equipo subió una
-  foto real desde el backoffice, esa MUST mostrarse. Si no, la ficha MUST mostrar una foto de
-  referencia del tipo de material, con epígrafe que diga que es solamente ilustrativa y que no
-  representa el objeto real (ADR-043). Sin ninguna de las dos, el espacio se reserva y se declara
-  qué va ahí, sin imagen de archivo. MUST NOT usar stock ni imagen generada en el relato (historia,
-  incendio, obra).
+  foto real desde el backoffice, esa MUST mostrarse en el listado y en la ficha. Si no, MUST
+  mostrarse la foto de referencia del tipo de material (ADR-043). En la ficha, con epígrafe que
+  diga que es solamente ilustrativa y que no representa el objeto real. En el listado, compacta
+  junto al título, sin epígrafe por fila: el caption de la tabla lo dice. Sin ninguna de las dos,
+  la ficha reserva el espacio y declara qué va ahí; el listado omite la foto. MUST NOT usar stock
+  ni imagen generada en el relato (historia, incendio, obra).
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
   y el presupuesto cuenten la misma obra.
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
@@ -313,7 +322,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-254**: Cada ítem publicado MUST tener una página propia con la foto (la subida, o la de
   referencia del tipo, o el espacio reservado), la descripción, las cantidades y, si queda algo,
   un solo formulario que explique que se puede traer el mismo bien o cubrirlo con plata. El
-  listado MUST NOT repetir la foto: la foto vive en la ficha.
+  listado MUST mostrar la misma foto en miniatura en la celda Qué cuando hay una, sin epígrafe
+  por fila y sin hueco si no hay. El epígrafe y el crédito completos viven en la ficha.
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
   reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.

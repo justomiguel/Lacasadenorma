@@ -1,13 +1,39 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { getContent } from "@/content";
-import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
+import type { CatalogClaim, DonationItem, MediaAsset } from "@/src/domain/entities";
 import { money } from "@/src/domain/money";
 
 import { CatalogTable } from "./table";
 
+vi.mock("next/image", () => ({
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element -- test double
+    <img src={src} alt={alt} />
+  ),
+}));
+
 const COPY = getContent("es").catalog;
+
+function uploaded(partial: Partial<MediaAsset> = {}): MediaAsset {
+  return {
+    id: "media-1",
+    kind: "photo",
+    bucketId: "media",
+    url: "/storage/tina-real.jpg",
+    alt: "La tina que llegó a la obra.",
+    caption: "La que se entregó.",
+    credit: "El equipo",
+    width: 800,
+    height: 600,
+    takenOn: null,
+    posterUrl: null,
+    posterWidth: null,
+    posterHeight: null,
+    ...partial,
+  };
+}
 
 function item(partial: Partial<DonationItem> = {}): DonationItem {
   return {
@@ -56,6 +82,53 @@ describe("CatalogTable", () => {
     );
     expect(screen.getByText("No")).toBeInTheDocument();
     expect(screen.getAllByText("—").length).toBeGreaterThan(0);
+    expect(screen.getByRole("table")).toHaveAccessibleName(
+      /fotos no representan el objeto real/i,
+    );
+  });
+
+  it("muestra la foto de referencia en Qué, y no reserva un hueco si no hay", () => {
+    const { rerender } = render(
+      <CatalogTable items={[item()]} claims={[]} copy={COPY} locale="es" />,
+    );
+
+    expect(
+      screen.getByRole("img", { name: /foto ilustrativa de tina/i }),
+    ).toHaveAttribute("src", "/fotos/catalogo/tina.jpg");
+    expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
+
+    rerender(
+      <CatalogTable
+        items={[item({ title: "Un ítem que no está en el JSON" })]}
+        claims={[]}
+        copy={COPY}
+        locale="es"
+      />,
+    );
+
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Un ítem que no está en el JSON" }),
+    ).toBeInTheDocument();
+  });
+
+  it("en el listado la foto subida pisa la de referencia", () => {
+    render(
+      <CatalogTable
+        items={[item({ photo: uploaded() })]}
+        claims={[]}
+        copy={COPY}
+        locale="es"
+      />,
+    );
+
+    expect(
+      screen.getByRole("img", { name: /la tina que llegó a la obra/i }),
+    ).toHaveAttribute("src", "/storage/tina-real.jpg");
+    expect(
+      screen.queryByRole("img", { name: /foto ilustrativa/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("publica el estimado por unidad y el total de lo que falta, etiquetado en el caption", () => {

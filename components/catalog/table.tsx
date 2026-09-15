@@ -1,7 +1,10 @@
+import Image from "next/image";
+
 import { InlineLink, SecondaryAction } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
+import type { Photograph } from "@/components/design-system/photo";
 import type { CatalogContent } from "@/content/schema";
-import { isCovered, takenStatus } from "@/src/domain/catalog";
+import { catalogItemPhotograph, isCovered, takenStatus } from "@/src/domain/catalog";
 import { netCoverAmount } from "@/src/domain/cover";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import { fill } from "@/src/i18n/fill";
@@ -15,8 +18,9 @@ import { unitLabel } from "./units";
  * El listado de lo que falta: una tabla por categoría, también en el teléfono
  * (ADR-044). El scroll de costado vive adentro: la página no desborda.
  *
- * Foto, descripción y formulario viven en la ficha. Acá se escanea: qué,
- * cuánto, si alguien ya la tomó, el estimado, y «Quiero donar».
+ * En Qué va una miniatura cuando hay foto (ADR-043). Descripción, epígrafe y
+ * formulario viven en la ficha. Acá se escanea: qué, cuánto, si alguien ya la
+ * tomó, el estimado, y «Quiero donar».
  */
 export function CatalogTable({
   items,
@@ -108,6 +112,10 @@ function CatalogRow({
       });
   const names = taken.names.join(", ");
   const href = localizedHref(`/catalogo/${item.id}`, locale);
+  const photo = catalogItemPhotograph<Photograph>(
+    item.photo,
+    copy.referencePhotos[item.title] ?? null,
+  );
   const unitPrice =
     item.estimatedValue === null
       ? copy.nameNone
@@ -126,7 +134,21 @@ function CatalogRow({
         scope="row"
         className="min-w-0 max-w-quote py-sm pr-md text-left text-body font-normal"
       >
-        <InlineLink href={href}>{item.title}</InlineLink>
+        <div className="flex min-w-0 items-start gap-sm">
+          {photo === null ? null : (
+            <Image
+              src={photo.url}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              sizes="96px"
+              className="h-auto w-5xl shrink-0"
+            />
+          )}
+          <InlineLink href={href} className="min-w-0">
+            {item.title}
+          </InlineLink>
+        </div>
       </th>
       <td
         className={cn(

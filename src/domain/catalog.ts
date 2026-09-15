@@ -155,9 +155,10 @@ export function groupCatalogByCategory<
 }
 
 /**
- * La foto de la ficha: la subida desde el backoffice gana; si no hay, la de
- * referencia del tipo (ADR-043). El epígrafe —no esta función— es lo que
- * impide presentarla como foto de esta casa.
+ * La foto del listado y de la ficha: la subida desde el backoffice gana; si
+ * no hay, la de referencia del tipo (ADR-043). El epígrafe —en la ficha— y
+ * el caption de la tabla —en el listado— son lo que impide presentarla como
+ * foto de esta casa.
  */
 
 export function catalogItemPhotograph<T>(
