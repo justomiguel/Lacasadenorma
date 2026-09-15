@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { signOut } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
 import { deleteAccount, updateProfile } from "@/app/(es)/cuenta/profile-actions";
+import { PendingTextButton } from "@/components/design-system/pending-submit";
 import type { AccountContent } from "@/content/schema";
 import type { DonorProfile } from "@/src/domain/entities/donor";
 import type { Locale } from "@/src/i18n/locale";
@@ -110,12 +111,12 @@ export function SignOutForm({
   return (
     <form action={signOut}>
       <LocaleField locale={locale} />
-      <button
-        type="submit"
+      <PendingTextButton
+        pendingLabel={copy.signingOut}
         className="min-h-touch font-ui text-small text-forest underline decoration-1 underline-offset-2 hover:text-forest-strong"
       >
         {copy.signOut}
-      </button>
+      </PendingTextButton>
     </form>
   );
 }

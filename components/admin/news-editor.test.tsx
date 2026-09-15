@@ -5,10 +5,20 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { editorFormat } from "./news-editor-marks";
+import type { MediaAsset } from "@/src/domain/entities";
+
 import { MediaInsertPanel } from "./news-editor-insert";
+import { NewsMediaLibrary } from "./news-editor-library";
+import { editorFormat } from "./news-editor-marks";
 import { WorkMedia } from "./news-editor-media";
 import { EditorToolButton } from "./news-editor-toolbar";
+
+vi.mock("next/image", () => ({
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element -- test double
+    <img src={src} alt={alt} />
+  ),
+}));
 
 function editorWith(html: string): Editor {
   return new Editor({
@@ -116,5 +126,41 @@ describe("MediaInsertPanel", () => {
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /^insertar$/i })).toBeEnabled();
     });
+  });
+});
+
+const photo: MediaAsset = {
+  id: "11111111-1111-4111-8111-111111111111",
+  kind: "photo",
+  bucketId: "fotos",
+  url: "https://ejemplo.test/techo.jpg",
+  alt: "Cabriadas de madera",
+  caption: null,
+  credit: null,
+  width: 1600,
+  height: 1200,
+  takenOn: null,
+  posterUrl: null,
+  posterWidth: null,
+  posterHeight: null,
+};
+
+describe("NewsMediaLibrary", () => {
+  it("al insertar, el botón se marca puesto y se anuncia", async () => {
+    const user = userEvent.setup();
+    const onInsert = vi.fn();
+
+    render(<NewsMediaLibrary media={[photo]} onInsert={onInsert} />);
+
+    await user.click(screen.getByRole("button", { name: /poner en el texto/i }));
+
+    expect(onInsert).toHaveBeenCalledWith(photo);
+    expect(screen.getByRole("button", { name: /puesto en el texto/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(document.querySelector("[data-news-library] [aria-live]")).toHaveTextContent(
+      "Puesto en el texto",
+    );
   });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 import { SubmitButton } from "@/components/admin/form";
 
@@ -25,6 +26,27 @@ export function LoginForm({ next }: { next: string | null }) {
     <form action={formAction} className="space-y-lg">
       {next === null ? null : <input type="hidden" name="volver" value={next} />}
 
+      <LoginFields />
+
+      {state.error === null ? null : (
+        <p role="alert" className="font-ui text-small text-danger">
+          {state.error}
+        </p>
+      )}
+
+      <SubmitButton pendingLabel="Entrando…">Entrar</SubmitButton>
+    </form>
+  );
+}
+
+const CONTROL =
+  "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body disabled:opacity-60";
+
+function LoginFields() {
+  const { pending } = useFormStatus();
+
+  return (
+    <>
       <div className="space-y-2xs">
         <label htmlFor="email" className="block font-ui text-small font-medium">
           Correo
@@ -34,10 +56,11 @@ export function LoginForm({ next }: { next: string | null }) {
           name="email"
           type="email"
           required
+          disabled={pending}
           autoComplete="username"
           inputMode="email"
           autoCapitalize="none"
-          className="w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body"
+          className={CONTROL}
         />
       </div>
 
@@ -50,18 +73,11 @@ export function LoginForm({ next }: { next: string | null }) {
           name="password"
           type="password"
           required
+          disabled={pending}
           autoComplete="current-password"
-          className="w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body"
+          className={CONTROL}
         />
       </div>
-
-      {state.error === null ? null : (
-        <p role="alert" className="font-ui text-small text-danger">
-          {state.error}
-        </p>
-      )}
-
-      <SubmitButton pendingLabel="Entrando…">Entrar</SubmitButton>
-    </form>
+    </>
   );
 }

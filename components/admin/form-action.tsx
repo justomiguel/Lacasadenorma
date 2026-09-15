@@ -33,6 +33,15 @@ function errorsOf(state: ActionState): FieldErrors {
   return state.status === "invalid" ? state.fieldErrors : {};
 }
 
+/**
+ * El mensaje de `Feedback` está al pie. Si el campo queda abajo del pliegue,
+ * el envío parece no haber hecho nada: el foco tiene que ir al primero
+ * marcado, que es lo que FR-023 pide y lo que un lector de pantalla espera.
+ */
+export function focusFirstInvalidField(form: HTMLFormElement | null) {
+  form?.querySelector<HTMLElement>("[aria-invalid=true]")?.focus();
+}
+
 export function ActionForm({
   action,
   children,
@@ -57,6 +66,14 @@ export function ActionForm({
       formRef.current?.reset();
     }
   }, [state, resetOnSuccess]);
+
+  useEffect(() => {
+    if (state.status !== "invalid") {
+      return;
+    }
+
+    focusFirstInvalidField(formRef.current);
+  }, [state]);
 
   return (
     <form ref={formRef} action={formAction} className={cn("space-y-lg", className)}>

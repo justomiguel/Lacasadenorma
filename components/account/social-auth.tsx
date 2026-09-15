@@ -112,7 +112,8 @@ function SocialSubmit({
   pendingLabel: string;
   provider: SocialProviderId;
 }) {
-  const { pending } = useFormStatus();
+  const { pending, data } = useFormStatus();
+  const thisPending = pending && data?.get("proveedor") === provider;
 
   return (
     <button
@@ -120,6 +121,7 @@ function SocialSubmit({
       name="proveedor"
       value={provider}
       disabled={pending}
+      aria-busy={thisPending || undefined}
       className={cn(
         "inline-flex min-h-cta w-full items-center justify-center gap-xs rounded-md border border-rule px-lg",
         "font-ui text-body font-medium text-ink",
@@ -128,7 +130,7 @@ function SocialSubmit({
       )}
     >
       <BrandMark id={brand} />
-      {pending ? pendingLabel : children}
+      {thisPending ? pendingLabel : children}
     </button>
   );
 }

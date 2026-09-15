@@ -8,6 +8,10 @@ import { cn } from "@/components/design-system/cn";
 
 import { CONTROL, FieldFrame, useField, type FieldProps } from "./form-field";
 
+function usePending(): boolean {
+  return useFormStatus().pending;
+}
+
 export function TextField({
   name,
   label,
@@ -29,6 +33,7 @@ export function TextField({
   maxLength?: number;
 }) {
   const field = useField(name, hint);
+  const pending = usePending();
 
   return (
     <FieldFrame
@@ -46,6 +51,7 @@ export function TextField({
         name={name}
         type={type}
         className={CONTROL}
+        disabled={pending}
         aria-invalid={field.error === undefined ? undefined : true}
         aria-describedby={field.describedBy}
         {...(required === true ? { required: true } : {})}
@@ -70,6 +76,7 @@ export function TextAreaField({
   maxLength,
 }: FieldProps & { defaultValue?: string; rows?: number; maxLength?: number }) {
   const field = useField(name, hint);
+  const pending = usePending();
 
   return (
     <FieldFrame
@@ -87,6 +94,7 @@ export function TextAreaField({
         name={name}
         rows={rows}
         className={cn(CONTROL, "font-prose leading-relaxed")}
+        disabled={pending}
         aria-invalid={field.error === undefined ? undefined : true}
         aria-describedby={field.describedBy}
         {...(required === true ? { required: true } : {})}
@@ -110,6 +118,7 @@ export function SelectField({
   defaultValue?: string;
 }) {
   const field = useField(name, hint);
+  const pending = usePending();
 
   return (
     <FieldFrame
@@ -126,6 +135,7 @@ export function SelectField({
         id={field.id}
         name={name}
         className={CONTROL}
+        disabled={pending}
         aria-invalid={field.error === undefined ? undefined : true}
         aria-describedby={field.describedBy}
         {...(defaultValue === undefined ? {} : { defaultValue })}

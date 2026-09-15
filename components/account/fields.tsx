@@ -24,7 +24,7 @@ import { cn } from "@/components/design-system/cn";
 const CONTROL =
   "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus " +
-  "aria-invalid:border-danger";
+  "aria-invalid:border-danger disabled:opacity-60";
 
 export function TextField({
   name,
@@ -48,6 +48,7 @@ export function TextField({
   error?: string;
   inputMode?: "text" | "numeric" | "decimal" | "email";
 }) {
+  const { pending } = useFormStatus();
   const id = useId();
   const hintId = `${id}-ayuda`;
   const errorId = `${id}-error`;
@@ -67,6 +68,7 @@ export function TextField({
         name={name}
         type={type}
         className={CONTROL}
+        disabled={pending}
         // `autoCapitalize` y `inputMode` en el correo no son detalles: en un
         // teléfono, la mayúscula automática al principio del campo es la causa más
         // común de "ese correo no parece válido" en una dirección bien escrita.
@@ -106,6 +108,7 @@ export function CheckboxField({
   hint?: string;
   defaultChecked?: boolean;
 }) {
+  const { pending } = useFormStatus();
   const id = useId();
   const hintId = `${id}-ayuda`;
 
@@ -117,6 +120,7 @@ export function CheckboxField({
           name={name}
           type="checkbox"
           className="size-md rounded-sm border-rule accent-forest"
+          disabled={pending}
           {...(hint === undefined ? {} : { "aria-describedby": hintId })}
           {...(defaultChecked === true ? { defaultChecked: true } : {})}
         />
@@ -144,6 +148,7 @@ export function RadioField({
   options: readonly { value: string; label: string }[];
   value: string;
 }) {
+  const { pending } = useFormStatus();
   const id = useId();
 
   return (
@@ -158,6 +163,7 @@ export function RadioField({
               type="radio"
               value={option.value}
               defaultChecked={option.value === value}
+              disabled={pending}
               className="size-md border-rule accent-forest"
             />
             <label

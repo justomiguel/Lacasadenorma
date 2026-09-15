@@ -1,3 +1,7 @@
+"use client";
+
+import { PendingTextButton } from "@/components/design-system/pending-submit";
+
 import { signOut } from "../login/actions";
 
 /**
@@ -11,12 +15,12 @@ import { signOut } from "../login/actions";
 export function SignOutButton() {
   return (
     <form action={signOut}>
-      <button
-        type="submit"
+      <PendingTextButton
+        pendingLabel="Cerrando…"
         className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-ink"
       >
         Cerrar sesión
-      </button>
+      </PendingTextButton>
     </form>
   );
 }

@@ -30,11 +30,13 @@ export const uiChromeSchema = z.object({
   copyLink: phrase,
   linkCopied: phrase,
   linkCopiedLive: phrase,
+  linkCopyFailed: phrase,
   languageName: phrase,
   otherLanguageName: phrase,
   signIn: phrase,
   account: phrase,
   signOut: phrase,
+  signingOut: phrase,
   /** El backoffice no se traduce (ADR-023). El href es siempre `/admin`. */
   backoffice: phrase,
   countryTabsLabel: phrase,

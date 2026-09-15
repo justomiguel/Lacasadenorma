@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "@/app/(es)/cuenta/actions";
 import { LocaleField } from "@/components/account/fields";
 import { cn } from "@/components/design-system/cn";
+import { PendingTextButton } from "@/components/design-system/pending-submit";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
 import { stripLocalePrefix, type Locale } from "@/src/i18n/locale";
@@ -98,6 +99,7 @@ export function AccountChrome({
         <SignOutLink
           locale={locale}
           label={ui.signOut}
+          pendingLabel={ui.signingOut}
           className={cn(LINK, "text-paper-muted")}
         />
       </div>
@@ -119,6 +121,7 @@ export function AccountChrome({
           <SignOutLink
             locale={locale}
             label={ui.signOut}
+            pendingLabel={ui.signingOut}
             className={className ?? chromeFallback}
           />
         )}
@@ -141,18 +144,23 @@ export function AccountChrome({
 function SignOutLink({
   locale,
   label,
+  pendingLabel,
   className,
 }: {
   locale: Locale;
   label: string;
+  pendingLabel: string;
   className?: string;
 }) {
   return (
     <form action={signOut} className="m-0 shrink-0">
       <LocaleField locale={locale} />
-      <button type="submit" className={className ?? chromeFallback}>
+      <PendingTextButton
+        pendingLabel={pendingLabel}
+        className={className ?? chromeFallback}
+      >
         {label}
-      </button>
+      </PendingTextButton>
     </form>
   );
 }

@@ -22,6 +22,7 @@ export function CheckboxField({
   className?: string;
 }) {
   const field = useField(name, hint);
+  const { pending } = useFormStatus();
 
   return (
     <div className={cn("space-y-2xs", className)}>
@@ -30,7 +31,8 @@ export function CheckboxField({
           id={field.id}
           name={name}
           type="checkbox"
-          className="size-md rounded-sm border-rule accent-aqua"
+          className="size-md rounded-sm border-rule accent-aqua disabled:opacity-60"
+          disabled={pending}
           aria-describedby={field.describedBy}
           {...(defaultChecked === true ? { defaultChecked: true } : {})}
         />

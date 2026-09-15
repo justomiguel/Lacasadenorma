@@ -66,13 +66,15 @@ export function ShareRow({
   onShared?: (channel: string) => void;
   className?: string;
 }) {
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const targets = buildShareTargets(url, text);
   const ui = useUiOptional()?.ui;
   const shareLabel = ui?.share ?? "Compartir";
   const copyLinkLabel = ui?.copyLink ?? "Copiar enlace";
   const linkCopiedLabel = ui?.linkCopied ?? "Enlace copiado";
   const linkCopiedLive = ui?.linkCopiedLive ?? "Se copió el enlace de la página.";
+  const linkCopyFailed =
+    ui?.linkCopyFailed ?? "No pudimos copiar el enlace. Seleccionalo y copialo a mano.";
 
   async function shareNative() {
     try {
@@ -86,14 +88,18 @@ export function ShareRow({
 
   async function copyLink() {
     try {
+      if (typeof navigator === "undefined" || navigator.clipboard === undefined) {
+        throw new Error("clipboard-unavailable");
+      }
+
       await navigator.clipboard.writeText(url);
-      setCopied(true);
+      setCopyState("copied");
       onShared?.("enlace");
       setTimeout(() => {
-        setCopied(false);
+        setCopyState("idle");
       }, 4000);
     } catch {
-      setCopied(false);
+      setCopyState("failed");
     }
   }
 
@@ -138,14 +144,25 @@ export function ShareRow({
             }}
             className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-aqua-strong"
           >
-            {copied ? linkCopiedLabel : copyLinkLabel}
+            {copyState === "copied" ? linkCopiedLabel : copyLinkLabel}
           </button>
         </li>
       </ul>
 
-      <p aria-live="polite" className="sr-only">
-        {copied ? linkCopiedLive : null}
+      <p
+        aria-live="polite"
+        className={
+          copyState === "failed"
+            ? "basis-full font-ui text-caption text-danger"
+            : "sr-only"
+        }
+      >
+        {copyState === "copied" ? linkCopiedLive : null}
+        {copyState === "failed" ? linkCopyFailed : null}
       </p>
+      {copyState === "failed" ? (
+        <p className="basis-full break-all font-ui text-caption text-ink">{url}</p>
+      ) : null}
     </div>
   );
 }

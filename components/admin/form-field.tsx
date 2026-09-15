@@ -7,7 +7,7 @@ import { cn } from "@/components/design-system/cn";
 import { FieldErrorsContext } from "./form-action";
 
 export const CONTROL =
-  "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink placeholder:text-ink-faint focus-visible:border-focus aria-[invalid=true]:border-danger";
+  "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink placeholder:text-ink-faint focus-visible:border-focus aria-[invalid=true]:border-danger disabled:opacity-60";
 
 export interface FieldProps {
   name: string;
