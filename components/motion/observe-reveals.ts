@@ -9,6 +9,10 @@
  * ADR-032). Acá sólo se marca `data-in-view`. Sin JavaScript, o con movimiento
  * reducido, el contenido ya se ve: el ocultamiento vive en
  * `prefers-reduced-motion: no-preference`.
+ *
+ * El layout se hidrata antes de que el RSC termine de entrar (ficha del
+ * catálogo, navegación suave). Un barrido único deja las fotos nuevas en
+ * opacity 0 para siempre: hay que observar lo que se agrega después.
  */
 
 const REVEAL = "[data-reveal], [data-reveal-photo]";
@@ -36,13 +40,42 @@ export function observeReveals(root: ParentNode = document): () => void {
     { rootMargin: "-100px", threshold: 0 },
   );
 
-  root.querySelectorAll(REVEAL).forEach((node) => {
-    if (!node.hasAttribute("data-in-view")) {
+  const watch = (node: Element) => {
+    if (node.matches(REVEAL) && !node.hasAttribute("data-in-view")) {
       observer.observe(node);
     }
+  };
+
+  const scan = (scope: ParentNode) => {
+    if (scope instanceof Element) {
+      watch(scope);
+    }
+
+    scope.querySelectorAll(REVEAL).forEach(watch);
+  };
+
+  scan(root);
+
+  const mutations =
+    typeof MutationObserver === "undefined"
+      ? null
+      : new MutationObserver((records) => {
+          for (const record of records) {
+            for (const node of record.addedNodes) {
+              if (node instanceof Element) {
+                scan(node);
+              }
+            }
+          }
+        });
+
+  mutations?.observe(root instanceof Document ? root.documentElement : root, {
+    childList: true,
+    subtree: true,
   });
 
   return () => {
     observer.disconnect();
+    mutations?.disconnect();
   };
 }

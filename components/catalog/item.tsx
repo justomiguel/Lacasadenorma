@@ -23,6 +23,9 @@ import { unitLabel } from "./units";
 /**
  * La ficha de un ítem: foto o hueco, cuánto falta, quién se anotó con nombre,
  * y el formulario para reservar cuando queda algo (FR-254).
+ *
+ * La foto es LCP: sale ya visible. El revelado al scroll la dejaba en opacity 0
+ * y se leía el epígrafe sobre un hueco.
  */
 export function CatalogItem({
   item,
@@ -32,7 +35,7 @@ export function CatalogItem({
   help,
   ui,
   locale,
-  priority = false,
+  priority = true,
 }: {
   item: DonationItem;
   claims: readonly CatalogClaim[];

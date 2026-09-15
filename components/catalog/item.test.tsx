@@ -84,7 +84,7 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
 
 describe("CatalogItem", () => {
   it("muestra la foto de referencia cuando no hay una subida, con el epígrafe (ADR-043)", () => {
-    render(
+    const { container } = render(
       <CatalogItem
         item={item()}
         claims={[]}
@@ -93,6 +93,7 @@ describe("CatalogItem", () => {
         help={{} as never}
         ui={{} as never}
         locale="es"
+        priority
       />,
     );
 
@@ -102,6 +103,11 @@ describe("CatalogItem", () => {
     expect(screen.getByText(/solamente ilustrativa/i)).toBeInTheDocument();
     expect(screen.getByText(/no representa el objeto real/i)).toBeInTheDocument();
     expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
+    // La ficha es LCP: si el revelado espera al observer, la foto queda en
+    // opacity 0 y se lee el epígrafe sobre un hueco.
+    expect(
+      container.querySelector("[data-reveal-photo]")?.hasAttribute("data-in-view"),
+    ).toBe(true);
   });
 
   it("la foto subida pisa la de referencia", () => {

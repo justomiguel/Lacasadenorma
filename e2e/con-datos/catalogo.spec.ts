@@ -106,6 +106,22 @@ test.describe("fase D · reservas", () => {
     ).toBe(0);
   });
 
+  test("del listado a la ficha se ve la foto, no sólo el epígrafe", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/catalogo");
+    await abrirItemDelCatalogo(page, "Chapas del techo (datos de desarrollo)");
+
+    const ficha = articuloDelCatalogo(page);
+    const revelado = ficha.locator("[data-reveal-photo]");
+
+    await expect(revelado).toHaveAttribute("data-in-view", "");
+    await expect(revelado).toHaveCSS("opacity", "1");
+    await expect(
+      ficha.getByRole("img", { name: /foto ilustrativa de chapas/i }),
+    ).toBeVisible();
+    await expect(ficha.getByText(/solamente ilustrativa/i)).toBeVisible();
+  });
+
   test("pedir donar sin sesión vuelve al mismo ítem después de ingresar", async ({
     request,
     browser,

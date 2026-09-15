@@ -63,6 +63,10 @@ export function EditorialImage({
   caption?: boolean | string;
   sizes?: string;
   quality?: 70 | 80;
+  /**
+   * LCP: carga ya, y no espera al IntersectionObserver. El revelado arranca en
+   * opacity 0; si esta foto es la de la ficha, se lee el epígrafe sobre un hueco.
+   */
   priority?: boolean;
   /** Retrasa apenas la aparición, para la segunda foto de una pareja. */
   stagger?: boolean;
@@ -100,7 +104,11 @@ export function EditorialImage({
           crop === undefined ? "" : CROP_CLASS[crop],
         )}
       >
-        <div data-reveal-photo="" {...(stagger ? { "data-stagger": "1" } : {})}>
+        <div
+          data-reveal-photo=""
+          {...(stagger ? { "data-stagger": "1" } : {})}
+          {...(priority ? { "data-in-view": "" } : {})}
+        >
           {image}
         </div>
       </div>

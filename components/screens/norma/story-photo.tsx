@@ -23,6 +23,7 @@ export function StoryPhoto({
   return (
     <div
       data-reveal-photo={direction}
+      {...(priority ? { "data-in-view": "" } : {})}
       className={cn("overflow-hidden rounded-md", className)}
     >
       <Figure

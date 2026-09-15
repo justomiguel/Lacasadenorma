@@ -7,10 +7,12 @@ type Notificar = (entradas: { target: Element; isIntersecting: boolean }[]) => v
 let notificar: Notificar;
 let observados: Element[];
 let desobservados: Element[];
+let parar: (() => void) | undefined;
 
 beforeEach(() => {
   observados = [];
   desobservados = [];
+  parar = undefined;
 
   vi.stubGlobal("matchMedia", (query: string) => ({
     matches: false,
@@ -43,6 +45,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  parar?.();
   vi.unstubAllGlobals();
   document.body.innerHTML = "";
 });
@@ -59,7 +62,7 @@ describe("observeReveals", () => {
     const momento = marcar("data-reveal");
     const foto = marcar("data-reveal-photo");
 
-    observeReveals(document);
+    parar = observeReveals(document);
 
     expect(observados).toEqual([momento, foto]);
 
@@ -77,7 +80,7 @@ describe("observeReveals", () => {
     const momento = marcar("data-reveal");
     momento.setAttribute("data-in-view", "");
 
-    observeReveals(document);
+    parar = observeReveals(document);
 
     expect(observados).toEqual([]);
   });
@@ -95,7 +98,7 @@ describe("observeReveals", () => {
     }));
 
     marcar("data-reveal");
-    observeReveals(document);
+    parar = observeReveals(document);
 
     expect(observados).toEqual([]);
   });
@@ -107,5 +110,17 @@ describe("observeReveals", () => {
 
     expect(() => observeReveals(document)).not.toThrow();
     expect(momento.hasAttribute("data-in-view")).toBe(false);
+  });
+
+  it("observa fotos que llegan después del primer barrido", async () => {
+    parar = observeReveals(document);
+
+    expect(observados).toEqual([]);
+
+    const foto = marcar("data-reveal-photo");
+
+    await vi.waitFor(() => {
+      expect(observados).toEqual([foto]);
+    });
   });
 });
