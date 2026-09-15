@@ -199,6 +199,16 @@ select id, slug, title, status, published_at from public.campaigns;
 Una sola fila. Gastos van en `/admin/gastos`, entradas (aportes) en `/admin/aportes`, lo que hace
 falta en especie en `/admin/catalogo`.
 
+### Cargar el catálogo básico de la casa
+
+Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga lo mínimo de una casa
+para una persona que vive sola: cocina, heladera, cama plaza y media, colchón, baño, un estar, dos
+ventiladores. **Sin montos.** Es idempotente por título y pide la campaña `casa-de-norma`.
+
+Correrlo en el SQL Editor del proyecto, entero. El `select` del final lista lo que quedó. Cada ítem
+sale publicado y sin foto: `/catalogo` reserva un hueco hasta que se suba la imagen desde
+`/admin/catalogo`. No se pone una ilustración en el medio.
+
 ### Correo: dominio, SPF y las plantillas que no viven en el repositorio
 
 Nada sale a una casilla real hasta que el dominio esté verificado en Resend. Hasta entonces, sólo se
@@ -406,7 +416,9 @@ Es la operación que sostiene la confianza. Una vez por semana, una persona con 
    conciliación.
 3. Registra en `/admin/gastos` los gastos, y **sube el comprobante de cada uno**.
 4. Marca la fecha de conciliación.
-5. Abre `/transparencia` como cualquier visitante y verifica que el total coincida con el banco.
+5. Abre `/transparencia` como cualquier visitante y verifica que se vean porcentajes de lo que ya
+   llegó, no montos, y que el 100% de la obra no se afirma como meta. Los montos se contrastan con
+   el banco en el backoffice.
 
 El paso 4 es el que se olvida y el que más se nota. La fecha de la última conciliación está publicada
 en el sitio: si queda vieja, la página dice sola que hay atraso. Es a propósito — un número sin fecha
