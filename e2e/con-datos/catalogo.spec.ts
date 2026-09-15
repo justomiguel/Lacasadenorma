@@ -92,7 +92,10 @@ test.describe("fase D · reservas", () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
 
-    expect(desborde, "la tabla se desplaza adentro, la página no desborda").toBe(0);
+    expect(
+      Math.max(0, desborde),
+      "la tabla se desplaza adentro, la página no desborda",
+    ).toBe(0);
   });
 
   test("pedir donar sin sesión vuelve al mismo ítem después de ingresar", async ({
