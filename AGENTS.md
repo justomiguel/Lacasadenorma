@@ -74,7 +74,7 @@ utilitaria icónica (`components/design-system/actions.tsx`, `icons.tsx`).
 La fotografía estructura la página. Las editoriales viven en `public/fotos/` declaradas en
 `content/*.json`; las del avance vienen de la base con cada novedad. En el relato no se pone stock
 ni ilustración: se reserva el espacio y se dice qué va ahí. El catálogo sí puede mostrar una foto
-de referencia del tipo, etiquetada como tal, en `public/fotos/catalogo/` (ADR-042). El hueco se
+de referencia del tipo, etiquetada como tal, en `public/fotos/catalogo/` (ADR-043). El hueco se
 cuenta: `revision-visual.spec.ts` exige el número **exacto** de espacios reservados por página,
 así que si el material llegó y nadie lo ubicó, falla. `npm run check:fotos` comprueba que cada
 foto declarada exista y mida lo que dice, y que cada ítem del catálogo básico tenga su referencia

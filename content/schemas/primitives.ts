@@ -19,7 +19,7 @@ import { z } from "zod";
  * —el retrato de Norma, el incendio, la limpieza— se eligen una vez y viven acá,
  * con el archivo en `public/fotos/`. Las del **avance de la obra** cambian con
  * cada novedad y siguen viniendo de la base, subidas desde el backoffice. Las
- * de **referencia del catálogo** (ADR-042) también se eligen una vez y viven en
+ * de **referencia del catálogo** (ADR-043) también se eligen una vez y viven en
  * `public/fotos/catalogo/`, con epígrafe que dice que no son una compra de esta
  * casa.
  */
@@ -80,7 +80,7 @@ export const photoGroupSchema = z.object({
 });
 
 /**
- * Foto de referencia de un ítem del catálogo (ADR-042).
+ * Foto de referencia de un ítem del catálogo (ADR-043).
  *
  * Vive en `public/fotos/catalogo/`, no junto a las de la familia. El epígrafe
  * y el crédito son obligatorios: sin ellos se leería como foto de esta casa.

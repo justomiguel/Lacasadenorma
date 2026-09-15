@@ -1,4 +1,4 @@
-# ADR-042 · Fotos de referencia en el catálogo
+# ADR-043 · Fotos de referencia en el catálogo
 
 **Estado**: Aceptada · **Fecha**: 2026-09-15
 

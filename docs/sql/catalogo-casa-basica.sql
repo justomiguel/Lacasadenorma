@@ -6,7 +6,7 @@
 -- Publicado de entrada: `published_at = now()`.
 --
 -- Cada ítem sale **sin foto en Storage**. La ficha pública muestra la foto de
--- referencia del título (public/fotos/catalogo/, ADR-042) hasta que el equipo
+-- referencia del título (public/fotos/catalogo/, ADR-043) hasta que el equipo
 -- suba la foto real desde `/admin/catalogo`. Esa, si existe, gana. El listado
 -- `/catalogo` es una tabla sin fotos; la foto vive en `/catalogo/<id>`.
 --

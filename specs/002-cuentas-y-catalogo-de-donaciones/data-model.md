@@ -83,7 +83,7 @@ aplicación y se refuerza en la reserva, que es donde importa.
 | `fulfilled_quantity` | `integer not null default 0` | Ídem |
 | `estimated_unit_amount_minor` | `bigint` **nullable** | Valor de referencia. La ficha lo publica etiquetado (ADR-041); el listado y el libro no |
 | `currency` | `char(3)` **nullable** | Nula exactamente cuando el monto es nulo |
-| `photo_media_id` | `uuid` nullable → `media` | Foto real subida desde el backoffice. Si es nula, la ficha usa la de referencia del título (ADR-042, FR-212); si tampoco hay, se reserva el espacio |
+| `photo_media_id` | `uuid` nullable → `media` | Foto real subida desde el backoffice. Si es nula, la ficha usa la de referencia del título (ADR-043, FR-212); si tampoco hay, se reserva el espacio |
 | `sort_order` | `integer` | Orden editorial: primero lo que más falta |
 | `published_at` | `timestamptz` nullable | Nulo = no se ofrece (FR-215) |
 

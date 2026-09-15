@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Baja fotos de referencia con licencia abierta para el catálogo (ADR-042).
+"""Baja fotos de referencia con licencia abierta para el catálogo (ADR-043).
 
 No es una compuerta: corre a mano cuando hay que reponer un archivo. La
 compuerta es `npm run check:fotos`.

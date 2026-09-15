@@ -12,7 +12,7 @@ import { cn } from "./cn";
  * imágenes de stock, ni imágenes generadas**: se reserva el espacio con la
  * proporción correcta y se dice qué va ahí. Un espacio vacío con intención se
  * lee como respeto; una foto de stock de una casa que no es ésta se lee como
- * mentira. El catálogo es la excepción (ADR-042): una foto de referencia del
+ * mentira. El catálogo es la excepción (ADR-043): una foto de referencia del
  * tipo, etiquetada, nunca presentada como foto de esta casa.
  *
  * El mockup (ADR-025) redondea las fotos. El recorte sigue siendo el del archivo:

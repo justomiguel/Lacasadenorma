@@ -179,7 +179,7 @@ describe("catalogItemPhotograph", () => {
   const uploaded = { url: "/storage/real.jpg" };
   const reference = { url: "/fotos/catalogo/ladrillos.jpg" };
 
-  it("la foto subida pisa la de referencia (ADR-042)", () => {
+  it("la foto subida pisa la de referencia (ADR-043)", () => {
     expect(catalogItemPhotograph(uploaded, reference)).toBe(uploaded);
   });
 

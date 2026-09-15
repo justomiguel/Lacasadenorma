@@ -16,7 +16,7 @@
  * ninguna página es peso muerto en el repositorio, y si es una foto de una
  * persona, es peso muerto que no debería estar guardado.
  *
- * El catálogo (ADR-042) tiene una regla extra: cada título de
+ * El catálogo (ADR-043) tiene una regla extra: cada título de
  * `docs/sql/catalogo-casa-basica.sql` y el del fixture tienen que tener una
  * foto de referencia en `catalogo-fotos.json`, con epígrafe que lo diga, y
  * esas fotos no pueden colarse en el relato.
@@ -126,7 +126,7 @@ for (const file of jsonFiles) {
 
     if (isCatalog) {
       if (!photo.url.startsWith("/fotos/catalogo/")) {
-        problems.push(`${file}: ${photo.url} no vive en /fotos/catalogo/ (ADR-042).`);
+        problems.push(`${file}: ${photo.url} no vive en /fotos/catalogo/ (ADR-043).`);
       }
 
       const caption = typeof photo.caption === "string" ? photo.caption : "";
@@ -141,7 +141,7 @@ for (const file of jsonFiles) {
       }
     } else if (photo.url.startsWith("/fotos/catalogo/")) {
       problems.push(
-        `${file}: una foto editorial no puede vivir en /fotos/catalogo/ (ADR-042).`,
+        `${file}: una foto editorial no puede vivir en /fotos/catalogo/ (ADR-043).`,
       );
     }
 
@@ -218,7 +218,7 @@ for (const locale of ["es", "en"]) {
 
   for (const title of requiredTitles) {
     if (photos[title] === undefined) {
-      problems.push(`${file}: falta la foto de referencia de «${title}» (ADR-042).`);
+      problems.push(`${file}: falta la foto de referencia de «${title}» (ADR-043).`);
     }
   }
 

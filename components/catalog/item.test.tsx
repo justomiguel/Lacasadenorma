@@ -84,7 +84,7 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
 }
 
 describe("CatalogItem", () => {
-  it("muestra la foto de referencia cuando no hay una subida, con el epígrafe (ADR-042)", () => {
+  it("muestra la foto de referencia cuando no hay una subida, con el epígrafe (ADR-043)", () => {
     render(
       <CatalogItem
         item={item()}

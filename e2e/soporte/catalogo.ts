@@ -10,7 +10,7 @@ import { esperarQueNoAparezca, revalidar } from "./revalidar";
 
 /**
  * El ítem de `supabase/fixtures/dev.sql`. El listado no muestra foto: la
- * ficha usa la de referencia del título (ADR-042). Cualquier ítem de prueba
+ * ficha usa la de referencia del título (ADR-043). Cualquier ítem de prueba
  * extra que quede publicado ensucia el listado; la aislación es despublicar.
  */
 const ITEM_SIN_FOTO_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";

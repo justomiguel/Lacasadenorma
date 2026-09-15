@@ -209,7 +209,7 @@ campaña `casa-de-norma`.
 
 Correrlo en el SQL Editor del proyecto, entero. El `select` del final lista lo que quedó. Cada ítem
 sale publicado y sin foto en Storage: la ficha `/catalogo/<id>` muestra la foto de referencia del
-tipo (ADR-042) hasta que se suba la imagen real desde `/admin/catalogo`. El listado es una tabla y
+tipo (ADR-043) hasta que se suba la imagen real desde `/admin/catalogo`. El listado es una tabla y
 no muestra fotos.
 
 ### Correo: dominio, SPF y las plantillas que no viven en el repositorio

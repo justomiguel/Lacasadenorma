@@ -52,4 +52,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [039](./039-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |
 | [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada; enmendada por ADR-041 para el estimado de la ficha del catálogo |
 | [041](./041-estimado-publico-y-cubrir-con-plata.md) | El estimado se publica en la ficha, y se puede cubrir con plata | Aceptada |
-| [042](./042-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |
+| [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |

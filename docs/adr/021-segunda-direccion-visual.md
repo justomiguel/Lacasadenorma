@@ -1,6 +1,6 @@
 # ADR-021 · La fotografía como estructura: segunda dirección visual
 
-**Estado**: Aceptada; enmendada por ADR-042 para las fotos de referencia del catálogo · **Fecha**: 2026-09-11
+**Estado**: Aceptada; enmendada por ADR-043 para las fotos de referencia del catálogo · **Fecha**: 2026-09-11
 
 ## Contexto
 
@@ -91,7 +91,7 @@ imágenes:
 | Fuente | Qué fotos | Cómo se edita |
 |---|---|---|
 | `public/fotos/`, declaradas en `content/*.json` | Las editoriales: el retrato de Norma, el frente, el interior, el garage, la limpieza. Se eligen una vez | Commit |
-| `public/fotos/catalogo/`, declaradas en `catalogo-fotos.json` | Referencia del tipo de material, etiquetada (ADR-042) | Commit |
+| `public/fotos/catalogo/`, declaradas en `catalogo-fotos.json` | Referencia del tipo de material, etiquetada (ADR-043) | Commit |
 | Supabase Storage vía `/admin` | Las del avance de la obra, adjuntas a cada novedad, fechadas; y la foto real de un ítem del catálogo | Backoffice |
 
 El motivo de que las editoriales **no** vayan a la base: son parte del relato, no un dato operativo,
@@ -103,7 +103,7 @@ Cada foto declara `width`, `height`, `alt` y, cuando corresponde, epígrafe y cr
 Zod al importar, igual que el resto del contenido. En el relato —Norma, el incendio, la obra—
 sigue prohibido el stock, la ilustración de relleno y la imagen generada: lo que entra es lo que
 la familia sacó. El catálogo es la excepción escrita en
-[ADR-042](./042-fotos-de-referencia-en-el-catalogo.md): una foto de referencia del tipo de
+[ADR-043](./043-fotos-de-referencia-en-el-catalogo.md): una foto de referencia del tipo de
 material, etiquetada como tal, nunca como foto de esta casa.
 
 ### 2. El material se ordena por su momento, y el eje del relato es ese
@@ -180,7 +180,7 @@ primaria está en pantalla.
 | Pulir lo que hay: más espacio, algún tamaño más grande | Es lo que produjo el estado actual. El problema no es la magnitud de los valores, es que falta el elemento alrededor del que se diseñó |
 | Cambiar la paleta para huir del crema y la terracota | La paleta viene del lugar, no de un generador, y la familia no pidió otro color. El diferenciador honesto es que el color venga de las fotos. Si con las fotos adentro la paleta sigue leyéndose como default, se reevalúa con evidencia |
 | Cambiar las tipografías | Newsreader y Archivo son elecciones del proyecto, y Archivo es de Buenos Aires. Lo que estaba mal no es la familia tipográfica: es que se usaba un solo tamaño y una sola voz |
-| Ilustración, textura o imagen generada para llenar los huecos del relato | Prohibido por la constitución y, en un sitio que pide plata, es exactamente lo que hace una estafa. El catálogo no llena un hueco del incendio: muestra el tipo de material que se pide, y eso queda en ADR-042 |
+| Ilustración, textura o imagen generada para llenar los huecos del relato | Prohibido por la constitución y, en un sitio que pide plata, es exactamente lo que hace una estafa. El catálogo no llena un hueco del incendio: muestra el tipo de material que se pide, y eso queda en ADR-043 |
 | Stock fotográfico de casas incendiadas | Lo mismo, agravado: afirma sobre el mundo algo que no pasó |
 | Animación de entrada por sección para «dar vida» | Es el default que `frontend-design` señala como delator, y no comunica ningún cambio de estado |
 | Menú hamburguesa en teléfono | Sigue siendo un toque y JavaScript para esconder ocho enlaces. El sumario en el documento resuelve lo mismo sin ocultar nada |

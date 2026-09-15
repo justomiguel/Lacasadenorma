@@ -243,7 +243,7 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **Una cuenta del público llama directamente al servidor** intentando escribir en la campaña, leer
   aportes o reservar a nombre de otro. La base lo niega, no la interfaz.
 - **Un ítem sin foto subida.** La ficha muestra la foto de referencia del tipo, etiquetada como
-  tal (ADR-042). Si tampoco hay referencia, se reserva el espacio y se dice qué foto va ahí; no
+  tal (ADR-043). Si tampoco hay referencia, se reserva el espacio y se dice qué foto va ahí; no
   se pone una imagen de archivo sin epígrafe (ADR-021).
 - **Alguien navega sólo con teclado, o con lector de pantalla.** Registrarse, reservar y cambiar el
   anonimato se completan igual, con foco visible y errores anunciados.
@@ -290,7 +290,7 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-212**: Un ítem MUST poder llevar una foto con texto alternativo. Si el equipo subió una
   foto real desde el backoffice, esa MUST mostrarse. Si no, la ficha MUST mostrar una foto de
   referencia del tipo de material, con epígrafe que diga que es de referencia y que no es una
-  compra de esta casa (ADR-042). Sin ninguna de las dos, el espacio se reserva y se declara qué
+  compra de esta casa (ADR-043). Sin ninguna de las dos, el espacio se reserva y se declara qué
   va ahí, sin imagen de archivo. MUST NOT usar stock ni imagen generada en el relato (historia,
   incendio, obra).
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
