@@ -132,6 +132,7 @@ const catalogo: DonationItem[] = [
     neededQuantity: 40,
     remainingQuantity: 35,
     fulfilledQuantity: 5,
+    estimatedValue: null,
     photo: null,
     sortOrder: 1,
   },

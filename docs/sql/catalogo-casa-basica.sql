@@ -1,7 +1,8 @@
 -- Catálogo de una casa de 60 m² para una persona que vive sola.
 --
 -- Producción: campaña `casa-de-norma`. Idempotente por título. Sin montos
--- (estimated_unit_amount_minor y currency quedan nulos: D3 / ADR-031 / ADR-040).
+-- (estimated_unit_amount_minor y currency quedan nulos hasta que el equipo
+-- cargue un promedio verificado: ADR-041 no inventa precios).
 -- Publicado de entrada: `published_at = now()`.
 --
 -- Cada ítem sale **sin foto**. La foto real se carga desde `/admin/catalogo` y

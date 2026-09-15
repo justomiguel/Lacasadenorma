@@ -1,3 +1,4 @@
+import type { CoverChannel } from "../cover";
 import type { PledgeStatus } from "../pledge-status";
 
 /**
@@ -32,6 +33,7 @@ export type OwnPledge = DonationPledge;
 export interface AdminPledgeRecord extends DonationPledge {
   readonly userId: string | null;
   readonly contactEmail: string | null;
+  readonly coverChannel: CoverChannel;
 }
 
 /**

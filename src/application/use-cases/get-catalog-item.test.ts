@@ -20,6 +20,7 @@ const ITEM: DonationItem = {
   neededQuantity: 1,
   remainingQuantity: 1,
   fulfilledQuantity: 0,
+  estimatedValue: null,
   photo: null,
   sortOrder: 10,
 };

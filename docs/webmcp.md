@@ -51,7 +51,7 @@ transporte.
 | `get_reconstruction_progress` | Hitos con estado y fecha, completados sobre total, rubros como % de lo cotizado | `/api/public/reconstruction-progress` |
 | `get_norma_story` | Nombre, rol, lugar y el relato publicado | `/api/public/norma-story` |
 | `get_transparency_summary` | Composición de lo recibido, gasto por categoría en %, cantidad de comprobantes | `/api/public/transparency-summary` |
-| `get_donation_catalog` | Qué le falta a la casa: categoría, título, unidad, necesarias y cuánto falta. Sin nombres, sin valor estimado, sin reservar | `/api/public/donation-catalog` |
+| `get_donation_catalog` | Qué le falta a la casa: categoría, título, unidad, cantidades y el estimado de la ficha si está cargado, etiquetado. Sin nombres, sin reservar | `/api/public/donation-catalog` |
 
 El slug del endpoint es el nombre sin `get_` y con guiones, derivado en la ruta. Un test compara los
 slugs contra el registro en las dos direcciones: una capacidad sin endpoint sería invisible, y un
@@ -228,7 +228,7 @@ Esta es la parte del documento que importa.
 | Ver un aporte individual o el nombre de quien aportó | El camino de lectura pública no llega a la tabla: el total sale de una vista agregada (ADR-016) y RLS niega la tabla al rol anónimo |
 | Descargar un comprobante | Los archivos están en un bucket privado; el enlace firmado lo emite el servidor sólo para rol `auditor` |
 | Ver el nombre de quien donó en especie | Que el nombre esté en `/quienes-ayudaron` no lo vuelve apto para una API. `get_donation_catalog` no lo devuelve (FR-242) |
-| Ver el valor estimado de un ítem | No se publica (D3). No está en la vista ni en la capacidad |
+| Ver el estimado de un ítem no publicado | La vista y la capacidad sólo ven lo publicado. El de la ficha, etiquetado, sí (ADR-041) |
 | Reservar un ítem | No hay herramienta que lo inicie. Reservar compromete a una persona real frente a una familia |
 | Escribir, publicar o borrar algo | No hay ningún `POST`, `PUT` ni `DELETE` en la API pública |
 | Mandar un parámetro que el servidor no espera | `z.strictObject`: se rechaza con 400, no se ignora |

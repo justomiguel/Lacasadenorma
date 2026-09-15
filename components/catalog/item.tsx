@@ -1,13 +1,19 @@
 import { BusyCue } from "@/components/design-system/busy";
 import { EditorialImage } from "@/components/design-system/editorial-image";
 import { ReservedSpace } from "@/components/design-system/photo";
-import type { AccountContent, CatalogContent } from "@/content/schema";
+import type {
+  AccountContent,
+  CatalogContent,
+  HelpContent,
+  UiContent,
+} from "@/content/schema";
 import { canClaim, isCovered, takenStatus } from "@/src/domain/catalog";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
-import type { Locale } from "@/src/i18n/locale";
 import { fill } from "@/src/i18n/fill";
+import type { Locale } from "@/src/i18n/locale";
 
 import { ClaimForm } from "./claim-form";
+import { CoverWithMoney } from "./cover";
 import { unitLabel } from "./units";
 
 /**
@@ -19,6 +25,8 @@ export function CatalogItem({
   claims,
   copy,
   account,
+  help,
+  ui,
   locale,
   priority = false,
 }: {
@@ -26,6 +34,8 @@ export function CatalogItem({
   claims: readonly CatalogClaim[];
   copy: CatalogContent;
   account: AccountContent;
+  help: HelpContent;
+  ui: UiContent;
   locale: Locale;
   priority?: boolean;
 }) {
@@ -75,13 +85,25 @@ export function CatalogItem({
         {copy.columnName} {names.length === 0 ? copy.nameNone : names}
       </p>
       {canClaim(quantities) ? (
-        <ClaimForm
-          itemId={item.id}
-          remaining={item.remainingQuantity}
-          copy={copy}
-          account={account}
-          locale={locale}
-        />
+        <>
+          <ClaimForm
+            itemId={item.id}
+            remaining={item.remainingQuantity}
+            copy={copy}
+            account={account}
+            locale={locale}
+          />
+          <CoverWithMoney
+            itemId={item.id}
+            remaining={item.remainingQuantity}
+            estimated={item.estimatedValue}
+            copy={copy}
+            account={account}
+            help={help}
+            ui={ui}
+            locale={locale}
+          />
+        </>
       ) : null}
     </article>
   );

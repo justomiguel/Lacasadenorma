@@ -7,6 +7,7 @@ import {
   isCurrencyCode,
   isPositive,
   money,
+  scaleMoney,
   subtractMoney,
   sumMoney,
 } from "./money";
@@ -162,5 +163,16 @@ describe("isPositive", () => {
   it("un centavo sí, y un saldo negativo no", () => {
     expect(isPositive(money(1, "ARS"))).toBe(true);
     expect(isPositive(money(-1, "ARS"))).toBe(false);
+  });
+});
+
+describe("scaleMoney", () => {
+  it("multiplica por un entero positivo", () => {
+    expect(scaleMoney(money(1_500, "ARS"), 3)).toEqual(money(4_500, "ARS"));
+  });
+
+  it("rechaza un factor que no es un entero positivo", () => {
+    expect(() => scaleMoney(money(100, "ARS"), 0)).toThrow(DomainError);
+    expect(() => scaleMoney(money(100, "ARS"), 1.5)).toThrow(DomainError);
   });
 });

@@ -4,7 +4,7 @@
 -- Fase D: reservas concurrentes, tope por cuenta, vencimiento sin cron (FR-218).
 
 begin;
-select plan(54);
+select plan(56);
 
 insert into public.campaigns (id, slug, title, summary, status, published_at) values
   ('c7000000-0000-4000-8000-000000000001', 'obra-catalogo', 'Obra del catálogo', 'Resumen', 'active', now());
@@ -231,7 +231,7 @@ select is_empty(
   'remaining_quantity nunca es negativo'
 );
 
-select is_empty(
+select isnt_empty(
   $q$
     select a.attname::text
       from pg_attribute a
@@ -242,7 +242,7 @@ select is_empty(
        and a.attname = 'estimated_unit_amount_minor'
        and not a.attisdropped
   $q$,
-  'la vista pública no tiene el valor estimado (D3)'
+  'la vista pública expone el valor estimado de la ficha (ADR-041)'
 );
 
 select is_empty(
@@ -291,7 +291,7 @@ select has_index(
 
 select has_function(
   'public', 'claim_donation_item',
-  array['uuid', 'integer', 'boolean', 'text', 'text']::name[],
+  array['uuid', 'integer', 'boolean', 'text', 'text', 'donation_cover_channel']::name[],
   'existe claim_donation_item()'
 );
 
@@ -783,6 +783,52 @@ select is(
 select is_empty(
   $q$ select detalle from concurrent_out where paso = 'error' $q$,
   'la prueba de concurrencia no se cayó por dblink ni por el entorno'
+);
+
+-- ── Cubrir con plata (ADR-041) ──────────────────────────────────────────────
+
+insert into public.donation_items (
+  id, campaign_id, title, unit, needed_quantity, published_at,
+  estimated_unit_amount_minor, currency
+) values (
+  'ab700000-0000-4000-8000-000000000007',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para cubrir con plata',
+  'unidad',
+  3,
+  now(),
+  15000000,
+  'ARS'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select is(
+  (
+    select cover_channel::text
+      from public.claim_donation_item('ab700000-0000-4000-8000-000000000007', 1)
+  ),
+  'bring',
+  'sin canal, la reserva es traer el objeto'
+);
+
+select is(
+  (
+    select cover_channel::text
+      from public.claim_donation_item(
+        'ab700000-0000-4000-8000-000000000007',
+        1,
+        true,
+        null,
+        null,
+        'mercadopago'
+      )
+  ),
+  'mercadopago',
+  'cubrir con Mercado Pago queda anotado en la reserva'
 );
 
 select * from finish();

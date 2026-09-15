@@ -307,6 +307,7 @@ export type Database = {
         Row: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          cover_channel: Database["public"]["Enums"]["donation_cover_channel"];
           created_at: string;
           donor_display_name: string | null;
           donor_note: string | null;
@@ -323,6 +324,7 @@ export type Database = {
         Insert: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           created_at?: string;
           donor_display_name?: string | null;
           donor_note?: string | null;
@@ -339,6 +341,7 @@ export type Database = {
         Update: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           created_at?: string;
           donor_display_name?: string | null;
           donor_note?: string | null;
@@ -940,7 +943,9 @@ export type Database = {
           budget_item_id: string | null;
           campaign_id: string | null;
           category: Database["public"]["Enums"]["donation_item_category"] | null;
+          currency: string | null;
           description: string | null;
+          estimated_unit_amount_minor: number | null;
           fulfilled_quantity: number | null;
           id: string | null;
           needed_quantity: number | null;
@@ -954,7 +959,9 @@ export type Database = {
           budget_item_id?: string | null;
           campaign_id?: string | null;
           category?: Database["public"]["Enums"]["donation_item_category"] | null;
+          currency?: string | null;
           description?: string | null;
+          estimated_unit_amount_minor?: number | null;
           fulfilled_quantity?: number | null;
           id?: string | null;
           needed_quantity?: number | null;
@@ -968,7 +975,9 @@ export type Database = {
           budget_item_id?: string | null;
           campaign_id?: string | null;
           category?: Database["public"]["Enums"]["donation_item_category"] | null;
+          currency?: string | null;
           description?: string | null;
+          estimated_unit_amount_minor?: number | null;
           fulfilled_quantity?: number | null;
           id?: string | null;
           needed_quantity?: number | null;
@@ -1095,6 +1104,7 @@ export type Database = {
       };
       claim_donation_item: {
         Args: {
+          p_cover_channel?: Database["public"]["Enums"]["donation_cover_channel"];
           p_display_name?: string;
           p_is_anonymous?: boolean;
           p_item_id: string;
@@ -1104,6 +1114,7 @@ export type Database = {
         Returns: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          cover_channel: Database["public"]["Enums"]["donation_cover_channel"];
           created_at: string;
           donor_display_name: string | null;
           donor_note: string | null;
@@ -1167,6 +1178,7 @@ export type Database = {
     Enums: {
       app_role: "auditor" | "editor" | "admin" | "owner";
       campaign_status: "draft" | "active" | "paused" | "completed";
+      donation_cover_channel: "bring" | "transfer" | "mercadopago" | "paypal";
       donation_item_category:
         | "materiales"
         | "aberturas"
@@ -1318,6 +1330,7 @@ export const Constants = {
     Enums: {
       app_role: ["auditor", "editor", "admin", "owner"],
       campaign_status: ["draft", "active", "paused", "completed"],
+      donation_cover_channel: ["bring", "transfer", "mercadopago", "paypal"],
       donation_item_category: [
         "materiales",
         "aberturas",

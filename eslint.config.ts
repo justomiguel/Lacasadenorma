@@ -201,6 +201,28 @@ export default defineConfig([
     },
   },
 
+  /**
+   * ADR-041: la ficha del catálogo puede mostrar un estimado etiquetado.
+   * Un solo archivo. El resto del sitio público sigue sin montos.
+   */
+  {
+    files: ["components/catalog/cover-amount.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/src/infrastructure/supabase/*"],
+              message:
+                "Los componentes no acceden a la base de datos: usan casos de uso (ADR-005).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   {
     files: ["**/*.{test,spec}.{ts,tsx}", "e2e/**/*.ts", "scripts/**/*.mjs"],
     rules: {

@@ -19,6 +19,7 @@ const item: DonationItem = {
   neededQuantity: 40,
   remainingQuantity: 35,
   fulfilledQuantity: 5,
+  estimatedValue: null,
   photo: null,
   sortOrder: 1,
 };
@@ -56,6 +57,7 @@ describe("get_donation_catalog", () => {
           category: "materiales",
           needed: 40,
           remaining: 35,
+          estimated: null,
         },
       ],
     });
@@ -71,6 +73,30 @@ describe("get_donation_catalog", () => {
     expect(serializado).not.toContain(String(VALOR_ESTIMADO_INTERNO));
     expect(serializado).not.toContain("user_id");
     expect(serializado).not.toContain("donor_note");
+  });
+
+  it("si la ficha tiene estimado, el agente cita el mismo número etiquetado", async () => {
+    const conEstimado = {
+      ...item,
+      estimatedValue: { amountMinor: 15_000_000, currency: "ARS" as const },
+    };
+    const { output, text } = esperarOk(
+      await runCapability(
+        "get_donation_catalog",
+        {},
+        context(fakeSupabaseLayer({ catalog: [conEstimado] })),
+      ),
+    );
+
+    expect(output).toMatchObject({
+      items: [
+        {
+          estimated: { amountMinor: 15_000_000, currency: "ARS" },
+        },
+      ],
+    });
+    expect(text).toMatch(/estimado, no fijo/i);
+    expect(text).toMatch(/150\.000/);
   });
 
   it("sin ítems publicados devuelve lista vacía y lo dice: no inventa un catálogo", async () => {

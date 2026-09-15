@@ -79,7 +79,7 @@ export async function CatalogItemScreen({
 } & CatalogItemProps) {
   const { id } = await params;
   const query = await searchParams;
-  const { catalog, account, ui } = getContent(locale);
+  const { catalog, account, ui, help } = getContent(locale);
 
   if (!ITEM_ID.test(id)) {
     notFound();
@@ -126,6 +126,8 @@ export async function CatalogItemScreen({
             claims={claims}
             copy={catalog}
             account={account}
+            help={help}
+            ui={ui}
             locale={locale}
             priority
           />

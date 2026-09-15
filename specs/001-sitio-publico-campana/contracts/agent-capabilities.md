@@ -122,10 +122,9 @@ Qué le falta a la casa, en especie.
 
 **Entrada**: ninguna.
 
-**Salida**: `{ items: [{ title, description, unit, category, needed, remaining }], updatedAt }`.
+**Salida**: `{ items: [{ title, description, unit, category, needed, remaining, estimated }], updatedAt }`.
 
-No incluye nombres de donantes, ni el valor estimado, ni una forma de reservar (FR-242). Corre el
-mismo caso de uso que `/catalogo`.
+`estimated` es `{ amountMinor, currency }` o `null`. Si la ficha no tiene número, acá tampoco (ADR-041, A5). No incluye nombres de donantes ni una forma de reservar (FR-242). Corre el mismo caso de uso que `/catalogo`.
 
 ---
 

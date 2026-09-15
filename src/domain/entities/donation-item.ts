@@ -5,8 +5,8 @@ import type { Money } from "../money";
  * Un ítem del catálogo de donaciones en especie.
  *
  * Lo que falta, en qué unidad, de qué categoría y cuánto. El valor estimado
- * **no está acá**: no se publica (D3). Quien administra lo ve en
- * `DonationItemAdminRecord`.
+ * va en la ficha, etiquetado como estimado y no como precio fijo (ADR-041).
+ * Quien administra lo carga en `DonationItemAdminRecord`.
  */
 
 export const DONATION_UNITS = [
@@ -72,6 +72,7 @@ export interface DonationItem {
   readonly neededQuantity: number;
   readonly remainingQuantity: number;
   readonly fulfilledQuantity: number;
+  readonly estimatedValue: Money | null;
   readonly photo: MediaAsset | null;
   readonly sortOrder: number;
 }
@@ -79,8 +80,9 @@ export interface DonationItem {
 /**
  * El mismo ítem visto desde el backoffice.
  *
- * Agrega lo que el público no tiene que ver: el valor de referencia, si está
- * publicado, cuánto hay reservado y el id de la foto para poder cambiarla.
+ * Agrega lo que el listado no tiene que ver: si está publicado, cuánto hay
+ * reservado y el id de la foto para poder cambiarla. El estimado sí se publica
+ * en la ficha (ADR-041); acá se carga.
  */
 export interface DonationItemAdminRecord {
   readonly id: string;

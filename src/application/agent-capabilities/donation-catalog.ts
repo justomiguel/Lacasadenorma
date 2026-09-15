@@ -1,3 +1,5 @@
+import { formatMoney, isCurrencyCode, money } from "@/src/domain/money";
+
 import { getCatalog } from "../use-cases/get-catalog";
 import { noInput, unavailableOutcome } from "./capability-helpers";
 import type { AgentCapability } from "./types";
@@ -10,6 +12,10 @@ export interface DonationCatalogOutput {
     readonly category: string;
     readonly needed: number;
     readonly remaining: number;
+    readonly estimated: {
+      readonly amountMinor: number;
+      readonly currency: string;
+    } | null;
   }[];
   readonly updatedAt: string;
 }
@@ -17,9 +23,10 @@ export interface DonationCatalogOutput {
 /**
  * Qué le falta a la casa, para un agente.
  *
- * Llama el mismo `getCatalog` que la página. No hay un camino paralelo, y no hay
- * forma de reservar: esta capacidad es de lectura, y reservar compromete a una
- * persona real frente a una familia (FR-242).
+ * Llama el mismo `getCatalog` que la página. El estimado, si la ficha lo
+ * muestra, va etiquetado (ADR-041, A5). No hay forma de reservar: esta
+ * capacidad es de lectura, y reservar compromete a una persona real frente
+ * a una familia (FR-242).
  */
 export const getDonationCatalogCapability: AgentCapability<
   Record<string, never>,
@@ -28,7 +35,7 @@ export const getDonationCatalogCapability: AgentCapability<
   name: "get_donation_catalog",
   title: "Qué le falta a la casa",
   description:
-    "Devuelve los ítems publicados de lo que le falta a la casa: categoría, título, descripción, unidad, cantidad necesaria y cantidad que todavía falta. No incluye nombres de quienes donan, ni el valor estimado, ni una forma de reservar.",
+    "Devuelve los ítems publicados de lo que le falta a la casa: categoría, título, descripción, unidad, cantidades y, si está cargado, el estimado por unidad etiquetado como estimado no fijo. No incluye nombres de quienes donan ni una forma de reservar.",
   input: noInput,
   readOnly: true,
   async run(_input, context) {
@@ -51,6 +58,13 @@ export const getDonationCatalogCapability: AgentCapability<
           category: item.category,
           needed: item.neededQuantity,
           remaining: item.remainingQuantity,
+          estimated:
+            item.estimatedValue === null
+              ? null
+              : {
+                  amountMinor: item.estimatedValue.amountMinor,
+                  currency: item.estimatedValue.currency,
+                },
         })),
         updatedAt: new Date().toISOString(),
       },
@@ -62,10 +76,19 @@ export const getDonationCatalogCapability: AgentCapability<
     }
 
     return output.items
-      .map(
-        (item) =>
-          `${item.title} (${item.category}): faltan ${String(item.remaining)} de ${String(item.needed)} (${item.unit}).`,
-      )
+      .map((item) => {
+        const quantities = `${item.title} (${item.category}): faltan ${String(item.remaining)} de ${String(item.needed)} (${item.unit}).`;
+
+        if (item.estimated === null || !isCurrencyCode(item.estimated.currency)) {
+          return quantities;
+        }
+
+        const amount = formatMoney(
+          money(item.estimated.amountMinor, item.estimated.currency),
+        );
+
+        return `${quantities} Estimado, no fijo: ${amount} por unidad.`;
+      })
       .join(" ");
   },
 };

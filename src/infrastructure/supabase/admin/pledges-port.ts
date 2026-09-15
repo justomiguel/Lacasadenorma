@@ -1,3 +1,4 @@
+import { isCoverChannel } from "@/src/domain/cover";
 import type { AdminPledgeRecord } from "@/src/domain/entities/donation-pledge";
 import { isPledgeStatus } from "@/src/domain/pledge-status";
 import type { AdminDonationsPort } from "@/src/domain/ports/donations";
@@ -7,7 +8,7 @@ import type { ServerSupabaseClient } from "../server-client";
 import { QueryError } from "./query";
 
 const COLUMNS =
-  "id, item_id, user_id, quantity, status, is_anonymous, donor_display_name, donor_note, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
+  "id, item_id, user_id, quantity, status, is_anonymous, donor_display_name, donor_note, cover_channel, expires_at, reminded_at, fulfilled_at, cancelled_at, cancel_reason, created_at";
 
 type PledgeRow = Pick<
   Database["public"]["Tables"]["donation_pledges"]["Row"],
@@ -19,6 +20,7 @@ type PledgeRow = Pick<
   | "is_anonymous"
   | "donor_display_name"
   | "donor_note"
+  | "cover_channel"
   | "expires_at"
   | "reminded_at"
   | "fulfilled_at"
@@ -129,5 +131,6 @@ function mapAdminPledge(row: PledgeWithItem, email: string | null): AdminPledgeR
     createdAt: row.created_at,
     userId: row.user_id,
     contactEmail: email,
+    coverChannel: isCoverChannel(row.cover_channel) ? row.cover_channel : "bring",
   };
 }

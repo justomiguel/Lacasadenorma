@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { catalogItemHref, CATALOG_ITEM_ID } from "@/src/application/accounts/return-path";
 import { claimItem } from "@/src/application/use-cases/claim-item";
+import { isCoverChannel } from "@/src/domain/cover";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { notifyPledgeClaimed } from "@/src/infrastructure/donations/notify";
 import { localizeHref, type Locale } from "@/src/i18n/locale";
@@ -34,6 +35,7 @@ export async function claimItemAction(
     redirect(`${localizeHref("/cuenta/ingresar", locale)}?volver=${volver}`);
   }
 
+  const canal = textOf(formData, "canal");
   const result = await claimItem(
     {
       ...deps,
@@ -45,6 +47,7 @@ export async function claimItemAction(
       anonymous: formData.get("aparecer") === null ? "si" : "no",
       displayName: textOf(formData, "nombre"),
       note: textOf(formData, "nota"),
+      coverChannel: isCoverChannel(canal) ? canal : "bring",
     },
   );
 

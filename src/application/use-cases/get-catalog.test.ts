@@ -21,6 +21,7 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
     neededQuantity: 40,
     remainingQuantity: 35,
     fulfilledQuantity: 2,
+    estimatedValue: null,
     photo: null,
     sortOrder: 10,
     ...partial,
