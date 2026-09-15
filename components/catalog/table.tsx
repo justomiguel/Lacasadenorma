@@ -31,7 +31,7 @@ export function CatalogTable({
 }) {
   return (
     <div className="max-w-full overflow-x-auto overscroll-x-contain">
-      <table className="w-max min-w-full border-collapse text-left">
+      <table className="w-full border-collapse text-left">
         <caption className="mb-md text-left font-ui text-small text-ink-muted">
           {copy.tableCaption}
         </caption>
@@ -124,7 +124,7 @@ function CatalogRow({
     <tr id={`item-${item.id}`} className="scroll-mt-xl border-b border-rule">
       <th
         scope="row"
-        className="max-w-measure py-sm pr-md text-left text-body font-normal"
+        className="min-w-0 max-w-quote py-sm pr-md text-left text-body font-normal"
       >
         <InlineLink href={href}>{item.title}</InlineLink>
       </th>
@@ -139,7 +139,7 @@ function CatalogRow({
       <td className="py-sm pr-md font-ui text-small whitespace-nowrap">
         {taken.taken ? copy.takenYes : copy.takenNo}
       </td>
-      <td className="max-w-measure py-sm pr-md font-ui text-small text-ink-muted">
+      <td className="min-w-0 max-w-quote py-sm pr-md font-ui text-small text-ink-muted">
         {names.length === 0 ? copy.nameNone : names}
       </td>
       <td className="py-sm pr-md font-ui text-small tabular-nums whitespace-nowrap">
