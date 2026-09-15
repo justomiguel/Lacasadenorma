@@ -201,14 +201,7 @@ export function esperarOk(result: CapabilityResult<unknown>): {
 
 /** La forma exacta de `contracts/agent-capabilities.md`, campo por campo. */
 export const CONTRATO: Record<string, readonly string[]> = {
-  get_campaign_status: [
-    "goalMinor",
-    "raisedMinor",
-    "percent",
-    "currency",
-    "reconciledAt",
-    "updatedAt",
-  ],
+  get_campaign_status: ["spentPercent", "remainingPercent", "reconciledAt", "updatedAt"],
   get_donation_methods: ["methods"],
   get_reconstruction_progress: [
     "milestones",
@@ -227,11 +220,8 @@ export const CONTRATO: Record<string, readonly string[]> = {
     "diedOn",
   ],
   get_transparency_summary: [
-    "receivedMinor",
-    "spentMinor",
-    "balanceMinor",
-    "currency",
-    "executedPercent",
+    "spentPercent",
+    "remainingPercent",
     "expenseCount",
     "receiptCount",
     "byCategory",

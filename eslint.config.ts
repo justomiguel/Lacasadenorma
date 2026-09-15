@@ -164,6 +164,43 @@ export default defineConfig([
     },
   },
 
+  /**
+   * El sitio público no publica montos (ADR-040). El backoffice sí: vive en
+   * `app/(es)/admin`. Si un componente de campaña o de pantalla pública importa
+   * `formatMoney`, el linter lo frena antes de que un `$` llegue a la interfaz.
+   */
+  {
+    files: [
+      "components/screens/**/*.{ts,tsx}",
+      "components/campaign/**/*.{ts,tsx}",
+      "components/catalog/**/*.{ts,tsx}",
+      "components/design-system/figures.tsx",
+      "components/design-system/ledger.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/src/domain/money",
+              importNames: ["formatMoney", "formatAmount"],
+              message:
+                "El sitio público no publica montos (ADR-040). Usá porcentajes sobre un total conocido.",
+            },
+          ],
+          patterns: [
+            {
+              group: ["@/src/infrastructure/supabase/*"],
+              message:
+                "Los componentes no acceden a la base de datos: usan casos de uso (ADR-005).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   {
     files: ["**/*.{test,spec}.{ts,tsx}", "e2e/**/*.ts", "scripts/**/*.mjs"],
     rules: {

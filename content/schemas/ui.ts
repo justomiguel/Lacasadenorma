@@ -176,6 +176,8 @@ export const uiPagesSchema = z.object({
     helpLead: phrase,
     newsLink: phrase,
     helpLeadTail: phrase,
+    unknownTotal: phrase,
+    budgetHeading: phrase,
   }),
   legacyPage: z.object({
     seoDescription: phrase,

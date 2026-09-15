@@ -99,40 +99,40 @@
   "figures": {
     "received": "Received",
     "receivedIn": "Received in {currency}",
-    "spent": "Spent",
-    "balance": "Balance",
-    "executedNote": "{percent} of the goal already spent",
-    "otherCurrency": "Received in another currency ({currency})",
+    "spent": "Already used",
+    "balance": "Still in the account",
+    "executedNote": "{percent} of what has already arrived has been used",
+    "otherCurrency": "There were also gifts in {currency}",
     "unquoted": "Not yet quoted",
-    "noGoal": "raised. The goal is not published yet, so we do not show a percentage.",
-    "raisedOfGoal": "{raised} raised of a {goal} goal",
-    "ofGoal": "of {goal}",
-    "percentOfGoal": "{percent} of the goal"
+    "noGoal": "100% of the work is not published yet, so we do not show a percentage against a goal.",
+    "raisedOfGoal": "{percent} of what has already arrived has been used",
+    "ofGoal": "of what has already arrived",
+    "percentOfGoal": "{percent} is still in the account"
   },
   "progress": {
     "noReconciliation": "There has not been a bank reconciliation yet, so this figure is provisional.",
     "reconciledOn": "Figures reconciled with the bank statement as of {date}.",
-    "otherCurrencies": "Also received: {amounts}. We do not convert them to pesos: there is no dated exchange rate we can publish.",
+    "otherCurrencies": "There were also gifts in {currencies}. We do not convert them to pesos: there is no dated exchange rate we can publish.",
     "milestones": "{completed} of {total} work milestones are complete.",
     "staleTitle": "Out of date",
     "staleBody": "More than thirty days have passed since the last reconciliation. The figure you see may be behind what is in the account."
   },
   "budget": {
     "emptyTitle": "The budget is still being put together",
-    "emptyBody": "The family is surveying the work with people from the town. Each line appears here with its amount as soon as it is quoted. We would rather show an incomplete list than an invented number.",
+    "emptyBody": "The family is surveying the work with people from the town. Each line appears here as a share of what is already quoted as soon as it is. We would rather show an incomplete list than an invented number.",
     "noneQuoted": "No line has been quoted yet.",
-    "someQuoted": "{quoted} of {total} lines are quoted. The rest appear without an amount until they are."
+    "someQuoted": "{quoted} of {total} lines are quoted. The rest appear without a percentage until they are."
   },
   "ledger": {
     "date": "Date",
     "concept": "Item",
     "category": "Category",
     "receipt": "Receipt",
-    "amount": "Amount",
+    "amount": "Of spending",
     "yes": "Yes",
     "receiptYes": "Has {count} receipt{plural} in the internal archive",
     "receiptMissing": "Not uploaded",
-    "caption": "{count} published expenses. The sum of this table is the total spent above."
+    "caption": "{count} published expenses. Each one says what share of total spending it is."
   },
   "donations": {
     "emptyTitle": "No account has been published yet",
@@ -312,24 +312,26 @@
     "shareLead": "If you cannot give, sharing the link still helps. Most of the people who got this far did so because someone passed it on."
   },
   "transparencyPage": {
-    "seoDescription": "How the campaign books are kept. A public ledger of figures is not published on the site yet.",
-    "totalsHeading": "How much came in and how much went out",
-    "noReconciliation": "There has not been a reconciliation with the bank statement yet, so these figures are provisional.",
+    "seoDescription": "How the campaign books are kept. Of what has already arrived we publish what share was used; the 100% of the work is not published yet.",
+    "totalsHeading": "Of what has already arrived",
+    "noReconciliation": "There has not been a reconciliation with the bank statement yet, so these percentages are provisional.",
     "reconciledOn": "Reconciled with the bank statement as of {date}.",
     "currenciesNote": " Currencies are not added together: there is no dated exchange rate we can publish.",
     "staleTitle": "Out of date",
-    "staleBody": "More than thirty days have passed since the last reconciliation. The figures above may be behind what is in the account.",
+    "staleBody": "More than thirty days have passed since the last reconciliation. The percentages above may be behind what is in the account.",
     "byCategoryHeading": "Where it was spent",
     "ledgerHeading": "Each expense, one by one",
     "noExpensesTitle": "Nothing has been spent yet",
-    "noExpensesBody": "The gifts are in the account and have not been spent. When the first materials are paid for, they will appear here, with their date and their receipt.",
+    "noExpensesBody": "What arrived is in the account and has not been spent. When the first materials are paid for, they will appear here, with their date and their receipt.",
     "noReceipts": "None of these expenses has a receipt uploaded yet.",
     "receiptsNote": "There are {count} receipts on file. The files are not published because they often have third-party details: someone with an audit role can review them.",
     "methodHeading": "How the books are kept",
     "helpHeading": "Add to the account",
     "helpLead": "Gifts given today go to rebuilding the house.",
     "newsLink": "The updates",
-    "helpLeadTail": "tell each step as it happens."
+    "helpLeadTail": "tell each step as it happens.",
+    "unknownTotal": "These percentages are of what has already arrived, not of the total for the work. That 100% is not published yet.",
+    "budgetHeading": "Of the quoted budget"
   },
   "legacyPage": {
     "seoDescription": "What Fundación Norma sets out to do once the house is finished and where the project stands today: an intention, still without an organisation.",

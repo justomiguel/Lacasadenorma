@@ -99,40 +99,40 @@
   "figures": {
     "received": "Recibido",
     "receivedIn": "Recibido en {currency}",
-    "spent": "Gastado",
-    "balance": "Saldo",
-    "executedNote": "{percent} del objetivo ya ejecutado",
-    "otherCurrency": "Recibido en otra moneda ({currency})",
+    "spent": "Ya se usó",
+    "balance": "Sigue en la cuenta",
+    "executedNote": "{percent} de lo que ya llegó se usó",
+    "otherCurrency": "También hubo aportes en {currency}",
     "unquoted": "Sin cotizar",
-    "noGoal": "recaudado. El objetivo todavía no está publicado, así que no mostramos un porcentaje.",
-    "raisedOfGoal": "{raised} recaudados de un objetivo de {goal}",
-    "ofGoal": "de {goal}",
-    "percentOfGoal": "{percent} del objetivo"
+    "noGoal": "El 100 % de la obra todavía no está publicado, así que no mostramos un porcentaje contra una meta.",
+    "raisedOfGoal": "{percent} de lo que ya llegó se usó",
+    "ofGoal": "de lo que ya llegó",
+    "percentOfGoal": "{percent} sigue en la cuenta"
   },
   "progress": {
     "noReconciliation": "Todavía no hubo una conciliación bancaria, así que esta cifra es provisoria.",
     "reconciledOn": "Cifras conciliadas con el resumen del banco al {date}.",
-    "otherCurrencies": "También se recibieron {amounts}. No los convertimos a pesos: no hay un tipo de cambio con fecha que podamos publicar.",
+    "otherCurrencies": "También hubo aportes en {currencies}. No los convertimos a pesos: no hay un tipo de cambio con fecha que podamos publicar.",
     "milestones": "De la obra están completados {completed} de {total} hitos.",
     "staleTitle": "Dato desactualizado",
     "staleBody": "Pasaron más de treinta días desde la última conciliación. La cifra que ves puede estar atrasada respecto de lo que hay en la cuenta."
   },
   "budget": {
     "emptyTitle": "El presupuesto se está armando",
-    "emptyBody": "La familia está relevando la obra con gente del pueblo. Cada rubro aparece acá con su monto en cuanto queda cotizado. Preferimos una lista incompleta a un número inventado.",
+    "emptyBody": "La familia está relevando la obra con gente del pueblo. Cada rubro aparece acá como parte de lo ya cotizado en cuanto queda. Preferimos una lista incompleta a un número inventado.",
     "noneQuoted": "Ningún rubro está cotizado todavía.",
-    "someQuoted": "{quoted} de {total} rubros están cotizados. El resto aparece sin monto hasta que lo esté."
+    "someQuoted": "{quoted} de {total} rubros están cotizados. El resto aparece sin porcentaje hasta que lo esté."
   },
   "ledger": {
     "date": "Fecha",
     "concept": "Concepto",
     "category": "Categoría",
     "receipt": "Comprobante",
-    "amount": "Monto",
+    "amount": "Del gastado",
     "yes": "Sí",
     "receiptYes": "Tiene {count} comprobante{plural} en el archivo interno",
     "receiptMissing": "Sin cargar",
-    "caption": "{count} gastos publicados. La suma de esta tabla es el total gastado de más arriba."
+    "caption": "{count} gastos publicados. Cada uno dice qué parte del total gastado representa."
   },
   "donations": {
     "emptyTitle": "Todavía no hay una cuenta publicada",
@@ -312,24 +312,26 @@
     "shareLead": "Si no podés aportar, compartir el enlace ayuda igual. La mayoría de la gente que llegó hasta acá lo hizo porque alguien se lo pasó."
   },
   "transparencyPage": {
-    "seoDescription": "Cómo se lleva la cuenta de la campaña. La rendición pública de cifras todavía no está publicada en el sitio.",
-    "totalsHeading": "Cuánto entró y cuánto salió",
-    "noReconciliation": "Todavía no hubo una conciliación con el resumen del banco, así que estas cifras son provisorias.",
+    "seoDescription": "Cómo se lleva la cuenta de la campaña. De lo que ya llegó se publica qué parte se usó; el 100 % de la obra todavía no está publicado.",
+    "totalsHeading": "De lo que ya llegó",
+    "noReconciliation": "Todavía no hubo una conciliación con el resumen del banco, así que estos porcentajes son provisorios.",
     "reconciledOn": "Conciliado con el resumen del banco al {date}.",
     "currenciesNote": " Las monedas no se suman entre sí: no hay un tipo de cambio con fecha que podamos publicar.",
     "staleTitle": "Dato desactualizado",
-    "staleBody": "Pasaron más de treinta días desde la última conciliación. Las cifras de arriba pueden estar atrasadas respecto de lo que hay en la cuenta.",
+    "staleBody": "Pasaron más de treinta días desde la última conciliación. Los porcentajes de arriba pueden estar atrasados respecto de lo que hay en la cuenta.",
     "byCategoryHeading": "En qué se gastó",
     "ledgerHeading": "Cada gasto, uno por uno",
     "noExpensesTitle": "Todavía no se gastó nada",
-    "noExpensesBody": "Los aportes están en la cuenta y sin ejecutar. Cuando se pague el primer material va a aparecer acá, con su fecha y su comprobante.",
+    "noExpensesBody": "Lo que llegó está en la cuenta y sin ejecutar. Cuando se pague el primer material va a aparecer acá, con su fecha y su comprobante.",
     "noReceipts": "Ninguno de estos gastos tiene todavía su comprobante cargado.",
     "receiptsNote": "Hay {count} comprobantes archivados. Los archivos no se publican porque suelen tener datos de terceros: los puede revisar una persona con rol de auditoría.",
     "methodHeading": "Cómo se lleva la cuenta",
     "helpHeading": "Sumar a la cuenta",
     "helpLead": "Los aportes de hoy van a la reconstrucción de la casa.",
     "newsLink": "Las novedades",
-    "helpLeadTail": "cuentan cada avance a medida que pasa."
+    "helpLeadTail": "cuentan cada avance a medida que pasa.",
+    "unknownTotal": "Estos porcentajes son sobre lo que ya llegó, no sobre el total de la obra. Ese 100 % todavía no está publicado.",
+    "budgetHeading": "Del presupuesto cotizado"
   },
   "legacyPage": {
     "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada y en qué estado está hoy el proyecto: una intención, todavía sin organización.",

@@ -1,4 +1,3 @@
-import { formatAmount, formatMoney, type Money } from "@/src/domain/money";
 import { formatPercentage } from "@/src/domain/percentage";
 import type { UiContent } from "@/content/schema";
 import { fill } from "@/src/i18n/fill";
@@ -9,53 +8,45 @@ import { cn } from "./cn";
 const DEFAULT_FIGURES: UiContent["figures"] = {
   received: "Recibido",
   receivedIn: "Recibido en {currency}",
-  spent: "Gastado",
-  balance: "Saldo",
-  executedNote: "{percent} del objetivo ya ejecutado",
-  otherCurrency: "Recibido en otra moneda ({currency})",
+  spent: "Ya se usó",
+  balance: "Sigue en la cuenta",
+  executedNote: "{percent} de lo que ya llegó se usó",
+  otherCurrency: "También hubo aportes en {currency}",
   unquoted: "Sin cotizar",
   noGoal:
-    "recaudado. El objetivo todavía no está publicado, así que no mostramos un porcentaje.",
-  raisedOfGoal: "{raised} recaudados de un objetivo de {goal}",
-  ofGoal: "de {goal}",
-  percentOfGoal: "{percent} del objetivo",
+    "El 100 % de la obra todavía no está publicado, así que no mostramos un porcentaje contra una meta.",
+  raisedOfGoal: "{percent} de lo que ya llegó se usó",
+  ofGoal: "de lo que ya llegó",
+  percentOfGoal: "{percent} sigue en la cuenta",
 };
 
 /**
- * Cifras y barras de progreso.
+ * Cifras públicas: porcentajes sobre totales conocidos, nunca montos (ADR-040).
  *
- * Todas las cifras son tabulares: un monto que baila al actualizarse transmite
- * descuido, y acá los números son el argumento.
+ * Son tabulares: un número que baila al actualizarse transmite descuido.
  */
 
 /**
- * Una cifra con su etiqueta y su fecha.
+ * Una cifra con su etiqueta.
  *
- * La etiqueta es parte del nombre accesible de la cifra, no un texto suelto al
- * lado: quien usa un lector de pantalla escucha "Recibido, 1.240.000 pesos", no
- * un número sin contexto.
+ * La etiqueta es parte del nombre accesible, no un texto suelto al lado.
  */
 export function Stat({
   label,
   amount,
   note,
-  locale = "es",
   className,
 }: {
   label: string;
-  amount: Money | string;
+  amount: string;
   note?: string;
-  locale?: Locale;
   className?: string;
 }) {
-  const value =
-    typeof amount === "string" ? amount : formatMoney(amount, intlLocale(locale));
-
   return (
     <div className={cn("border-t border-rule pt-sm", className)}>
       <dt className="font-ui text-label text-ink-muted">{label}</dt>
       <dd className="mt-2xs font-ui text-figure font-medium" data-figure>
-        {value}
+        {amount}
       </dd>
       {note === undefined ? null : (
         <dd className="mt-2xs font-ui text-small text-ink-muted">{note}</dd>
@@ -72,91 +63,71 @@ export function StatGroup({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <dl className={cn("grid gap-lg sm:grid-cols-3", className)}>{children}</dl>;
+  return <dl className={cn("grid gap-lg sm:grid-cols-2", className)}>{children}</dl>;
 }
 
 /**
- * Barra de progreso de la recaudación.
+ * Barra de lo que ya se usó, sobre lo que ya llegó.
  *
- * Cuando no hay objetivo cargado, **no se dibuja la barra**: se muestra lo
- * recaudado. Una barra al 0% comunica "no juntamos nada", que es distinto de "no
- * publicamos el objetivo todavía" (FR de honestidad del contenido).
+ * Cuando no hay recibido, **no se dibuja la barra**: el 100% de la obra no está
+ * publicado, y una barra al 0% comunicaría "no juntamos nada".
  */
 export function ProgressBar({
-  raised,
-  goal,
-  percent,
+  spentPercent,
+  remainingPercent,
   locale = "es",
   figures = DEFAULT_FIGURES,
   className,
 }: {
-  raised: Money;
-  goal: Money | null;
-  percent: number | null;
+  spentPercent: number | null;
+  remainingPercent: number | null;
   locale?: Locale;
   figures?: UiContent["figures"];
   className?: string;
 }) {
   const intl = intlLocale(locale);
-  const raisedText = formatMoney(raised, intl);
 
-  if (goal === null || percent === null) {
+  if (spentPercent === null) {
     return (
       <div className={className}>
-        <p className="font-ui text-figure font-medium" data-figure>
-          {raisedText}
-        </p>
-        <p className="mt-xs max-w-measure font-ui text-small text-ink-muted">
+        <p className="max-w-measure font-ui text-small text-ink-muted">
           {figures.noGoal}
         </p>
       </div>
     );
   }
 
-  const goalText = formatMoney(goal, intl);
-  const label = fill(figures.raisedOfGoal, { raised: raisedText, goal: goalText });
+  const spentText = formatPercentage(spentPercent, { locale: intl });
+  const label = fill(figures.raisedOfGoal, { percent: spentText });
 
   return (
     <div className={className}>
       <p className="font-ui text-figure font-medium" data-figure>
-        {raisedText}{" "}
+        {spentText}{" "}
         <span className="text-subheading font-normal text-ink-muted">
-          {fill(figures.ofGoal, { goal: goalText })}
+          {figures.ofGoal}
         </span>
       </p>
       <div
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={Math.round(percent)}
+        aria-valuenow={Math.round(spentPercent)}
         aria-label={label}
         className="mt-md h-2xs w-full overflow-hidden bg-paper-sunk"
       >
         <div
           className="h-full bg-aqua"
-          style={{ width: `${String(Math.max(percent, 0.5))}%` }}
+          style={{ width: `${String(Math.max(spentPercent, 0.5))}%` }}
         />
       </div>
-      <p className="mt-xs font-ui text-small text-ink-muted" data-figure>
-        {fill(figures.percentOfGoal, {
-          percent: formatPercentage(percent, { locale: intl }),
-        })}
-      </p>
+      {remainingPercent === null ? null : (
+        <p className="mt-xs font-ui text-small text-ink-muted" data-figure>
+          {fill(figures.percentOfGoal, {
+            percent: formatPercentage(remainingPercent, { locale: intl }),
+          })}
+        </p>
+      )}
     </div>
-  );
-}
-
-/** Monto dentro de una tabla, sin símbolo: la moneda está en el encabezado. */
-export function TableAmount({
-  amount,
-  locale = "es",
-}: {
-  amount: Money;
-  locale?: Locale;
-}) {
-  return (
-    <span className="font-ui tabular-nums" data-figure>
-      {formatAmount(amount, intlLocale(locale))}
-    </span>
   );
 }

@@ -1,5 +1,5 @@
-import { type ExpenseRecord } from "@/src/domain/entities";
-import { formatMoney } from "@/src/domain/money";
+import type { ExpenseRecord } from "@/src/domain/entities";
+import { formatPercentage } from "@/src/domain/percentage";
 import type { UiContent } from "@/content/schema";
 import { fill } from "@/src/i18n/fill";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
@@ -12,12 +12,12 @@ const DEFAULT_LEDGER: UiContent["ledger"] = {
   concept: "Concepto",
   category: "Categoría",
   receipt: "Comprobante",
-  amount: "Monto",
+  amount: "Del gastado",
   yes: "Sí",
   receiptYes: "Tiene {count} comprobante{plural} en el archivo interno",
   receiptMissing: "Sin cargar",
   caption:
-    "{count} gastos publicados. La suma de esta tabla es el total gastado de más arriba.",
+    "{count} gastos publicados. Cada uno dice qué parte del total gastado representa.",
 };
 
 const DEFAULT_CATEGORIES: UiContent["expenseCategories"] = {
@@ -29,15 +29,12 @@ const DEFAULT_CATEGORIES: UiContent["expenseCategories"] = {
   otros: "Otros",
 };
 
+export type LedgerExpense = ExpenseRecord & {
+  readonly percentOfSpent: number | null;
+};
+
 /**
- * Libro de gastos.
- *
- * Es una `<table>` con `<caption>` y encabezados asociados, porque es
- * literalmente una tabla de datos y cualquier otra cosa sería peor para quien la
- * recorre con un lector de pantalla.
- *
- * En mobile **no** hace scroll horizontal: cada fila se reordena en bloque. Una
- * tabla financiera que se lee de costado no se lee.
+ * Libro de gastos públicos: cada fila es una parte de lo ya gastado, no un monto.
  */
 export function Ledger({
   expenses,
@@ -47,7 +44,7 @@ export function Ledger({
   categories = DEFAULT_CATEGORIES,
   className,
 }: {
-  expenses: readonly ExpenseRecord[];
+  expenses: readonly LedgerExpense[];
   caption: string;
   locale?: Locale;
   ledger?: UiContent["ledger"];
@@ -124,7 +121,9 @@ export function Ledger({
               className="block py-3xs font-ui text-subheading font-medium md:table-cell md:py-sm md:text-right"
               data-figure
             >
-              {formatMoney(expense.amount, intl)}
+              {expense.percentOfSpent === null
+                ? "—"
+                : formatPercentage(expense.percentOfSpent, { locale: intl })}
             </td>
           </tr>
         ))}

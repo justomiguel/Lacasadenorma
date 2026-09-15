@@ -263,7 +263,8 @@ lista de enlaces de la página y leerla fuera de contexto; varios enlaces que di
 enlaces entre los que no se puede elegir. Si una pregunta no tiene página propia, van en `null` los
 dos campos —el esquema los exige juntos— y la pregunta se responde y ahí termina.
 
-Las respuestas no prometen una rendición de cifras que el sitio todavía no muestra.
+Las respuestas no prometen montos. En público la plata se habla en porcentajes de lo ya
+conocido; el 100% de la obra no está publicado (ADR-040).
 
 ---
 
@@ -281,9 +282,9 @@ Qué hace buena a una novedad:
 - **Qué sigue.** Una línea. La pregunta que todos tienen es "¿y ahora?".
 - **Sin balance emocional.** El agradecimiento va una vez, al principio de la campaña, no en cada
   actualización.
-- **Sin cifras escritas a mano.** Los totales salen de la base y se calculan; escribir "ya juntamos
-  $2.400.000" en el cuerpo de una novedad crea un número que no se actualiza nunca y que dentro de un
-  mes va a contradecir a la página de transparencia.
+- **Sin cifras escritas a mano.** Los porcentajes salen de la base y se calculan; escribir "ya
+  juntamos $2.400.000" o "vamos el 40%" en el cuerpo de una novedad crea un número que no se
+  actualiza nunca y que dentro de un mes va a contradecir a la página de transparencia.
 
 Una novedad breve publicada a tiempo vale más que una larga que espera a que haya algo importante que
 contar. El silencio, en una campaña de plata, se lee como que algo salió mal.

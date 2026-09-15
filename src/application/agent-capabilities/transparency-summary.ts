@@ -1,21 +1,18 @@
 import { EXPENSE_CATEGORY_LABELS } from "@/src/domain/entities";
-import { formatMoney, money, type CurrencyCode } from "@/src/domain/money";
+import { formatPercentage } from "@/src/domain/percentage";
 
 import { getTransparencyReport } from "../use-cases/get-transparency-report";
 import { formatDate, noInput, unavailableOutcome } from "./capability-helpers";
 import type { AgentCapability } from "./types";
 
 export interface TransparencySummaryOutput {
-  readonly receivedMinor: number;
-  readonly spentMinor: number;
-  readonly balanceMinor: number;
-  readonly currency: CurrencyCode;
-  readonly executedPercent: number | null;
+  readonly spentPercent: number | null;
+  readonly remainingPercent: number | null;
   readonly expenseCount: number;
   readonly receiptCount: number;
   readonly byCategory: readonly {
     readonly category: string;
-    readonly amountMinor: number;
+    readonly percent: number | null;
   }[];
   readonly reconciledAt: string | null;
   readonly detailUrl: string;
@@ -28,7 +25,7 @@ export const getTransparencySummary: AgentCapability<
   name: "get_transparency_summary",
   title: "Resumen de la rendición",
   description:
-    "Devuelve el total recibido, el total gastado, el saldo, el porcentaje ejecutado, la cantidad de gastos y de comprobantes, el gasto por categoría y la fecha de la última conciliación. No incluye aportes individuales, identidades ni archivos de comprobantes.",
+    "Devuelve qué parte de lo ya recibido se usó y cuál sigue, la cantidad de gastos y de comprobantes, el gasto por categoría como porcentaje de lo gastado, y la fecha de la última conciliación. No incluye montos, aportes individuales, identidades ni archivos de comprobantes. El 100% de la obra no está publicado.",
   input: noInput,
   readOnly: true,
   async run(_input, context) {
@@ -46,16 +43,13 @@ export const getTransparencySummary: AgentCapability<
     return {
       ok: true,
       output: {
-        receivedMinor: summary.primary.received.amountMinor,
-        spentMinor: summary.primary.spent.amountMinor,
-        balanceMinor: summary.primary.balance.amountMinor,
-        currency: summary.primary.currency,
-        executedPercent: summary.primary.executedPercent,
+        spentPercent: summary.primary.executedPercent,
+        remainingPercent: summary.primary.remainingPercent,
         expenseCount: summary.expenseCount,
         receiptCount: summary.receiptCount,
         byCategory: summary.byCategory.map((entry) => ({
           category: EXPENSE_CATEGORY_LABELS[entry.category],
-          amountMinor: entry.amount.amountMinor,
+          percent: entry.percentOfSpent,
         })),
         reconciledAt: summary.reconciledAt,
         detailUrl: `${context.siteUrl}/transparencia`,
@@ -63,14 +57,18 @@ export const getTransparencySummary: AgentCapability<
     };
   },
   format(output) {
-    const received = formatMoney(money(output.receivedMinor, output.currency));
-    const spent = formatMoney(money(output.spentMinor, output.currency));
-    const balance = formatMoney(money(output.balanceMinor, output.currency));
     const reconciled =
       output.reconciledAt === null
         ? ""
         : ` Conciliado al ${formatDate(output.reconciledAt)}.`;
 
-    return `Recibido ${received}, gastado ${spent}, saldo ${balance} en ${String(output.expenseCount)} gastos.${reconciled} Detalle completo en ${output.detailUrl}`;
+    if (output.spentPercent === null || output.remainingPercent === null) {
+      return `Todavía no hay aportes conciliados para hablar de plata. El 100% de la obra no está publicado.${reconciled} Detalle en ${output.detailUrl}`;
+    }
+
+    const used = formatPercentage(output.spentPercent);
+    const left = formatPercentage(output.remainingPercent);
+
+    return `Se usó el ${used} de lo que ya llegó; el ${left} sigue en la cuenta, en ${String(output.expenseCount)} gastos. El 100% de la obra no está publicado.${reconciled} Detalle completo en ${output.detailUrl}`;
   },
 };

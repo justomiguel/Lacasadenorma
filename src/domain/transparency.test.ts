@@ -92,7 +92,8 @@ describe("summarizeTransparency", () => {
         received: money(20_000, "USD"),
         spent: money(0, "USD"),
         balance: money(20_000, "USD"),
-        executedPercent: null,
+        executedPercent: 0,
+        remainingPercent: 100,
       },
     ]);
   });
@@ -114,22 +115,24 @@ describe("summarizeTransparency", () => {
         spent: money(5_000, "USD"),
         balance: money(-5_000, "USD"),
         executedPercent: null,
+        remainingPercent: null,
       },
     ]);
   });
 
-  it("devuelve porcentaje ejecutado nulo cuando el objetivo no está cargado", () => {
+  it("calcula el porcentaje usado sobre lo recibido, no sobre un objetivo", () => {
     const summary = summarizeTransparency({
       received: [money(100_000, "ARS")],
       expenses: [expense()],
-      goal: null,
+      goal: money(1_000_000, "ARS"),
       reconciledAt: null,
     });
 
-    expect(summary.primary.executedPercent).toBeNull();
+    expect(summary.primary.executedPercent).toBe(40);
+    expect(summary.primary.remainingPercent).toBe(60);
   });
 
-  it("calcula el porcentaje ejecutado sobre el objetivo cuando existe", () => {
+  it("sin recibido no inventa un porcentaje contra el objetivo", () => {
     const summary = summarizeTransparency({
       received: [],
       expenses: [expense({ amount: money(250_000, "ARS") })],
@@ -137,7 +140,8 @@ describe("summarizeTransparency", () => {
       reconciledAt: null,
     });
 
-    expect(summary.primary.executedPercent).toBe(25);
+    expect(summary.primary.executedPercent).toBeNull();
+    expect(summary.primary.remainingPercent).toBeNull();
   });
 
   it("agrupa el gasto por categoría y cuenta los comprobantes", () => {
@@ -161,8 +165,16 @@ describe("summarizeTransparency", () => {
     });
 
     expect(summary.byCategory).toEqual([
-      { category: "materiales", amount: money(15_000, "ARS") },
-      { category: "mano_de_obra", amount: money(7_000, "ARS") },
+      {
+        category: "materiales",
+        amount: money(15_000, "ARS"),
+        percentOfSpent: (15_000 / 22_000) * 100,
+      },
+      {
+        category: "mano_de_obra",
+        amount: money(7_000, "ARS"),
+        percentOfSpent: (7_000 / 22_000) * 100,
+      },
     ]);
     expect(summary.receiptCount).toBe(3);
   });
@@ -179,6 +191,7 @@ describe("summarizeTransparency", () => {
     });
 
     expect(summary.expenses.map((item) => item.concept)).toEqual(["nuevo", "viejo"]);
+    expect(summary.expenses.every((item) => item.percentOfSpent === 50)).toBe(true);
   });
 
   it("sin registros devuelve totales en cero y marca que está vacío", () => {

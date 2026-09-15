@@ -49,22 +49,22 @@ backoffice, sin autenticación y sin base de datos.
 ### User Story 2 - Verificar que la plata se usó como se dijo (Priority: P1)
 
 Alguien que ya aportó, o que está evaluando aportar, quiere comprobar que el dinero se usa en lo
-que se prometió. Entra a la sección de transparencia y ve el total recibido, el total gastado, el
-saldo disponible, el porcentaje ejecutado, cada gasto con su fecha, concepto, categoría y monto, si
-tiene comprobante respaldatorio, y cuándo fue la última conciliación.
+que se prometió. Entra a la sección de transparencia y ve qué parte de lo que ya llegó se usó, qué
+parte sigue en la cuenta, cada gasto como porcentaje de lo gastado, si tiene comprobante, y cuándo
+fue la última conciliación. No ve montos: el 100% de la obra no está publicado (ADR-040).
 
 **Why this priority**: Es lo que separa esta campaña de una que no merece confianza. Sin esto, el
 sitio es una promesa; con esto, es un registro verificable.
 
 **Independent Test**: Se prueba entrando a `/transparencia` con datos cargados y comprobando que
-los totales cierran aritméticamente con el detalle mostrado, y que la fecha de última conciliación
-está visible.
+los porcentajes son sobre lo recibido y lo gastado, que no aparece ningún monto, y que la fecha de
+última conciliación está visible.
 
 **Acceptance Scenarios**:
 
 1. **Given** una campaña con aportes y gastos registrados, **When** alguien abre la transparencia,
-   **Then** ve total recibido, total gastado, saldo y porcentaje ejecutado, y la suma del detalle
-   coincide exactamente con los totales.
+   **Then** ve el porcentaje usado y el que sigue en la cuenta sobre lo ya recibido, cada gasto
+   como parte de lo gastado, y **no** ve montos ni un porcentaje contra un objetivo.
 2. **Given** un gasto con comprobante cargado, **When** alguien lo ve sin haber iniciado sesión,
    **Then** ve que existe un comprobante pero **no** puede acceder al archivo.
 3. **Given** aportes individuales registrados, **When** alguien los consulta sin sesión, **Then**
@@ -207,20 +207,25 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 
 **Transparencia**
 
-- **FR-010**: El sistema MUST publicar total recibido, total gastado, saldo, porcentaje ejecutado y
-  fecha de la última conciliación.
-- **FR-011**: El sistema MUST publicar cada gasto con fecha, concepto, categoría, monto, moneda y
-  la indicación de si tiene comprobante.
-- **FR-012**: Los totales publicados MUST calcularse a partir de los registros individuales, de
-  manera que la suma del detalle coincida con el total mostrado.
+- **FR-010**: El sistema MUST publicar, sobre el total recibido conciliado, el porcentaje ya
+  usado y el que sigue en la cuenta, y la fecha de la última conciliación. MUST NOT publicar
+  montos ni un porcentaje contra un objetivo de obra: ese 100% no está verificado (ADR-040).
+- **FR-011**: El sistema MUST publicar cada gasto con fecha, concepto, categoría, el porcentaje
+  que representa del total gastado y la indicación de si tiene comprobante. MUST NOT publicar
+  el monto ni la moneda en la interfaz pública.
+- **FR-012**: Los porcentajes públicos MUST calcularse a partir de los mismos registros que el
+  libro interno, de manera que la composición publicada sea la del detalle, no una consulta
+  distinta. La suma exacta de montos sigue siendo una propiedad del backoffice (SC-007).
 - **FR-013**: Los archivos de comprobantes MUST NOT ser accesibles públicamente; sólo roles
   autorizados pueden obtenerlos, mediante acceso temporal.
 - **FR-014**: Los aportes individuales y la identidad de quienes aportan MUST NOT ser públicos.
 - **FR-015**: Los registros financieros MUST NOT poder eliminarse: se anulan con motivo y fecha, y
   la anulación queda registrada.
 - **FR-016**: Todo cambio en datos financieros MUST registrar autor y momento.
-- **FR-017**: El sistema MUST publicar el presupuesto estimado por rubro y el avance de la
-  reconstrucción mediante hitos con estado y fecha.
+- **FR-017**: El sistema MUST publicar el presupuesto cotizado por rubro como porcentaje de la
+  suma de los rubros ya cotizados —nunca como monto— y el avance de la reconstrucción mediante
+  hitos con estado y fecha. Un rubro sin cotizar se muestra sin porcentaje. Esa suma no es el
+  100% de la obra.
 
 **Contenido y administración**
 

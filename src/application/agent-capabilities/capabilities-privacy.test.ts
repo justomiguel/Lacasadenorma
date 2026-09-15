@@ -57,9 +57,8 @@ describe("ninguna capacidad filtra datos privados (A6)", () => {
     );
 
     expect(output).toMatchObject({
-      receivedMinor: TOTAL_RECIBIDO,
-      spentMinor: 10_000_000,
-      balanceMinor: 14_000_000,
+      spentPercent: (10_000_000 / TOTAL_RECIBIDO) * 100,
+      remainingPercent: (14_000_000 / TOTAL_RECIBIDO) * 100,
       expenseCount: 1,
       receiptCount: 2,
       detailUrl: `${SITE}/transparencia`,

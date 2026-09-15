@@ -112,7 +112,7 @@ export const TOOLS: readonly ToolSpec[] = [
     name: "get_campaign_status",
     path: "campaign-status",
     description:
-      "Devuelve el objetivo, el monto recaudado, el porcentaje alcanzado, la moneda y la fecha de la última conciliación bancaria de la campaña de reconstrucción de La Casa de Norma. El porcentaje es nulo cuando el objetivo no está publicado.",
+      "Devuelve qué parte de lo ya recibido se usó y cuál sigue en la cuenta, y la fecha de la última conciliación. Los porcentajes son nulos cuando no hay recibido conciliado. El 100% de la obra no está publicado: no hay un porcentaje contra una meta.",
     inputSchema: EMPTY_SCHEMA,
   },
   {
@@ -137,7 +137,7 @@ export const TOOLS: readonly ToolSpec[] = [
     name: "get_reconstruction_progress",
     path: "reconstruction-progress",
     description:
-      "Devuelve los hitos publicados de la reconstrucción con su estado y su fecha, la cantidad de hitos completados sobre el total, y los rubros del presupuesto con su monto estimado cuando ya está cotizado. El porcentaje se calcula sobre hitos, no sobre dinero.",
+      "Devuelve los hitos publicados de la reconstrucción con su estado y su fecha, la cantidad de hitos completados sobre el total, y los rubros del presupuesto como porcentaje de lo ya cotizado. El porcentaje de obra se calcula sobre hitos, no sobre dinero. El 100% de la obra no está publicado.",
     inputSchema: EMPTY_SCHEMA,
   },
   {
@@ -151,7 +151,7 @@ export const TOOLS: readonly ToolSpec[] = [
     name: "get_transparency_summary",
     path: "transparency-summary",
     description:
-      "Devuelve el total recibido, el total gastado, el saldo, el porcentaje ejecutado, la cantidad de gastos y de comprobantes, el gasto por categoría y la fecha de la última conciliación. No incluye aportes individuales, identidades ni archivos de comprobantes.",
+      "Devuelve qué parte de lo ya recibido se usó y cuál sigue, la cantidad de gastos y de comprobantes, el gasto por categoría como porcentaje de lo gastado, y la fecha de la última conciliación. No incluye montos, aportes individuales, identidades ni archivos de comprobantes. El 100% de la obra no está publicado.",
     inputSchema: EMPTY_SCHEMA,
   },
   {
