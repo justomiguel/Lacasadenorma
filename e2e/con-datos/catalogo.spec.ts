@@ -32,23 +32,67 @@ test.describe("fase D · reservas", () => {
   }) => {
     await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
 
-    await expect(
-      page.getByRole("heading", { name: /cubrirlo con plata/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /cómo donar esto/i })).toBeVisible();
     await expect(page.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
     await expect(page.getByText(/solamente ilustrativa/i)).toBeVisible();
     await expect(page.getByText(/no representa el objeto real/i)).toBeVisible();
     await expect(page.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/traer el mismo bien o cubrirlo con plata/i),
+    ).toBeVisible();
+    await expect(page.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
+    await expect(page.locator("[data-pay=transfer]")).toBeHidden();
+    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
+    await expect(page.locator("[data-pay=paypal]")).toBeHidden();
+
+    await page.getByRole("radio", { name: /^transferencia$/i }).click();
+    await expect(page.locator("[data-pay=transfer]")).toBeVisible();
+    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
+    await expect(page.getByText(/^cbu$/i).first()).toBeVisible();
+
+    await page.getByRole("radio", { name: /mercado pago/i }).click();
+    await expect(page.locator("[data-pay=mercadopago]")).toBeVisible();
+    await expect(page.locator("[data-pay=transfer]")).toBeHidden();
     await expect(page.getByLabel(/sumar más/i)).toBeVisible();
     await expect(
       page.getByRole("link", { name: /continuar con mercado pago/i }).first(),
     ).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: /continuar con paypal/i }).first(),
-    ).toBeVisible();
 
     await page.getByLabel(/sumar más/i).fill("1000");
     await expect(page.getByText(/total a enviar por mercado pago/i)).toBeVisible();
+
+    await page.getByRole("radio", { name: /paypal/i }).click();
+    await expect(page.locator("[data-pay=paypal]")).toBeVisible();
+    await expect(page.locator("[data-pay=mercadopago]")).toBeHidden();
+    await expect(
+      page.getByRole("link", { name: /continuar con paypal/i }).first(),
+    ).toBeVisible();
+  });
+
+  test("el listado es una tabla en teléfono, con estimado y quiero donar", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto("/catalogo");
+
+    await expect(
+      page.getByRole("columnheader", { name: /estimado por unidad/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: /^donar$/i }).first(),
+    ).toBeVisible();
+
+    const fila = filaDelCatalogo(page, "Chapas del techo (datos de desarrollo)");
+
+    await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
+    await expect(fila.getByText("$ 150.000")).toBeVisible();
+    await expect(fila.getByText("$ 1.050.000")).toBeVisible();
+
+    const desborde = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+
+    expect(desborde, "la tabla se desplaza adentro, la página no desborda").toBe(0);
   });
 
   test("pedir donar sin sesión vuelve al mismo ítem después de ingresar", async ({
@@ -80,9 +124,7 @@ test.describe("fase D · reservas", () => {
 
           await expect(articulo).toHaveCount(1);
           await expect(articulo).toBeVisible();
-          await articulo
-            .getByRole("button", { name: /anotarme para traer esto/i })
-            .click();
+          await articulo.getByRole("button", { name: /quiero donar/i }).click();
 
           await expect(donantePage).toHaveURL(new RegExp(`/cuenta/ingresar\\?volver=`));
           await expect(donantePage).toHaveURL(new RegExp(itemId));
@@ -146,7 +188,7 @@ test.describe("fase D · reservas", () => {
 
           const articuloA = articuloDelCatalogo(paginaA);
           const articuloB = articuloDelCatalogo(paginaB);
-          const reservar = /anotarme para traer esto/i;
+          const reservar = /quiero donar/i;
 
           await expect(articuloA).toHaveCount(1);
           await expect(articuloB).toHaveCount(1);
@@ -210,9 +252,7 @@ test.describe("fase D · reservas", () => {
           await abrirItemDelCatalogo(donantePage, titulo);
           const articulo = articuloDelCatalogo(donantePage);
           await expect(articulo).toHaveCount(1);
-          await articulo
-            .getByRole("button", { name: /anotarme para traer esto/i })
-            .click();
+          await articulo.getByRole("button", { name: /quiero donar/i }).click();
           await expect(donantePage).toHaveURL(/\/cuenta$/);
           await expect(
             donantePage.getByRole("tab", { name: /reservas/i }),

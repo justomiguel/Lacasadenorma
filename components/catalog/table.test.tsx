@@ -1,33 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { CatalogContent } from "@/content/schema";
+import { getContent } from "@/content";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
+import { money } from "@/src/domain/money";
 
 import { CatalogTable } from "./table";
 
-const COPY = {
-  tableCaption: "Lo que falta, cuánto, y si alguien ya se anotó.",
-  columnItem: "Qué",
-  columnQuantity: "Cantidad",
-  columnTaken: "¿La tomó alguien?",
-  columnName: "Nombre",
-  takenYes: "Sí",
-  takenNo: "No",
-  nameNone: "—",
-  quantityOf: "Faltan {remaining} de {needed} {unit}.",
-  covered: "Ya está cubierto.",
-  units: {
-    unidad: { one: "unidad", other: "unidades" },
-    metro: { one: "metro", other: "metros" },
-    metro_cuadrado: { one: "metro cuadrado", other: "metros cuadrados" },
-    metro_cubico: { one: "metro cúbico", other: "metros cúbicos" },
-    bolsa: { one: "bolsa", other: "bolsas" },
-    litro: { one: "litro", other: "litros" },
-    juego: { one: "juego", other: "juegos" },
-  },
-  referencePhotos: {},
-} as CatalogContent;
+const COPY = getContent("es").catalog;
 
 function item(partial: Partial<DonationItem> = {}): DonationItem {
   return {
@@ -49,7 +29,7 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
 }
 
 describe("CatalogTable", () => {
-  it("es una tabla con encabezados, no un listado que se parece a una", () => {
+  it("es una tabla con encabezados también sin apilar, y un quiero donar por fila", () => {
     render(<CatalogTable items={[item()]} claims={[]} copy={COPY} locale="es" />);
 
     expect(screen.getByRole("table")).toHaveAccessibleName(/lo que falta/i);
@@ -59,12 +39,65 @@ describe("CatalogTable", () => {
       screen.getByRole("columnheader", { name: "¿La tomó alguien?" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Nombre" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Estimado por unidad" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Estimado total" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Donar" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Tina" })).toHaveAttribute(
       "href",
       "/catalogo/item-tina",
     );
+    expect(screen.getByRole("link", { name: /quiero donar tina/i })).toHaveAttribute(
+      "href",
+      "/catalogo/item-tina",
+    );
     expect(screen.getByText("No")).toBeInTheDocument();
-    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
+  });
+
+  it("publica el estimado por unidad y el total de lo que falta, etiquetado en el caption", () => {
+    render(
+      <CatalogTable
+        items={[
+          item({
+            neededQuantity: 4,
+            remainingQuantity: 3,
+            estimatedValue: money(10_000, "ARS"),
+          }),
+        ]}
+        claims={[]}
+        copy={COPY}
+        locale="es"
+      />,
+    );
+
+    expect(screen.getByText("$ 100")).toBeInTheDocument();
+    expect(screen.getByText("$ 300")).toBeInTheDocument();
+    expect(screen.getByRole("table")).toHaveAccessibleName(/no es un precio fijo/i);
+  });
+
+  it("un ítem cubierto no ofrece donar ni inventa un total", () => {
+    render(
+      <CatalogTable
+        items={[
+          item({
+            remainingQuantity: 0,
+            fulfilledQuantity: 1,
+            estimatedValue: money(10_000, "ARS"),
+          }),
+        ]}
+        claims={[]}
+        copy={COPY}
+        locale="es"
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: /quiero donar/i })).not.toBeInTheDocument();
+    expect(screen.getByText("$ 100")).toBeInTheDocument();
+    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
   });
 
   it("muestra el nombre de quien eligió aparecer, y no inventa uno si no hay", () => {

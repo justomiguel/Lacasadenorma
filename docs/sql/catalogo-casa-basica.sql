@@ -1,8 +1,8 @@
 -- Catálogo de una casa de 60 m² para una persona que vive sola.
 --
 -- Producción: campaña `casa-de-norma`. Idempotente por título. Sin montos
--- (estimated_unit_amount_minor y currency quedan nulos hasta que el equipo
--- cargue un promedio verificado: ADR-041 no inventa precios).
+-- (estimated_unit_amount_minor y currency: promedios de internet citados en
+-- docs/research/2026-09-precios-catalogo.md. Sin fuente, nulo: ADR-044).
 -- Publicado de entrada: `published_at = now()`.
 --
 -- Cada ítem sale **sin foto en Storage**. La ficha pública muestra la foto de
@@ -50,7 +50,9 @@ create temp table catalog_seed (
   title text not null,
   description text not null,
   unit public.donation_unit not null,
-  needed_quantity integer not null
+  needed_quantity integer not null,
+  estimated_unit_pesos integer,
+  check (estimated_unit_pesos is null or estimated_unit_pesos > 0)
 );
 
 insert into catalog_seed (
@@ -326,8 +328,41 @@ insert into catalog_seed (
    'Perchas para el ropero. Sin esto la ropa se apila.',
    'juego', 1);
 
+update catalog_seed as s
+set estimated_unit_pesos = v.pesos
+from (values
+  ('Ladrillos comunes', 145),
+  ('Ladrillos huecos 18x18x33', 480),
+  ('Cemento', 11858),
+  ('Cal hidratada', 3500),
+  ('Arena', 46585),
+  ('Ripio', 90145),
+  ('Chapas de techo', 18000),
+  ('Cerámico de piso', 15730),
+  ('Azulejos de cocina', 15730),
+  ('Azulejos de baño', 15730),
+  ('Pintura', 6595),
+  ('Cielorraso', 5588),
+  ('Enduido', 55418),
+  ('Cable eléctrico', 938),
+  ('Caños de agua', 5264),
+  ('Caños de desagüe', 7034),
+  ('Puertas interiores', 505220),
+  ('Ventanas', 386691),
+  ('Rejas', 185695),
+  ('Portón', 405490),
+  ('Tanque de agua', 140000),
+  ('Inodoro', 250439),
+  ('Calefón o termotanque', 475000),
+  ('Cocina', 510000),
+  ('Heladera', 834950),
+  ('Lavarropas', 437490)
+) as v(title, pesos)
+where s.title = v.title;
+
 insert into public.donation_items (
-  campaign_id, title, description, unit, category, needed_quantity, sort_order, published_at
+  campaign_id, title, description, unit, category, needed_quantity, sort_order,
+  estimated_unit_amount_minor, currency, published_at
 )
 select
   c.id,
@@ -337,6 +372,8 @@ select
   i.category,
   i.needed_quantity,
   i.sort_order,
+  i.estimated_unit_pesos * 100,
+  case when i.estimated_unit_pesos is null then null else 'ARS' end,
   now()
 from public.campaigns c
 cross join catalog_seed i
@@ -354,7 +391,9 @@ set
   description = i.description,
   unit = i.unit,
   needed_quantity = greatest(i.needed_quantity, d.reserved_quantity + d.fulfilled_quantity),
-  sort_order = i.sort_order
+  sort_order = i.sort_order,
+  estimated_unit_amount_minor = i.estimated_unit_pesos * 100,
+  currency = case when i.estimated_unit_pesos is null then null else 'ARS' end
 from catalog_seed i
 join public.campaigns c on c.slug = 'casa-de-norma'
 where d.campaign_id = c.id
