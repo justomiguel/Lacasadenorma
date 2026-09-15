@@ -37,9 +37,12 @@ guardaban direcciones. Eso deja al equipo sin el dato que necesita para ir.
 2. **Traer el mismo bien reserva, y pide datos de retiro.** Nombre de
    contacto, correo o teléfono, y dirección de retiro. El correo de la cuenta
    satisface «mail o teléfono»; el teléfono es para que el equipo pueda
-   llamar. La dirección es obligatoria. Nada de eso se publica. Vive en
-   `donation_pledges` (`contact_name`, `contact_phone`, `pickup_address`), no
-   en `donor_profiles`. `anon` no puede nombrar esas columnas.
+   llamar. La dirección es obligatoria. Nombre y dirección son `required` en
+   el HTML: si falta un dato, el envío no sale, el primer campo inválido
+   entra en vista, recibe el foco y el borde pasa a danger. Nada de eso se
+   publica. Vive en `donation_pledges` (`contact_name`, `contact_phone`,
+   `pickup_address`), no en `donor_profiles`. `anon` no puede nombrar esas
+   columnas.
 3. **Confirmar el correo alcanza para anotarse a traer.** `pending` y
    `approved` reservan. `declined` no. ADR-033 sigue: la cuenta nace
    `pending`, el equipo puede rechazarla para frenar a alguien, y el correo

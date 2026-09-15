@@ -43,8 +43,9 @@ describe("HowToDonate", () => {
     expect(screen.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /quiero donar/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/^nombre$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^nombre$/i)).toBeRequired();
+    expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeRequired();
+    expect(screen.getByLabelText(/^teléfono$/i)).not.toBeRequired();
     expect(screen.getByText(/confirmar el correo no es una prueba/i)).toBeInTheDocument();
   });
 

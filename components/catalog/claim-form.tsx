@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useId } from "react";
+import { useActionState, useEffect, useId, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
 import { claimItemAction } from "@/app/(es)/catalogo/actions";
@@ -16,6 +16,8 @@ import { fieldError, generalError } from "@/components/account/error-text";
 import { cn } from "@/components/design-system/cn";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
+
+import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
 
 /**
  * Anotarse a traer un bien: nombre, teléfono optativo y dirección de retiro
@@ -42,14 +44,25 @@ export function ClaimForm({
     claimItemAction,
     IDLE,
   );
+  const form = useRef<HTMLFormElement>(null);
   const general = generalError(state, account.errors);
   const label = submitLabel ?? copy.claim;
 
+  useEffect(() => {
+    if (state.phase !== "error") {
+      return;
+    }
+
+    revealFormError(form.current);
+  }, [state]);
+
   return (
     <form
+      ref={form}
       action={formAction}
       aria-label={label}
       className="mt-lg max-w-measure space-y-lg"
+      onInvalidCapture={captureFirstInvalid}
     >
       <LocaleField locale={locale} />
       <input type="hidden" name="itemId" value={itemId} />
@@ -72,7 +85,6 @@ export function ClaimForm({
         name="contacto"
         label={copy.contactName}
         hint={copy.contactNameHint}
-        required={false}
         autoComplete="name"
         {...optional(fieldError(state, account.errors, "contactName"))}
       />
@@ -142,13 +154,14 @@ function AddressField({
         name="direccion"
         rows={3}
         autoComplete="street-address"
+        required
         disabled={pending}
         aria-describedby={describedBy}
         {...(error === undefined ? {} : { "aria-invalid": true })}
         className={cn(
           "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
-          "aria-invalid:border-danger disabled:opacity-60",
+          "aria-invalid:border-danger user-invalid:border-danger disabled:opacity-60",
         )}
       />
       <p id={hintId} className="font-ui text-small text-ink-muted">

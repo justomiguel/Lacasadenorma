@@ -104,6 +104,42 @@ test.describe("fase D · reservas", () => {
       Math.max(0, desborde),
       "la tabla se desplaza adentro, la página no desborda",
     ).toBe(0);
+
+    await expect(
+      page.locator("[data-foco-condicional]"),
+      "en el catálogo la acción es donar el ítem, no ir a /ayudar",
+    ).toHaveCount(0);
+  });
+
+  test("en la ficha tampoco está la barra de ayudar", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
+
+    await expect(page.locator("[data-foco-condicional]")).toHaveCount(0);
+  });
+
+  test("enviar vacío lleva al primer dato faltante y lo marca en rojo", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
+
+    const formulario = formularioDeTraer(articuloDelCatalogo(page));
+    const nombre = formulario.getByLabel(/^nombre$/i);
+    const direccion = formulario.getByLabel(/dirección donde ir a buscar/i);
+
+    await formulario.getByRole("button", { name: /quiero donar/i }).click();
+
+    await expect(nombre).toBeFocused();
+    await expect(nombre).toBeInViewport();
+    await expect(nombre).toHaveCSS("border-top-color", "rgb(138, 58, 42)");
+
+    await nombre.fill("Ana");
+    await formulario.getByRole("button", { name: /quiero donar/i }).click();
+
+    await expect(direccion).toBeFocused();
+    await expect(direccion).toBeInViewport();
+    await expect(direccion).toHaveCSS("border-top-color", "rgb(138, 58, 42)");
   });
 
   test("del listado a la ficha se ve la foto, no sólo el epígrafe", async ({ page }) => {

@@ -343,6 +343,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
   Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
   a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
+  Si falta un dato, el sistema MUST llevar el foco y el scroll al primer campo inválido y MUST
+  marcar su borde con el color de peligro. MUST NOT enviar el formulario.
 - **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
   catálogo.
 - **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
