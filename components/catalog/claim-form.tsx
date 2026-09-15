@@ -47,9 +47,14 @@ export function ClaimForm({
     IDLE,
   );
   const general = generalError(state, account.errors);
+  const label = submitLabel ?? copy.claim;
 
   return (
-    <form action={formAction} className="mt-lg max-w-measure space-y-lg">
+    <form
+      action={formAction}
+      aria-label={label}
+      className="mt-lg max-w-measure space-y-lg"
+    >
       <LocaleField locale={locale} />
       <input type="hidden" name="itemId" value={itemId} />
 
@@ -88,9 +93,7 @@ export function ClaimForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={pendingLabel ?? copy.claiming}>
-        {submitLabel ?? copy.claim}
-      </SubmitButton>
+      <SubmitButton pendingLabel={pendingLabel ?? copy.claiming}>{label}</SubmitButton>
     </form>
   );
 }

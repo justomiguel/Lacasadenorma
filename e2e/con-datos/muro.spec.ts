@@ -6,6 +6,7 @@ import {
   abrirItemDelCatalogo,
   cargarItemPublicado,
   confirmarLlegada,
+  formularioDeTraer,
   habilitarCuenta,
   idDeItem,
   ocultarItemSiExiste,
@@ -55,21 +56,19 @@ test.describe("fase E · muro", () => {
         await abrirItemDelCatalogo(paginaSi, titulo);
         const articuloSi = articuloDelCatalogo(paginaSi);
         await expect(articuloSi).toHaveCount(1);
-        await articuloSi.getByLabel(/quiero aparecer con nombre/i).check();
-        await articuloSi.getByLabel(/nombre para mostrar/i).fill(visible);
-        await articuloSi
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        const traerSi = formularioDeTraer(articuloSi);
+        await traerSi.getByLabel(/quiero aparecer con nombre/i).check();
+        await traerSi.getByLabel(/nombre para mostrar/i).fill(visible);
+        await traerSi.getByRole("button", { name: /anotarme para traer esto/i }).click();
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
 
         await paginaNo.goto("/catalogo");
         await abrirItemDelCatalogo(paginaNo, titulo);
         const articuloNo = articuloDelCatalogo(paginaNo);
         await expect(articuloNo).toHaveCount(1);
-        await articuloNo.getByLabel(/nombre para mostrar/i).fill(oculto);
-        await articuloNo
-          .getByRole("button", { name: /anotarme para traer esto/i })
-          .click();
+        const traerNo = formularioDeTraer(articuloNo);
+        await traerNo.getByLabel(/nombre para mostrar/i).fill(oculto);
+        await traerNo.getByRole("button", { name: /anotarme para traer esto/i }).click();
         await expect(paginaNo).toHaveURL(/\/cuenta$/);
 
         await confirmarLlegada(staffPage, titulo);

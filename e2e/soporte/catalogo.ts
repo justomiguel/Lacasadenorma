@@ -1,4 +1,9 @@
-import { expect, type APIRequestContext, type Page } from "@playwright/test";
+import {
+  expect,
+  type APIRequestContext,
+  type Locator,
+  type Page,
+} from "@playwright/test";
 
 import { apiLocal, CUENTAS, entrar, primeraFila, tokenDe } from "./backoffice";
 import { esperarQueNoAparezca, revalidar } from "./revalidar";
@@ -218,6 +223,15 @@ export async function abrirItemDelCatalogo(page: Page, titulo: string): Promise<
 /** La ficha: foto o hueco, cantidades y el formulario. */
 export function articuloDelCatalogo(page: Page, _titulo?: string) {
   return page.locator("#contenido").getByRole("article");
+}
+
+/**
+ * El formulario de traer el objeto. En la ficha hay otro para cubrirlo con
+ * plata (ADR-041); los dos tienen las mismas etiquetas de nombre y de
+ * aparecer, así que hay que acotar al que corresponde.
+ */
+export function formularioDeTraer(articulo: Locator) {
+  return articulo.locator("form").filter({ hasText: /anotarme para traer esto/i });
 }
 
 export async function confirmarLlegada(page: Page, titulo: string): Promise<void> {
