@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
 import { fakeLogger } from "../test-support/fake-data-layer";
-import { createCampaign, saveBudgetItem, updateGoal } from "./campaign";
+import {
+  createCampaign,
+  saveBudgetItem,
+  setPublishContributionShare,
+  updateGoal,
+} from "./campaign";
 import { recordExpense } from "./expenses";
 import { saveMilestone } from "./milestones";
 import { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
@@ -49,6 +54,7 @@ describe("crear la campaña", () => {
         goalCurrency: "ARS",
         status: "active",
         reconciledAt: null,
+        publishContributionShare: false,
       },
     });
     const { deps: admin, fake } = deps("admin", gateway);
@@ -91,6 +97,37 @@ describe("objetivo y presupuesto", () => {
 
     expect(result.status).toBe("ok");
     expect(fake.calls[0]).toMatchObject({ input: { estimatedAmount: null } });
+  });
+});
+
+describe("porcentaje en el muro de aportes", () => {
+  it("prende el interruptor y deja rastro sin cifras", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await setPublishContributionShare(admin, {
+      campaignId: CAMPAIGN,
+      publishShare: "on",
+    });
+
+    expect(result.status).toBe("ok");
+    expect(fake.calls[0]).toMatchObject({
+      name: "setPublishContributionShare",
+      input: { campaignId: CAMPAIGN, publishShare: true },
+    });
+    expect(fake.audit[0]).toMatchObject({
+      action: "campaign.contribution_share_toggled",
+      diff: { publishContributionShare: true },
+    });
+  });
+
+  it("rechaza a un editor: el interruptor es de admin u owner", async () => {
+    const { deps: editor, fake } = deps("editor");
+    const result = await setPublishContributionShare(editor, {
+      campaignId: CAMPAIGN,
+      publishShare: "on",
+    });
+
+    expect(result.status).toBe("rejected");
+    expect(fake.calls).toEqual([]);
   });
 });
 

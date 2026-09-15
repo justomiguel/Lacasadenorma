@@ -105,6 +105,7 @@ export type Database = {
           goal_amount_minor: number | null;
           goal_currency: string;
           id: string;
+          publish_contribution_share: boolean;
           published_at: string | null;
           reconciled_at: string | null;
           slug: string;
@@ -118,6 +119,7 @@ export type Database = {
           goal_amount_minor?: number | null;
           goal_currency?: string;
           id?: string;
+          publish_contribution_share?: boolean;
           published_at?: string | null;
           reconciled_at?: string | null;
           slug: string;
@@ -131,6 +133,7 @@ export type Database = {
           goal_amount_minor?: number | null;
           goal_currency?: string;
           id?: string;
+          publish_contribution_share?: boolean;
           published_at?: string | null;
           reconciled_at?: string | null;
           slug?: string;
@@ -935,6 +938,17 @@ export type Database = {
           received_minor: number | null;
           reconciled_at: string | null;
           spent_minor: number | null;
+        };
+        Relationships: [];
+      };
+      contribution_wall: {
+        Row: {
+          campaign_id: string | null;
+          currency: string | null;
+          donor_display_name: string | null;
+          id: string | null;
+          percent_of_received: number | null;
+          received_at: string | null;
         };
         Relationships: [];
       };

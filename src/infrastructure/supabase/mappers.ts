@@ -44,9 +44,10 @@ export class MappingError extends Error {
  *
  * No es cosmética: así la consulta y el mapeador comparten una única lista de
  * columnas verificada por el compilador. Si mañana alguien agrega
- * `contributor_display_name` al `select` de la capa pública, el tipo no cambia y el
+ * `contributor_display_name` al `select` de totales, el tipo no cambia y el
  * dato no llega al dominio; y si alguien quita una columna del `select`, el
- * mapeador deja de compilar en lugar de leer `undefined`.
+ * mapeador deja de compilar en lugar de leer `undefined`. El nombre público
+ * sale de `contribution_wall`, no de esta consulta (ADR-042).
  */
 type Tables = Database["public"]["Tables"];
 
@@ -60,6 +61,7 @@ export type CampaignRow = Pick<
   | "goal_currency"
   | "status"
   | "reconciled_at"
+  | "publish_contribution_share"
 >;
 
 export type BudgetItemRow = Pick<
@@ -154,6 +156,7 @@ export function mapCampaign(row: CampaignRow): Campaign {
     goalCurrency,
     status: row.status,
     reconciledAt: row.reconciled_at,
+    publishContributionShare: row.publish_contribution_share,
   };
 }
 

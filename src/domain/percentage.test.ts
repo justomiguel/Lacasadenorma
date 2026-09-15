@@ -1,7 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { DomainError } from "./errors";
-import { formatPercentage, percentage, ratioAsPercentage } from "./percentage";
+import {
+  formatPercentage,
+  percentage,
+  ratioAsPercentage,
+  shareOfReceived,
+} from "./percentage";
 
 describe("percentage", () => {
   it("acepta valores dentro del rango", () => {
@@ -50,6 +55,27 @@ describe("ratioAsPercentage", () => {
 
   it("acota cuando la parte supera al total", () => {
     expect(ratioAsPercentage(300, 200)).toBe(100);
+  });
+});
+
+describe("shareOfReceived", () => {
+  it("trunca a entero, igual que la función SQL", () => {
+    expect(shareOfReceived(100_000n, 150_500n)).toBe(66);
+    expect(shareOfReceived(333n, 1_000n)).toBe(33);
+  });
+
+  it("omite el 0% en lugar de publicarlo", () => {
+    expect(shareOfReceived(500n, 150_500n)).toBeNull();
+    expect(shareOfReceived(9n, 1_000n)).toBeNull();
+  });
+
+  it("devuelve null cuando no hay denominador", () => {
+    expect(shareOfReceived(100n, 0n)).toBeNull();
+    expect(shareOfReceived(100n, -1n)).toBeNull();
+  });
+
+  it("acota en 100 cuando la parte supera al total", () => {
+    expect(shareOfReceived(150n, 100n)).toBe(100);
   });
 });
 

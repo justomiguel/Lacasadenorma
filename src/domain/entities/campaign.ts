@@ -18,6 +18,11 @@ export interface Campaign {
   readonly status: CampaignStatus;
   /** Última conciliación bancaria. Es pública: un número sin fecha no es un dato. */
   readonly reconciledAt: string | null;
+  /**
+   * Si el muro de aportes muestra el % sobre lo ya recibido. Apagado: sólo el
+   * nombre. El monto no se publica nunca (ADR-042).
+   */
+  readonly publishContributionShare: boolean;
 }
 
 export interface BudgetItem {

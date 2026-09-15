@@ -206,6 +206,9 @@ export const wallSchema = pageSchema.extend({
   unavailableTitle: z.string().min(1),
   brought: z.string().min(1),
   quantityOnly: z.string().min(1),
+  inKindHeading: z.string().min(1),
+  moneyHeading: z.string().min(1),
+  moneyShare: z.string().min(1),
   previewAction: z.string().min(1),
   previewSummary: z.string().min(1),
 });

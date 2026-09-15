@@ -216,21 +216,24 @@ el backoffice:
 | `expense_receipts.file_name` | Nombre del archivo subido | Sólo su existencia y su cantidad |
 | `contributions.recorded_by`, `expenses.recorded_by`, `expense_receipts.uploaded_by`, `media.uploaded_by`, `user_roles.granted_by`, `audit_log.actor_id` | `default auth.uid()` en la base | No. Son procedencia interna, para que cada asiento tenga responsable |
 
-Los nombres individuales de quienes aportan y sus montos **nunca se publican**. El total recibido
-sale de una vista agregada (ADR-016), no de la tabla: no es una decisión de presentación que alguien
-pueda revertir sin darse cuenta, es que el camino de lectura pública no llega a la fila. Ninguna fila
-de `contributions` es legible por el rol `anon`, y hay pruebas de pgTAP que lo verifican.
+Los montos individuales de quienes aportan **nunca se publican**. El total recibido sale de una vista
+agregada (ADR-016), no de la tabla: no es una decisión de presentación que alguien pueda revertir sin
+darse cuenta, es que el camino de lectura pública no llega a la fila. Ninguna fila de `contributions`
+es legible por el rol `anon`, y hay pruebas de pgTAP que lo verifican.
 
-Dos columnas de esa tabla merecen una aclaración porque parecen identificar y hoy no lo hacen:
+El **nombre** sí puede publicarse, y sólo con consentimiento explícito (ADR-042, FR-014). Vive en
+`contribution_wall`: nombre, fecha, moneda y, si la campaña tiene prendido
+`publish_contribution_share`, el porcentaje truncado sobre lo ya recibido en esa moneda. Nunca el
+monto. El interruptor apagado no esconde la cifra en la interfaz: la función no la devuelve.
 
-- **`is_anonymous`** es `not null default true`, y el formulario de aportes no la expone. Es decir:
-  todo aporte que se registre hoy queda anónimo, y el caso seguro es el que ocurre cuando nadie
-  decide nada.
-- **`contributor_display_name`** existe en el esquema y **no tiene quien la escriba**: ningún
-  formulario la carga y ningún camino de lectura la trae. La migración lo dice en su propio
-  comentario, "sólo con consentimiento explícito, no se usa en esta versión". Está reservada para el
-  día en que alguien quiera figurar y lo pida; mientras eso no exista como pantalla, la columna está
-  vacía en todas las filas.
+Dos columnas de `contributions` merecen una aclaración porque identifican y el default es no
+identificar:
+
+- **`is_anonymous`** es `not null default true`. Todo aporte queda anónimo hasta que admin u owner
+  marcan que esa persona eligió aparecer, y hay un nombre.
+- **`contributor_display_name`** se escribe desde `/admin/aportes` cuando hay consentimiento. Si el
+  aporte es anónimo, la columna queda vacía. El registro de auditoría anota *si* apareció, no el
+  nombre: ese registro lo leen más roles que la tabla.
 
 La columna de procedencia (`recorded_by` y sus hermanas) es la única concesión: identifica a alguien
 del equipo, no a quien colabora, y existe porque una rendición de cuentas sin responsable por asiento

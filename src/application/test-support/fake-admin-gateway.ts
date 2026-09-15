@@ -51,10 +51,14 @@ export function fakeAdminGateway(
       listBudgetItems: () => record("listBudgetItems", null, []),
       updateGoal: (input) => record("updateGoal", input, undefined),
       saveBudgetItem: (input) => record("saveBudgetItem", input, id),
+      setPublishContributionShare: (input) =>
+        record("setPublishContributionShare", input, undefined),
     },
     contributions: {
       listContributions: () => record("listContributions", null, []),
       recordContribution: (input) => record("recordContribution", input, id),
+      updateContributionAppearance: (input) =>
+        record("updateContributionAppearance", input, undefined),
       voidContribution: (input) => record("voidContribution", input, undefined),
       markReconciled: (input) => record("markReconciled", input, undefined),
     },

@@ -2,6 +2,7 @@ import type {
   BudgetItem,
   Campaign,
   CatalogClaim,
+  ContributionWallEntry,
   DonationItem,
   DonationWallEntry,
   ExpenseRecord,
@@ -76,4 +77,9 @@ export interface CatalogRepository {
 export interface DonationWallRepository {
   /** Entregadas, no anónimas, más recientes primero. Lo demás no existe acá. */
   listEntries(): Promise<DonationWallEntry[]>;
+  /**
+   * Aportes en plata con nombre, más recientes primero. El monto no existe
+   * en este puerto (ADR-042).
+   */
+  listMoneyEntries(campaignId: string): Promise<ContributionWallEntry[]>;
 }

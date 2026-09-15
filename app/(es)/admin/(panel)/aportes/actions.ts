@@ -6,19 +6,23 @@ import type { ActionState } from "@/components/admin/form";
 import {
   markReconciled,
   recordContribution,
+  setPublishContributionShare,
+  updateContributionAppearance,
   voidContribution,
 } from "@/src/application/admin";
 import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context";
 
 /**
- * Un aporte cambia el total recibido, que aparece en la home y en transparencia. El
- * detalle **no** se publica en ninguna parte: lo que cambia afuera es la suma
- * (FR-014, ADR-016).
+ * Un aporte cambia el total recibido (home y transparencia) y, si hay
+ * consentimiento, el muro de nombres. El monto **no** se publica (FR-014,
+ * ADR-016, ADR-042).
  */
-function revalidateTotals(): void {
+function revalidateAportes(): void {
   revalidatePath("/");
   revalidatePath("/transparencia");
   revalidatePath("/admin/aportes");
+  revalidatePath("/quienes-ayudaron");
+  revalidatePath("/en/quienes-ayudaron");
 }
 
 export async function recordContributionAction(
@@ -34,7 +38,7 @@ export async function recordContributionAction(
   const result = await recordContribution(deps, Object.fromEntries(formData));
 
   if (result.status === "ok") {
-    revalidateTotals();
+    revalidateAportes();
   }
 
   return result;
@@ -53,7 +57,7 @@ export async function voidContributionAction(
   const result = await voidContribution(deps, Object.fromEntries(formData));
 
   if (result.status === "ok") {
-    revalidateTotals();
+    revalidateAportes();
   }
 
   return result;
@@ -72,7 +76,45 @@ export async function markReconciledAction(
   const result = await markReconciled(deps, Object.fromEntries(formData));
 
   if (result.status === "ok") {
-    revalidateTotals();
+    revalidateAportes();
+  }
+
+  return result;
+}
+
+export async function setPublishContributionShareAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await setPublishContributionShare(deps, Object.fromEntries(formData));
+
+  if (result.status === "ok") {
+    revalidateAportes();
+  }
+
+  return result;
+}
+
+export async function updateContributionAppearanceAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await updateContributionAppearance(deps, Object.fromEntries(formData));
+
+  if (result.status === "ok") {
+    revalidateAportes();
   }
 
   return result;
