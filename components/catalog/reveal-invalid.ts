@@ -38,10 +38,7 @@ export function revealInvalidField(field: EventTarget | null): void {
 
 export function captureFirstInvalid(event: {
   readonly target: EventTarget | null;
-  preventDefault(): void;
 }): void {
-  event.preventDefault();
-
   const target = event.target;
 
   if (!(target instanceof HTMLElement)) {
@@ -62,9 +59,9 @@ export function captureFirstInvalid(event: {
   form.dataset[FLAG] = "true";
   revealInvalidField(target);
 
-  queueMicrotask(() => {
+  window.setTimeout(() => {
     delete form.dataset[FLAG];
-  });
+  }, 0);
 }
 
 export function revealFormError(form: HTMLFormElement | null): void {
