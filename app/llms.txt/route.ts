@@ -70,7 +70,7 @@ servidor: no hay nada importante detrás de un click ni de una carga en el clien
 - [Cómo ayudar](${siteUrl}/ayudar): las tres formas de ayudar y los datos bancarios de Argentina y
   Chile.
 - [Contacto](${siteUrl}/contacto): WhatsApp, correo e Instagram de Justo Miguel Vargas.
-- [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta, sin cifras públicas.
+- [Transparencia](${siteUrl}/transparencia): cómo se lleva la cuenta. De lo que ya llegó se publica qué parte se usó; no hay montos ni un 100% de la obra.
 - [Novedades](${siteUrl}/novedades): cada avance de la obra, fechado. También en ${siteUrl}/novedades.xml.
 - [El legado](${siteUrl}/legado): qué se propone Fundación Norma y en qué estado real está.
 - [Privacidad](${siteUrl}/legales/privacidad) · [Términos](${siteUrl}/legales/terminos)

@@ -45,7 +45,7 @@ público no lo ve.
 |---|---|---|
 | `slug` | `citext unique` | `casa-de-norma` |
 | `title`, `summary` | `text` | |
-| `goal_amount_minor` | `bigint` nullable | **Nulo = no verificado.** La UI omite la barra de progreso |
+| `goal_amount_minor` | `bigint` nullable | **Interno.** Nulo = no hay meta operativa. Aunque tenga valor, el sitio público no lo usa como 100% (ADR-040) |
 | `goal_currency` | `char(3)` | `ARS` |
 | `status` | enum `campaign_status` | `draft` \| `active` \| `paused` \| `completed` |
 | `reconciled_at` | `timestamptz` nullable | Última conciliación bancaria. Se muestra al público (FR-010) |

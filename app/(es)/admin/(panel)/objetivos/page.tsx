@@ -24,10 +24,10 @@ import { createCampaignAction, saveBudgetItemAction, updateGoalAction } from "./
  *
  * Las dos cifras más delicadas del sitio, y las dos pueden quedar vacías a propósito.
  *
- * **El objetivo vacío es una opción legítima.** Mientras no haya un presupuesto hecho
- * por alguien que sepa de obra, publicar una meta sería inventar un número; el sitio
- * muestra el avance sin porcentaje y eso es más honesto que una cifra redonda elegida
- * a ojo. Por eso el campo se puede borrar, y borrarlo es una operación, no un error.
+ * **El objetivo es interno.** Aunque esté cargado, el sitio público no lo usa como
+ * 100% (ADR-040). Vacío sigue siendo una opción legítima: sirve para priorizar
+ * adentro cuando hay un número, y no inventa una meta cuando no lo hay. Borrarlo
+ * es una operación, no un error.
  *
  * **Un rubro sin cotizar también se publica.** Saber *qué* falta arreglar ya es
  * información, y aparece como "sin cotizar" en lugar de con un cero que se leería como
@@ -39,8 +39,8 @@ export default async function AdminObjetivosPage() {
 
   const heading = (
     <AdminHeading title="Objetivo y presupuesto">
-      La meta de recaudación y los rubros de la obra. Las dos cifras se publican tal como
-      se cargan acá.
+      La meta de recaudación es interna: el sitio público no la muestra. Los rubros
+      cotizados aparecen afuera como porcentaje de lo ya cotizado, nunca en pesos.
     </AdminHeading>
   );
 
@@ -169,7 +169,7 @@ export default async function AdminObjetivosPage() {
         id="objetivo"
         title="La meta de recaudación"
         tone="sunk"
-        description="Es el número contra el que el sitio calcula el porcentaje de avance."
+        description="Es un número para priorizar adentro. El sitio público no lo usa como 100%: afuera el 100% es lo que ya llegó, y el de la obra no está publicado."
       >
         <ActionForm action={updateGoalAction}>
           <HiddenValue name="campaignId" value={campaign.id} />
@@ -179,7 +179,7 @@ export default async function AdminObjetivosPage() {
               label="Objetivo"
               inputMode="decimal"
               placeholder="8.500.000"
-              hint="Vacío significa “todavía no hay objetivo”: el sitio muestra el avance sin porcentaje."
+              hint="Vacío significa “todavía no hay objetivo interno”. El sitio público igual habla en porcentajes de lo ya recibido, nunca contra este número."
               {...defaultOf(
                 campaign.goal === null ? null : amountToInputValue(campaign.goal),
               )}
@@ -196,10 +196,10 @@ export default async function AdminObjetivosPage() {
         </ActionForm>
 
         {campaign.goal === null ? (
-          <Callout title="Sin objetivo publicado" className="mt-lg">
+          <Callout title="Sin objetivo interno" className="mt-lg">
             <p>
-              Hoy el sitio muestra cuánto se recibió y cuánto se gastó, sin porcentaje. Es
-              la opción prudente hasta tener un presupuesto de obra.
+              Aunque lo cargues, el sitio público no lo publica. Hoy tampoco hay uno
+              interno: sirve para vos, no para una barra contra una meta.
             </p>
           </Callout>
         ) : null}
