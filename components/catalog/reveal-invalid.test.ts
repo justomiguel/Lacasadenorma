@@ -79,9 +79,12 @@ describe("captureFirstInvalid", () => {
     form.append(primero.nodo, segundo.nodo);
     document.body.append(form);
 
-    captureFirstInvalid({ target: primero.nodo });
-    captureFirstInvalid({ target: segundo.nodo });
+    const preventDefault = vi.fn();
 
+    captureFirstInvalid({ target: primero.nodo, preventDefault });
+    captureFirstInvalid({ target: segundo.nodo, preventDefault });
+
+    expect(preventDefault).toHaveBeenCalledTimes(2);
     expect(primero.scroll).toHaveBeenCalledTimes(1);
     expect(segundo.scroll).not.toHaveBeenCalled();
   });

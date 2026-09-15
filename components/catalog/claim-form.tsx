@@ -159,9 +159,9 @@ function AddressField({
         aria-describedby={describedBy}
         {...(error === undefined ? {} : { "aria-invalid": true })}
         className={cn(
-          "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink",
+          "w-full min-h-touch scroll-mt-3xl rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
-          "aria-invalid:border-danger user-invalid:border-danger disabled:opacity-60",
+          "aria-invalid:border-danger user-invalid:border-danger user-invalid:focus-visible:outline-danger disabled:opacity-60",
         )}
       />
       <p id={hintId} className="font-ui text-small text-ink-muted">

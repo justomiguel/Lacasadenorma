@@ -38,7 +38,10 @@ export function revealInvalidField(field: EventTarget | null): void {
 
 export function captureFirstInvalid(event: {
   readonly target: EventTarget | null;
+  preventDefault(): void;
 }): void {
+  event.preventDefault();
+
   const target = event.target;
 
   if (!(target instanceof HTMLElement)) {

@@ -22,9 +22,9 @@ import { cn } from "@/components/design-system/cn";
  */
 
 const CONTROL =
-  "w-full min-h-touch rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink " +
+  "w-full min-h-touch scroll-mt-3xl rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus " +
-  "aria-invalid:border-danger user-invalid:border-danger disabled:opacity-60";
+  "aria-invalid:border-danger user-invalid:border-danger user-invalid:focus-visible:outline-danger disabled:opacity-60";
 
 export function TextField({
   name,
