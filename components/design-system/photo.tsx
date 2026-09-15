@@ -242,10 +242,12 @@ export function PhotoSequence({
     <div className={cn("space-y-3xl", className)}>
       {groups.map((group) => (
         <section key={group.heading}>
-          <h3 className="font-display text-subheading font-medium">{group.heading}</h3>
-          {group.note === null ? null : (
-            <p className="mt-sm max-w-measure text-body text-ink-muted">{group.note}</p>
-          )}
+          <div data-reveal="">
+            <h3 className="font-display text-subheading font-medium">{group.heading}</h3>
+            {group.note === null ? null : (
+              <p className="mt-sm max-w-measure text-body text-ink-muted">{group.note}</p>
+            )}
+          </div>
 
           <div
             className={cn(
@@ -258,31 +260,25 @@ export function PhotoSequence({
                 : "",
             )}
           >
+            {/* Sin `priority`: el ensayo no es LCP. La primera foto de un
+                tramo impar y ancha ocupa las dos columnas para no dejar hueco. */}
             {group.photos.map((photo, index) => (
-              <Figure
+              <div
                 key={photo.url}
-                media={photo}
-                reservedFor=""
-                sizes="(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw"
-                /* Ninguna lleva `priority`, y eso es una corrección: antes la
-                   primera de cada tramo lo llevaba, «porque se ve entera antes de
-                   desplazarse». No se ve. En las dos páginas que usan este
-                   componente el ensayo empieza después del título, la bajada y los
-                   párrafos de introducción, y en un teléfono eso es una pantalla y
-                   media. `priority` precarga con prioridad alta, así que estaba
-                   poniendo hasta 114 KB de fotos que nadie mira todavía delante del
-                   texto que sí se está mirando: en `/reconstruccion` el LCP es un
-                   párrafo y llegaba a 3 040 ms con un presupuesto de 2 800. */
-                /* Cuando el tramo tiene una cantidad impar de fotos, la primera
-                   ocupa las dos columnas: así no queda un hueco al final de la
-                   grilla, y la que abre el tramo es la que más se ve. Sólo si el
-                   archivo tiene resolución para eso: las fotos recortadas del
-                   collage miden 602 px de ancho y a dos columnas se estiraban al
-                   doble, borrosas. Ésas se quedan en una columna. */
-                {...(group.photos.length % 2 === 1 && index === 0 && photo.width >= 1000
-                  ? { className: "sm:col-span-2" }
-                  : {})}
-              />
+                data-reveal-photo=""
+                {...(index > 0 ? { "data-stagger": String(Math.min(index, 2)) } : {})}
+                className={
+                  group.photos.length % 2 === 1 && index === 0 && photo.width >= 1000
+                    ? "sm:col-span-2"
+                    : undefined
+                }
+              >
+                <Figure
+                  media={photo}
+                  reservedFor=""
+                  sizes="(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -310,13 +306,14 @@ export function PhotoEssay({
     <div className={cn("grid gap-md sm:grid-cols-2", className)}>
       {/* Sin `priority`, por lo mismo que en `PhotoSequence`: las fotos de una
           novedad van dentro del cuerpo de la novedad, nunca arriba. */}
-      {media.map((item) => (
-        <Figure
+      {media.map((item, index) => (
+        <div
           key={item.id}
-          media={item}
-          reservedFor=""
-          sizes="(min-width: 40rem) 50vw, 100vw"
-        />
+          data-reveal-photo=""
+          {...(index > 0 ? { "data-stagger": String(Math.min(index, 2)) } : {})}
+        >
+          <Figure media={item} reservedFor="" sizes="(min-width: 40rem) 50vw, 100vw" />
+        </div>
       ))}
     </div>
   );

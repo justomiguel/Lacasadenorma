@@ -147,7 +147,7 @@ export function Testimony({
   className?: string;
 }) {
   return (
-    <figure className={className}>
+    <figure className={className} data-reveal="">
       {/* La medida va acá y no en el `figure`: el token está en `em` para escalar con
           el tamaño de la cita, y `em` resuelve contra el `font-size` del **propio**
           elemento. Puesto en el `figure`, que hereda el cuerpo de 17 px, 20em daban

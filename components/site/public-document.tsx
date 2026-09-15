@@ -1,11 +1,12 @@
+import { UiProvider } from "@/components/i18n/ui-provider";
+import { RevealObserver } from "@/components/motion/reveal-observer";
 import { AnalyticsScript } from "@/components/site/analytics";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { HelpBar } from "@/components/site/help-bar";
+import { SessionProvider } from "@/components/site/session";
 import { StructuredData } from "@/components/site/structured-data";
 import { WebMcpTools } from "@/components/site/webmcp";
-import { SessionProvider } from "@/components/site/session";
-import { UiProvider } from "@/components/i18n/ui-provider";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import { htmlLang, type Locale } from "@/src/i18n/locale";
@@ -45,6 +46,9 @@ export function PublicDocument({
         <AnalyticsScript />
       </head>
       <body className="min-h-dvh bg-paper text-ink antialiased">
+        <noscript>
+          <style>{`[data-reveal],[data-reveal-photo]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <UiProvider locale={locale} ui={ui}>
           <SessionProvider locale={locale}>
             <a
@@ -65,6 +69,7 @@ export function PublicDocument({
               legalUpdatedOn={legal.updatedOn}
             />
             <HelpBar href={localizedHref("/ayudar", locale)} label={ui.helpCta} />
+            <RevealObserver />
             <WebMcpTools />
           </SessionProvider>
         </UiProvider>

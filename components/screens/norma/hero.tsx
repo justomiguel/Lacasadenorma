@@ -8,7 +8,9 @@ export function NormaHero({ norma, ui }: { norma: PersonContent; ui: UiContent }
     <header className="bg-paper">
       <Container className="pb-3xl pt-3xl lg:pb-5xl lg:pt-5xl">
         <div className="grid items-end gap-3xl lg:grid-cols-12">
-          <div className="lg:col-span-7" data-reveal="">
+          <div className="lg:col-span-7">
+            {/* El título de la página se lee: no lleva `data-reveal`. Animarlo
+                al cargar es mover el dato que la persona vino a leer. */}
             <p
               data-kicker=""
               className="font-ui text-label uppercase tracking-label text-olive"
