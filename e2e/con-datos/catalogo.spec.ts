@@ -84,6 +84,9 @@ test.describe("fase D · reservas", () => {
 
     const fila = filaDelCatalogo(page, "Chapas del techo (datos de desarrollo)");
 
+    await expect(
+      fila.getByRole("img", { name: /foto ilustrativa de chapas/i }),
+    ).toBeVisible();
     await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
     await expect(fila.getByText("$ 150.000")).toBeVisible();
     await expect(fila.getByText("$ 1.050.000")).toBeVisible();

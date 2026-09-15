@@ -1,6 +1,6 @@
 {
   "title": "Qué le falta a la casa",
-  "lead": "Materiales y cosas que todavía hacen falta para reconstruir. La tabla dice cuánto falta, un estimado por unidad y el total de lo que sigue faltando. El estimado no es un precio fijo: sale de un promedio de internet. Si en el negocio de Formosa sale otra cosa, vale esa. «Quiero donar» abre la ficha: se puede traer el mismo bien o cubrirlo con plata.",
+  "lead": "Materiales y cosas que todavía hacen falta para reconstruir. La tabla muestra una foto ilustrativa cuando hay una, cuánto falta, un estimado por unidad y el total de lo que sigue faltando. El estimado no es un precio fijo: sale de un promedio de internet. Si en el negocio de Formosa sale otra cosa, vale esa. Las fotos no representan el objeto real. «Quiero donar» abre la ficha: se puede traer el mismo bien o cubrirlo con plata.",
   "paragraphs": [],
   "seoDescription": "Qué materiales y cosas le faltan a la casa de Norma, y cuánto queda por cubrir.",
   "emptyTitle": "Todavía no hay un listado publicado",
@@ -21,7 +21,7 @@
   "appearNamedHint": "Si no marcás esto, lo que traigas se cuenta sin tu nombre. Es el valor por defecto.",
   "conflictTitle": "Alguien se adelantó",
   "conflictBody": "Esa unidad ya quedó anotada a nombre de otra persona. El listado se actualizó.",
-  "tableCaption": "Lo que falta, cuánto, un estimado por unidad y el total de lo que sigue faltando. El estimado no es un precio fijo. El nombre aparece sólo si esa persona eligió aparecer.",
+  "tableCaption": "Lo que falta, con una foto ilustrativa cuando hay una, cuánto, un estimado por unidad y el total de lo que sigue faltando. El estimado no es un precio fijo. Las fotos no representan el objeto real. El nombre aparece sólo si esa persona eligió aparecer.",
   "columnItem": "Qué",
   "columnQuantity": "Cantidad",
   "columnTaken": "¿La tomó alguien?",

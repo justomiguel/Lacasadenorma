@@ -448,7 +448,7 @@ la página o el test; **no** se agregan secretos a esos workflows.
 | `cache lookup failed for type` al leer el catálogo o la campaña | PostgREST quedó con el caché de tipos de antes de `db:reset`. `scripts/e2e.sh` manda `NOTIFY pgrst, 'reload schema'` y la sonda pide `estimated_unit_amount_minor`, `publish_contribution_share` y `contribution_wall`; si igual falla: `fuser -k 54321/tcp` y volvé a correr |
 | Un test de axe falla con `color-contrast` | Es un bug del token, no del test. Los contrastes medidos están en `ux.md` |
 | `/reconstruccion` muestra una novedad de prueba como lo último | El flujo 9 no volvió a borrador. Tiene que despublicar por el botón del backoffice, no por un `PATCH` a PostgREST |
-| `/catalogo` reserva un hueco de foto en el listado | Un ítem de prueba sigue publicado **y** alguien volvió a poner el hueco en la tabla. El listado no reserva foto; la ficha sí. `ocultarItem` espera a que el título desaparezca del HTML |
+| `/catalogo` reserva un hueco de foto en el listado | Un ítem de prueba sigue publicado **y** alguien volvió a poner el hueco en la tabla. El listado muestra miniatura si hay foto y omite si no; no reserva hueco. La ficha sí reserva. `ocultarItem` espera a que el título desaparezca del HTML |
 | Fallan casi todos los tests de los flujos 3, 4, 5 y 7 a la vez, con timeouts | El sitio se construyó sin datos. La API local tiene que estar arriba **antes** del build (sección 5); mirá que `scripts/e2e.sh` la haya levantado y no haya fallado la sonda |
 | pgTAP falla en una aserción de rechazo | Alguien agregó una policy más permisiva, o una tabla sin policies |
 | `npm run verify` pasa y `test:e2e` no | Casi siempre el build: `verify` construye con el entorno de la máquina, `e2e.sh` con el del modo |

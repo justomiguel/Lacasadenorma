@@ -54,9 +54,9 @@ const MAX_ACENTOS = 3;
 const ESPACIOS_RESERVADOS = new Map<string, number>(
   process.env.E2E_MODO === "con-datos"
     ? [
-        // El ítem del fixture se publica sin foto en Storage: la ficha usa la
-        // de referencia. Esta lista no recorre fichas, así que el número exacto
-        // del listado es cero.
+        // El ítem del fixture se publica sin foto en Storage: el listado usa
+        // la de referencia, sin hueco. Esta lista no recorre fichas, así que
+        // el número exacto del listado es cero.
       ]
     : [
         // Vacío: sin base no hay ítems, y el mapa se queda para anotar un hueco
