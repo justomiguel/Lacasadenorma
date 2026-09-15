@@ -54,6 +54,10 @@ público no lo ve.
 **Invariante**: `goal_amount_minor` nulo o `> 0`. Nunca `0`, que sería ambiguo entre "no hay
 objetivo" y "el objetivo es cero".
 
+Este sitio tiene **una** campaña. La primera fila se crea desde `/admin/objetivos` (o con el SQL
+del runbook). Sin ella no hay a qué imputar gastos, aportes ni el catálogo: el backoffice lo dice
+y ofrece el alta, no manda al panel de Postgres.
+
 ### `budget_items` — en qué se va a usar el dinero (FR-017)
 
 | Columna | Tipo | Notas |

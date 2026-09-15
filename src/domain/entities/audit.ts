@@ -17,6 +17,7 @@
  * oración: *Nombre · publicó una cuenta bancaria · hace dos horas*.
  */
 export const AUDIT_ACTION_LABELS = {
+  "campaign.created": "creó la campaña",
   "campaign.goal_updated": "cambió el objetivo de recaudación",
   "campaign.reconciled": "marcó la conciliación bancaria",
   "budget_item.created": "agregó un rubro al presupuesto",

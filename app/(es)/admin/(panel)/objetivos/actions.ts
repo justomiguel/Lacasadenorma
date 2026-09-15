@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import type { ActionState } from "@/components/admin/form";
-import { saveBudgetItem, updateGoal } from "@/src/application/admin";
+import { createCampaign, saveBudgetItem, updateGoal } from "@/src/application/admin";
 import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context";
 
 /**
@@ -19,6 +19,30 @@ function revalidateFigures(): void {
   revalidatePath("/reconstruccion");
   revalidatePath("/transparencia");
   revalidatePath("/ayudar");
+}
+
+export async function createCampaignAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await createCampaign(deps, Object.fromEntries(formData));
+
+  if (result.status === "ok") {
+    revalidatePath("/admin");
+    revalidatePath("/admin/objetivos");
+    revalidatePath("/admin/gastos");
+    revalidatePath("/admin/aportes");
+    revalidatePath("/admin/catalogo");
+    revalidateFigures();
+  }
+
+  return result;
 }
 
 export async function updateGoalAction(

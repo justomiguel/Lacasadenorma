@@ -1,7 +1,11 @@
 import type { z } from "zod";
 
 import type { AuditAction } from "@/src/domain/entities/audit";
-import { CatalogOversubscribedError, NotAuthorizedError } from "@/src/domain/errors";
+import {
+  CampaignExistsError,
+  CatalogOversubscribedError,
+  NotAuthorizedError,
+} from "@/src/domain/errors";
 import { can, type Permission } from "@/src/domain/permissions";
 import type { AppRole } from "@/src/domain/entities/role";
 import type { AdminGateway } from "@/src/domain/ports/admin";
@@ -130,6 +134,14 @@ export async function perform<Input, Output>({
         status: "invalid",
         message: error.message,
         fieldErrors: { neededQuantity: error.message },
+      };
+    }
+
+    if (error instanceof CampaignExistsError) {
+      return {
+        status: "invalid",
+        message: error.message,
+        fieldErrors: { title: error.message },
       };
     }
 

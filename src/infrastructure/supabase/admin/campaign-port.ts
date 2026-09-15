@@ -27,6 +27,26 @@ export function createCampaignPort(client: ServerSupabaseClient): AdminCampaignP
       return data === null ? null : mapCampaign(data);
     },
 
+    async createCampaign(input): Promise<string> {
+      const { data, error } = await client
+        .from("campaigns")
+        .insert({
+          slug: input.slug,
+          title: input.title,
+          summary: input.summary,
+          status: input.publish ? "active" : "draft",
+          published_at: input.publish ? new Date().toISOString() : null,
+        })
+        .select("id")
+        .single();
+
+      if (error !== null) {
+        throw new QueryError("crear la campaña", error);
+      }
+
+      return data.id;
+    },
+
     async listBudgetItems(campaignId): Promise<BudgetItemAdminRecord[]> {
       const { data, error } = await client
         .from("budget_items")

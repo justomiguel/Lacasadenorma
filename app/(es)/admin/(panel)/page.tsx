@@ -53,6 +53,25 @@ export default async function AdminPanelPage() {
         </Callout>
       ) : null}
 
+      {context !== null && context.campaign === null ? (
+        <Callout tone="warning" title="Todavía no hay campaña">
+          <p>
+            Gastos, aportes y el catálogo se anotan sobre una campaña, y todavía no hay
+            ninguna.{" "}
+            {can(viewer.role, "campana.escribir") ? (
+              <Link
+                href="/admin/objetivos"
+                className="text-aqua underline underline-offset-2"
+              >
+                Creala en Objetivo
+              </Link>
+            ) : (
+              "Quien administra la campaña tiene que crearla en Objetivo."
+            )}
+          </p>
+        </Callout>
+      ) : null}
+
       {report.status === "ok" ? (
         <Panel id="cifras" title="Las cifras públicas" tone="sunk">
           <dl className="grid gap-lg sm:grid-cols-3">

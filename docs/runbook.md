@@ -173,6 +173,32 @@ El primer `owner` se crea así, con SQL, y es deliberado: no hay pantalla de aut
 usuario privilegiado por defecto. Un formulario público que crea el primer administrador es una puerta
 que queda abierta para siempre.
 
+### Crear la primera campaña
+
+Las migraciones no insertan una campaña: el fixture local sí, producción no. Sin esa fila el
+backoffice no deja cargar gastos, aportes ni el catálogo, porque no hay a qué imputarlos.
+
+Con el rol ya en el token, el camino es **`/admin` → Objetivo → Crear campaña**. Título y resumen
+son operativos (el relato público sigue en `content/`). Publicada, el sitio empieza a mostrar las
+cifras que se carguen; en borrador se puede anotar igual y el sitio público omite las cifras.
+
+Si el backoffice todavía no está desplegado con esa pantalla, el SQL Editor del mismo proyecto:
+
+```sql
+insert into public.campaigns (slug, title, summary, status, published_at)
+select 'casa-de-norma',
+       'Reconstrucción de la casa',
+       'Campaña de reconstrucción de la casa de Norma en Riacho He Hé.',
+       'active',
+       now()
+ where not exists (select 1 from public.campaigns);
+
+select id, slug, title, status, published_at from public.campaigns;
+```
+
+Una sola fila. Gastos van en `/admin/gastos`, entradas (aportes) en `/admin/aportes`, lo que hace
+falta en especie en `/admin/catalogo`.
+
 ### Correo: dominio, SPF y las plantillas que no viven en el repositorio
 
 Nada sale a una casilla real hasta que el dominio esté verificado en Resend. Hasta entonces, sólo se

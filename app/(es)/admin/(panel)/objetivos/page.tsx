@@ -17,7 +17,7 @@ import { amountToInputValue } from "@/src/domain/money-input";
 import { getAdminScope } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
 
-import { saveBudgetItemAction, updateGoalAction } from "./actions";
+import { createCampaignAction, saveBudgetItemAction, updateGoalAction } from "./actions";
 
 /**
  * Objetivo y presupuesto.
@@ -44,11 +44,53 @@ export default async function AdminObjetivosPage() {
     </AdminHeading>
   );
 
-  if (scope.state !== "lista") {
+  if (scope.state === "sin-base") {
     return (
       <>
         {heading}
         <SinDatos state={scope.state} />
+      </>
+    );
+  }
+
+  if (scope.state === "sin-campana") {
+    return (
+      <>
+        <AdminHeading title="La campaña">
+          Gastos, aportes y el catálogo se anotan sobre una campaña. Todavía no hay
+          ninguna: hay que crearla para poder cargar lo que falta.
+        </AdminHeading>
+        <Panel
+          id="crear"
+          title="Crear la campaña"
+          tone="sunk"
+          description="Es una sola, a propósito. El relato público sigue en el contenido editorial; esto es el contenedor de las cifras."
+        >
+          <ActionForm action={createCampaignAction}>
+            <TextField
+              name="title"
+              label="Cómo se llama"
+              required
+              maxLength={140}
+              placeholder="Reconstrucción de la casa"
+            />
+            <TextAreaField
+              name="summary"
+              label="De qué se trata"
+              required
+              rows={3}
+              maxLength={500}
+              hint="Uso interno. No reemplaza la historia que está en el sitio."
+            />
+            <CheckboxField
+              name="publish"
+              label="Publicarla: el sitio empieza a mostrar las cifras que cargues"
+              defaultChecked
+              hint="Sin marcar queda como borrador: podés cargar igual, y el sitio público sigue omitiendo las cifras."
+            />
+            <SubmitButton pendingLabel="Creando…">Crear campaña</SubmitButton>
+          </ActionForm>
+        </Panel>
       </>
     );
   }

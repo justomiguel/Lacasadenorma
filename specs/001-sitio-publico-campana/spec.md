@@ -226,9 +226,10 @@ que explican el proyecto futuro sin prometer nada que no esté decidido.
 
 - **FR-018**: El contenido editorial (historia, textos, preguntas frecuentes, descripciones) MUST
   ser modificable sin desplegar código para los campos que cambian con frecuencia.
-- **FR-019**: El backoffice MUST permitir: registrar aportes, registrar gastos con comprobante,
-  publicar actualizaciones, cargar fotografías, administrar cuentas de aporte, administrar hitos y
-  editar objetivos.
+- **FR-019**: El backoffice MUST permitir: crear la campaña si todavía no existe, registrar
+  aportes, registrar gastos con comprobante, publicar actualizaciones, cargar fotografías,
+  administrar cuentas de aporte, administrar hitos, editar objetivos y cargar el catálogo de
+  lo que hace falta en especie.
 - **FR-020**: El acceso al backoffice MUST requerir autenticación.
 - **FR-021**: El sistema MUST soportar cuatro roles con permisos distintos: propietario,
   administrador, editor y auditor.

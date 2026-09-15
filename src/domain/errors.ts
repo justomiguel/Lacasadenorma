@@ -3,11 +3,11 @@
  * prohíbe que un error se degrade a un valor vacío sin avisar, y un `Error`
  * genérico no permite distinguir "el dato es inválido" de "no tenés permiso".
  *
- * Hay sólo dos, y es a propósito. La indisponibilidad de la fuente de datos
- * **no** es una excepción de este archivo: es un estado legítimo del sistema y se
- * representa con el tipo `DataResult` de la capa de aplicación, que obliga a la
- * presentación a manejarlo. Una excepción se puede olvidar en un `catch`; una
- * unión discriminada no se puede leer sin decidir qué hacer con cada caso.
+ * La indisponibilidad de la fuente de datos **no** es una excepción de este
+ * archivo: es un estado legítimo del sistema y se representa con el tipo
+ * `DataResult` de la capa de aplicación, que obliga a la presentación a
+ * manejarlo. Una excepción se puede olvidar en un `catch`; una unión
+ * discriminada no se puede leer sin decidir qué hacer con cada caso.
  */
 
 /** Una regla del dominio no se cumple. Siempre es un error de programación. */
@@ -52,6 +52,19 @@ export class PledgeUnavailableError extends DomainError {
   constructor() {
     super("Alguien se adelantó.");
     this.name = "PledgeUnavailableError";
+  }
+}
+
+/**
+ * Ya hay una campaña. Este sitio tiene una sola: gastos, aportes y el catálogo
+ * se imputan a esa fila. Crear otra no es un alta, es un error de quien carga.
+ */
+export class CampaignExistsError extends DomainError {
+  constructor() {
+    super(
+      "Ya hay una campaña. Los gastos, los aportes y el catálogo van sobre esa; no se crea otra.",
+    );
+    this.name = "CampaignExistsError";
   }
 }
 
