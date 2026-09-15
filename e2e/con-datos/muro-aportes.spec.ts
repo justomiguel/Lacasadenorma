@@ -25,7 +25,12 @@ test.describe("fase · muro de aportes", () => {
     await entrar(page, "admin");
     await page.goto("/admin/aportes");
 
-    const alta = page.locator("#nuevo");
+    // El `id` del Panel vive en el h2 (`aria-labelledby`), no en el section:
+    // `#nuevo` no contiene el formulario. El patrón es el de `catalogo.ts`.
+    const alta = page.getByRole("region", { name: /registrar un aporte/i });
+    const interruptor = page.getByRole("region", {
+      name: /quiénes ayudaron · plata/i,
+    });
 
     await alta.getByLabel("Monto", { exact: true }).fill("1.000.000");
     await alta.getByLabel(/fecha en que entró/i).fill(hoy);
@@ -51,8 +56,6 @@ test.describe("fase · muro de aportes", () => {
     await expect(page.getByText("1000000")).toHaveCount(0);
 
     await page.goto("/admin/aportes");
-
-    const interruptor = page.locator("#muro");
 
     await interruptor.getByLabel(/mostrar el porcentaje/i).check();
     await interruptor.getByRole("button", { name: /^guardar$/i }).click();
