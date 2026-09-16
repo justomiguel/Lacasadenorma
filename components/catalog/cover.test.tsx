@@ -41,6 +41,8 @@ describe("HowToDonate", () => {
       screen.getByText(/traer el mismo bien o cubrirlo con plata/i),
     ).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
+    expect(document.querySelector('[data-channel-mark="bring"]')).not.toBeNull();
+    expect(document.querySelector('[data-channel-mark="transfer"]')).not.toBeNull();
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /quiero donar/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/^nombre$/i)).toBeRequired();

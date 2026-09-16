@@ -1,6 +1,28 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.2.2 → 1.3.0
+Tipo de cambio: MINOR — se amplía el principio VIII con una obligación y su compuerta.
+Fecha: 2026-09-16
+
+Motivo: en `/ayudar/dinero` y en la ficha, los datos para transferir y los
+canales se barrían como texto solo. El pedido es que donde un icono identifica
+(un país, un CBU, un camino, un canal) vaya siempre al lado del nombre. La
+iconografía por relleno sigue prohibida.
+
+  1. "VIII. Diseño humano" — un pictograma que identifica un control, un campo,
+     un canal o un camino MUST ir al lado del nombre. No reemplaza el texto.
+     Sale de `icons.tsx`, de `BrandMark` o de `CountryFlag`. Un pack o un emoji
+     siguen vedados.
+  2. Compuerta `npm run check:iconos`. Skills `iconos-en-la-interfaz` e
+     `iconos-en-transferencia`. ADR-047.
+
+Artefactos actualizados en el mismo commit:
+  ✅ docs/adr/047-iconos-que-identifican.md
+  ✅ scripts/check-iconos.mjs y `check:iconos` en verify / CI
+  ✅ .cursor/skills y .agents/skills, .cursor/rules/iconos.mdc
+  ✅ AGENTS.md, diseno.mdc, ADR-032 enmendado
+
 Cambio de versión: 1.2.1 → 1.2.2
 Tipo de cambio: PATCH — se nombra una Skill ya pinneada, sin cambiar un principio.
 Fecha: 2026-09-15
@@ -214,6 +236,11 @@ gradientes decorativos · glassmorphism · blobs · una card para cada cosa · b
 exceso · hero genérico de SaaS · ilustraciones artificiales · emojis como decoración · iconografía
 por relleno · layouts repetidos · animaciones sin función · copy corporativo.
 
+Un pictograma que **identifica** un control, un campo, un canal o un camino MUST ir al lado del
+nombre (ADR-047). No lo reemplaza. Sale de `components/design-system/icons.tsx`, de `BrandMark` o
+de `CountryFlag`. Un pack (Lucide, Heroicons) o un emoji siguen siendo relleno. La compuerta es
+`npm run check:iconos`.
+
 Obligatorio: la fotografía tiene protagonismo; hay espacio negativo generoso; la tipografía y la
 jerarquía hacen el trabajo; los detalles son sutiles.
 
@@ -425,4 +452,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.2.2 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-15
+**Version**: 1.3.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-16

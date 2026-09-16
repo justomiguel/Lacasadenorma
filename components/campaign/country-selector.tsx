@@ -3,6 +3,7 @@
 import { useRef } from "react";
 
 import { cn } from "@/components/design-system/cn";
+import { CountryMark } from "@/components/design-system/flags";
 
 export type DonationRegion = "AR" | "CL" | "INT";
 
@@ -29,8 +30,9 @@ function moveIndex(count: number, current: number, key: string): number | null {
  * Desde dónde aportás: Argentina, Chile o el resto del mundo (ADR-032).
  *
  * Es el patrón de tabs de ARIA —flechas, `aria-selected`, un solo tab en el
- * orden de tabulación— con el aspecto de un índice: texto y una regla debajo del
- * elegido. No son píldoras ni banderas: el nombre del país alcanza.
+ * orden de tabulación— con el aspecto de un índice: marca (bandera o globo),
+ * texto y una regla debajo del elegido. No son píldoras. El nombre del país
+ * no se saca (ADR-047).
  */
 export function CountrySelector({
   region,
@@ -99,7 +101,7 @@ export function CountrySelector({
             aria-controls={`${baseId}-panel`}
             tabIndex={selected ? 0 : -1}
             className={cn(
-              "inline-flex min-h-12 items-center whitespace-nowrap px-md font-ui text-body transition-colors duration-fast ease-editorial first:pl-0",
+              "inline-flex min-h-12 items-center gap-xs whitespace-nowrap px-md font-ui text-body transition-colors duration-fast ease-editorial first:pl-0",
               selected ? "font-medium text-ink" : "text-ink-muted hover:text-ink",
             )}
             onClick={() => {
@@ -110,6 +112,7 @@ export function CountrySelector({
               });
             }}
           >
+            <CountryMark region={item} />
             {names[item]}
           </button>
         );

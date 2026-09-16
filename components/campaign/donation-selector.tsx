@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { CountryMark } from "@/components/design-system/flags";
 import type { HelpContent, UiContent } from "@/content/schema";
 import { track } from "@/src/infrastructure/analytics/browser";
 
@@ -121,8 +122,9 @@ export function DonationSelector({
             <section key={item} aria-labelledby={`${baseId}-heading-${item}`}>
               <h3
                 id={`${baseId}-heading-${item}`}
-                className="mb-md font-display text-section-title"
+                className="mb-md flex items-center gap-sm font-display text-section-title"
               >
+                <CountryMark region={item} />
                 {names[item]}
               </h3>
               {panels[item]}

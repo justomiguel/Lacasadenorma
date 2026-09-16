@@ -79,15 +79,16 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
    historia. Nada más.
 
 9. **Aportar es una decisión: desde dónde.** `DonationSelector` reemplaza al tablero:
-   `CountrySelector` (Argentina, Chile, Internacional; tabs con teclado y una regla bajo
-   el elegido) y, en Argentina y en Chile, dos cards: transferencia (Brubank
-   o Scotiabank, cada uno con su logo) y Mercado Pago con su logo al lado del
-   nombre. Adentro de la primera, `CopyField` —etiqueta chica,
-   dato grande y tabular, icono de copiar que pasa a un tilde con «Copiado»
-   durante 1,5 s—. La segunda es `ExternalPayment`: la marca, una línea, y un
-   botón con los colores de esa marca y letra papel. Mercado Pago lleva la
+   `CountrySelector` (Argentina, Chile, Internacional; tabs con teclado, bandera o
+   globo al lado del nombre, y una regla bajo el elegido) y, en Argentina y en Chile,
+   dos cards: transferencia (Brubank o Scotiabank, cada uno con su logo) y Mercado
+   Pago con su logo al lado del nombre. Adentro de la primera, `CopyField` —marca de
+   la etiqueta, etiqueta chica, dato grande y tabular, icono de copiar que pasa a un
+   tilde con «Copiado» durante 1,5 s—. La segunda es `ExternalPayment`: la marca, una
+   línea, y un botón con los colores de esa marca y letra papel. Mercado Pago lleva la
    banderita de Argentina o de Chile; PayPal es la misma pieza para el resto del
    mundo. Sin JavaScript los tres países se apilan con su título y se transfiere igual.
+   Enmienda ADR-047: el tab de país y cada fila bancaria llevan marca.
 
 10. **Las vistas previas dejan de ser tarjetas.** `PreviewCard` conserva el nombre
     y pierde la caja: foto sin radio, título y flecha, toda ella enlace. En la home no
@@ -115,8 +116,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 - `ChapterHeading`, `ChapterNav`, `ChapterEnd`, `DonationBoard`, `CountryTabs` y
   `DonationMethods` se borran. `ui.home.chaptersLabel` y `ui.home.quoteOverlay` salen
   del contenido.
-- `check:marcas` sigue exigiendo el logo al lado del nombre de cada marca; el
-  selector de país no lleva banderas: el nombre alcanza.
+- `check:marcas` sigue exigiendo el logo al lado del nombre de cada marca.
+  `check:iconos` exige bandera o globo en el tab de país, pictograma en cada
+  `CopyField` de la transferencia y marca en los caminos de `/ayudar` (ADR-047).
 - `revision-visual.spec.ts` acepta el gradiente marcado con `data-scrim` y sigue
   rechazando cualquier otro, igual que las versales fuera de `data-kicker`.
 - `aportes.spec.ts` se reescribe sobre el nuevo selector; `help-bar.test.tsx`

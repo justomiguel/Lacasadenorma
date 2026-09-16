@@ -1,12 +1,21 @@
 /**
- * Banderas de Argentina y Chile, para el botón de Mercado Pago.
+ * Banderas de Argentina y Chile, y el globo del resto del mundo.
  *
- * No son iconos del sistema: tienen los colores de cada bandera, no `currentColor`.
- * El nombre del país ya está en el texto accesible del botón; acá son marca
- * visual para quien elige entre el link argentino y el chileno.
+ * Las banderas no son iconos del sistema: tienen los colores de cada país, no
+ * `currentColor`. El globo sí: es trazo. El nombre del país ya está en el
+ * texto; acá son marca visual (ADR-047).
  */
 
-export function CountryFlag({ country }: { country: "AR" | "CL" }) {
+import { cn } from "./cn";
+import { GlobeIcon } from "./icons";
+
+export function CountryFlag({
+  country,
+  className,
+}: {
+  country: "AR" | "CL";
+  className?: string;
+}) {
   return (
     <svg
       data-flag={country}
@@ -14,11 +23,24 @@ export function CountryFlag({ country }: { country: "AR" | "CL" }) {
       width={24}
       height={16}
       viewBox="0 0 36 24"
-      className="h-md w-lg shrink-0"
+      className={cn("h-md w-lg shrink-0", className)}
     >
       {country === "AR" ? <ArgentinaFlagMarks /> : <ChileFlagMarks />}
     </svg>
   );
+}
+
+/** Marca de un país de aporte: bandera o globo, nunca sola, siempre al lado del nombre. */
+export function CountryMark({ region }: { region: "AR" | "CL" | "INT" }) {
+  if (region === "INT") {
+    return (
+      <span data-country-mark="INT" className="inline-flex shrink-0 text-olive">
+        <GlobeIcon size={16} />
+      </span>
+    );
+  }
+
+  return <CountryFlag country={region} />;
 }
 
 function ArgentinaFlagMarks() {
