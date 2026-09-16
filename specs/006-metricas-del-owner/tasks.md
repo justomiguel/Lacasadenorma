@@ -9,4 +9,4 @@
 - [x] T007 Puerto de snapshot sin PII
 - [x] T008 UI: gráficos SVG, tablero, `/admin/metricas`, nav, señales en `/admin`
 - [x] T009 E2E: sin sesión y con owner/admin
-- [ ] T010 `npm run verify`
+- [x] T010 `npm run verify`
