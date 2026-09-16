@@ -33,21 +33,32 @@ export function signUpMetadata(locale: Locale) {
 export function SignUpScreen({
   locale,
   returnTo,
+  donateIntent,
 }: {
   locale: Locale;
   returnTo?: string | null;
+  donateIntent?: { readonly email: string } | null;
 }) {
   const { account } = getContent(locale);
   const { signUp, fields, errors, social } = account;
   const providers = enabledSocialProviders();
+  const fromDonate = donateIntent !== null && donateIntent !== undefined;
+  const lead = fromDonate ? signUp.donateLead : signUp.lead;
 
   return (
     <AuthShell
       title={signUp.title}
-      lead={signUp.lead}
+      lead={lead}
       aside={
         <>
-          <p>
+          {fromDonate
+            ? signUp.donateWhy.map((text, index) => (
+                <p key={text.slice(0, 32)} className={index === 0 ? undefined : "mt-md"}>
+                  {text}
+                </p>
+              ))
+            : null}
+          <p className={fromDonate ? "mt-md" : undefined}>
             {signUp.privacyLead}{" "}
             <InlineLink href={localizedHref("/legales/privacidad", locale)}>
               {signUp.privacyLink}
@@ -71,6 +82,7 @@ export function SignUpScreen({
         providers={providers}
         returnTo={returnTo ?? null}
         social={social}
+        emailPrefill={donateIntent?.email ?? null}
       />
     </AuthShell>
   );

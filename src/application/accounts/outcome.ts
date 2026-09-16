@@ -31,6 +31,10 @@ export const ACCOUNT_ERROR_CODES = [
   "contactNameRequired",
   /** Traer un bien sin dirección de retiro. */
   "pickupAddressRequired",
+  /** El primer paso de traer pide teléfono o correo, uno de los dos (ADR-051). */
+  "contactChannelRequired",
+  /** Un teléfono que no parece un número. */
+  "phoneInvalid",
   /** Cubrir con plata no reserva: la transacción es la prueba (ADR-046). */
   "coverIsNotAPledge",
   /** El sitio llama una función que PostgREST todavía no tiene en el caché. */
@@ -73,6 +77,7 @@ export type AccountField =
   | "portrait"
   | "contactName"
   | "contactPhone"
+  | "contactChannel"
   | "pickupAddress";
 
 export type AccountOutcome<T> =

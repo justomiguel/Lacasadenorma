@@ -611,9 +611,9 @@ select is_empty(
       from information_schema.role_table_grants
      where table_schema = 'public'
        and grantee = 'anon'
-       and table_name in ('contributions', 'expense_receipts', 'user_roles', 'audit_log', 'email_deliveries', 'donor_profiles', 'donation_pledges')
+       and table_name in ('contributions', 'expense_receipts', 'user_roles', 'audit_log', 'email_deliveries', 'donor_profiles', 'donation_pledges', 'donation_offers')
   $q$,
-  'anon no tiene ningún privilegio sobre aportes, comprobantes, roles, auditoría, envíos, perfiles ni reservas (I1, I2)'
+  'anon no tiene ningún privilegio sobre aportes, comprobantes, roles, auditoría, envíos, perfiles, reservas ni avisos (I1, I2)'
 );
 
 select * from finish();

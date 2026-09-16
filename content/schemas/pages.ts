@@ -196,6 +196,12 @@ export const catalogSchema = pageSchema.extend({
   contactNameHint: z.string().min(1),
   contactPhone: z.string().min(1),
   contactPhoneHint: z.string().min(1),
+  contactEmail: z.string().min(1),
+  contactEmailHint: z.string().min(1),
+  contactChannelHint: z.string().min(1),
+  claimPhoneHint: z.string().min(1),
+  offerThanksTitle: z.string().min(1),
+  offerThanksBody: z.string().min(1),
   pickupAddress: z.string().min(1),
   pickupAddressHint: z.string().min(1),
   units: z.object({

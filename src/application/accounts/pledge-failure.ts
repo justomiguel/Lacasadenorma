@@ -62,6 +62,10 @@ function codeOf(
     return { code: "pickupAddressRequired", field: "pickupAddress" };
   }
 
+  if (message.includes("telefono_invalido")) {
+    return { code: "phoneInvalid", field: "contactPhone" };
+  }
+
   if (message.includes("cantidad_invalida")) {
     return { code: "quantityInvalid", field: "quantity" };
   }

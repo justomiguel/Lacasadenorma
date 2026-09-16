@@ -127,6 +127,7 @@ export function fakeAdminGateway(
     },
     donations: {
       listPledges: () => record("listPledges", null, []),
+      listOffers: () => record("listOffers", null, []),
       fulfillPledge: (input) => record("fulfillPledge", input, undefined),
       cancelPledge: (input) => record("cancelPledge", input, undefined),
       markReminded: (input) => record("markReminded", input, undefined),

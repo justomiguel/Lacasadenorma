@@ -19,6 +19,27 @@ export interface DonationWallEntry {
 }
 
 /**
+ * Lo que el muro público admite: cumplida, con nombre, con fecha.
+ *
+ * El sí del owner sobre una reserva por teléfono entra acá (FR-261). Una
+ * reserva suelta, una anónima o una sin fecha no.
+ */
+export function isPublicWallEntry(pledge: {
+  readonly status: string;
+  readonly isAnonymous: boolean;
+  readonly donorDisplayName: string | null;
+  readonly fulfilledAt: string | null;
+}): boolean {
+  return (
+    pledge.status === "fulfilled" &&
+    !pledge.isAnonymous &&
+    pledge.donorDisplayName !== null &&
+    pledge.donorDisplayName.trim().length > 0 &&
+    pledge.fulfilledAt !== null
+  );
+}
+
+/**
  * Una línea del muro de aportes en plata.
  *
  * No hay monto. `percentOfReceived` es nulo cuando la campaña no publica el %,

@@ -1,11 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { revalidateDonationPages } from "@/app/(es)/revalidate-donations";
 
 import type { ActionState } from "@/components/admin/form";
 import { cancelPledge, fulfillPledge } from "@/src/application/admin";
+import {
+  isStaffPledgeDecision,
+  STAFF_CONTACT_REJECT_REASON,
+} from "@/src/domain/staff-pledge-decision";
 import { getAdminDeps, NOT_CONFIGURED } from "@/src/infrastructure/admin/context";
 import { getEmailSender, readStaffAddress } from "@/src/infrastructure/email";
 import { recordEmailDelivery } from "@/src/infrastructure/email/deliveries";
@@ -96,6 +101,47 @@ export async function cancelPledgeAction(
   if (result.status === "ok") {
     revalidatePath("/admin/donaciones");
     revalidateDonationPages();
+  }
+
+  return result;
+}
+
+/**
+ * Los dos enlaces del correo: sí donan, o no y se suelta (ADR-051).
+ *
+ * El GET no muta. Acá sí. Un no no vuelve a avisarle al equipo: ya lo acaba
+ * de decidir.
+ */
+export async function decidePledgeAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const decisionRaw = formData.get("decision");
+  const decision = typeof decisionRaw === "string" ? decisionRaw : "";
+
+  if (!isStaffPledgeDecision(decision)) {
+    return { status: "invalid", message: "Esa decisión no existe.", fieldErrors: {} };
+  }
+
+  const result =
+    decision === "si"
+      ? await fulfillPledge(deps, Object.fromEntries(formData), mailOf(deps, formData))
+      : await cancelPledge(
+          deps,
+          { id: formData.get("id"), reason: STAFF_CONTACT_REJECT_REASON },
+          null,
+        );
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+    redirect("/admin/donaciones");
   }
 
   return result;

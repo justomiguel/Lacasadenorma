@@ -27,6 +27,11 @@
     "privacyTail": ", y la cuenta se borra desde el sitio cuando quieras.",
     "haveAccount": "¿Ya tenés cuenta?",
     "haveAccountLink": "Ingresá",
+    "donateLead": "Dejaste un correo para donar un artículo. La cuenta es para confirmar esa casilla, después pedir dónde ir a buscar, y para que veas y canceles lo anotado.",
+    "donateWhy": [
+      "Confirmar el correo es la validación: así sabemos que podemos escribirte. Después, en la ficha, se pide la dirección y se reserva el ítem. También le avisamos a quien coordina.",
+      "El teléfono, si lo preferís, es el otro camino: avisa para que te llamen y no abre una cuenta."
+    ],
     "checkInboxTitle": "Revisá tu correo",
     "checkInboxBody": [
       "Mandamos un enlace a la dirección que escribiste. Hay que abrirlo: así sabemos que esa casilla existe y que podemos escribirte. Hasta entonces la cuenta no está activa.",
@@ -141,6 +146,8 @@
     "displayNameRequired": "Escribí con qué nombre querés aparecer, o dejá marcado que preferís no aparecer.",
     "contactNameRequired": "Escribí un nombre para que el equipo sepa con quién habla.",
     "pickupAddressRequired": "Escribí la dirección donde ir a buscar el bien.",
+    "contactChannelRequired": "Dejá un teléfono o un correo, uno de los dos.",
+    "phoneInvalid": "Ese teléfono no parece un número.",
     "coverIsNotAPledge": "Cubrir con plata no se anota: transferí, y el equipo lo registra cuando llega.",
     "schemaBehind": "El listado se actualizó y esta reserva todavía no se puede anotar. En un rato se puede intentar de nuevo.",
     "noRecoverySession": "Este enlace no abre una sesión de recuperación. Pedí uno nuevo.",

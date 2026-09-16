@@ -9,10 +9,10 @@ import { paragraphs, phrase } from "./primitives";
  * dirección— **sí están acá**: el token lo emite GoTrue, el HTML lo arma este
  * repositorio y Resend lo manda (ADR-028). `{link}` es el canje, no una visita.
  *
- * **Las marcas de sustitución son tres y están cerradas**: `{what}` es lo que se
- * reservó, `{when}` es cuándo vence y `{link}` es a dónde ir. No hay motor de
- * plantillas. `messages.test.ts` falla si algún correo sale con una marca sin
- * reemplazar.
+ * **Las marcas de sustitución son cuatro y están cerradas**: `{what}` es lo que se
+ * reservó, `{when}` es cuándo vence, `{who}` es el nombre de un aviso por
+ * teléfono y `{link}` es a dónde ir. No hay motor de plantillas.
+ * `messages.test.ts` falla si algún correo sale con una marca sin reemplazar.
  */
 
 const message = z.object({
@@ -50,15 +50,18 @@ export const emailsSchema = z.object({
   pledgeReminder: message,
   pledgeFulfilled: message,
   /**
-   * Los cuatro del equipo. Están en los dos archivos y en los dos dicen lo mismo,
+   * Los cinco del equipo. Están en los dos archivos y en los dos dicen lo mismo,
    * en castellano, porque el backoffice no se traduce (ADR-014).
    * `content/emails.test.ts` compara los dos y falla si alguien traduce éstos.
    */
   staffNewAccount: message,
-  staffNewPledge: message,
+  staffNewPledge: message.extend({ rejectAction: phrase }),
+  staffPhoneOffer: message.extend({ rejectAction: phrase }),
   staffPledgeCancelled: message,
   staffPledgeExpired: message,
 });
 
 export type EmailsContent = z.infer<typeof emailsSchema>;
-export type EmailCopy = EmailsContent[keyof EmailsContent];
+export type EmailCopy = EmailsContent[keyof EmailsContent] & {
+  readonly rejectAction?: string;
+};

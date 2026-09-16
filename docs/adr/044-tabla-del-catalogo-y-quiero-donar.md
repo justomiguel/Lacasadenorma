@@ -1,6 +1,6 @@
 # ADR-044 · El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar»
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md) y por [ADR-051](./051-dos-puertas-para-traer.md): el primer clic pide nombre y teléfono o correo; el teléfono reserva.
 
 Enmienda a [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md) (el estimado
 también se publica en el listado), a [ADR-032](./032-relato-mobile-editorial.md)

@@ -20,8 +20,8 @@ import type { Locale } from "@/src/i18n/locale";
 import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
 
 /**
- * Anotarse a traer un bien: nombre, teléfono optativo y dirección de retiro
- * (ADR-046). La cuenta no es la prueba: es para ver y cancelar.
+ * Anotarse a traer un bien, con sesión: nombre, teléfono optativo y
+ * dirección de retiro (ADR-046, ADR-051). El HTML público no es éste.
  */
 export function ClaimForm({
   itemId,
@@ -92,7 +92,7 @@ export function ClaimForm({
       <TextField
         name="telefono"
         label={copy.contactPhone}
-        hint={copy.contactPhoneHint}
+        hint={copy.claimPhoneHint}
         required={false}
         autoComplete="tel"
         inputMode="tel"

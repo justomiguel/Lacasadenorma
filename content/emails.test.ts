@@ -12,11 +12,12 @@ import { getContent } from "./pack";
  * están en castellano en los dos (ADR-014).
  */
 
-const MARCAS = ["{what}", "{when}", "{link}"] as const;
+const MARCAS = ["{what}", "{when}", "{who}", "{link}"] as const;
 
 const STAFF = [
   "staffNewAccount",
   "staffNewPledge",
+  "staffPhoneOffer",
   "staffPledgeCancelled",
   "staffPledgeExpired",
 ] as const;
@@ -38,6 +39,7 @@ function todoElTexto(correo: {
   preheader: string;
   body: readonly string[];
   action: string;
+  rejectAction?: string;
   why: string;
 }): string {
   return [
@@ -45,6 +47,7 @@ function todoElTexto(correo: {
     correo.preheader,
     ...correo.body,
     correo.action,
+    correo.rejectAction ?? "",
     correo.why,
   ].join("\n");
 }

@@ -1,4 +1,5 @@
 import { isCoverChannel } from "@/src/domain/cover";
+import type { DonationOffer } from "@/src/domain/entities/donation-offer";
 import type { AdminPledgeRecord } from "@/src/domain/entities/donation-pledge";
 import { isPledgeStatus } from "@/src/domain/pledge-status";
 import type { AdminDonationsPort } from "@/src/domain/ports/donations";
@@ -36,6 +37,16 @@ interface PledgeWithItem extends PledgeRow {
   donation_items: { title: string } | { title: string }[] | null;
 }
 
+interface OfferWithItem {
+  id: string;
+  item_id: string;
+  contact_name: string;
+  contact_phone: string;
+  created_at: string;
+  pledge_id: string | null;
+  donation_items: { title: string } | { title: string }[] | null;
+}
+
 export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsPort {
   return {
     async listPledges(): Promise<readonly AdminPledgeRecord[]> {
@@ -58,6 +69,21 @@ export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsP
           return mapAdminPledge(row, email);
         }),
       );
+    },
+
+    async listOffers(): Promise<readonly DonationOffer[]> {
+      const { data, error } = await client
+        .from("donation_offers")
+        .select(
+          "id, item_id, contact_name, contact_phone, created_at, pledge_id, donation_items(title)",
+        )
+        .order("created_at", { ascending: false });
+
+      if (error !== null) {
+        throw new QueryError("leer los avisos por teléfono", error);
+      }
+
+      return data.map((row) => mapOffer(row as OfferWithItem));
     },
 
     async fulfillPledge(id): Promise<void> {
@@ -107,8 +133,22 @@ async function contactOf(
 }
 
 function titleOf(row: PledgeWithItem): string {
-  const related = row.donation_items;
+  return relatedTitle(row.donation_items);
+}
 
+function mapOffer(row: OfferWithItem): DonationOffer {
+  return {
+    id: row.id,
+    itemId: row.item_id,
+    itemTitle: relatedTitle(row.donation_items),
+    contactName: row.contact_name,
+    contactPhone: row.contact_phone,
+    pledgeId: row.pledge_id,
+    createdAt: row.created_at,
+  };
+}
+
+function relatedTitle(related: { title: string } | { title: string }[] | null): string {
   if (related === null) {
     return "Ítem";
   }

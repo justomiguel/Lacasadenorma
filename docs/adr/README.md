@@ -61,3 +61,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [048](./048-tablero-de-metricas-del-owner.md) | Tablero de métricas del owner, con gráficos y señales | Aceptada; enmendada por ADR-049 |
 | [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada |
 | [050](./050-acciones-del-catalogo.md) | Acciones del catálogo: ver, editar la fila y borrar, en el backoffice | Aceptada |
+| [051](./051-dos-puertas-para-traer.md) | Dos puertas para traer un bien: el mail abre cuenta, el teléfono reserva | Aceptada |

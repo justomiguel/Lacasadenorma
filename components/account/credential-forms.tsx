@@ -35,6 +35,7 @@ export function SignUpForm({
   providers,
   returnTo,
   social,
+  emailPrefill,
 }: {
   copy: AccountContent["signUp"];
   errors: AccountContent["errors"];
@@ -43,6 +44,7 @@ export function SignUpForm({
   providers: readonly SocialProviderId[];
   returnTo?: string | null;
   social: AccountContent["social"];
+  emailPrefill?: string | null;
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(signUp, IDLE);
 
@@ -80,6 +82,11 @@ export function SignUpForm({
           type="email"
           label={fields.email}
           autoComplete="username"
+          {...(emailPrefill === undefined ||
+          emailPrefill === null ||
+          emailPrefill.length === 0
+            ? {}
+            : { defaultValue: emailPrefill })}
           {...optional(fieldError(state, errors, "email"))}
         />
 
