@@ -56,4 +56,5 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |
 | [044](./044-tabla-del-catalogo-y-quiero-donar.md) | El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar» | Aceptada; enmendada por ADR-046 (datos de retiro / plata sin reserva) |
 | [045](./045-tres-caminos-para-ayudar.md) | Tres caminos para ayudar, no pestañas | Aceptada |
+| [046](./046-compromiso-con-datos-de-retiro.md) | El compromiso pide datos de retiro, no una cuenta como prueba | Aceptada |
 | [047](./047-tablero-de-metricas-del-owner.md) | Tablero de métricas del owner, con gráficos propios y señales | Aceptada |
