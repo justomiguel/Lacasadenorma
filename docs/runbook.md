@@ -571,7 +571,8 @@ desde el resumen del banco.
 | Antes de cada despliegue | `npm run verify` en verde | CI, y conviene también en local |
 | Cuando cambia una página, y sin excepción cuando lleguen las fotos | El loop de revisión visual: `node scripts/screenshots.mjs` y mirar las páginas de `PAGINAS_PUBLICAS` en los dos anchos. Los seis criterios medibles ya los sostiene CI; lo que hay que mirar son los cuatro que son un juicio (`docs/testing.md`) | Quien la cambió |
 
-El tablero de métricas lee el alcance (visitas, fuentes, dispositivos, eventos) del Stats API
+El tablero de métricas lee el alcance (visitas, fuentes, dispositivos, navegadores, entrada,
+eventos y propiedades ya emitidas) del Stats API
 del proveedor. Hace falta `ANALYTICS_API_KEY` en el servidor, además del script público. Se
 crea en la cuenta del proveedor (en Plausible: Settings → API keys → Stats API). Sin ella el
 sitio puede estar midiendo y el tablero no lo muestra: una señal lo dice. `ANALYTICS_API_URL`

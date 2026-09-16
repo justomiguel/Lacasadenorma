@@ -7,6 +7,21 @@ import type {
 } from "@/src/domain/metrics-analytics";
 import type { AnalyticsStatsPort } from "@/src/domain/ports/analytics-stats";
 
+import {
+  asFinite,
+  BREAKDOWN_LIMIT,
+  countryLabel,
+  DATE_RANGE,
+  dateOf,
+  PERIOD_DAYS,
+  queryStats,
+  type EnvBag,
+  type QueryBody,
+  type StatsConfig,
+  type StatsFetch,
+  type StatsFilter,
+} from "./stats-query";
+
 /**
  * Lectura del Stats API v2 de un proveedor compatible con Plausible (ADR-049).
  *
@@ -14,46 +29,12 @@ import type { AnalyticsStatsPort } from "@/src/domain/ports/analytics-stats";
  * que no contestan son `error`. Un desglose caído se omite, no tumba el resto.
  */
 
-const PERIOD_DAYS = 30;
-const DATE_RANGE = "30d";
-const BREAKDOWN_LIMIT = 8;
-const TIMEOUT_MS = 10_000;
 const IGNORED_EVENTS = new Set(["pageview", "pageviews"]);
-
-type EnvBag = Readonly<Record<string, string | undefined>>;
-type StatsFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 export interface AnalyticsStatsOptions {
   readonly env?: EnvBag;
   readonly fetchImpl?: StatsFetch;
 }
-
-interface StatsConfig {
-  readonly origin: string;
-  readonly apiKey: string;
-  readonly siteId: string;
-}
-
-interface QueryBody {
-  readonly site_id: string;
-  readonly date_range: string;
-  readonly metrics: readonly string[];
-  readonly dimensions?: readonly string[];
-  readonly include?: Readonly<Record<string, boolean>>;
-  readonly pagination?: { readonly limit: number };
-}
-
-interface QueryRow {
-  readonly metrics: readonly unknown[];
-  readonly dimensions: readonly unknown[];
-}
-
-interface QueryResponse {
-  readonly results: readonly QueryRow[];
-  readonly timeLabels: readonly string[];
-}
-
-const COUNTRY_NAMES = new Intl.DisplayNames(["es-AR"], { type: "region" });
 
 export function createAnalyticsStatsPort(
   options: AnalyticsStatsOptions = {},
@@ -120,16 +101,35 @@ async function loadSnapshot(
   config: StatsConfig,
   fetchImpl: StatsFetch,
 ): Promise<AnalyticsSnapshot> {
-  const [totals, timeseries, pages, sources, devices, countries, events] =
-    await Promise.all([
-      loadTotals(config, fetchImpl),
-      loadTimeseries(config, fetchImpl),
-      loadBreakdown(config, fetchImpl, "event:page", "pageviews"),
-      loadBreakdown(config, fetchImpl, "visit:source", "visitors"),
-      loadBreakdown(config, fetchImpl, "visit:device", "visitors"),
-      loadBreakdown(config, fetchImpl, "visit:country", "visitors", countryLabel),
-      loadBreakdown(config, fetchImpl, "event:goal", "events"),
-    ]);
+  const [
+    totals,
+    timeseries,
+    pages,
+    sources,
+    devices,
+    browsers,
+    entryPages,
+    countries,
+    events,
+    helpOrigins,
+    copiedFields,
+    shareChannels,
+    paymentMedia,
+  ] = await Promise.all([
+    loadTotals(config, fetchImpl),
+    loadTimeseries(config, fetchImpl),
+    loadBreakdown(config, fetchImpl, "event:page", "pageviews"),
+    loadBreakdown(config, fetchImpl, "visit:source", "visitors"),
+    loadBreakdown(config, fetchImpl, "visit:device", "visitors"),
+    loadBreakdown(config, fetchImpl, "visit:browser", "visitors"),
+    loadBreakdown(config, fetchImpl, "visit:entry_page", "visitors"),
+    loadBreakdown(config, fetchImpl, "visit:country", "visitors", countryLabel),
+    loadBreakdown(config, fetchImpl, "event:goal", "events"),
+    loadEventProp(config, fetchImpl, "ayudar_click", "origen"),
+    loadEventProp(config, fetchImpl, "dato_copiado", "campo"),
+    loadEventProp(config, fetchImpl, "compartir", "canal"),
+    loadEventProp(config, fetchImpl, "medio_externo_click", "medio"),
+  ]);
 
   return {
     periodDays: PERIOD_DAYS,
@@ -138,8 +138,14 @@ async function loadSnapshot(
     pages,
     sources,
     devices,
+    browsers,
+    entryPages,
     countries,
     events: events.filter((item) => !IGNORED_EVENTS.has(item.name.toLowerCase())),
+    helpOrigins,
+    copiedFields,
+    shareChannels,
+    paymentMedia,
   };
 }
 
@@ -147,7 +153,7 @@ async function loadTotals(
   config: StatsConfig,
   fetchImpl: StatsFetch,
 ): Promise<AnalyticsTotals> {
-  const response = await query(config, fetchImpl, {
+  const response = await queryStats(config, fetchImpl, {
     site_id: config.siteId,
     date_range: DATE_RANGE,
     metrics: ["visitors", "pageviews", "bounce_rate", "visit_duration"],
@@ -172,7 +178,7 @@ async function loadTimeseries(
   config: StatsConfig,
   fetchImpl: StatsFetch,
 ): Promise<readonly AnalyticsDay[]> {
-  const response = await query(config, fetchImpl, {
+  const response = await queryStats(config, fetchImpl, {
     site_id: config.siteId,
     date_range: DATE_RANGE,
     metrics: ["visitors", "pageviews"],
@@ -204,21 +210,35 @@ async function loadTimeseries(
   return labels.map((date) => byDate.get(date) ?? { date, visitors: 0, pageviews: 0 });
 }
 
+async function loadEventProp(
+  config: StatsConfig,
+  fetchImpl: StatsFetch,
+  goal: string,
+  prop: string,
+): Promise<readonly AnalyticsNamedCount[]> {
+  return loadBreakdown(config, fetchImpl, `event:props:${prop}`, "events", (name) => name, [
+    ["is", "event:goal", [goal]],
+  ]);
+}
+
 async function loadBreakdown(
   config: StatsConfig,
   fetchImpl: StatsFetch,
   dimension: string,
   metric: string,
   label: (name: string) => string = (name) => name,
+  filters?: readonly StatsFilter[],
 ): Promise<readonly AnalyticsNamedCount[]> {
   try {
-    const response = await query(config, fetchImpl, {
+    const body: QueryBody = {
       site_id: config.siteId,
       date_range: DATE_RANGE,
       metrics: [metric],
       dimensions: [dimension],
       pagination: { limit: BREAKDOWN_LIMIT },
-    });
+      ...(filters === undefined ? {} : { filters }),
+    };
+    const response = await queryStats(config, fetchImpl, body);
 
     return response.results.flatMap((row) => {
       const name = typeof row.dimensions[0] === "string" ? row.dimensions[0] : null;
@@ -233,84 +253,4 @@ async function loadBreakdown(
   } catch {
     return [];
   }
-}
-
-async function query(
-  config: StatsConfig,
-  fetchImpl: StatsFetch,
-  body: QueryBody,
-): Promise<QueryResponse> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-  try {
-    const response = await fetchImpl(`${config.origin}/api/v2/query`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Stats API ${String(response.status)}`);
-    }
-
-    return asQueryResponse(await response.json());
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-function asQueryResponse(payload: unknown): QueryResponse {
-  if (!isRecord(payload) || !Array.isArray(payload["results"])) {
-    throw new Error("respuesta irreconocible");
-  }
-
-  const results: QueryRow[] = payload["results"].map((row) => {
-    if (!isRecord(row)) {
-      return { metrics: [], dimensions: [] };
-    }
-
-    return {
-      metrics: Array.isArray(row["metrics"]) ? row["metrics"] : [],
-      dimensions: Array.isArray(row["dimensions"]) ? row["dimensions"] : [],
-    };
-  });
-
-  const meta = payload["meta"];
-  const rawLabels = isRecord(meta) ? meta["time_labels"] : undefined;
-  const timeLabels = Array.isArray(rawLabels)
-    ? rawLabels.filter((item): item is string => typeof item === "string")
-    : [];
-
-  return { results, timeLabels };
-}
-
-function countryLabel(code: string): string {
-  if (!/^[A-Za-z]{2}$/.test(code)) {
-    return code;
-  }
-
-  return COUNTRY_NAMES.of(code.toUpperCase()) ?? code;
-}
-
-function asFinite(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
-function dateOf(value: unknown): string | null {
-  if (typeof value !== "string" || value.length < 10) {
-    return null;
-  }
-
-  const date = value.slice(0, 10);
-
-  return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object";
 }

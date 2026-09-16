@@ -239,4 +239,85 @@ describe("collectSignals", () => {
       expect.objectContaining({ severity: "warning", href: "/admin/aportes" }),
     );
   });
+
+  it("una novedad publicada hace más de catorce días avisa; nunca publicada no", () => {
+    const stale = collectSignals(
+      { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
+      facts({
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+        updates: [{ publishedAt: "2026-08-31T12:00:00.000Z" }],
+      }),
+      NOW,
+    );
+    const never = collectSignals(
+      { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
+      facts({
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+        updates: [{ publishedAt: null }],
+      }),
+      NOW,
+    );
+    const recent = collectSignals(
+      { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
+      facts({
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+        updates: [{ publishedAt: "2026-09-10T12:00:00.000Z" }],
+      }),
+      NOW,
+    );
+
+    expect(stale.find((signal) => signal.id === "news_stale")).toEqual(
+      expect.objectContaining({
+        severity: "warning",
+        href: "/admin/novedades",
+        count: 16,
+      }),
+    );
+    expect(never.find((signal) => signal.id === "news_stale")).toBeUndefined();
+    expect(recent.find((signal) => signal.id === "news_stale")).toBeUndefined();
+  });
+
+  it("un aporte vivo viejo avisa; sólo anulados o recientes no", () => {
+    const stale = collectSignals(
+      { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
+      facts({
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+        contributions: [
+          {
+            amountMinor: 100,
+            currency: "ARS",
+            receivedAt: "2026-08-30T12:00:00.000Z",
+            voidedAt: null,
+          },
+        ],
+      }),
+      NOW,
+    );
+    const voidedOnly = collectSignals(
+      { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
+      facts({
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+        contributions: [
+          {
+            amountMinor: 100,
+            currency: "ARS",
+            receivedAt: "2026-08-01T12:00:00.000Z",
+            voidedAt: "2026-08-02T12:00:00.000Z",
+          },
+        ],
+      }),
+      NOW,
+    );
+
+    expect(stale.find((signal) => signal.id === "contributions_stale")).toEqual(
+      expect.objectContaining({
+        severity: "warning",
+        href: "/admin/aportes",
+        count: 17,
+      }),
+    );
+    expect(
+      voidedOnly.find((signal) => signal.id === "contributions_stale"),
+    ).toBeUndefined();
+  });
 });

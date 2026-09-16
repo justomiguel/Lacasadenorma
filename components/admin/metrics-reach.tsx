@@ -20,8 +20,14 @@ export function MetricsReach({ reach }: { reach: OwnerReach }) {
     reach.topPages,
     reach.topSources,
     reach.devices,
+    reach.browsers,
+    reach.entryPages,
     reach.countries,
     reach.events,
+    reach.helpOrigins,
+    reach.copiedFields,
+    reach.shareChannels,
+    reach.paymentMedia,
   ].filter((chart) => chart !== null);
 
   return (
@@ -43,10 +49,17 @@ export function MetricsReach({ reach }: { reach: OwnerReach }) {
           />
         )}
         {headline.helpClicks === null ? null : (
-          <Count label="Clic en Ayudar" value={headline.helpClicks} />
+          <Count
+            label="Clic en Ayudar"
+            value={headline.helpClicks}
+            rate={headline.helpRate}
+          />
         )}
         {headline.copies === null ? null : (
-          <Count label="Copió un dato" value={headline.copies} />
+          <Count label="Copió un dato" value={headline.copies} rate={headline.copyRate} />
+        )}
+        {headline.shares === null ? null : (
+          <Count label="Compartir" value={headline.shares} rate={headline.shareRate} />
         )}
       </dl>
       {series === null && bars.length === 0 ? null : (
@@ -72,7 +85,15 @@ function Figure({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Count({ label, value }: { label: string; value: number }) {
+function Count({
+  label,
+  value,
+  rate,
+}: {
+  label: string;
+  value: number;
+  rate?: number | null;
+}) {
   return (
     <div>
       <dt className="font-ui text-label uppercase tracking-label text-ink-muted">
@@ -80,6 +101,7 @@ function Count({ label, value }: { label: string; value: number }) {
       </dt>
       <dd className="mt-2xs font-ui text-body text-ink">
         {new Intl.NumberFormat("es-AR").format(value)}
+        {rate === undefined || rate === null ? null : ` · ${formatPercentage(rate)}`}
       </dd>
     </div>
   );

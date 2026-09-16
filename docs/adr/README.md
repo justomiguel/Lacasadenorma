@@ -59,4 +59,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [046](./046-compromiso-con-datos-de-retiro.md) | El compromiso pide datos de retiro, no una cuenta como prueba | Aceptada |
 | [047](./047-iconos-que-identifican.md) | Un icono al lado del nombre, siempre que identifique | Aceptada |
 | [048](./048-tablero-de-metricas-del-owner.md) | Tablero de métricas del owner, con gráficos y señales | Aceptada; enmendada por ADR-049 |
-| [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada |
+| [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada; enmendada: navegadores, entrada, propiedades, tasas |
