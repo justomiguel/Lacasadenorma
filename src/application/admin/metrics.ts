@@ -17,7 +17,7 @@ export type OwnerMetricsResult =
  * El tablero del owner.
  *
  * Lee un snapshot sin datos personales y deja que el dominio agregue y señale.
- * No deja rastro: mirar cifras no es una mutación (ADR-047).
+ * No deja rastro: mirar cifras no es una mutación (ADR-048).
  */
 export async function getOwnerMetrics(
   deps: AdminDeps & { now?: Date },

@@ -26,7 +26,7 @@ const BAR_MIN_HEIGHT = 192;
 
 /**
  * Gráficos del tablero: Recharts con los tokens del tema, y la tabla de las
- * mismas cifras al pie (ADR-048, FR-605). Sin animación de entrada: el hover
+ * mismas cifras al pie (ADR-049, FR-605). Sin animación de entrada: el hover
  * es la única interactividad.
  */
 

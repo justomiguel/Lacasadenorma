@@ -13,7 +13,7 @@ import type { OwnerReach } from "./metrics-analytics";
  *
  * No hay nombres, correos ni notas: con esto se grafica y se señalan
  * excepciones, y no hay forma de filtrar un dato personal desde la capa de
- * agregación (FR-608, ADR-047).
+ * agregación (FR-608, ADR-048).
  */
 
 export interface MetricsContribution {

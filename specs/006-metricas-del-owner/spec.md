@@ -132,7 +132,7 @@ actúa.
   ocultar el enlace al resto de los roles.
 - **FR-603**: El tablero MUST mostrar el libro interno (recibido y gastado no anulados, saldo,
   objetivo interno si está) y MUST NOT publicar esos montos en ninguna página pública.
-- **FR-604**: MUST haber gráficos —Recharts, ADR-048— para cada familia con observaciones:
+- **FR-604**: MUST haber gráficos —Recharts, ADR-049— para cada familia con observaciones:
   flujo semanal, acumulado contra el objetivo, gastos por categoría, pipeline de reservas,
   canal de cobertura, cobertura del catálogo, aprobaciones, correos, hitos, novedades, y el
   alcance cuando el proveedor responde.
@@ -184,7 +184,7 @@ actúa.
 | Decisión | Valor | Por qué |
 |---|---|---|
 | Quién lo ve | sólo `owner` | Es el pedido; ampliar el permiso es barato |
-| Gráficos | Recharts 3 + tabla | Pedido de librería; WCAG 1.4.1 se queda (ADR-048) |
+| Gráficos | Recharts 3 + tabla | Pedido de librería; WCAG 1.4.1 se queda (ADR-049) |
 | Analítica de visitas | Stats API del proveedor | ADR-010: no está en la base y no se copia |
 | Especie | unidades | ADR-031 |
 | Semanas vacías dentro de las últimas 12 | sí, si hubo algún movimiento en la ventana | Cero observado, no ejemplo |

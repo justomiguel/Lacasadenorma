@@ -60,7 +60,7 @@ export type Permission = (typeof PERMISSIONS)[number];
  *
  * `metricas.leer` es el mismo privilegio de recorte: junta colas operativas (donantes,
  * reservas, correos, cuentas) que el resto recorre sección por sección. El tablero
- * es de `owner` (ADR-047).
+ * es de `owner` (ADR-048).
  *
  * `donaciones.leer` tiene la misma forma que `finanzas.leer` —`auditor`, `admin`,
  * `owner`, y `editor` afuera— y por la misma razón: `editor` está por encima de

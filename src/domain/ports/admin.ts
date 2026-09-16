@@ -274,7 +274,7 @@ export interface AdminRolePort {
 export interface AdminMetricsPort {
   /**
    * Hechos para el tablero. Sin correos, nombres ni notas: lo que no está
-   * en el tipo no puede filtrarse a la página (ADR-047).
+   * en el tipo no puede filtrarse a la página (ADR-048).
    */
   readSnapshot(campaignId: string): Promise<MetricsFacts>;
 }

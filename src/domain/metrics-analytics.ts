@@ -3,7 +3,7 @@ import type { BarChart, ChartPoint, MetricSignal, SeriesChart } from "./metrics"
 import { countBar } from "./metrics-counts";
 
 /**
- * Totales de alcance que el proveedor ya agregó. Sin personas (ADR-010, ADR-048).
+ * Totales de alcance que el proveedor ya agregó. Sin personas (ADR-010, ADR-049).
  */
 export interface AnalyticsTotals {
   readonly visitors: number;

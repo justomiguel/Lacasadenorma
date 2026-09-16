@@ -6,7 +6,7 @@
 
 Una pantalla `/admin/metricas` para `owner`: el dominio agrega lo medible y deriva señales; la
 infraestructura lee un snapshot sin PII y, si hay clave, el Stats API del proveedor; la
-presentación dibuja Recharts + tabla (ADR-047, ADR-048).
+presentación dibuja Recharts + tabla (ADR-048, ADR-049).
 
 ## Technical Context
 
@@ -33,7 +33,7 @@ en la ruta y en el permiso.
 
 | Principio | Cómo se cumple |
 |---|---|
-| I · Spec first | Este plan, la spec y ADR-047/048 **antes** del código |
+| I · Spec first | Este plan, la spec y ADR-048/049 **antes** del código |
 | II · TDD | Señales, agregados y alcance en rojo primero |
 | III · Simplicidad | Un puerto de snapshot; un puerto de Stats API |
 | IV · Capas | dominio → caso de uso → puerto → página |

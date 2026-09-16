@@ -17,7 +17,7 @@ describe("getOwnerMetrics", () => {
     expect(gateway.calls.map((call) => call.name)).not.toContain("readSnapshot");
   });
 
-  it("rechaza a un admin y no toca el puerto (ADR-047)", async () => {
+  it("rechaza a un admin y no toca el puerto (ADR-048)", async () => {
     const { deps: admin, fake } = deps("admin");
     const result = await getOwnerMetrics(admin);
 

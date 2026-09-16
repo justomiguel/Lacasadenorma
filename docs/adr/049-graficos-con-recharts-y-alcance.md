@@ -1,13 +1,13 @@
-# ADR-048 · Gráficos con Recharts y alcance leído del proveedor
+# ADR-049 · Gráficos con Recharts y alcance leído del proveedor
 
 **Estado**: Aceptada · **Fecha**: 2026-09-16
 
-Enmienda ADR-047 (gráficos SVG propios; analítica de visitas fuera del tablero).
+Enmienda ADR-048 (gráficos SVG propios; analítica de visitas fuera del tablero).
 No enmienda ADR-010: las visitas **no** se copian a Postgres.
 
 ## Contexto
 
-El tablero del owner (ADR-047) dibujaba SVG a mano y dejaba las visitas en el proveedor. El
+El tablero del owner (ADR-048) dibujaba SVG a mano y dejaba las visitas en el proveedor. El
 pedido de producto cambió en dos puntos: usar una librería de gráficos, y mostrar en el mismo
 tablero lo que todo sitio mide —vistas, procedencia, dispositivos, eventos de intención—.
 

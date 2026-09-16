@@ -49,7 +49,7 @@ export interface AdminDeps {
   readonly gateway: AdminGateway;
   readonly logger: Logger;
   readonly actor: Actor | null;
-  /** Ausente: el tablero omite el alcance. Un fallo no tumba el libro (ADR-048). */
+  /** Ausente: el tablero omite el alcance. Un fallo no tumba el libro (ADR-049). */
   readonly analyticsStats?: AnalyticsStatsPort;
 }
 

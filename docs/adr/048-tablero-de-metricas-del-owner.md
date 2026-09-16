@@ -1,6 +1,6 @@
-# ADR-047 · Tablero de métricas del owner, con gráficos propios y señales
+# ADR-048 · Tablero de métricas del owner, con gráficos propios y señales
 
-**Estado**: Aceptada; enmendada por ADR-048 · **Fecha**: 2026-09-16
+**Estado**: Aceptada; enmendada por ADR-049 · **Fecha**: 2026-09-16
 
 ## Contexto
 
@@ -30,7 +30,7 @@ Tres tensiones:
    `owner`. No es un recorte de `finanzas.leer`: junta colas operativas (donantes, reservas,
    correos, cuentas bancarias) que un auditor recorre sección por sección, y que un admin opera
    desde cada lista. El tablero es el lugar desde el que se decide qué mirar primero.
-2. **Los gráficos se dibujan con Recharts** (ADR-048), en un componente cliente, con los tokens
+2. **Los gráficos se dibujan con Recharts** (ADR-049), en un componente cliente, con los tokens
    del tema. Cada gráfico es una figura con título, y la tabla de datos acompaña al dibujo: un
    gráfico que sólo se distingue por color no existe para quien no lo ve.
 3. **Las señales se derivan en el dominio**, con `now` inyectable. Un umbral que ya existe se
@@ -46,16 +46,16 @@ Tres tensiones:
    ejemplo.
 
 La analítica de visitas **no** se copia a Postgres. El tablero la lee del Stats API del
-proveedor cuando hay clave (ADR-048). Sin clave, la sección se omite.
+proveedor cuando hay clave (ADR-049). Sin clave, la sección se omite.
 
 ## Alternativas descartadas
 
 | Alternativa | Por qué no |
 |---|---|
-| Librería de gráficos | Superada por ADR-048: el pedido pide librería; la tabla al pie se queda |
+| Librería de gráficos | Superada por ADR-049: el pedido pide librería; la tabla al pie se queda |
 | Abrirlo a `admin` y `auditor` | El pedido es del owner. Un auditor verifica sección por sección; un admin opera las listas. Ampliar el permiso es un cambio de una línea el día que haga falta |
-| Guardar eventos de visita en Postgres para graficarlos | ADR-010 lo descartó: escribe en cada visita y mezcla alcance con el libro. ADR-048 lee el proveedor, no la base |
-| Un iframe a Plausible/Umami | El tablero mezclaría dos fuentes con dos privilegios. ADR-048 lee el Stats API en el servidor |
+| Guardar eventos de visita en Postgres para graficarlos | ADR-010 lo descartó: escribe en cada visita y mezcla alcance con el libro. ADR-049 lee el proveedor, no la base |
+| Un iframe a Plausible/Umami | El tablero mezclaría dos fuentes con dos privilegios. ADR-049 lee el Stats API en el servidor |
 | Reusar `listPledges` / `listAccounts` | Traen correo y notas. El snapshot tiene su puerto para no pagar ese costo ni ese riesgo |
 
 ## Consecuencias
@@ -68,6 +68,6 @@ prueba sin base. Los correos no viajan al HTML del tablero.
 - Quien no es `owner` no ve el tablero, aunque ya pueda leer las mismas cifras por separado.
 - Sin clave de Stats API, el tablero no habla de visitas aunque el script público esté midiendo.
   La señal lo dice. No se finge un 0.
-- Recharts agrega hover. La tabla al pie sigue siendo la fuente para quien no lo ve (ADR-048).
+- Recharts agrega hover. La tabla al pie sigue siendo la fuente para quien no lo ve (ADR-049).
 - El atajo **Métricas** vive en el drawer público, no en el encabezado (ADR-037, FR-615). El
   snapshot de chrome expone `owner` además de `staff`.

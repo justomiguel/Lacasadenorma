@@ -8,7 +8,7 @@ import type {
 import type { AnalyticsStatsPort } from "@/src/domain/ports/analytics-stats";
 
 /**
- * Lectura del Stats API v2 de un proveedor compatible con Plausible (ADR-048).
+ * Lectura del Stats API v2 de un proveedor compatible con Plausible (ADR-049).
  *
  * No escribe. Sin clave, dominio u origen, `absent`. Un agregado o una serie
  * que no contestan son `error`. Un desglose caído se omite, no tumba el resto.

@@ -242,7 +242,7 @@ export default defineConfig([
             {
               name: "recharts",
               message:
-                "Recharts es del backoffice (ADR-048). El sitio público no lo importa.",
+                "Recharts es del backoffice (ADR-049). El sitio público no lo importa.",
             },
           ],
         },

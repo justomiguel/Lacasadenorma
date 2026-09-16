@@ -7,7 +7,7 @@ import { MetricsBarChart, MetricsSeriesChart } from "./metrics-charts";
 
 /**
  * Alcance leído del proveedor. Si no hay clave o la lectura falló, no se
- * dibuja: la señal de arriba ya dijo por qué (ADR-048).
+ * dibuja: la señal de arriba ya dijo por qué (ADR-049).
  */
 export function MetricsReach({ reach }: { reach: OwnerReach }) {
   if (reach.status !== "ok" || reach.headline === null) {

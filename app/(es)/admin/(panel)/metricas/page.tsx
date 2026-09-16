@@ -8,7 +8,7 @@ import { requirePermission } from "@/src/infrastructure/auth/guards";
 /**
  * El pulso de la campaña: libro, gráficos y excepciones.
  *
- * Sólo `owner`. El snapshot no trae correos ni nombres (ADR-047).
+ * Sólo `owner`. El snapshot no trae correos ni nombres (ADR-048).
  */
 export default async function AdminMetricasPage() {
   await requirePermission("metricas.leer");
