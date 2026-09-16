@@ -39,6 +39,8 @@ export const uiChromeSchema = z.object({
   signingOut: phrase,
   /** El backoffice no se traduce (ADR-023). El href es siempre `/admin`. */
   backoffice: phrase,
+  /** El tablero del owner. Tampoco se traduce; el href es siempre `/admin/metricas`. */
+  metrics: phrase,
   countryTabsLabel: phrase,
   homeLabel: phrase,
   legalLabel: phrase,

@@ -3,10 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 
 import { signOut } from "@/app/(es)/cuenta/actions";
 import { LocaleField } from "@/components/account/fields";
 import { cn } from "@/components/design-system/cn";
+import {
+  ChartIcon,
+  GridIcon,
+  LeaveIcon,
+  PersonIcon,
+} from "@/components/design-system/icons";
 import { PendingTextButton } from "@/components/design-system/pending-submit";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
@@ -22,14 +29,15 @@ import { useChromeSession } from "./session";
  * tercer enlace recortaba la acción de ayudar, así que «Cerrar sesión» se queda
  * en el menú y en `/cuenta`. En el teléfono es un bloque: retrato rectangular
  * (no un avatar redondo), nombre, correo y las salidas —la cuenta, el
- * backoffice si hay rol, y cerrar sesión—. En el menú ese bloque va arriba de
+ * backoffice si hay rol, métricas si es owner, y cerrar sesión—, cada una con
+ * un icono de trazo para barrer (ADR-037). En el menú ese bloque va arriba de
  * las secciones: las cinco de display llenan 360×640 y lo que queda debajo no
  * se ve (ADR-032, ADR-037). El pie no muestra el backoffice: es un colofón.
  */
 
-const LINK =
-  "inline-flex min-h-touch w-fit items-center font-ui text-small underline decoration-1 underline-offset-4";
 const chromeFallback = "inline-flex min-h-touch w-fit items-center font-ui text-small";
+const DRAWER_ITEM =
+  "inline-flex min-h-touch w-fit items-center gap-sm font-ui text-small text-paper-muted";
 
 export function AccountChrome({
   locale,
@@ -77,30 +85,33 @@ export function AccountChrome({
           </div>
         </div>
 
-        <Link
+        <DrawerLink
           href={accountHref}
-          className={cn(LINK, "text-paper-muted")}
-          {...current}
-          {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
+          icon={<PersonIcon />}
+          onNavigate={onNavigate}
+          current={onAccount}
         >
           {ui.account}
-        </Link>
+        </DrawerLink>
 
         {session.staff ? (
-          <Link
-            href="/admin"
-            className={cn(LINK, "text-paper-muted")}
-            {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
-          >
+          <DrawerLink href="/admin" icon={<GridIcon />} onNavigate={onNavigate}>
             {ui.backoffice}
-          </Link>
+          </DrawerLink>
+        ) : null}
+
+        {session.owner ? (
+          <DrawerLink href="/admin/metricas" icon={<ChartIcon />} onNavigate={onNavigate}>
+            {ui.metrics}
+          </DrawerLink>
         ) : null}
 
         <SignOutLink
           locale={locale}
           label={ui.signOut}
           pendingLabel={ui.signingOut}
-          className={cn(LINK, "text-paper-muted")}
+          className={DRAWER_ITEM}
+          icon={<LeaveIcon />}
         />
       </div>
     );
@@ -141,16 +152,44 @@ export function AccountChrome({
   );
 }
 
+function DrawerLink({
+  href,
+  icon,
+  children,
+  onNavigate,
+  current = false,
+}: {
+  href: string;
+  icon: ReactNode;
+  children: string;
+  onNavigate?: () => void;
+  current?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={DRAWER_ITEM}
+      {...(current ? { "aria-current": "page" as const } : {})}
+      {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
+    >
+      {icon}
+      {children}
+    </Link>
+  );
+}
+
 function SignOutLink({
   locale,
   label,
   pendingLabel,
   className,
+  icon,
 }: {
   locale: Locale;
   label: string;
   pendingLabel: string;
   className?: string;
+  icon?: ReactNode;
 }) {
   return (
     <form action={signOut} className="m-0 shrink-0">
@@ -158,6 +197,7 @@ function SignOutLink({
       <PendingTextButton
         pendingLabel={pendingLabel}
         className={className ?? chromeFallback}
+        {...(icon === undefined ? {} : { icon })}
       >
         {label}
       </PendingTextButton>

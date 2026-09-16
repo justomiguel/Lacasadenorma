@@ -48,6 +48,16 @@ const staffSession = {
   email: "editora@ejemplo.invalid",
   hasPortrait: false,
   staff: true,
+  owner: false,
+} as const satisfies ChromeSession;
+
+const ownerSession = {
+  status: "signed-in",
+  displayName: "Dueña",
+  email: "duena@ejemplo.invalid",
+  hasPortrait: false,
+  staff: true,
+  owner: true,
 } as const satisfies ChromeSession;
 
 const publicSession = {
@@ -56,7 +66,12 @@ const publicSession = {
   email: "vecina@ejemplo.invalid",
   hasPortrait: false,
   staff: false,
+  owner: false,
 } as const satisfies ChromeSession;
+
+function hrefs() {
+  return screen.getAllByRole("link").map((link) => link.getAttribute("href"));
+}
 
 describe("AccountChrome", () => {
   beforeEach(() => {
@@ -71,9 +86,11 @@ describe("AccountChrome", () => {
   it("el nombre del panel no se traduce", () => {
     expect(getContent("es").ui.backoffice).toBe("Backoffice");
     expect(getContent("en").ui.backoffice).toBe("Backoffice");
+    expect(getContent("es").ui.metrics).toBe("Métricas");
+    expect(getContent("en").ui.metrics).toBe("Métricas");
   });
 
-  it("una cuenta del público no ve Backoffice", () => {
+  it("una cuenta del público no ve Backoffice ni Métricas", () => {
     renderChrome(publicSession, "header");
 
     expect(screen.getByRole("link", { name: "Vecina" })).toHaveAttribute(
@@ -81,6 +98,7 @@ describe("AccountChrome", () => {
       "/cuenta",
     );
     expect(screen.queryByRole("link", { name: "Backoffice" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
   });
 
   it("quien tiene rol ve Backoffice en el encabezado y en el menú", () => {
@@ -90,6 +108,7 @@ describe("AccountChrome", () => {
       "href",
       "/admin",
     );
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Cerrar sesión" })).toBeNull();
     unmount();
 
@@ -99,6 +118,7 @@ describe("AccountChrome", () => {
       "href",
       "/admin",
     );
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
     expect(screen.getByRole("link", { name: "Tu cuenta" })).toHaveAttribute(
       "href",
       "/cuenta",
@@ -106,16 +126,46 @@ describe("AccountChrome", () => {
     expect(screen.getByRole("button", { name: "Cerrar sesión" })).toBeTruthy();
   });
 
+  it("en el menú, Métricas va debajo de Backoffice sólo para owner", () => {
+    const { unmount } = renderChrome(ownerSession, "header");
+
+    expect(screen.getByRole("link", { name: "Backoffice" })).toHaveAttribute(
+      "href",
+      "/admin",
+    );
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
+    unmount();
+
+    renderChrome(ownerSession, "drawer");
+
+    const paths = hrefs();
+    expect(paths.indexOf("/admin/metricas")).toBe(paths.indexOf("/admin") + 1);
+    expect(
+      screen.getByRole("link", { name: "Métricas" }).querySelector("svg"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Backoffice" }).querySelector("svg"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Tu cuenta" }).querySelector("svg"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Cerrar sesión" }).querySelector("svg"),
+    ).not.toBeNull();
+  });
+
   it("el pie no muestra Backoffice aunque haya rol", () => {
     renderChrome(staffSession, "footer");
 
     expect(screen.queryByRole("link", { name: "Backoffice" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
   });
 
   it("en /admin el chrome público no se personaliza", () => {
-    renderChrome(staffSession, "header", "/admin/catalogo");
+    renderChrome(ownerSession, "header", "/admin/catalogo");
 
     expect(screen.getByRole("link", { name: "Ingresar" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Backoffice" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
   });
 });

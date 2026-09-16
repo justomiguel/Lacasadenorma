@@ -31,6 +31,8 @@ export type ChromeSession =
       readonly hasPortrait: boolean;
       /** `true` sólo con rol interno. El público no lo ve ni lo recibe. */
       readonly staff: boolean;
+      /** `true` sólo para `owner`. Enciende Métricas en el drawer, no el rol en claro. */
+      readonly owner: boolean;
     };
 
 /**
@@ -54,6 +56,7 @@ export function readChromeSession(data: unknown): ChromeSession {
     email: typeof record["email"] === "string" ? record["email"] : null,
     hasPortrait: record["hasPortrait"] === true,
     staff: record["staff"] === true,
+    owner: record["owner"] === true,
   };
 }
 

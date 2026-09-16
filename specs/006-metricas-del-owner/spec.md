@@ -155,6 +155,10 @@ actúa.
 - **FR-613**: Un fallo del Stats API MUST NOT esconder el libro. MUST producir una señal, no un
   tablero en cero de visitas.
 - **FR-614**: `ANALYTICS_API_KEY` MUST ser de servidor. MUST NOT llevar prefijo `NEXT_PUBLIC_`.
+- **FR-615**: El menú del teléfono MUST ofrecer, debajo de Backoffice, un enlace a
+  `/admin/metricas` a quien tiene `metricas.leer`. MUST NOT mostrarlo a otros roles, ni en el
+  encabezado de escritorio, ni en el pie. El bloque de cuenta de ese menú MUST llevar un icono
+  de trazo de `icons.tsx` en cada salida (cuenta, backoffice, métricas, cerrar sesión).
 
 ---
 
@@ -170,6 +174,8 @@ actúa.
   desde una página pública.
 - **SC-605**: Un `AnalyticsRead` ausente no produce gráfico de visitas. Uno con observaciones
   produce serie y barras. Un error de Stats API no esconde el libro.
+- **SC-606**: Un `owner` abre el menú en 360 px y ve Métricas debajo de Backoffice, con icono, y
+  llega a `/admin/metricas`. Un editor ve Backoffice y no ve Métricas.
 
 ---
 
@@ -182,3 +188,4 @@ actúa.
 | Analítica de visitas | Stats API del proveedor | ADR-010: no está en la base y no se copia |
 | Especie | unidades | ADR-031 |
 | Semanas vacías dentro de las últimas 12 | sí, si hubo algún movimiento en la ventana | Cero observado, no ejemplo |
+| Atajo en el chrome público | drawer del teléfono, sólo owner | Debajo de Backoffice; el encabezado no suma un enlace más (ADR-037) |

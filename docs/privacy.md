@@ -132,8 +132,10 @@ puede cachear ni razonar. Es también lo que hace que el HTML público sea idén
 
 El menú, después de hidratar, pide un snapshot privado a `/cuenta/sesion`. Esa petición sí lleva la
 cookie, y por eso el nombre, el retrato y —si hay rol interno— el enlace al backoffice aparecen en
-el drawer de quien ya entró, no en el HTML que se cachea. Las páginas de `/cuenta` son la otra
-excepción y no debilitan nada: dependen de la sesión por definición y por eso no se cachean.
+el drawer de quien ya entró, no en el HTML que se cachea. Si el rol es `owner`, el mismo snapshot
+enciende el atajo a Métricas debajo de Backoffice; no viaja el nombre del rol. Las páginas de
+`/cuenta` son la otra excepción y no debilitan nada: dependen de la sesión por definición y por eso
+no se cachean.
 
 ---
 

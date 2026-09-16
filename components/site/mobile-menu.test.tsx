@@ -39,6 +39,16 @@ const staffSession = {
   email: "editora@ejemplo.invalid",
   hasPortrait: false,
   staff: true,
+  owner: false,
+} as const satisfies ChromeSession;
+
+const ownerSession = {
+  status: "signed-in",
+  displayName: "Dueña",
+  email: "duena@ejemplo.invalid",
+  hasPortrait: false,
+  staff: true,
+  owner: true,
 } as const satisfies ChromeSession;
 
 describe("MobileMenu", () => {
@@ -51,8 +61,8 @@ describe("MobileMenu", () => {
     });
   });
 
-  it("Backoffice queda arriba de las secciones, no debajo del pliegue", () => {
-    render(
+  function renderMenu() {
+    return render(
       <MobileMenu
         id="menu"
         locale="es"
@@ -65,12 +75,39 @@ describe("MobileMenu", () => {
         onClose={() => undefined}
       />,
     );
+  }
 
-    const links = screen.getAllByRole("link").map((link) => link.textContent);
-    const backoffice = links.indexOf("Backoffice");
-    const historia = links.indexOf("Historia");
+  it("Backoffice queda arriba de las secciones, no debajo del pliegue", () => {
+    renderMenu();
 
-    expect(backoffice).toBeGreaterThanOrEqual(0);
-    expect(historia).toBeGreaterThan(backoffice);
+    const backoffice = screen.getByRole("link", { name: "Backoffice" });
+    const historia = screen.getByRole("link", { name: "Historia" });
+
+    expect(
+      backoffice.compareDocumentPosition(historia) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Métricas" })).toBeNull();
+  });
+
+  it("Métricas queda debajo de Backoffice y arriba de las secciones", () => {
+    mockDeSesion.mockReturnValue({
+      session: ownerSession,
+      portraitSrc: null,
+      refresh: () => undefined,
+    });
+    renderMenu();
+
+    const backoffice = screen.getByRole("link", { name: "Backoffice" });
+    const metricas = screen.getByRole("link", { name: "Métricas" });
+    const historia = screen.getByRole("link", { name: "Historia" });
+
+    expect(metricas).toHaveAttribute("href", "/admin/metricas");
+    expect(
+      backoffice.compareDocumentPosition(metricas) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      metricas.compareDocumentPosition(historia) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(metricas.querySelector("svg")).not.toBeNull();
   });
 });

@@ -11,10 +11,11 @@ describe("readChromeSession", () => {
       email: null,
       hasPortrait: false,
       staff: false,
+      owner: false,
     });
   });
 
-  it("staff es verdadero sólo si el snapshot lo afirma", () => {
+  it("staff y owner son verdaderos sólo si el snapshot los afirma", () => {
     expect(
       readChromeSession({
         status: "signed-in",
@@ -29,6 +30,25 @@ describe("readChromeSession", () => {
       email: "editora@ejemplo.invalid",
       hasPortrait: true,
       staff: true,
+      owner: false,
+    });
+
+    expect(
+      readChromeSession({
+        status: "signed-in",
+        displayName: "Dueña",
+        email: "duena@ejemplo.invalid",
+        hasPortrait: false,
+        staff: true,
+        owner: true,
+      }),
+    ).toEqual({
+      status: "signed-in",
+      displayName: "Dueña",
+      email: "duena@ejemplo.invalid",
+      hasPortrait: false,
+      staff: true,
+      owner: true,
     });
 
     expect(
@@ -45,6 +65,7 @@ describe("readChromeSession", () => {
       email: "vecina@ejemplo.invalid",
       hasPortrait: false,
       staff: false,
+      owner: false,
     });
   });
 });

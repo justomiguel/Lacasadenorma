@@ -69,3 +69,5 @@ prueba sin base. Los correos no viajan al HTML del tablero.
 - Sin clave de Stats API, el tablero no habla de visitas aunque el script público esté midiendo.
   La señal lo dice. No se finge un 0.
 - Recharts agrega hover. La tabla al pie sigue siendo la fuente para quien no lo ve (ADR-048).
+- El atajo **Métricas** vive en el drawer público, no en el encabezado (ADR-037, FR-615). El
+  snapshot de chrome expone `owner` además de `staff`.

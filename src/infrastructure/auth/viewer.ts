@@ -82,6 +82,10 @@ export function isStaff(viewer: Viewer): boolean {
   return viewer.role !== null;
 }
 
+export function isOwner(viewer: Viewer): boolean {
+  return viewer.role === "owner";
+}
+
 /**
  * Un claim ausente, con otro tipo, o con un valor que no está en la escala de roles
  * da `null`. No hay valor por defecto: el rol es una autorización, y la ausencia de
