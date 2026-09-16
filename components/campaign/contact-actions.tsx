@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import { MailIcon, PhoneIcon } from "@/components/design-system/icons";
 import type { Photograph } from "@/components/design-system/photo";
 import { track } from "@/src/infrastructure/analytics/browser";
@@ -86,15 +87,15 @@ export function ContactActions({
             track({ name: "llamar_click", props: { origen } });
           }}
         >
-          <span data-contact-mark="tel" className="inline-flex shrink-0 text-olive">
-            <PhoneIcon size={16} />
-          </span>
+          <IdentifyingMark data-contact-mark="tel" className="text-olive">
+            <PhoneIcon />
+          </IdentifyingMark>
           {callLabel}
         </a>
         <a href={mail} className={TEXT_ACTION}>
-          <span data-contact-mark="mail" className="inline-flex shrink-0 text-olive">
-            <MailIcon size={16} />
-          </span>
+          <IdentifyingMark data-contact-mark="mail" className="text-olive">
+            <MailIcon />
+          </IdentifyingMark>
           {emailLabel}
         </a>
         <a

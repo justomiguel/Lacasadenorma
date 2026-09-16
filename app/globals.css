@@ -159,6 +159,13 @@
   --spacing-header: 60px;
   --spacing-helpbar: 80px;
 
+  /*
+   * Pictograma identificador: 1.15em de la letra a la que acompaña (ADR-047).
+   * Un poco más que el cuerpo para que el trazo, que no llena el viewBox,
+   * se lea del mismo tamaño que la capital. Las banderas son 3:2 a esa altura.
+   */
+  --identifying-mark: 1.15em;
+
   --container-*: initial;
   --container-measure: 26em;
   --container-page: 80rem;
@@ -324,6 +331,33 @@
 
 @utility safe-top {
   padding-top: calc(var(--spacing-sm) + env(safe-area-inset-top));
+}
+
+/*
+ * Marca identificadora: mismo tamaño que la letra del padre, un poco más
+ * (ADR-047). El color lo hereda; `text-olive` lo pone el call site cuando
+ * la superficie es papel.
+ */
+@utility identifying-mark {
+  display: inline-flex;
+  width: var(--identifying-mark);
+  height: var(--identifying-mark);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+
+  & > svg,
+  & > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Bandera al lado del nombre: la altura del pictograma, proporción 3:2. */
+@utility identifying-flag {
+  width: calc(var(--identifying-mark) * 3 / 2);
+  height: var(--identifying-mark);
+  flex-shrink: 0;
 }
 
 /*

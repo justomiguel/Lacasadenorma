@@ -1,5 +1,6 @@
 import { SecondaryAction } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import { BanknoteIcon, BoxIcon, HandsIcon } from "@/components/design-system/icons";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
@@ -58,12 +59,9 @@ export function HelpPaths({
             className={index === 0 ? undefined : "mt-xl border-t border-rule pt-xl"}
           >
             <Heading className="flex items-center gap-sm font-display text-section-title">
-              <span
-                data-path-mark={path.href}
-                className="inline-flex shrink-0 text-olive"
-              >
+              <IdentifyingMark data-path-mark={path.href} className="text-olive">
                 <path.icon />
-              </span>
+              </IdentifyingMark>
               {ui.home[path.title]}
             </Heading>
             <p className="mt-sm text-body text-ink-muted">{ui.home[path.lead]}</p>

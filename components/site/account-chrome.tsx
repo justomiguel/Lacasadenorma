@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { signOut } from "@/app/(es)/cuenta/actions";
 import { LocaleField } from "@/components/account/fields";
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import {
   ChartIcon,
   GridIcon,
@@ -87,7 +88,11 @@ export function AccountChrome({
 
         <DrawerLink
           href={accountHref}
-          icon={<PersonIcon />}
+          icon={
+            <IdentifyingMark>
+              <PersonIcon />
+            </IdentifyingMark>
+          }
           {...(onNavigate === undefined ? {} : { onNavigate })}
           {...(onAccount ? { current: true } : {})}
         >
@@ -97,7 +102,11 @@ export function AccountChrome({
         {session.staff ? (
           <DrawerLink
             href="/admin"
-            icon={<GridIcon />}
+            icon={
+              <IdentifyingMark>
+                <GridIcon />
+              </IdentifyingMark>
+            }
             {...(onNavigate === undefined ? {} : { onNavigate })}
           >
             {ui.backoffice}
@@ -107,7 +116,11 @@ export function AccountChrome({
         {session.owner ? (
           <DrawerLink
             href="/admin/metricas"
-            icon={<ChartIcon />}
+            icon={
+              <IdentifyingMark>
+                <ChartIcon />
+              </IdentifyingMark>
+            }
             {...(onNavigate === undefined ? {} : { onNavigate })}
           >
             {ui.metrics}
@@ -119,7 +132,11 @@ export function AccountChrome({
           label={ui.signOut}
           pendingLabel={ui.signingOut}
           className={DRAWER_ITEM}
-          icon={<LeaveIcon />}
+          icon={
+            <IdentifyingMark>
+              <LeaveIcon />
+            </IdentifyingMark>
+          }
         />
       </div>
     );

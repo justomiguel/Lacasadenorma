@@ -42,6 +42,11 @@ export const PERMISSIONS = [
   "metricas.leer",
   /** Crear, editar y publicar ítems del catálogo de donaciones: qué falta y cuánto. */
   "catalogo.escribir",
+  /**
+   * Borrar un ítem del catálogo. Espejo de `donation_items_delete`: admin y
+   * owner. Un ítem con reservas no se borra: la base lo impide (ADR-050).
+   */
+  "catalogo.borrar",
   /** Ver quién se comprometió a donar qué, con su contacto y su nota privada. */
   "donaciones.leer",
   /** Confirmar la llegada de una donación y cancelar una reserva con motivo. */
@@ -82,6 +87,7 @@ const RULES: Record<Permission, readonly AppRole[]> = {
   "auditoria.leer": ["auditor", "admin", "owner"],
   "roles.escribir": ["owner"],
   "catalogo.escribir": ["editor", "admin", "owner"],
+  "catalogo.borrar": ["admin", "owner"],
   "donaciones.leer": ["auditor", "admin", "owner"],
   "donaciones.escribir": ["admin", "owner"],
 };

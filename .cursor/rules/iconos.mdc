@@ -1,22 +1,25 @@
 ---
-description: Iconos que identifican al lado del nombre. Se aplica al tocar pantallas y componentes de interfaz.
+description: Iconos que identifican antes del nombre, a 1.15em de esa letra. Se aplica al tocar pantallas y componentes de interfaz.
 globs: app/**,components/**,content/**
 alwaysApply: false
 ---
 
 # Iconos al lado del nombre
 
-Donde un control, un campo, un canal o un camino se puede reconocer de un
-vistazo, **el icono va**. No se espera a que lo pidan. El nombre no se
-reemplaza.
+Donde un control, un campo, un canal, un camino o un ítem de menú se puede
+reconocer de un vistazo, **el icono va antes del nombre**, a `1.15em` de
+esa letra. No se espera a que lo pidan. El nombre no se reemplaza.
 
 Leé `.cursor/skills/iconos-en-la-interfaz/SKILL.md`. Si tocás transferencia,
 países o `CopyField`, también `.cursor/skills/iconos-en-transferencia/SKILL.md`.
 La decisión es ADR-047. La compuerta es `npm run check:iconos`.
 
 - Marca de terceros → `BrandLabel`. País → `CountryFlag` o `GlobeIcon`.
-  Dato bancario → `COPY_FIELD_MARKS`. El resto de trazo → `icons.tsx`.
-- Prohibido Lucide, Heroicons, emoji, fill, y un tab/radio/`CopyField`/camino
-  de ayudar sin marca.
+  Dato bancario → `COPY_FIELD_MARKS`. El resto de trazo → `IdentifyingMark`
+  + `icons.tsx`.
+- Prohibido Lucide, Heroicons, emoji, fill, `size={16}`, un `1.15em` suelto,
+  y un tab/radio/`CopyField`/camino de ayudar sin marca.
+- Copiar, cerrar y el menú son `ICON_ACTION`. La flecha de la secundaria va
+  **después** del texto.
 - El relato (Norma, incendio, obra) no se llena de pictogramas: eso sigue
   siendo relleno, y la constitución VIII lo cierra.

@@ -216,9 +216,14 @@ async function loadEventProp(
   goal: string,
   prop: string,
 ): Promise<readonly AnalyticsNamedCount[]> {
-  return loadBreakdown(config, fetchImpl, `event:props:${prop}`, "events", (name) => name, [
-    ["is", "event:goal", [goal]],
-  ]);
+  return loadBreakdown(
+    config,
+    fetchImpl,
+    `event:props:${prop}`,
+    "events",
+    (name) => name,
+    [["is", "event:goal", [goal]]],
+  );
 }
 
 async function loadBreakdown(

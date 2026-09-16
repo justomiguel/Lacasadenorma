@@ -1,6 +1,27 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.3.0 → 1.3.1
+Tipo de cambio: PATCH — se precisa colocación y tamaño del pictograma identificador.
+Fecha: 2026-09-16
+
+Motivo: los iconos que identifican no compartían tamaño ni lugar. Alias iba a
+16 px, los caminos de /ayudar a 20 px junto a un título más grande, BrandMark
+ya usaba 1.15em. El criterio unificado es: antes del nombre, 1.15em de esa
+letra.
+
+  1. "VIII. Diseño humano" — el pictograma identificador MUST ir **antes** del
+     nombre, en la misma línea, a 1.15em de esa letra. Las acciones siguen
+     siendo ICON_ACTION.
+  2. Token `--identifying-mark`, componente `IdentifyingMark`, compuerta
+     `check:iconos` (sin size={16}, sin 1.15em suelto).
+
+Artefactos actualizados en el mismo commit:
+  ✅ docs/adr/047-iconos-que-identifican.md
+  ✅ scripts/check-iconos.mjs
+  ✅ IdentifyingMark, token y call sites
+  ✅ Skills, iconos.mdc, AGENTS.md, diseno.mdc, ux.md
+
 Cambio de versión: 1.2.2 → 1.3.0
 Tipo de cambio: MINOR — se amplía el principio VIII con una obligación y su compuerta.
 Fecha: 2026-09-16
@@ -236,10 +257,11 @@ gradientes decorativos · glassmorphism · blobs · una card para cada cosa · b
 exceso · hero genérico de SaaS · ilustraciones artificiales · emojis como decoración · iconografía
 por relleno · layouts repetidos · animaciones sin función · copy corporativo.
 
-Un pictograma que **identifica** un control, un campo, un canal o un camino MUST ir al lado del
-nombre (ADR-047). No lo reemplaza. Sale de `components/design-system/icons.tsx`, de `BrandMark` o
-de `CountryFlag`. Un pack (Lucide, Heroicons) o un emoji siguen siendo relleno. La compuerta es
-`npm run check:iconos`.
+Un pictograma que **identifica** un control, un campo, un canal, un camino o un ítem de menú
+MUST ir **antes** del nombre, en la misma línea, a `1.15em` de esa letra (ADR-047). No lo
+reemplaza. Sale de `IdentifyingMark` + `icons.tsx`, de `BrandMark` o de `CountryFlag`. Copiar,
+cerrar y el menú siguen siendo `ICON_ACTION`. Un pack (Lucide, Heroicons) o un emoji siguen
+siendo relleno. La compuerta es `npm run check:iconos`.
 
 Obligatorio: la fotografía tiene protagonismo; hay espacio negativo generoso; la tipografía y la
 jerarquía hacen el trabajo; los detalles son sutiles.
@@ -452,4 +474,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.3.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-16
+**Version**: 1.3.1 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-16

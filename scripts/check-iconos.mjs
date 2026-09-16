@@ -1,11 +1,14 @@
 /**
- * Donde un control se reconoce de un vistazo, el icono va al lado del nombre
- * (ADR-047). Un párrafo no alcanza: este script es la compuerta.
+ * Donde un control se reconoce de un vistazo, el icono va **antes** del
+ * nombre, a 1.15 em de esa letra (ADR-047). Un párrafo no alcanza: este
+ * script es la compuerta.
  *
  * Comprueba:
  * - cada `CopyField` tiene un `label` declarado en `COPY_FIELD_MARKS`
- * - el selector de país, los caminos de ayudar, los canales de la ficha y
- *   llamar/escribir llevan su marca
+ * - el selector de país, los caminos, los canales, el contacto y el drawer
+ *   envuelven la marca en `IdentifyingMark`
+ * - el token `--identifying-mark: 1.15em` está y no hay `size={16}` ni
+ *   `1.15em` suelto
  * - no entra un pack de iconos
  *
  * Corre en `npm run verify` y en CI.
@@ -17,6 +20,7 @@ import process from "node:process";
 import { readdir } from "node:fs/promises";
 
 const COPY_FIELD = path.join("components", "design-system", "copy-field.tsx");
+const TOKENS = path.join("app", "globals.css");
 const SURFACES = ["components", "app"];
 const PACKS = [
   "lucide-react",
@@ -40,18 +44,38 @@ const REQUIRED = [
   },
   {
     file: path.join("components", "campaign", "help-paths.tsx"),
-    needles: ["HandsIcon", "BanknoteIcon", "BoxIcon"],
-    why: "los tres caminos de /ayudar llevan pictograma.",
+    needles: ["HandsIcon", "BanknoteIcon", "BoxIcon", "IdentifyingMark"],
+    why: "los tres caminos de /ayudar llevan pictograma a 1.15 em.",
   },
   {
     file: path.join("components", "catalog", "cover.tsx"),
-    needles: ["BankIcon", "BoxIcon", "BrandLabel"],
-    why: "traer, transferir y los medios llevan marca.",
+    needles: ["BankIcon", "BoxIcon", "BrandLabel", "IdentifyingMark"],
+    why: "traer, transferir y los medios llevan marca a 1.15 em.",
   },
   {
     file: path.join("components", "campaign", "contact-actions.tsx"),
-    needles: ["PhoneIcon", "MailIcon"],
-    why: "llamar y escribir llevan pictograma.",
+    needles: ["PhoneIcon", "MailIcon", "IdentifyingMark"],
+    why: "llamar y escribir llevan pictograma a 1.15 em.",
+  },
+  {
+    file: COPY_FIELD,
+    needles: ["IdentifyingMark"],
+    why: "cada dato bancario lleva la marca a 1.15 em de la etiqueta.",
+  },
+  {
+    file: path.join("components", "design-system", "flags.tsx"),
+    needles: ["IdentifyingMark", "identifying-flag"],
+    why: "el globo y la bandera miden en em de la letra del país.",
+  },
+  {
+    file: path.join("components", "design-system", "brand-mark.tsx"),
+    needles: ["identifying-mark"],
+    why: "el logo de terceros comparte el 1.15 em.",
+  },
+  {
+    file: path.join("components", "site", "account-chrome.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "cuenta, backoffice, métricas y salir llevan marca a 1.15 em.",
   },
 ];
 
@@ -64,6 +88,16 @@ const markKeys = [
 
 if (markKeys.length === 0) {
   problems.push(`${COPY_FIELD}: no encontré claves en COPY_FIELD_MARKS.`);
+}
+
+const tokens = await readFile(TOKENS, "utf8");
+
+if (!tokens.includes("--identifying-mark: 1.15em")) {
+  problems.push(`${TOKENS}: falta --identifying-mark: 1.15em (ADR-047).`);
+}
+
+if (!tokens.includes("@utility identifying-mark")) {
+  problems.push(`${TOKENS}: falta @utility identifying-mark.`);
 }
 
 async function collectTsx(dir, acc = []) {
@@ -96,6 +130,18 @@ for (const { file, text } of contents) {
         `${file}: no se importa ${pack}. Los pictogramas salen de icons.tsx.`,
       );
     }
+  }
+
+  if (text.includes("size={16}")) {
+    problems.push(
+      `${file}: size={16} en un pictograma identificador. Va en IdentifyingMark (1.15 em).`,
+    );
+  }
+
+  if (text.includes("1.15em") && !file.endsWith("identifying-mark.test.tsx")) {
+    problems.push(
+      `${file}: 1.15em suelto. El tamaño identificador es la clase identifying-mark.`,
+    );
   }
 
   for (const match of text.matchAll(/<CopyField\b([^>]*)>/g)) {
@@ -151,5 +197,5 @@ if (problems.length > 0) {
 
 console.log(
   `${String(usedLabels.length)} CopyField con marca, ${String(markKeys.length)} etiquetas en el mapa, ` +
-    `sin packs. País, caminos, canales y contacto llevan pictograma.`,
+    `1.15 em, sin packs. País, caminos, canales, contacto y drawer llevan pictograma.`,
 );

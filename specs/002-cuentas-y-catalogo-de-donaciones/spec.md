@@ -169,8 +169,9 @@ nombre pasa al muro y el catálogo actualiza cuánto falta.
 para probar las historias 1 y 3. Es la que hace que el catálogo siga siendo cierto en el mes tres.
 
 **Independent Test**: se prueba desde `/admin/catalogo` en viewport de teléfono, creando un ítem,
-publicándolo, y desde `/admin/donaciones` confirmando la llegada de una reserva y cancelando otra con
-motivo.
+publicándolo, viendo la ficha desde el icono de la fila, editando esa fila, y desde `/admin/donaciones`
+confirmando la llegada de una reserva y cancelando otra con motivo. Un ítem sin reservas se borra
+desde la misma tabla; uno con reservas se rechaza.
 
 **Acceptance Scenarios**:
 
@@ -189,6 +190,11 @@ motivo.
    comprometidas, en lugar de dejar el ítem sobrevendido.
 6. **Given** cualquier cambio en el catálogo o en una reserva, **When** se guarda, **Then** queda
    registrado quién lo hizo y cuándo.
+7. **Given** el owner en `/admin/catalogo`, **When** mira la tabla de lo que falta, **Then** cada
+   fila tiene una columna Acciones con ver (abre la ficha pública), editar (esa fila entra en modo
+   edición) y borrar (pide confirmación). **Given** un editor, **Then** ve ver y editar y **no** ve
+   borrar. **Given** un ítem con reservas o entregas, **When** confirma el borrado, **Then** se
+   rechaza con un mensaje que lo explica y el ítem sigue.
 
 ---
 
@@ -315,6 +321,11 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   listado y la ficha MUST publicarlo etiquetado como estimado, no como precio fijo (ADR-041, ADR-044).
   El total del listado MUST ser el estimado de unidad por las unidades que siguen faltando.
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
+- **FR-258**: `/admin/catalogo` MUST ser una tabla con una columna Acciones. Ver MUST abrir la ficha
+  pública `/catalogo/{id}`. Editar MUST poner esa fila en modo edición con `?editar={id}` y MUST
+  funcionar sin JavaScript. Borrar MUST pedir confirmación, MUST estar visible sólo para un rol con
+  `catalogo.borrar` (`admin` y `owner`), MUST fallar si hay reservas o entregas —incluso canceladas—
+  y MUST dejar rastro. MUST NOT aparecer en el HTML de `/catalogo` (ADR-037, ADR-050).
 - **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
   (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
   MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
@@ -492,6 +503,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **SC-214**: Con un proveedor social habilitado, una persona puede crear la cuenta desde el botón
   de esa red y aterrizar en `/cuenta` con sesión, con el nombre de esa red ya en el perfil, anónima
   y `pending`. Si esa dirección ya tenía cuenta, entra a ésa. Verificado en el harness local.
+- **SC-215**: Desde `/admin/catalogo` el owner ve, edita en la fila y borra un ítem sin reservas; el
+  editor no ve borrar. Verificado en e2e, en viewport de teléfono y de escritorio.
 
 ---
 

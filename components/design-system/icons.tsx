@@ -1,13 +1,12 @@
 import type { ReactNode, SVGProps } from "react";
 
 /**
- * Una sola familia de iconos: trazo de 1.5, esquinas redondas, 20 px.
+ * Una sola familia de iconos: trazo de 1.5, esquinas redondas, viewBox 24.
  *
- * Van al lado del nombre cuando identifican un control, un campo, un canal o
- * un camino (ADR-047). Las acciones (copiar, cerrar, menú, flecha, salir) y el
- * bloque de cuenta del drawer (persona, panel, gráfico) también. Los bancos de
- * la transferencia son marcas, no pictogramas: van en `content/brands.ts`. Las
- * banderas, en `flags.tsx`. No hay iconos de relleno ni packs.
+ * Los que identifican van **antes del nombre**, a 1.15 em de esa letra, en
+ * `IdentifyingMark` (ADR-047). El default de 20 px queda para las acciones
+ * (copiar, cerrar, menú, flecha) dentro de `ICON_ACTION`. Los bancos son
+ * marcas (`content/brands.ts`). Las banderas, `flags.tsx`. Sin relleno ni packs.
  */
 
 export type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };
@@ -224,6 +223,36 @@ export function LeaveIcon(props: IconProps) {
       <path d="M9 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H9" />
       <path d="M10 12h9" />
       <path d="m16 8 4 4-4 4" />
+    </Svg>
+  );
+}
+
+export function EyeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 12s3.2-7 9-7 9 7 9 7-3.2 7-9 7-9-7-9-7Z" />
+      <circle cx="12" cy="12" r="2.5" />
+    </Svg>
+  );
+}
+
+export function PencilIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M15 5.5 18.5 9 8 19.5H4.5V16Z" />
+      <path d="m13 7.5 3.5 3.5" />
+    </Svg>
+  );
+}
+
+export function TrashIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M5 7h14" />
+      <path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h1A1.5 1.5 0 0 1 14 5.5V7" />
+      <path d="M8 7v11.5A1.5 1.5 0 0 0 9.5 20h5a1.5 1.5 0 0 0 1.5-1.5V7" />
+      <path d="M10 11v5" />
+      <path d="M14 11v5" />
     </Svg>
   );
 }

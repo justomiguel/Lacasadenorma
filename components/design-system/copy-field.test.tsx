@@ -62,7 +62,10 @@ describe("CopyField", { timeout: 15_000 }, () => {
   it("la etiqueta CBU lleva su pictograma al lado del nombre", () => {
     const { container } = render(<CopyField label="CBU" value={CBU} />);
 
-    expect(container.querySelector('[data-field-mark="CBU"]')).not.toBeNull();
+    const mark = container.querySelector('[data-field-mark="CBU"]');
+
+    expect(mark).not.toBeNull();
+    expect(mark?.className).toMatch(/identifying-mark/);
     expect(screen.getByText("CBU")).toBeInTheDocument();
   });
 

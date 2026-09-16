@@ -35,7 +35,9 @@ Y una traducción que no viene de una excepción nuestra sino del motor: bajar `
 debajo de lo comprometido falla con `23514` y el nombre del `check`. La capa de aplicación **tiene que
 convertir eso** en "hay tres unidades comprometidas; cancelalas primero" (US4 escenario 5). Si no lo
 hace, el formulario del backoffice muestra un mensaje de Postgres, que es la definición de estado no
-diseñado.
+diseñado. Borrar un ítem con reservas o entregas falla con `23503` (`on delete restrict`); **tiene
+que** convertirse en "hay reservas o entregas de este ítem; no se puede borrar" (US4 escenario 7,
+ADR-050).
 
 ## Reglas de la capa de aplicación
 
@@ -45,8 +47,8 @@ diseñado.
   transacción (ADR-028).
 - Toda operación sobre el catálogo o sobre una reserva pasa por `perform()` y escribe el rastro con
   `record_audit()` (ADR-020, FR-223). Acciones nuevas: `donation_item.created`,
-  `donation_item.updated`, `donation_item.published`, `pledge.claimed`, `pledge.cancelled`,
-  `pledge.fulfilled`.
+  `donation_item.updated`, `donation_item.published`, `donation_item.deleted`, `pledge.claimed`,
+  `pledge.cancelled`, `pledge.fulfilled`.
 - La revalidación es explícita al publicar o al cambiar disponibilidad (ADR-017): `/catalogo`,
   `/catalogo/[id]`, `/quienes-ayudaron` y sus equivalentes en `/en`. SC-212 —cinco minutos entre
   confirmar y ver el nombre— se cumple por el ISR de cinco minutos incluso si la invalidación
