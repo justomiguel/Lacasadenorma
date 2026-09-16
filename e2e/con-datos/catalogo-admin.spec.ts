@@ -22,6 +22,7 @@ test.describe("catálogo · acciones del owner", () => {
     request,
   }, info) => {
     const titulo = `Ladrillos de prueba (${sufijoUnico(info.project.name)})`;
+    let borrado = false;
 
     try {
       await entrar(page, "owner");
@@ -41,8 +42,11 @@ test.describe("catálogo · acciones del owner", () => {
 
       await fila.getByRole("link", { name: /^editar$/i }).click();
       await expect(page).toHaveURL(/editar=/);
-      await expect(fila.getByLabel("Qué hace falta")).toHaveValue(titulo);
-      await expect(fila.getByRole("button", { name: /guardar cambios/i })).toBeVisible();
+
+      const lista = page.getByRole("region", { name: /qué le falta a la casa/i });
+
+      await expect(lista.getByLabel("Qué hace falta")).toHaveValue(titulo);
+      await expect(lista.getByRole("button", { name: /guardar cambios/i })).toBeVisible();
 
       await fila.getByRole("link", { name: /ver ficha/i }).click();
       await expect(page).toHaveURL(/\/catalogo\/[0-9a-f-]{36}/i);
@@ -56,8 +60,11 @@ test.describe("catálogo · acciones del owner", () => {
       await expect(page).toHaveURL(/hecho=borrado/);
       await expect(page.getByRole("status")).toHaveText(/ítem borrado/i);
       await expect(filaDe(page, titulo)).toHaveCount(0);
+      borrado = true;
     } finally {
-      await ocultarItemSiExiste(request, titulo);
+      if (!borrado) {
+        await ocultarItemSiExiste(request, titulo);
+      }
     }
   });
 
