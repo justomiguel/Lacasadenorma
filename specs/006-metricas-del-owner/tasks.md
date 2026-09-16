@@ -15,4 +15,4 @@
 - [x] T013 Recharts en el tablero; puerto Stats API; panel Alcance
 - [x] T014 `npm run verify` del alcance
 - [x] T015 Atajo Métricas debajo de Backoffice en el drawer, con iconos del bloque de cuenta
-- [ ] T016 Más alcance (navegadores, entrada, propiedades de ADR-010, tasas) y señales de pulso a 14 días
+- [x] T016 Más alcance (navegadores, entrada, propiedades de ADR-010, tasas) y señales de pulso a 14 días
