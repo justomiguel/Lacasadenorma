@@ -13,4 +13,4 @@
 - [x] T011 Spec + ADR-048 (Recharts y alcance)
 - [x] T012 Tests de dominio de alcance y del Stats API (rojo)
 - [x] T013 Recharts en el tablero; puerto Stats API; panel Alcance
-- [ ] T014 `npm run verify` del alcance
+- [x] T014 `npm run verify` del alcance

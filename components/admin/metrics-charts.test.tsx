@@ -43,6 +43,7 @@ describe("MetricsBarChart", () => {
     render(<MetricsBarChart chart={BARS} />);
 
     expect(screen.getByRole("img", { name: "Gastos por rubro" })).toBeInTheDocument();
+    expect(document.querySelector("svg.recharts-surface")).not.toBeNull();
     expect(screen.getByRole("columnheader", { name: "Categoría" })).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "Materiales" })).toBeInTheDocument();
   });

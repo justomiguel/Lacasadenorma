@@ -5,7 +5,6 @@ import {
   BarChart,
   CartesianGrid,
   ReferenceLine,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -45,48 +44,56 @@ export function MetricsBarChart({ chart }: { chart: BarChartData }) {
       <div
         role="img"
         aria-labelledby={`${chart.id}-title`}
-        className="mt-md w-full"
-        style={{ height }}
+        className="mt-md w-full overflow-x-auto"
       >
-        <ResponsiveContainer width="100%" height="100%" minWidth={280} minHeight={120}>
-          <BarChart
-            accessibilityLayer
-            data={[...chart.bars]}
-            layout="vertical"
-            margin={{ top: 8, right: 16, bottom: 0, left: 8 }}
-          >
-            <CartesianGrid stroke="var(--color-rule)" horizontal={false} />
-            <XAxis type="number" tick={TICK} axisLine={false} tickLine={false} />
-            <YAxis
-              type="category"
-              dataKey="label"
-              width={132}
-              tick={TICK}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip
-              cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
-              isAnimationActive={false}
-              content={(props) => (
-                <ChartHint
-                  active={props.active}
-                  label={typeof props.label === "string" ? props.label : undefined}
-                  payload={hintPayload(props.payload)}
-                  unit={chart.unit}
-                  currency={chart.currency}
-                />
-              )}
-            />
-            <Bar
-              dataKey="value"
-              name={chart.unit === "money" ? "Monto" : "Cantidad"}
-              fill="var(--color-forest)"
-              isAnimationActive={false}
-              maxBarSize={20}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          accessibilityLayer
+          width={640}
+          height={height}
+          data={[...chart.bars]}
+          layout="vertical"
+          margin={{ top: 8, right: 16, bottom: 0, left: 8 }}
+          className="max-w-full"
+        >
+          <CartesianGrid stroke="var(--color-rule)" horizontal={false} />
+          <XAxis
+            type="number"
+            tick={TICK}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(value: number) =>
+              formatChartValue(chart.unit, value, chart.currency)
+            }
+          />
+          <YAxis
+            type="category"
+            dataKey="label"
+            width={132}
+            tick={TICK}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
+            isAnimationActive={false}
+            content={(props) => (
+              <ChartHint
+                active={props.active}
+                label={typeof props.label === "string" ? props.label : undefined}
+                payload={hintPayload(props.payload)}
+                unit={chart.unit}
+                currency={chart.currency}
+              />
+            )}
+          />
+          <Bar
+            dataKey="value"
+            name={chart.unit === "money" ? "Monto" : "Cantidad"}
+            fill="var(--color-forest)"
+            isAnimationActive={false}
+            maxBarSize={20}
+          />
+        </BarChart>
       </div>
       <ChartTable
         columns={["Categoría", chart.unit === "money" ? "Monto" : "Cantidad"]}
@@ -128,58 +135,66 @@ export function MetricsSeriesChart({ chart }: { chart: SeriesChart }) {
       <div
         role="img"
         aria-labelledby={`${chart.id}-title`}
-        className="mt-md w-full"
-        style={{ height: SERIES_HEIGHT }}
+        className="mt-md w-full overflow-x-auto"
       >
-        <ResponsiveContainer width="100%" height="100%" minWidth={280} minHeight={120}>
-          <BarChart
-            accessibilityLayer
-            data={data}
-            margin={{ top: 8, right: 8, bottom: 0, left: 8 }}
-          >
-            <CartesianGrid stroke="var(--color-rule)" vertical={false} />
-            <XAxis
-              dataKey="label"
-              tick={TICK}
-              axisLine={false}
-              tickLine={false}
-              minTickGap={24}
+        <BarChart
+          accessibilityLayer
+          width={640}
+          height={SERIES_HEIGHT}
+          data={data}
+          margin={{ top: 8, right: 8, bottom: 0, left: 8 }}
+          className="max-w-full"
+        >
+          <CartesianGrid stroke="var(--color-rule)" vertical={false} />
+          <XAxis
+            dataKey="label"
+            tick={TICK}
+            axisLine={false}
+            tickLine={false}
+            minTickGap={24}
+          />
+          <YAxis
+            tick={TICK}
+            axisLine={false}
+            tickLine={false}
+            width={chart.unit === "money" ? 92 : 48}
+            tickFormatter={(value: number) =>
+              formatChartValue(chart.unit, value, chart.currency)
+            }
+          />
+          <Tooltip
+            cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
+            isAnimationActive={false}
+            content={(props) => (
+              <ChartHint
+                active={props.active}
+                label={typeof props.label === "string" ? props.label : undefined}
+                payload={hintPayload(props.payload)}
+                unit={chart.unit}
+                currency={chart.currency}
+              />
+            )}
+          />
+          {chart.signals.map((signal) => (
+            <ReferenceLine
+              key={signal.id}
+              y={signal.value}
+              stroke="var(--color-warning)"
+              strokeDasharray="6 4"
+              ifOverflow="extendDomain"
             />
-            <YAxis tick={TICK} axisLine={false} tickLine={false} width={48} />
-            <Tooltip
-              cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
+          ))}
+          {chart.series.map((series) => (
+            <Bar
+              key={series.id}
+              dataKey={series.id}
+              name={series.label}
+              fill={seriesFill(series.id)}
               isAnimationActive={false}
-              content={(props) => (
-                <ChartHint
-                  active={props.active}
-                  label={typeof props.label === "string" ? props.label : undefined}
-                  payload={hintPayload(props.payload)}
-                  unit={chart.unit}
-                  currency={chart.currency}
-                />
-              )}
+              maxBarSize={28}
             />
-            {chart.signals.map((signal) => (
-              <ReferenceLine
-                key={signal.id}
-                y={signal.value}
-                stroke="var(--color-warning)"
-                strokeDasharray="6 4"
-                ifOverflow="extendDomain"
-              />
-            ))}
-            {chart.series.map((series) => (
-              <Bar
-                key={series.id}
-                dataKey={series.id}
-                name={series.label}
-                fill={seriesFill(series.id)}
-                isAnimationActive={false}
-                maxBarSize={28}
-              />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+          ))}
+        </BarChart>
       </div>
       <ChartTable
         columns={["Período", ...chart.series.map((series) => series.label)]}
