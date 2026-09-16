@@ -88,20 +88,28 @@ export function AccountChrome({
         <DrawerLink
           href={accountHref}
           icon={<PersonIcon />}
-          onNavigate={onNavigate}
-          current={onAccount}
+          {...(onNavigate === undefined ? {} : { onNavigate })}
+          {...(onAccount ? { current: true } : {})}
         >
           {ui.account}
         </DrawerLink>
 
         {session.staff ? (
-          <DrawerLink href="/admin" icon={<GridIcon />} onNavigate={onNavigate}>
+          <DrawerLink
+            href="/admin"
+            icon={<GridIcon />}
+            {...(onNavigate === undefined ? {} : { onNavigate })}
+          >
             {ui.backoffice}
           </DrawerLink>
         ) : null}
 
         {session.owner ? (
-          <DrawerLink href="/admin/metricas" icon={<ChartIcon />} onNavigate={onNavigate}>
+          <DrawerLink
+            href="/admin/metricas"
+            icon={<ChartIcon />}
+            {...(onNavigate === undefined ? {} : { onNavigate })}
+          >
             {ui.metrics}
           </DrawerLink>
         ) : null}
