@@ -46,6 +46,7 @@ export const AUDIT_ACTION_LABELS = {
   "donation_item.created": "agregó un ítem al catálogo",
   "donation_item.updated": "editó un ítem del catálogo",
   "donation_item.published": "publicó un ítem del catálogo",
+  "donation_item.deleted": "borró un ítem del catálogo",
   "donor.approved": "habilitó una cuenta del público",
   "donor.declined": "rechazó una cuenta del público",
   "pledge.claimed": "registró una reserva del público",

@@ -31,7 +31,7 @@ export {
   voidExpense,
 } from "./expenses";
 export { saveMilestone } from "./milestones";
-export { saveDonationItem } from "./catalog";
+export { saveDonationItem, deleteDonationItem } from "./catalog";
 export { reviewDonorAccount } from "./donors";
 export type { ReviewAccountMail } from "./donors";
 export { cancelPledge, fulfillPledge } from "./pledges";

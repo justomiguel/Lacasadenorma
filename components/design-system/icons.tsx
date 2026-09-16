@@ -226,3 +226,33 @@ export function LeaveIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function EyeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 12s3.2-7 9-7 9 7 9 7-3.2 7-9 7-9-7-9-7Z" />
+      <circle cx="12" cy="12" r="2.5" />
+    </Svg>
+  );
+}
+
+export function PencilIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M15 5.5 18.5 9 8 19.5H4.5V16Z" />
+      <path d="m13 7.5 3.5 3.5" />
+    </Svg>
+  );
+}
+
+export function TrashIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M5 7h14" />
+      <path d="M10 7V5.5A1.5 1.5 0 0 1 11.5 4h1A1.5 1.5 0 0 1 14 5.5V7" />
+      <path d="M8 7v11.5A1.5 1.5 0 0 0 9.5 20h5a1.5 1.5 0 0 0 1.5-1.5V7" />
+      <path d="M10 11v5" />
+      <path d="M14 11v5" />
+    </Svg>
+  );
+}

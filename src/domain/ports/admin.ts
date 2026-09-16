@@ -34,10 +34,12 @@ import type { AdminDonationsPort } from "./donations";
  *
  * Tres reglas que la forma de estos tipos impone:
  *
- * 1. **Nada se borra.** No hay ningún método `delete` sobre un registro
- *    financiero. Un aporte o un gasto cargado por error se **anula** con motivo y
- *    fecha, y deja de sumar. Es el requisito de auditoría, y acá se cumple por
- *    ausencia de la operación, no por disciplina.
+ * 1. **Nada financiero se borra.** No hay ningún método `delete` sobre un aporte,
+ *    un gasto ni una reserva. Se **anulan** con motivo y fecha, y dejan de sumar.
+ *    Es el requisito de auditoría, y acá se cumple por ausencia de la operación,
+ *    no por disciplina. El catálogo es inventario de lo que falta: un ítem que
+ *    nadie tomó sí se puede borrar (`deleteItem`, ADR-050). Si hay reservas, la
+ *    base lo impide (`on delete restrict`).
  * 2. **`alt` es obligatorio al crear una foto.** No es opcional en el tipo, así que
  *    una foto sin descripción no compila (FR-024).
  * 3. **El registro de auditoría sólo se agrega.** `AuditPort` no tiene forma de
@@ -179,6 +181,11 @@ export interface AdminMilestonePort {
 
 export interface AdminCatalogPort {
   listItems(campaignId: string): Promise<DonationItemAdminRecord[]>;
+  /**
+   * Saca un ítem que nadie tomó. Si hay filas en `donation_pledges`, Postgres
+   * responde `23503` y el puerto lanza `CatalogItemReferencedError`.
+   */
+  deleteItem(id: string): Promise<void>;
   saveItem(input: {
     campaignId: string;
     id: string | null;

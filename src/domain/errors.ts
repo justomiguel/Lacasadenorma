@@ -47,6 +47,21 @@ export class CatalogOversubscribedError extends DomainError {
   }
 }
 
+/**
+ * Borrar un ítem que todavía tiene filas en `donation_pledges`.
+ *
+ * Postgres lo rechaza con `23503` porque la clave es `on delete restrict` y
+ * las reservas no se borran (FR-222). Este error es la traducción (ADR-050).
+ */
+export class CatalogItemReferencedError extends DomainError {
+  constructor() {
+    super(
+      "Hay reservas o entregas de este ítem; no se puede borrar. Despublicarlo lo saca del sitio.",
+    );
+    this.name = "CatalogItemReferencedError";
+  }
+}
+
 /** Alguien se adelantó: el `update` condicional no tocó ninguna fila. */
 export class PledgeUnavailableError extends DomainError {
   constructor() {

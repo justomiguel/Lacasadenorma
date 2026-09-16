@@ -3,6 +3,7 @@ import type { z } from "zod";
 import type { AuditAction } from "@/src/domain/entities/audit";
 import {
   CampaignExistsError,
+  CatalogItemReferencedError,
   CatalogOversubscribedError,
   NotAuthorizedError,
 } from "@/src/domain/errors";
@@ -137,6 +138,14 @@ export async function perform<Input, Output>({
         status: "invalid",
         message: error.message,
         fieldErrors: { neededQuantity: error.message },
+      };
+    }
+
+    if (error instanceof CatalogItemReferencedError) {
+      return {
+        status: "invalid",
+        message: error.message,
+        fieldErrors: { id: error.message },
       };
     }
 

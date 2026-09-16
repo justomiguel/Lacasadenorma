@@ -33,8 +33,9 @@ describe("can", () => {
       // Es la razón por la que la tabla existe: con una jerarquía numérica,
       // "al menos auditor" habilitaría toda escritura, y el rol perdería su
       // sentido, que es dejar verificar sin poder alterar.
-      const escrituras = PERMISSIONS.filter((permission) =>
-        permission.endsWith(".escribir"),
+      const escrituras = PERMISSIONS.filter(
+        (permission) =>
+          permission.endsWith(".escribir") || permission.endsWith(".borrar"),
       );
 
       for (const permission of escrituras) {
@@ -53,6 +54,12 @@ describe("can", () => {
       // Qué falta, cuánto y con qué foto es una decisión editorial: es la misma
       // persona que publica una novedad.
       expect(can("editor", "catalogo.escribir")).toBe(true);
+    });
+
+    it("no borra un ítem del catálogo", () => {
+      // La policy `donation_items_delete` es admin+. Un tacho que la base va a
+      // negar es peor que un tacho que no aparece (ADR-050).
+      expect(can("editor", "catalogo.borrar")).toBe(false);
     });
 
     it("no ve ni toca plata", () => {
@@ -90,6 +97,10 @@ describe("can", () => {
       // el contador de un ítem y la que puede llevar un nombre al muro.
       expect(can("admin", "donaciones.leer")).toBe(true);
       expect(can("admin", "donaciones.escribir")).toBe(true);
+    });
+
+    it("borra un ítem del catálogo que nadie tomó", () => {
+      expect(can("admin", "catalogo.borrar")).toBe(true);
     });
 
     it("no administra cuentas bancarias ni roles, ni ve el tablero de métricas", () => {

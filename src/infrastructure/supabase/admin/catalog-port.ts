@@ -4,7 +4,10 @@ import {
   remaining,
 } from "@/src/domain/catalog";
 import type { DonationItemAdminRecord } from "@/src/domain/entities";
-import { CatalogOversubscribedError } from "@/src/domain/errors";
+import {
+  CatalogItemReferencedError,
+  CatalogOversubscribedError,
+} from "@/src/domain/errors";
 import type { AdminCatalogPort } from "@/src/domain/ports/admin";
 
 import { loadPhotos } from "../catalog-repository";
@@ -131,6 +134,18 @@ export function createCatalogPort(client: ServerSupabaseClient): AdminCatalogPor
       }
 
       return data.id;
+    },
+
+    async deleteItem(id): Promise<void> {
+      const { error } = await client.from("donation_items").delete().eq("id", id);
+
+      if (error !== null) {
+        if (error.code === "23503") {
+          throw new CatalogItemReferencedError();
+        }
+
+        throw new QueryError("borrar el ítem del catálogo", error);
+      }
     },
   };
 }

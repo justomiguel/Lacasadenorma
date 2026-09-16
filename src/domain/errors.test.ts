@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   CampaignExistsError,
   CatalogOversubscribedError,
+  CatalogItemReferencedError,
   DomainError,
   NotAuthorizedError,
   PledgeUnavailableError,
@@ -59,6 +60,18 @@ describe("CatalogOversubscribedError", () => {
     const error = new CatalogOversubscribedError(3);
 
     expect(error.message).toBe("Hay 3 unidades comprometidas; cancelalas primero.");
+  });
+});
+
+describe("CatalogItemReferencedError", () => {
+  it("traduce el 23503, no el error de Postgres (US4 escenario 7)", () => {
+    const error = new CatalogItemReferencedError();
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("CatalogItemReferencedError");
+    expect(error.message).toBe(
+      "Hay reservas o entregas de este ítem; no se puede borrar. Despublicarlo lo saca del sitio.",
+    );
   });
 });
 

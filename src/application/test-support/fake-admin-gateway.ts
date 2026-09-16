@@ -113,6 +113,7 @@ export function fakeAdminGateway(
     catalog: {
       listItems: () => record("listItems", null, []),
       saveItem: (input) => record("saveItem", input, id),
+      deleteItem: (input) => record("deleteItem", input, undefined),
     },
     paymentMethods: {
       listMethods: () => record("listMethods", null, []),

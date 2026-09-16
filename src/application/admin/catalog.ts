@@ -123,3 +123,37 @@ export async function saveDonationItem(
     }),
   });
 }
+
+const deleteSchema = z.object({
+  id: uuid("el ítem"),
+  title: requiredText("el ítem", 140),
+});
+
+/**
+ * Saca un ítem que nadie tomó. Si hay reservas, la base lo impide y
+ * `perform` traduce el error (ADR-050).
+ */
+export async function deleteDonationItem(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<{ id: string }>> {
+  return perform({
+    deps,
+    permission: "catalogo.borrar",
+    describe: "borrar el ítem del catálogo",
+    schema: deleteSchema,
+    input,
+    run: async (data) => {
+      await deps.gateway.catalog.deleteItem(data.id);
+
+      return { id: data.id };
+    },
+    success: () => "Ítem borrado.",
+    audit: (data, output) => ({
+      action: "donation_item.deleted",
+      entityTable: "donation_items",
+      entityId: output.id,
+      diff: { title: data.title },
+    }),
+  });
+}
