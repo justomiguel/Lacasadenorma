@@ -89,12 +89,17 @@ describe("CatalogTable", () => {
 
   it("muestra la foto de referencia en Qué, y no reserva un hueco si no hay", () => {
     const { rerender } = render(
-      <CatalogTable items={[item()]} claims={[]} copy={COPY} locale="es" />,
+      <CatalogTable
+        items={[item({ title: "Bidet" })]}
+        claims={[]}
+        copy={COPY}
+        locale="es"
+      />,
     );
 
     expect(
-      screen.getByRole("img", { name: /foto ilustrativa de tina/i }),
-    ).toHaveAttribute("src", "/fotos/catalogo/tina.jpg");
+      screen.getByRole("img", { name: /foto ilustrativa de bidet/i }),
+    ).toHaveAttribute("src", "/fotos/catalogo/bidet.jpg");
     expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
 
     rerender(
