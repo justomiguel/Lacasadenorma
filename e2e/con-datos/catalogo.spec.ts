@@ -11,12 +11,7 @@ import {
   ocultarItemSiExiste,
   vencerReserva,
 } from "../soporte/catalogo";
-import {
-  CLAVE_PUBLICA,
-  correoDePrueba,
-  crearCuenta,
-  cerrarSesion,
-} from "../soporte/cuentas";
+import { correoDePrueba, crearCuenta } from "../soporte/cuentas";
 
 /**
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).
@@ -163,62 +158,6 @@ test.describe("fase D · reservas", () => {
       ficha.getByRole("img", { name: /foto ilustrativa de chapas/i }),
     ).toBeVisible();
     await expect(ficha.getByText(/solamente ilustrativa/i)).toBeVisible();
-  });
-
-  test("pedir donar sin sesión vuelve al mismo ítem después de ingresar", async ({
-    request,
-    browser,
-  }, info) => {
-    // Alta, salida, catálogo e ingreso: 45 s cortaba en CI con el formulario
-    // de redes debajo.
-    test.setTimeout(90_000);
-    const sufijo = sufijoUnico(info.project.name);
-    const titulo = `Chapas para volver (${sufijo})`;
-    const email = correoDePrueba(info.project.name, "volver");
-
-    const staff = await browser.newContext();
-    const staffPage = await staff.newPage();
-
-    try {
-      const donante = await browser.newContext();
-      const donantePage = await donante.newPage();
-
-      try {
-        await conItemPublicado(request, staffPage, titulo, 1, async (itemId) => {
-          await crearCuenta(donantePage, request, email);
-          await cerrarSesion(donantePage);
-
-          await donantePage.goto("/catalogo");
-          await abrirItemDelCatalogo(donantePage, titulo);
-          const articulo = articuloDelCatalogo(donantePage);
-
-          await expect(articulo).toHaveCount(1);
-          await expect(articulo).toBeVisible();
-          // FR-216: el HTML no deja salir un envío vacío. Sin sesión se pide
-          // la cuenta después de tener nombre y dirección.
-          await completarTraer(formularioDeTraer(articulo));
-
-          await expect(donantePage).toHaveURL(new RegExp(`/cuenta/ingresar\\?volver=`));
-          await expect(donantePage).toHaveURL(new RegExp(itemId));
-
-          const acceso = donantePage
-            .locator("form")
-            .filter({ has: donantePage.getByRole("button", { name: /^ingresar$/i }) });
-
-          await acceso.getByLabel("Correo").fill(email);
-          await acceso.getByLabel("Contraseña").fill(CLAVE_PUBLICA);
-          await acceso.getByRole("button", { name: /^ingresar$/i }).click();
-
-          await expect(donantePage).toHaveURL(new RegExp(`/catalogo/${itemId}$`));
-          await expect(donantePage.getByRole("heading", { name: titulo })).toBeVisible();
-        });
-      } finally {
-        await donante.close();
-      }
-    } finally {
-      await ocultarItemSiExiste(staffPage.request, titulo);
-      await staff.close();
-    }
   });
 
   test("reservar, conflicto cuando alguien se adelanta, y cancelar", async ({

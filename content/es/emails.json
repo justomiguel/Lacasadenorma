@@ -20,6 +20,36 @@
     "action": "Ver tu cuenta",
     "why": "Recibís este correo porque el equipo habilitó tu cuenta en el sitio de la reconstrucción de la casa de Norma."
   },
+  "accountConfirm": {
+    "subject": "Confirmá tu correo",
+    "preheader": "Hay que abrir el enlace para que sepamos que esa casilla existe.",
+    "body": [
+      "Pediste una cuenta en el sitio de la reconstrucción de la casa de Norma. Abrí el enlace para que sepamos que esa casilla existe y que podemos escribirte. Hasta entonces la cuenta no está activa.",
+      "Si no fuiste vos, ignorá este correo. Nadie va a anotar nada a tu nombre hasta que alguien abra el enlace."
+    ],
+    "action": "Confirmar el correo",
+    "why": "Recibís este correo porque alguien escribió esta dirección al crear una cuenta en el sitio de la reconstrucción de la casa de Norma."
+  },
+  "accountRecover": {
+    "subject": "Poner una contraseña nueva",
+    "preheader": "El enlace vence. Si no llegás, pedí otro desde el sitio.",
+    "body": [
+      "Alguien pidió poner una contraseña nueva en una cuenta de La Casa de Norma. Si fuiste vos, abrí el enlace. Vence; si no llegás, pedí otro desde el sitio.",
+      "Si no fuiste vos, ignorá este correo. La contraseña no cambia hasta que alguien abra el enlace y escriba una nueva."
+    ],
+    "action": "Poner una contraseña nueva",
+    "why": "Recibís este correo porque alguien pidió recuperar el acceso a una cuenta en el sitio de la reconstrucción de la casa de Norma."
+  },
+  "accountEmailChange": {
+    "subject": "Confirmá la dirección nueva",
+    "preheader": "Hay que abrir el enlace para que el cambio quede hecho.",
+    "body": [
+      "Alguien pidió cambiar el correo de una cuenta en el sitio de la reconstrucción de la casa de Norma. Si fuiste vos, abrí el enlace.",
+      "Si no fuiste vos, ignorá este correo. La dirección no cambia hasta que alguien abra el enlace."
+    ],
+    "action": "Confirmar la dirección nueva",
+    "why": "Recibís este correo porque alguien pidió cambiar el correo de una cuenta en el sitio de la reconstrucción de la casa de Norma."
+  },
   "accountDeclined": {
     "subject": "Esta vez no vamos a habilitar la cuenta",
     "preheader": "El equipo revisó el pedido y esta vez no va a habilitarla.",

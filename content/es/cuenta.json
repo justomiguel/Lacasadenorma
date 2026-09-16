@@ -29,7 +29,7 @@
     "haveAccountLink": "Ingresá",
     "checkInboxTitle": "Revisá tu correo",
     "checkInboxBody": [
-      "Mandamos un enlace a la dirección que escribiste. Hay que abrirlo para que la cuenta quede activa; hasta entonces no está creada.",
+      "Mandamos un enlace a la dirección que escribiste. Hay que abrirlo: así sabemos que esa casilla existe y que podemos escribirte. Hasta entonces la cuenta no está activa.",
       "Si no llega en unos minutos, mirá en el correo no deseado."
     ]
   },

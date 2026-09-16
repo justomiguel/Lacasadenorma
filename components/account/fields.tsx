@@ -89,7 +89,7 @@ export function TextField({
         </p>
       )}
       {error === undefined ? null : (
-        <p id={errorId} className="font-ui text-small text-danger">
+        <p id={errorId} role="alert" className="font-ui text-small text-danger">
           {error}
         </p>
       )}

@@ -107,3 +107,27 @@ de Resend:
 Los tres correos de identidad (confirmar, recuperar, cambiar dirección) **siguen** en el panel de
 Supabase: llevan un token que esta aplicación no emite. Su texto está copiado en el runbook.
 
+## Enmienda · Confirmación por la API de Resend (2026-09-16)
+
+La alternativa descartada —"Resend por API para identidad: no hay dónde enchufarlo"— dejó de ser
+cierta. Auth entrega el token de dos maneras que esta aplicación sí puede usar, sin replicar el
+canje:
+
+1. **Hook `send_email`.** GoTrue POSTea a `/api/correo/identidad` con `token_hash` y una firma
+   Standard Webhooks. La aplicación arma el HTML (misma plantilla que el resto) y manda por
+   `EmailSender` → `POST https://api.resend.com/emails`. Con el hook habilitado, Auth **no** manda
+   por SMTP: un solo correo, el mismo remitente, el texto en `content/*/emails.json`.
+2. **`auth.admin.generateLink`.** Si el hook todavía no está y hay `SUPABASE_SECRET_KEY`, el alta
+   crea la cuenta por esa llamada y manda el correo ella. La clave secreta se usa **sólo** para
+   esto, nunca para leer ni escribir la base (ADR-019). Sin ella —el harness local— el alta es
+   `signUp` y el buzón de prueba lee el token de `auth.users`.
+
+`enable_confirmations = true` no cambia: sin abrir el enlace no hay sesión, y eso sigue siendo la
+prueba de que la casilla existe.
+
+El `{link}` de estos tres correos **lleva el token**. Los del producto no pueden: un enlace que
+autentica en un acuse de reserva sería una sesión en una bandeja. Acá el token es el hecho.
+
+SMTP de Resend queda como respaldo (recuperar y cambiar dirección, o un entorno sin hook ni clave
+secreta). Rotar `RESEND_API_KEY` sigue siendo dos lugares hasta que el hook tome los tres.
+

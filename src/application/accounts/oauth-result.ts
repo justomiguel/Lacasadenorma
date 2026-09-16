@@ -20,10 +20,32 @@ export type OAuthNotice = "oauthFailed" | "oauthNoEmail";
 /** Cookie httpOnly con la vuelta al catálogo. No viaja en la URL del callback. */
 export const OAUTH_RETURN_COOKIE = "cuenta-volver";
 
+/** Diez minutos: alcanza para confirmar el correo o volver de la red. */
+export const ACCOUNT_RETURN_MAX_AGE = 10 * 60;
+
 export function oauthSuccessPath(locale: Locale, returnTo: string | undefined): string {
   return safeAccountReturn(returnTo, locale);
 }
 
 export function oauthFailurePath(locale: Locale, notice: OAuthNotice): string {
   return `${localizeHref("/cuenta/ingresar", locale)}?aviso=${notice}`;
+}
+
+/**
+ * Después de canjear el enlace del correo.
+ *
+ * Recuperar va a poner la contraseña. Confirmar (y el resto) va al catálogo si
+ * la persona venía de una ficha, y si no a `/cuenta`. El destino **no** sale
+ * de la query del enlace.
+ */
+export function pathAfterEmailConfirm(
+  type: "signup" | "email" | "email_change" | "recovery" | "invite",
+  locale: Locale,
+  returnTo: string | undefined,
+): string {
+  if (type === "recovery") {
+    return localizeHref("/cuenta/clave", locale);
+  }
+
+  return safeAccountReturn(returnTo, locale);
 }

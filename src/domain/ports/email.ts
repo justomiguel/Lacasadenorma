@@ -1,18 +1,23 @@
 /**
- * El puerto del correo del producto.
+ * El puerto del correo.
  *
- * Ninguno de estos es de identidad: la confirmación de la cuenta, la recuperación
- * de la contraseña y el cambio de dirección los manda el servidor de Auth por SMTP,
- * porque llevan un token firmado que sólo él sabe emitir (ADR-028).
+ * Los del producto no llevan token. Los de identidad sí: el enlace es el que
+ * demuestra que la casilla existe, y el token lo emite GoTrue (ADR-028).
+ * Quién manda de verdad es un adaptador de `src/infrastructure/email/`.
  *
- * TypeScript puro: sin `fetch`, sin Next, sin el SDK de nadie. Quién manda de
- * verdad es un adaptador de `src/infrastructure/email/`.
+ * TypeScript puro: sin `fetch`, sin Next, sin el SDK de nadie.
  */
 
 export const ACCOUNT_EMAIL_KINDS = [
   "account.received",
   "account.approved",
   "account.declined",
+] as const;
+
+export const IDENTITY_EMAIL_KINDS = [
+  "account.confirm",
+  "account.recover",
+  "account.email_change",
 ] as const;
 
 export const PLEDGE_EMAIL_KINDS = [
@@ -30,11 +35,13 @@ export const STAFF_EMAIL_KINDS = [
 
 export const EMAIL_KINDS = [
   ...ACCOUNT_EMAIL_KINDS,
+  ...IDENTITY_EMAIL_KINDS,
   ...PLEDGE_EMAIL_KINDS,
   ...STAFF_EMAIL_KINDS,
 ] as const;
 
 export type AccountEmailKind = (typeof ACCOUNT_EMAIL_KINDS)[number];
+export type IdentityEmailKind = (typeof IDENTITY_EMAIL_KINDS)[number];
 export type PledgeEmailKind = (typeof PLEDGE_EMAIL_KINDS)[number];
 export type StaffEmailKind = (typeof STAFF_EMAIL_KINDS)[number];
 export type EmailKind = (typeof EMAIL_KINDS)[number];

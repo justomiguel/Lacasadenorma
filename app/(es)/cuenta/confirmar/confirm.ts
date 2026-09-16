@@ -1,5 +1,10 @@
+import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
+import {
+  OAUTH_RETURN_COOKIE,
+  pathAfterEmailConfirm,
+} from "@/src/application/accounts/oauth-result";
 import { localizeHref, type Locale } from "@/src/i18n/locale";
 import { logger } from "@/src/infrastructure/logging/logger";
 import { createServerSupabaseClient } from "@/src/infrastructure/supabase/server-client";
@@ -94,6 +99,11 @@ export async function confirmEmailLink(
   }
 
   // La cookie de sesión la escribió `verifyOtp` a través del almacén de cookies del
-  // request, y el redirect la lleva puesta.
-  return goTo(localizeHref(type === "recovery" ? "/cuenta/clave" : "/cuenta", locale));
+  // request, y el redirect la lleva puesta. La vuelta al catálogo, si venía de
+  // donar, viaja en la misma cookie que OAuth: no en la query del enlace.
+  const cookieStore = await cookies();
+  const returnTo = cookieStore.get(OAUTH_RETURN_COOKIE)?.value;
+  cookieStore.delete(OAUTH_RETURN_COOKIE);
+
+  return goTo(pathAfterEmailConfirm(type, locale, returnTo));
 }

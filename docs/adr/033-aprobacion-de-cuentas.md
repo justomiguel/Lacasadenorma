@@ -61,8 +61,8 @@ un dato se guardó.
 Lo que **no** manda correo, y el motivo:
 
 - Cambiar el nombre o el anonimato: es la misma persona hablándose a sí misma.
-- Recuperar la contraseña, confirmar la cuenta, cambiar de dirección: los manda
-  Auth por SMTP, no esta aplicación (ADR-028).
+- Recuperar la contraseña, confirmar la cuenta, cambiar de dirección: el token lo emite Auth;
+  el correo lo manda Resend por la API (ADR-028).
 - Un envío que falló: queda en `email_deliveries` y se lee en el backoffice. Mandar
   un correo para decir que no se pudo mandar un correo es el agujero.
 

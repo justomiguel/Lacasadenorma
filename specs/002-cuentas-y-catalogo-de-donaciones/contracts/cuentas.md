@@ -24,9 +24,10 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 | `/cuenta/retrato` | **Route handler** | Sirve el retrato propio. Pide la URL firmada en el servidor y la descarta (ADR-037) |
 
 `/cuenta/confirmar` es un `route.ts` y no una página porque su trabajo es canjear un token y
-redirigir; no tiene nada que mostrar. Llama a `verifyOtp({ type, token_hash })` con lo que viene en la
-query, y **valida el destino** contra la lista de rutas conocidas antes de redirigir: un `next` que se
-respeta sin validar es un redirect abierto.
+redirigir; no tiene nada que mostrar. Llama a `verifyOtp({ type, token_hash })` con lo que viene en
+la query, y **valida el destino** contra la lista de rutas conocidas antes de redirigir: un `next`
+que se respeta sin validar es un redirect abierto. Si la persona venía de una ficha, la vuelta viaja
+en la cookie `cuenta-volver` (la misma de OAuth), no en la query.
 
 `/cuenta/oauth` es el mismo patrón para el salto a una red (ADR-039). Canjea el `code` de PKCE con
 `exchangeCodeForSession`, y el destino **no viene de la query**: va a `/cuenta`, o al catálogo si la

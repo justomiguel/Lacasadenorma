@@ -36,8 +36,9 @@ internet, con Formosa primero cuando hay un número de esa plaza.
 3. **«Quiero donar» es `SecondaryAction`.** Una primaria por pantalla, y esa
    sigue siendo «Ayudar a reconstruir». El CTA de fila abre la ficha
    (`/catalogo/{id}`). El HTML público es idéntico con o sin sesión
-   (ADR-037): si no hay sesión, el formulario de la ficha redirige a ingresar
-   con `volver` a esa ficha.
+   (ADR-037): si no hay sesión, el formulario de la ficha redirige a
+   **crear una cuenta** con `volver` a esa ficha. Quien ya tiene cuenta
+   pasa a ingresar desde ahí, con la misma vuelta.
 4. **El estimado del listado es el mismo de la ficha.** Sale de
    `estimated_unit_amount_minor` + `currency`. Etiquetado: no es un precio
    fijo. Si no hay número cargado, la celda es un em dash, no un cero. Los

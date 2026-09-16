@@ -1,10 +1,16 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { AccountErrorCode } from "@/src/application/accounts/outcome";
+import {
+  ACCOUNT_RETURN_MAX_AGE,
+  OAUTH_RETURN_COOKIE,
+} from "@/src/application/accounts/oauth-result";
 import { localizeHref, type Locale } from "@/src/i18n/locale";
 import { logger } from "@/src/infrastructure/logging/logger";
+import { registerPublicAccount } from "@/src/infrastructure/accounts/register";
 import { getSiteUrl } from "@/src/infrastructure/site-url";
 import { createServerSupabaseClient } from "@/src/infrastructure/supabase/server-client";
 
@@ -118,20 +124,20 @@ export async function signUp(
     return parsed;
   }
 
-  const client = await createServerSupabaseClient();
+  await rememberAccountReturn(textOf(formData, "volver"), parsed.locale);
 
-  if (client === null) {
-    return { phase: "error", code: "notConfigured", field: null };
-  }
-
-  const { error } = await client.auth.signUp({
+  const registered = await registerPublicAccount({
     email: parsed.email,
     password: parsed.password,
-    options: { emailRedirectTo: confirmationUrl(parsed.locale) },
+    locale: parsed.locale,
   });
 
-  if (error !== null) {
-    return authFailure("crear la cuenta", error, "failed");
+  if (!registered.ok) {
+    if (registered.error.code === "notConfigured") {
+      return { phase: "error", code: "notConfigured", field: null };
+    }
+
+    return authFailure("crear la cuenta", registered.error, "failed");
   }
 
   // `done` y no un redirect: lo que sigue no es una pantalla nueva sino la misma
@@ -139,6 +145,23 @@ export async function signUp(
   // Supabase contesta exactamente igual —sin identidades nuevas— para no revelarlo;
   // mostrar otra cosa acá desharía esa protección.
   return { phase: "done" };
+}
+
+async function rememberAccountReturn(candidate: string, locale: Locale): Promise<void> {
+  const safe = safeAccountReturn(candidate, locale);
+
+  if (safe === localizeHref("/cuenta", locale)) {
+    return;
+  }
+
+  const cookieStore = await cookies();
+
+  cookieStore.set(OAUTH_RETURN_COOKIE, safe, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: ACCOUNT_RETURN_MAX_AGE,
+  });
 }
 
 export async function signIn(

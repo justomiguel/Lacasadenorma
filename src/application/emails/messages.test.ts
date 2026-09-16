@@ -4,6 +4,7 @@ import { getContent } from "@/content/pack";
 import {
   ACCOUNT_EMAIL_KINDS,
   EMAIL_KINDS,
+  IDENTITY_EMAIL_KINDS,
   PLEDGE_EMAIL_KINDS,
   STAFF_EMAIL_KINDS,
   idempotencyKeyFor,
@@ -197,9 +198,14 @@ describe("la plantilla", () => {
     }
   });
 
-  it("las clases del puerto están cubiertas y no hay una undécima", () => {
+  it("las clases del puerto están cubiertas y no hay una suelta", () => {
     expect(
-      [...ACCOUNT_EMAIL_KINDS, ...PLEDGE_EMAIL_KINDS, ...STAFF_EMAIL_KINDS].sort(),
+      [
+        ...ACCOUNT_EMAIL_KINDS,
+        ...IDENTITY_EMAIL_KINDS,
+        ...PLEDGE_EMAIL_KINDS,
+        ...STAFF_EMAIL_KINDS,
+      ].sort(),
     ).toEqual([...EMAIL_KINDS].sort());
   });
 });
