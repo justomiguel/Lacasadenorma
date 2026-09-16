@@ -201,10 +201,10 @@ falta en especie en `/admin/catalogo`.
 
 ### Cargar el catálogo básico de la casa
 
-Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga una casa de 60 m²
-para una persona que vive sola, agrupada por categoría: materiales (ladrillos, cal, cemento, arena),
-aberturas, instalaciones (baño y cocina desde cero: tina, inodoro, mesada, grifería de cocina), electrodomésticos, muebles y ajuar. **Sin montos.** Las cantidades de
-mampostería están calculadas en el encabezado del archivo. Es idempotente por título y pide la
+Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga el cómputo de
+reconstrucción de ~102,5 m² (2 dormitorios, living, comedor, cocina, 2 baños y lavadero),
+agrupado por categoría, con estimados de esa lista. Es idempotente por título: inserta lo que
+falta, actualiza lo que coincide y despublica títulos que ya no están. No borra filas. Pide la
 campaña `casa-de-norma`.
 
 Correrlo en el SQL Editor del proyecto, entero. El `select` del final lista lo que quedó. Cada ítem
