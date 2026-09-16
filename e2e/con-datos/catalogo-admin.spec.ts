@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { esperarSinViolaciones } from "../soporte/axe";
 import { entrar, sufijoUnico } from "../soporte/backoffice";
@@ -9,7 +9,7 @@ import { cargarItemPublicado, ocultarItemSiExiste } from "../soporte/catalogo";
  * (ADR-050, FR-258, SC-215). El HTML de `/catalogo` no se toca.
  */
 
-function filaDe(page: import("@playwright/test").Page, titulo: string) {
+function filaDe(page: Page, titulo: string) {
   return page
     .getByRole("region", { name: /qué le falta a la casa/i })
     .getByRole("row")
