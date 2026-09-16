@@ -2,6 +2,7 @@ import { money, subtractMoney, type CurrencyCode } from "./money";
 import { ratioAsPercentage } from "./percentage";
 import type { MetricsCampaign, MetricsFacts, OwnerMetrics } from "./metrics";
 import { collectSignals } from "./metrics-signals";
+import { buildReach, collectReachSignals, type AnalyticsRead } from "./metrics-analytics";
 import {
   catalogByCategoryChart,
   catalogCoverageChart,
@@ -51,6 +52,7 @@ export function buildOwnerMetrics(
   campaign: MetricsCampaign | null,
   facts: MetricsFacts,
   now = new Date(),
+  analytics: AnalyticsRead = { status: "absent" },
 ): OwnerMetrics {
   const currency = primaryCurrency(campaign, facts);
   const receivedMinor = sumLive(facts.contributions, currency);
@@ -97,6 +99,16 @@ export function buildOwnerMetrics(
     emailHealth: emailHealthChart(facts),
     milestoneProgress: milestoneProgressChart(facts),
     newsCadence: newsCadenceChart(facts),
-    signals: collectSignals(campaign, facts, now),
+    reach: buildReach(analytics),
+    signals: [
+      ...collectSignals(campaign, facts, now),
+      ...collectReachSignals(analytics, now),
+    ].sort((a, b) => rankOf(a.severity) - rankOf(b.severity) || a.id.localeCompare(b.id)),
   };
+}
+
+function rankOf(severity: "danger" | "warning" | "info"): number {
+  if (severity === "danger") return 0;
+  if (severity === "warning") return 1;
+  return 2;
 }

@@ -1,6 +1,7 @@
 import { can } from "@/src/domain/permissions";
 import { buildOwnerMetrics } from "@/src/domain/metrics-build";
 import type { OwnerMetrics } from "@/src/domain/metrics";
+import type { AnalyticsRead } from "@/src/domain/metrics-analytics";
 
 import type { AdminDeps } from "./core";
 
@@ -35,14 +36,29 @@ export async function getOwnerMetrics(
     }
 
     const facts = await gateway.metrics.readSnapshot(campaign.id);
+    const analytics = await readReach(deps);
 
     return {
       status: "ok",
-      data: buildOwnerMetrics(campaign, facts, deps.now),
+      data: buildOwnerMetrics(campaign, facts, deps.now, analytics),
     };
   } catch (error) {
     logger.error("No se pudo leer el tablero de métricas", { error });
 
     return { status: "unavailable", reason: "error" };
+  }
+}
+
+async function readReach(deps: AdminDeps & { now?: Date }): Promise<AnalyticsRead> {
+  if (deps.analyticsStats === undefined) {
+    return { status: "absent" };
+  }
+
+  try {
+    return await deps.analyticsStats.read();
+  } catch (error) {
+    deps.logger.error("No se pudo leer el alcance del proveedor", { error });
+
+    return { status: "error" };
   }
 }

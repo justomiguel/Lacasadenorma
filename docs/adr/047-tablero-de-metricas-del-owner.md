@@ -1,6 +1,6 @@
 # ADR-047 · Tablero de métricas del owner, con gráficos propios y señales
 
-**Estado**: Aceptada · **Fecha**: 2026-09-16
+**Estado**: Aceptada; enmendada por ADR-048 · **Fecha**: 2026-09-16
 
 ## Contexto
 
@@ -30,9 +30,9 @@ Tres tensiones:
    `owner`. No es un recorte de `finanzas.leer`: junta colas operativas (donantes, reservas,
    correos, cuentas bancarias) que un auditor recorre sección por sección, y que un admin opera
    desde cada lista. El tablero es el lugar desde el que se decide qué mirar primero.
-2. **Los gráficos se dibujan en SVG propio**, en Server Components, con los tokens del tema. No se
-   instala una librería de charts. Cada gráfico es una figura con título, y la tabla de datos
-   acompaña al dibujo: un gráfico que sólo se distingue por color no existe para quien no lo ve.
+2. **Los gráficos se dibujan con Recharts** (ADR-048), en un componente cliente, con los tokens
+   del tema. Cada gráfico es una figura con título, y la tabla de datos acompaña al dibujo: un
+   gráfico que sólo se distingue por color no existe para quien no lo ve.
 3. **Las señales se derivan en el dominio**, con `now` inyectable. Un umbral que ya existe se
    reutiliza: treinta días de conciliación (FR-010), tres días del recordatorio de reserva
    (`PLEDGE_REMINDER_DAYS`). Un gráfico puede llevar una **señal de referencia** (promedio
@@ -45,28 +45,27 @@ Tres tensiones:
    (cero reservas vencidas habiendo otras reservas) sí se muestra: es un cero observado, no un
    ejemplo.
 
-La analítica de eventos del sitio (`ayudar_click`, `dato_copiado`, …) **no** se replica acá: no
-está en la base, y copiarla rompería ADR-010.
+La analítica de visitas **no** se copia a Postgres. El tablero la lee del Stats API del
+proveedor cuando hay clave (ADR-048). Sin clave, la sección se omite.
 
 ## Alternativas descartadas
 
 | Alternativa | Por qué no |
 |---|---|
-| Librería de gráficos | Dependencia de UI para un panel que ve una persona. El SVG propio cabe en dos componentes y usa los tokens |
+| Librería de gráficos | Superada por ADR-048: el pedido pide librería; la tabla al pie se queda |
 | Abrirlo a `admin` y `auditor` | El pedido es del owner. Un auditor verifica sección por sección; un admin opera las listas. Ampliar el permiso es un cambio de una línea el día que haga falta |
-| Guardar eventos de visita en Postgres para graficarlos | ADR-010 lo descartó: escribe en cada visita y mezcla alcance con el libro |
-| Un iframe a Plausible/Umami | El tablero mezclaría dos fuentes con dos privilegios. La analítica de visitas se mira en el proveedor, no acá |
+| Guardar eventos de visita en Postgres para graficarlos | ADR-010 lo descartó: escribe en cada visita y mezcla alcance con el libro. ADR-048 lee el proveedor, no la base |
+| Un iframe a Plausible/Umami | El tablero mezclaría dos fuentes con dos privilegios. ADR-048 lee el Stats API en el servidor |
 | Reusar `listPledges` / `listAccounts` | Traen correo y notas. El snapshot tiene su puerto para no pagar ese costo ni ese riesgo |
 
 ## Consecuencias
 
 **Buenas.** El owner ve el pulso y las excepciones en una pantalla. El dominio de señales se
-prueba sin base. No hay dependencia nueva. Los correos no viajan al HTML del tablero.
+prueba sin base. Los correos no viajan al HTML del tablero.
 
 **Malas y aceptadas.**
 
 - Quien no es `owner` no ve el tablero, aunque ya pueda leer las mismas cifras por separado.
-- Sin proveedor de analítica configurado, el tablero no habla de visitas. Es coherente con
-  ADR-010 y hay que resistir la tentación de “sólo un pixel”.
-- Los gráficos SVG propios no tienen zoom ni tooltips. En un tablero de una campaña, la tabla al
-  pie alcanza.
+- Sin clave de Stats API, el tablero no habla de visitas aunque el script público esté midiendo.
+  La señal lo dice. No se finge un 0.
+- Recharts agrega hover. La tabla al pie sigue siendo la fuente para quien no lo ve (ADR-048).

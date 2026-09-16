@@ -89,6 +89,7 @@ export default defineConfig([
                 "@/components/*",
                 "@/src/infrastructure/*",
                 "@/src/application/*",
+                "recharts",
               ],
               message:
                 "domain/ no puede depender de UI, framework ni infraestructura (ADR-005).",
@@ -108,7 +109,7 @@ export default defineConfig([
         {
           patterns: [
             {
-              group: ["@/src/infrastructure/*", "@/app/*", "@/components/*"],
+              group: ["@/src/infrastructure/*", "@/app/*", "@/components/*", "recharts"],
               message:
                 "application/ depende de puertos de domain, no de infrastructure ni de UI (ADR-005).",
             },
@@ -216,6 +217,32 @@ export default defineConfig([
               group: ["@/src/infrastructure/supabase/*"],
               message:
                 "Los componentes no acceden a la base de datos: usan casos de uso (ADR-005).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: [
+      "components/screens/**/*.{ts,tsx}",
+      "components/campaign/**/*.{ts,tsx}",
+      "components/catalog/**/*.{ts,tsx}",
+      "components/site/**/*.{ts,tsx}",
+      "app/(es)/**/*.{ts,tsx}",
+      "app/(en)/**/*.{ts,tsx}",
+    ],
+    ignores: ["app/(es)/admin/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "recharts",
+              message:
+                "Recharts es del backoffice (ADR-048). El sitio público no lo importa.",
             },
           ],
         },

@@ -47,6 +47,37 @@ libro, al menos un gráfico con su tabla, y las señales que el fixture dispara.
    al menos una observación, **Then** cada familia tiene su gráfico (pipeline, canal, cobertura
    del catálogo, aprobaciones, salud de correo, hitos, novedades). La especie se cuenta en
    unidades, nunca en pesos (ADR-031).
+5. **Given** una clave de Stats API y un proveedor que responde, **When** abre `/admin/metricas`,
+   **Then** ve un panel de alcance (visitantes, vistas, rebote, duración, páginas, fuentes,
+   dispositivos, países y eventos de ADR-010) con gráficos de librería y tabla. **Given** que
+   no hay clave o la lectura falla, **Then** ese panel se omite y una señal lo dice; el libro
+   no se esconde.
+
+---
+
+### User Story 3 - Ver si alguien llega (Priority: P1)
+
+La dueña también pregunta si el sitio se visita: cuánta gente, de dónde, qué páginas, si
+tocan Ayudar o copian un dato. Eso ya lo mide el proveedor (ADR-010). El tablero lo **lee**,
+no lo duplica.
+
+**Why this priority**: "métricas de vistas y demás analíticas que todo sitio debería tener"
+es el segundo pedido, y sin él el tablero sólo habla de plata.
+
+**Independent Test**: un `AnalyticsRead` de tesoro produce gráficos de alcance; `{ status:
+"absent" }` no dibuja ceros; el caso de uso sigue mostrando el libro si el Stats API falla.
+
+**Acceptance Scenarios**:
+
+1. **Given** `ANALYTICS_API_KEY` y un Stats API que responde, **When** se arma el tablero,
+   **Then** hay cifras de visitantes y vistas de treinta días, una serie diaria, y barras de
+   páginas, fuentes, dispositivos, países y eventos semánticos cuando hay observaciones.
+2. **Given** que no hay clave, **When** se arma el tablero, **Then** no hay gráfico de visitas
+   y una señal `info` dice que el alcance no se puede leer acá.
+3. **Given** clave configurada y la lectura falla, **When** se arma el tablero, **Then** el
+   libro sigue, y una señal `warning` dice que el alcance no se pudo leer.
+4. **Given** un snapshot con cero vistas en los últimos siete días, **When** hay observaciones
+   en el período, **Then** una señal `warning` avisa que el sitio está quieto.
 
 ---
 
@@ -101,10 +132,10 @@ actúa.
   ocultar el enlace al resto de los roles.
 - **FR-603**: El tablero MUST mostrar el libro interno (recibido y gastado no anulados, saldo,
   objetivo interno si está) y MUST NOT publicar esos montos en ninguna página pública.
-- **FR-604**: MUST haber gráficos SVG propios —sin librería nueva— para cada familia con
-  observaciones: flujo semanal, acumulado contra el objetivo, gastos por categoría, pipeline de
-  reservas, canal de cobertura, cobertura del catálogo, aprobaciones, correos, hitos,
-  novedades.
+- **FR-604**: MUST haber gráficos —Recharts, ADR-048— para cada familia con observaciones:
+  flujo semanal, acumulado contra el objetivo, gastos por categoría, pipeline de reservas,
+  canal de cobertura, cobertura del catálogo, aprobaciones, correos, hitos, novedades, y el
+  alcance cuando el proveedor responde.
 - **FR-605**: Cada gráfico MUST ir acompañado de una tabla con las mismas cifras. El color MUST
   NOT ser el único indicador (WCAG 1.4.1).
 - **FR-606**: El dominio MUST derivar señales con umbral explícito y `now` inyectable. Donde hay
@@ -114,9 +145,16 @@ actúa.
 - **FR-608**: El snapshot del tablero MUST NOT incluir correos, nombres, notas ni destinatarios.
 - **FR-609**: Las cantidades en especie MUST NOT convertirse a dinero ni sumarse al libro
   (ADR-031).
-- **FR-610**: Los eventos de ADR-010 MUST NOT aparecer en este tablero.
+- **FR-610**: Los eventos de ADR-010 MUST aparecer en el tablero sólo como totales que el
+  proveedor ya agregó. MUST NOT copiarse a Postgres ni emitirse de nuevo desde el servidor.
 - **FR-611**: `/admin` MUST, para `owner`, resumir las señales de tono `warning` y `danger` con
   enlace al tablero. Si la lectura falla, MUST decirlo.
+- **FR-612**: El tablero MUST leer el alcance (visitantes, vistas, rebote, duración, páginas,
+  fuentes, dispositivos, países, eventos) del Stats API del proveedor cuando hay
+  `ANALYTICS_API_KEY`. Sin clave, MUST omitir la sección y decirlo.
+- **FR-613**: Un fallo del Stats API MUST NOT esconder el libro. MUST producir una señal, no un
+  tablero en cero de visitas.
+- **FR-614**: `ANALYTICS_API_KEY` MUST ser de servidor. MUST NOT llevar prefijo `NEXT_PUBLIC_`.
 
 ---
 
@@ -128,7 +166,10 @@ actúa.
   Sin sesión, la ruta manda a `/admin/login` igual que el resto de las secciones.
 - **SC-603**: Los tests de dominio cubren cada señal por el motivo correcto (vistos en rojo
   antes) y la agregación semanal no mezcla monedas ni incluye anulados.
-- **SC-604**: `npm run verify` en verde. No hay dependencia nueva de gráficos.
+- **SC-604**: `npm run verify` en verde. Recharts está pinneado a versión exacta y no se importa
+  desde una página pública.
+- **SC-605**: Un `AnalyticsRead` ausente no produce gráfico de visitas. Uno con observaciones
+  produce serie y barras. Un error de Stats API no esconde el libro.
 
 ---
 
@@ -137,7 +178,7 @@ actúa.
 | Decisión | Valor | Por qué |
 |---|---|---|
 | Quién lo ve | sólo `owner` | Es el pedido; ampliar el permiso es barato |
-| Gráficos | SVG propio | Constitución: una dependencia se justifica contra escribir el código |
-| Analítica de visitas | fuera | ADR-010: no está en la base y no se copia |
+| Gráficos | Recharts 3 + tabla | Pedido de librería; WCAG 1.4.1 se queda (ADR-048) |
+| Analítica de visitas | Stats API del proveedor | ADR-010: no está en la base y no se copia |
 | Especie | unidades | ADR-031 |
 | Semanas vacías dentro de las últimas 12 | sí, si hubo algún movimiento en la ventana | Cero observado, no ejemplo |

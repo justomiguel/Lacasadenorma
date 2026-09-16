@@ -25,7 +25,7 @@ import path from "node:path";
 import process from "node:process";
 
 const FORBIDDEN_IN_PUBLIC_NAMES =
-  /^NEXT_PUBLIC_.*(SECRET|SERVICE_ROLE|PRIVATE|PASSWORD|TOKEN)/;
+  /^NEXT_PUBLIC_.*(SECRET|SERVICE_ROLE|PRIVATE|PASSWORD|TOKEN|API_KEY)/;
 
 const SOURCE_DIRS = ["app", "components", "src", "content"];
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".mts"]);
@@ -79,6 +79,7 @@ for (const dir of SOURCE_DIRS) {
 // ── 3: el bundle, si existe ──────────────────────────────────────────────────
 
 const secret = process.env.SUPABASE_SECRET_KEY?.trim();
+const analyticsKey = process.env.ANALYTICS_API_KEY?.trim();
 const bundleFiles = await filesUnder(CLIENT_BUNDLE_DIR, (name) => name.endsWith(".js"));
 
 if (bundleFiles.length === 0) {
@@ -89,6 +90,14 @@ if (bundleFiles.length === 0) {
 
     if (secret !== undefined && secret.length > 16 && code.includes(secret)) {
       problems.push(`${file}: contiene el valor de SUPABASE_SECRET_KEY.`);
+    }
+
+    if (
+      analyticsKey !== undefined &&
+      analyticsKey.length > 16 &&
+      code.includes(analyticsKey)
+    ) {
+      problems.push(`${file}: contiene el valor de ANALYTICS_API_KEY.`);
     }
 
     // Las claves nuevas de Supabase llevan prefijo por tipo. `sb_secret_` en un

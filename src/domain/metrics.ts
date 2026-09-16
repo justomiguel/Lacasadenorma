@@ -6,6 +6,7 @@ import type { Campaign } from "./entities/campaign";
 import type { CoverChannel } from "./cover";
 import type { PledgeStatus } from "./pledge-status";
 import type { CurrencyCode, Money } from "./money";
+import type { OwnerReach } from "./metrics-analytics";
 
 /**
  * Los hechos que el tablero puede medir.
@@ -168,6 +169,7 @@ export interface OwnerMetrics {
   readonly emailHealth: BarChart | null;
   readonly milestoneProgress: BarChart | null;
   readonly newsCadence: BarChart | null;
+  readonly reach: OwnerReach;
   readonly signals: readonly MetricSignal[];
 }
 

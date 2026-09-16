@@ -16,8 +16,8 @@ export default async function AdminMetricasPage() {
 
   const heading = (
     <AdminHeading title="Métricas">
-      Todo lo que se puede medir de la campaña, con gráficos y las señales que piden una
-      decisión. Los montos viven sólo acá. Afuera se hablan en porcentajes.
+      Todo lo que se puede medir de la campaña y del sitio, con gráficos y las señales que
+      piden una decisión. Los montos viven sólo acá. Afuera se hablan en porcentajes.
     </AdminHeading>
   );
 

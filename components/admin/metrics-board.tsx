@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/design-system/callout";
 import { Panel } from "@/components/admin/shell";
 
 import { MetricsBarChart, MetricsSeriesChart } from "./metrics-charts";
+import { MetricsReach } from "./metrics-reach";
 import { MetricsSignalList } from "./metrics-signals";
 
 /**
@@ -70,6 +71,8 @@ export function MetricsBoard({ metrics }: { metrics: OwnerMetrics }) {
           <Count label="Cuentas por revisar" value={headline.pendingDonorCount} />
         </dl>
       </Panel>
+
+      <MetricsReach reach={metrics.reach} />
 
       {hasCharts ? (
         <Panel id="graficos" title="Lo medible">

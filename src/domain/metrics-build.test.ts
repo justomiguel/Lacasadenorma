@@ -261,4 +261,30 @@ describe("buildOwnerMetrics", () => {
     expect(metrics.headline.spent).toEqual(money(10_000_00, "ARS"));
     expect(metrics.headline.unpublishedExpenseCount).toBe(1);
   });
+
+  it("un fallo de alcance no esconde el libro ni inventa visitas", () => {
+    const metrics = buildOwnerMetrics(
+      CAMPAIGN,
+      facts({
+        contributions: [
+          {
+            amountMinor: 10_000_00,
+            currency: "ARS",
+            receivedAt: "2026-09-02",
+            voidedAt: null,
+          },
+        ],
+        paymentMethods: [{ publishedAt: "2026-09-01T00:00:00.000Z" }],
+      }),
+      NOW,
+      { status: "error" },
+    );
+
+    expect(metrics.headline.received).toEqual(money(10_000_00, "ARS"));
+    expect(metrics.reach.status).toBe("error");
+    expect(metrics.reach.headline).toBeNull();
+    expect(metrics.signals.some((signal) => signal.id === "analytics_unavailable")).toBe(
+      true,
+    );
+  });
 });

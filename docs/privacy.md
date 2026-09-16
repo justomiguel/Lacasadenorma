@@ -90,6 +90,11 @@ El adaptador no instala ningún SDK. Llama la global `plausible(name, { props })
 contrato que implementan Plausible, Umami y varios más. Elegir proveedor es cambiar dos variables,
 no cambiar código.
 
+El tablero del owner (`/admin/metricas`) puede **leer** los totales que el proveedor ya agregó,
+con `ANALYTICS_API_KEY` en el servidor (ADR-048). Esa lectura no recolecta nada nuevo: pide
+agregados que el proveedor ya tiene. Sin la clave, el tablero omite el alcance. Las visitas
+siguen sin escribirse en Postgres (ADR-010).
+
 Al elegirlo hay tres obligaciones que no son técnicas:
 
 1. **Verificar que no ponga cookies ni identificadores persistentes.** La página pública promete que

@@ -1,99 +1,113 @@
-import { formatMoney, type CurrencyCode } from "@/src/domain/money";
-import type { BarChart, ChartUnit, SeriesChart } from "@/src/domain/metrics";
+"use client";
 
-function formatValue(
-  unit: ChartUnit,
-  value: number,
-  currency: CurrencyCode | null,
-): string {
-  if (unit === "money" && currency !== null) {
-    return formatMoney({ amountMinor: value, currency });
-  }
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-  return new Intl.NumberFormat("es-AR").format(value);
-}
+import type {
+  BarChart as BarChartData,
+  ChartUnit,
+  SeriesChart,
+} from "@/src/domain/metrics";
+import type { CurrencyCode } from "@/src/domain/money";
 
-const SERIES_FILL: Record<string, string> = {
-  inflow: "var(--color-forest)",
-  outflow: "var(--color-olive)",
-  raised: "var(--color-forest)",
-};
+import { ChartTable, formatChartValue, seriesFill } from "./metrics-chart-table";
+
+const TICK = { fill: "var(--color-ink-muted)", fontSize: 14 } as const;
+const SERIES_HEIGHT = 220;
+const BAR_ROW = 40;
+const BAR_MIN_HEIGHT = 192;
 
 /**
- * Un gráfico de barras horizontales más la tabla de las mismas cifras.
- * El color no es el único indicador: cada barra tiene su cifra (FR-605).
+ * Gráficos del tablero: Recharts con los tokens del tema, y la tabla de las
+ * mismas cifras al pie (ADR-048, FR-605). Sin animación de entrada: el hover
+ * es la única interactividad.
  */
-export function MetricsBarChart({ chart }: { chart: BarChart }) {
-  const max = Math.max(
-    ...chart.bars.map((bar) => bar.value),
-    ...chart.signals.map((s) => s.value),
-    1,
-  );
+
+export function MetricsBarChart({ chart }: { chart: BarChartData }) {
+  const height = Math.max(BAR_MIN_HEIGHT, chart.bars.length * BAR_ROW);
 
   return (
     <figure>
-      <figcaption className="font-ui text-subheading font-medium text-ink">
+      <figcaption
+        id={`${chart.id}-title`}
+        className="font-ui text-subheading font-medium text-ink"
+      >
         {chart.title}
       </figcaption>
-      <svg
+      <div
         role="img"
         aria-labelledby={`${chart.id}-title`}
-        viewBox={`0 0 640 ${String(chart.bars.length * 36 + 8)}`}
-        className="mt-md h-auto w-full"
+        className="mt-md w-full"
+        style={{ height }}
       >
-        <title id={`${chart.id}-title`}>{chart.title}</title>
-        {chart.bars.map((bar, index) => {
-          const y = index * 36 + 4;
-          const width = Math.max(4, (bar.value / max) * 420);
-
-          return (
-            <g key={bar.id}>
-              <text x="0" y={y + 16} className="fill-ink font-ui text-caption">
-                {bar.label}
-              </text>
-              <rect
-                x="200"
-                y={y + 4}
-                width={width}
-                height="20"
-                fill="var(--color-forest)"
-              />
-              <text x={208 + width} y={y + 18} className="fill-ink font-ui text-caption">
-                {formatValue(chart.unit, bar.value, chart.currency)}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+        <ResponsiveContainer width="100%" height="100%" minWidth={280} minHeight={120}>
+          <BarChart
+            accessibilityLayer
+            data={[...chart.bars]}
+            layout="vertical"
+            margin={{ top: 8, right: 16, bottom: 0, left: 8 }}
+          >
+            <CartesianGrid stroke="var(--color-rule)" horizontal={false} />
+            <XAxis type="number" tick={TICK} axisLine={false} tickLine={false} />
+            <YAxis
+              type="category"
+              dataKey="label"
+              width={132}
+              tick={TICK}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
+              isAnimationActive={false}
+              content={(props) => (
+                <ChartHint
+                  active={props.active}
+                  label={typeof props.label === "string" ? props.label : undefined}
+                  payload={hintPayload(props.payload)}
+                  unit={chart.unit}
+                  currency={chart.currency}
+                />
+              )}
+            />
+            <Bar
+              dataKey="value"
+              name={chart.unit === "money" ? "Monto" : "Cantidad"}
+              fill="var(--color-forest)"
+              isAnimationActive={false}
+              maxBarSize={20}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       <ChartTable
         columns={["Categoría", chart.unit === "money" ? "Monto" : "Cantidad"]}
         rows={chart.bars.map((bar) => [
           bar.label,
-          formatValue(chart.unit, bar.value, chart.currency),
+          formatChartValue(chart.unit, bar.value, chart.currency),
         ])}
       />
     </figure>
   );
 }
 
-/**
- * Flujo o acumulado: barras agrupadas y una línea de señal cuando hay umbral.
- */
 export function MetricsSeriesChart({ chart }: { chart: SeriesChart }) {
-  const height = 220;
-  const width = 640;
-  const left = 16;
-  const bottom = 36;
-  const top = 12;
-  const innerWidth = width - left - 16;
-  const innerHeight = height - bottom - top;
-  const slot = innerWidth / chart.points.length;
-  const maxima = chart.points.flatMap((point) => Object.values(point.values));
-  const max = Math.max(...maxima, ...chart.signals.map((signal) => signal.value), 1);
+  const data = chart.points.map((point) => ({ label: point.label, ...point.values }));
 
   return (
     <figure>
-      <figcaption className="font-ui text-subheading font-medium text-ink">
+      <figcaption
+        id={`${chart.id}-title`}
+        className="font-ui text-subheading font-medium text-ink"
+      >
         {chart.title}
       </figcaption>
       <ul className="mt-xs flex flex-wrap gap-md font-ui text-caption text-ink-muted">
@@ -101,7 +115,7 @@ export function MetricsSeriesChart({ chart }: { chart: SeriesChart }) {
           <li key={series.id} className="inline-flex items-center gap-xs">
             <span
               className="inline-block size-sm"
-              style={{ background: SERIES_FILL[series.id] ?? "var(--color-forest)" }}
+              style={{ background: seriesFill(series.id) }}
               aria-hidden="true"
             />
             {series.label}
@@ -111,61 +125,68 @@ export function MetricsSeriesChart({ chart }: { chart: SeriesChart }) {
           <li key={signal.id}>Señal · {signal.label}</li>
         ))}
       </ul>
-      <svg
+      <div
         role="img"
         aria-labelledby={`${chart.id}-title`}
-        viewBox={`0 0 ${String(width)} ${String(height)}`}
         className="mt-md w-full"
+        style={{ height: SERIES_HEIGHT }}
       >
-        <title id={`${chart.id}-title`}>{chart.title}</title>
-        {chart.signals.map((signal) => {
-          const y = top + innerHeight - (signal.value / max) * innerHeight;
-
-          return (
-            <g key={signal.id}>
-              <line
-                x1={left}
-                x2={width - 16}
-                y1={y}
-                y2={y}
+        <ResponsiveContainer width="100%" height="100%" minWidth={280} minHeight={120}>
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{ top: 8, right: 8, bottom: 0, left: 8 }}
+          >
+            <CartesianGrid stroke="var(--color-rule)" vertical={false} />
+            <XAxis
+              dataKey="label"
+              tick={TICK}
+              axisLine={false}
+              tickLine={false}
+              minTickGap={24}
+            />
+            <YAxis tick={TICK} axisLine={false} tickLine={false} width={48} />
+            <Tooltip
+              cursor={{ fill: "var(--color-sage)", fillOpacity: 0.35 }}
+              isAnimationActive={false}
+              content={(props) => (
+                <ChartHint
+                  active={props.active}
+                  label={typeof props.label === "string" ? props.label : undefined}
+                  payload={hintPayload(props.payload)}
+                  unit={chart.unit}
+                  currency={chart.currency}
+                />
+              )}
+            />
+            {chart.signals.map((signal) => (
+              <ReferenceLine
+                key={signal.id}
+                y={signal.value}
                 stroke="var(--color-warning)"
                 strokeDasharray="6 4"
-                strokeWidth="2"
+                ifOverflow="extendDomain"
               />
-            </g>
-          );
-        })}
-        {chart.points.map((point, index) => {
-          const x = left + index * slot;
-          const barWidth = Math.max(4, (slot - 8) / chart.series.length);
-
-          return (
-            <g key={point.key}>
-              {chart.series.map((series, seriesIndex) => {
-                const value = point.values[series.id] ?? 0;
-                const barHeight = (value / max) * innerHeight;
-
-                return (
-                  <rect
-                    key={series.id}
-                    x={x + 4 + seriesIndex * barWidth}
-                    y={top + innerHeight - barHeight}
-                    width={barWidth}
-                    height={barHeight}
-                    fill={SERIES_FILL[series.id] ?? "var(--color-forest)"}
-                  />
-                );
-              })}
-            </g>
-          );
-        })}
-      </svg>
+            ))}
+            {chart.series.map((series) => (
+              <Bar
+                key={series.id}
+                dataKey={series.id}
+                name={series.label}
+                fill={seriesFill(series.id)}
+                isAnimationActive={false}
+                maxBarSize={28}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       <ChartTable
-        columns={["Semana", ...chart.series.map((series) => series.label)]}
+        columns={["Período", ...chart.series.map((series) => series.label)]}
         rows={chart.points.map((point) => [
           point.label,
           ...chart.series.map((series) =>
-            formatValue(chart.unit, point.values[series.id] ?? 0, chart.currency),
+            formatChartValue(chart.unit, point.values[series.id] ?? 0, chart.currency),
           ),
         ])}
       />
@@ -173,41 +194,49 @@ export function MetricsSeriesChart({ chart }: { chart: SeriesChart }) {
   );
 }
 
-function ChartTable({
-  columns,
-  rows,
+function hintPayload(
+  payload: readonly { name?: unknown; value?: unknown }[] | undefined,
+): readonly { name: string; value: number }[] {
+  if (payload === undefined) {
+    return [];
+  }
+
+  return payload.flatMap((entry) => {
+    if (typeof entry.name !== "string" || typeof entry.value !== "number") {
+      return [];
+    }
+
+    return [{ name: entry.name, value: entry.value }];
+  });
+}
+
+function ChartHint({
+  active,
+  payload,
+  label,
+  unit,
+  currency,
 }: {
-  columns: readonly string[];
-  rows: readonly (readonly string[])[];
+  active: boolean | undefined;
+  payload: readonly { name: string; value: number }[];
+  label: string | undefined;
+  unit: ChartUnit;
+  currency: CurrencyCode | null;
 }) {
+  if (active !== true || payload.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="mt-lg overflow-x-auto">
-      <table className="w-full border-t border-rule font-ui text-small text-ink">
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={column}
-                scope="col"
-                className="border-b border-rule py-xs text-left font-medium text-ink-muted"
-              >
-                {column}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.join("|")} className="border-b border-rule">
-              {row.map((cell, index) => (
-                <td key={`${row[0] ?? ""}-${String(index)}`} className="py-xs">
-                  {cell}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="border border-rule bg-paper px-sm py-xs font-ui text-caption text-ink">
+      {label === undefined ? null : <p className="font-medium">{label}</p>}
+      <ul>
+        {payload.map((entry) => (
+          <li key={entry.name}>
+            {entry.name}: {formatChartValue(unit, entry.value, currency)}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

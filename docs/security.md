@@ -319,6 +319,8 @@ formulario, ese comentario deja de ser cierto.
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sí, a propósito | Cliente de Supabase. La protección es RLS, no el secreto de esta clave |
 | `NEXT_PUBLIC_SITE_URL` | Sí | Canónicas, sitemap, JSON-LD, OpenGraph |
 | `NEXT_PUBLIC_ANALYTICS_*` | Sí | Script del proveedor y su origen en la CSP |
+| `ANALYTICS_API_KEY` | **No** | Stats API, sólo para armar `/admin/metricas` (ADR-048) |
+| `ANALYTICS_API_URL` | **No** | Origen del Stats API si no coincide con el del script |
 | `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink` en el servidor, si el hook de correo no está. Nunca para la base |
 | `RESEND_API_KEY` | **No** | `ResendSender` y, de respaldo, SMTP de Auth |
 | `SEND_EMAIL_HOOK_SECRET` | **No** | Verificar la firma del hook `send_email` |
@@ -329,10 +331,12 @@ La clave secreta no tiene prefijo `NEXT_PUBLIC_`. En `src/` se lee **sólo** en
 `src/infrastructure/supabase/auth-admin.ts` para emitir el enlace de confirmación.
 Eso lo verifica `npm run check:secrets`, que hace tres cosas:
 
-1. Rechaza nombres con forma de secreto que lleven prefijo `NEXT_PUBLIC_`.
+1. Rechaza nombres con forma de secreto que lleven prefijo `NEXT_PUBLIC_` (`SECRET`,
+   `SERVICE_ROLE`, `PRIVATE`, `PASSWORD`, `TOKEN`, `API_KEY`).
 2. Rechaza que un módulo `"use client"` lea una variable de entorno sin ese prefijo.
-3. **Busca el valor de `SUPABASE_SECRET_KEY`, la cadena `sb_secret_` y `"service_role"` dentro de los
-   archivos de `.next/static`**, o sea el JavaScript que se le sirve al navegador.
+3. **Busca el valor de `SUPABASE_SECRET_KEY`, el de `ANALYTICS_API_KEY`, la cadena
+   `sb_secret_` y `"service_role"` dentro de los archivos de `.next/static`**, o sea el
+   JavaScript que se le sirve al navegador.
 
 El punto 3 es el que importa, y por eso el script corre **después** del `build` en CI. Sin build previo
 avisa que omite esa revisión y sale en verde: la comprobación más importante quedaría desactivada sin

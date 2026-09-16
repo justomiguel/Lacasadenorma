@@ -9,6 +9,7 @@ import {
 import { can, type Permission } from "@/src/domain/permissions";
 import type { AppRole } from "@/src/domain/entities/role";
 import type { AdminGateway } from "@/src/domain/ports/admin";
+import type { AnalyticsStatsPort } from "@/src/domain/ports/analytics-stats";
 import type { Logger } from "@/src/domain/ports/logger";
 
 /**
@@ -48,6 +49,8 @@ export interface AdminDeps {
   readonly gateway: AdminGateway;
   readonly logger: Logger;
   readonly actor: Actor | null;
+  /** Ausente: el tablero omite el alcance. Un fallo no tumba el libro (ADR-048). */
+  readonly analyticsStats?: AnalyticsStatsPort;
 }
 
 export type FieldErrors = Readonly<Record<string, string>>;
