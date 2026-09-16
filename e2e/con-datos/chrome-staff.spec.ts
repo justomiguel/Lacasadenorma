@@ -23,7 +23,12 @@ test.describe("chrome · Backoffice", () => {
 
     await expect(page).toHaveURL(/\/admin\/sin-permiso$/);
 
-    for (const ruta of ["/admin/aportes", "/admin/gastos", "/admin/cuentas"]) {
+    for (const ruta of [
+      "/admin/aportes",
+      "/admin/gastos",
+      "/admin/cuentas",
+      "/admin/metricas",
+    ]) {
       await page.goto(ruta);
       await expect(page, `${ruta} se abrió para una cuenta sin rol`).toHaveURL(
         /\/admin\/sin-permiso$/,

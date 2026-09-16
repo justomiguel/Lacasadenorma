@@ -23,7 +23,7 @@ export function AdminNav({ sections }: { sections: readonly AdminSection[] }) {
     <nav aria-label="Secciones del backoffice" className="border-t border-rule">
       {/*
        * Desplazamiento horizontal en el teléfono en lugar de un menú
-       * desplegable: siete secciones entran en dos gestos, y un menú agrega un
+       * desplegable: las secciones entran en dos gestos, y un menú agrega un
        * toque a cada navegación de un trabajo que se hace muchas veces por día.
        */}
       <ul className="mx-auto flex max-w-page gap-lg overflow-x-auto px-md py-xs sm:px-lg">

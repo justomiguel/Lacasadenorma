@@ -3,9 +3,11 @@ import Link from "next/link";
 import { ADMIN_SECTIONS } from "@/components/admin/nav";
 import { AdminHeading, Panel } from "@/components/admin/shell";
 import { Callout } from "@/components/design-system/callout";
+import { MetricsSignalList } from "@/components/admin/metrics-signals";
 import { getTransparencyReport } from "@/src/application/use-cases/get-transparency-report";
 import { formatMoney } from "@/src/domain/money";
 import { formatPercentage } from "@/src/domain/percentage";
+import { getOwnerMetrics } from "@/src/application/admin/metrics";
 import { can } from "@/src/domain/permissions";
 import { getAdminContext } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
@@ -39,6 +41,15 @@ export default async function AdminPanelPage() {
     can(viewer.role, section.permission),
   );
 
+  const ownerBoard =
+    context === null || !can(viewer.role, "metricas.leer")
+      ? null
+      : await getOwnerMetrics({
+          gateway: context.gateway,
+          logger,
+          actor: { userId: viewer.userId, role: viewer.role },
+        });
+
   return (
     <>
       <AdminHeading title="Estado de la campaña">
@@ -71,6 +82,29 @@ export default async function AdminPanelPage() {
             ) : (
               "Quien administra la campaña tiene que crearla en Objetivo."
             )}
+          </p>
+        </Callout>
+      ) : null}
+
+      {ownerBoard?.status === "ok" ? (
+        <Panel
+          id="senales"
+          title="Señales"
+          description="Lo que pide una decisión. El tablero completo está en Métricas."
+        >
+          <MetricsSignalList
+            signals={ownerBoard.data.signals.filter(
+              (signal) => signal.severity === "danger" || signal.severity === "warning",
+            )}
+            empty="No hay excepciones urgentes. El detalle y los gráficos están en Métricas."
+          />
+        </Panel>
+      ) : null}
+
+      {ownerBoard?.status === "unavailable" && ownerBoard.reason === "error" ? (
+        <Callout tone="danger" title="No se pudieron leer las señales">
+          <p>
+            La lectura del tablero falló. El detalle quedó en el registro del servidor.
           </p>
         </Callout>
       ) : null}

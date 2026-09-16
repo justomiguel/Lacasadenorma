@@ -38,6 +38,8 @@ export const PERMISSIONS = [
   "auditoria.leer",
   /** Otorgar y quitar roles. */
   "roles.escribir",
+  /** Ver el tablero de métricas: libro, gráficos y señales. Sólo owner. */
+  "metricas.leer",
   /** Crear, editar y publicar ítems del catálogo de donaciones: qué falta y cuánto. */
   "catalogo.escribir",
   /** Ver quién se comprometió a donar qué, con su contacto y su nota privada. */
@@ -56,6 +58,10 @@ export type Permission = (typeof PERMISSIONS)[number];
  * justifica sola: quien pueda cambiar un CBU puede desviar todos los aportes de la
  * campaña. No hay razón para que un `admin` lo pueda hacer.
  *
+ * `metricas.leer` es el mismo privilegio de recorte: junta colas operativas (donantes,
+ * reservas, correos, cuentas) que el resto recorre sección por sección. El tablero
+ * es de `owner` (ADR-047).
+ *
  * `donaciones.leer` tiene la misma forma que `finanzas.leer` —`auditor`, `admin`,
  * `owner`, y `editor` afuera— y por la misma razón: `editor` está por encima de
  * `auditor` en la jerarquía, así que cualquier permiso resuelto por rango le
@@ -72,6 +78,7 @@ const RULES: Record<Permission, readonly AppRole[]> = {
   "hitos.escribir": ["editor", "admin", "owner"],
   "campana.escribir": ["admin", "owner"],
   "cuentas.escribir": ["owner"],
+  "metricas.leer": ["owner"],
   "auditoria.leer": ["auditor", "admin", "owner"],
   "roles.escribir": ["owner"],
   "catalogo.escribir": ["editor", "admin", "owner"],

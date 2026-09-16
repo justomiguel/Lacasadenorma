@@ -111,6 +111,7 @@ enviarse es peor que un formulario que no aparece.
 | `cuentas.escribir` | · | · | · | · | ✓ |
 | `auditoria.leer` | · | ✓ | · | ✓ | ✓ |
 | `roles.escribir` | · | · | · | · | ✓ |
+| `metricas.leer` | · | · | · | · | ✓ |
 | `catalogo.escribir` | · | · | ✓ | ✓ | ✓ |
 | `donaciones.leer` | · | ✓ | · | ✓ | ✓ |
 | `donaciones.escribir` | · | · | · | ✓ | ✓ |
@@ -133,6 +134,10 @@ aplicada a datos personales, y su espejo en la base es `private.can_read_donors(
 tabla `user_roles`, y está en [`docs/runbook.md`](./runbook.md#5-dar-y-quitar-acceso). Es deliberado:
 con cuatro personas, una pantalla para la operación más peligrosa del sistema es más superficie de
 ataque que ahorro de trabajo.
+
+`metricas.leer` es sólo de `owner` y **sí tiene pantalla** (`/admin/metricas`, ADR-047). Junta el
+libro, los gráficos y las colas operativas. Un auditor o un admin siguen viendo las mismas cifras
+en cada sección; el tablero es el lugar desde el que se decide qué mirar primero.
 
 ---
 

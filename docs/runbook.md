@@ -581,6 +581,7 @@ desde el resumen del banco.
 | Cada | Qué | Quién |
 |---|---|---|
 | Semana | Conciliación (sección 6) | `owner` |
+| Semana | Tablero de métricas en `/admin/metricas`: señales primero, después los gráficos | `owner` |
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
 | Semana | Pedidos de cuenta pendientes en `/admin/donantes`. Si no se miran, la persona espera | `admin` |
 | Día | Recordatorios de reservas a tres días del vencimiento: `node scripts/remind-pledges.mjs` (sección 12) | Cron, con `DATABASE_URL` y `RESEND_API_KEY` |
