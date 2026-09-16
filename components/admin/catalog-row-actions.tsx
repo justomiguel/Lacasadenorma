@@ -27,7 +27,7 @@ export function CatalogRowActions({
     : `/admin/catalogo?editar=${item.id}#item-${item.id}`;
 
   return (
-    <div className="flex items-center justify-end">
+    <div className="flex flex-nowrap items-center justify-end">
       <a href={`/catalogo/${item.id}`} className={ICON_ACTION}>
         <EyeIcon />
         <span className="sr-only">Ver ficha</span>
@@ -53,7 +53,7 @@ function DeleteControl({
   deleteAction: CatalogAction;
 }) {
   return (
-    <details className="group">
+    <details className="relative">
       <summary
         role="button"
         className={cn(ICON_ACTION, "cursor-pointer list-none text-danger")}
@@ -61,7 +61,7 @@ function DeleteControl({
         <TrashIcon />
         <span className="sr-only">Borrar</span>
       </summary>
-      <div className="mt-sm max-w-measure border-l-2 border-danger pl-md">
+      <div className="absolute right-0 z-10 mt-2xs w-measure border border-rule bg-paper p-md">
         <p className="mb-md font-ui text-small text-ink">
           ¿Borrar «{item.title}» del catálogo? Si alguien se anotó, no se puede.
           Despublicarlo lo saca del sitio.
