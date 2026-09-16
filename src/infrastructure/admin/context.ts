@@ -2,6 +2,7 @@ import type { Campaign } from "@/src/domain/entities";
 import type { AdminGateway } from "@/src/domain/ports/admin";
 import type { AdminDeps, AdminResult } from "@/src/application/admin";
 
+import { createAnalyticsStatsPort } from "../analytics/stats";
 import { readViewer, type Viewer } from "../auth/viewer";
 import { logger } from "../logging/logger";
 import { getAdminGateway } from "../supabase/admin-repositories";
@@ -91,6 +92,7 @@ export async function getAdminDeps(): Promise<AdminDeps | null> {
     gateway,
     logger,
     actor: viewer === null ? null : { userId: viewer.userId, role: viewer.role },
+    analyticsStats: createAnalyticsStatsPort(),
   };
 }
 

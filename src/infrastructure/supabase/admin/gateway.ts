@@ -10,6 +10,7 @@ import { createDonorsPort } from "./donors-port";
 import { createPledgesPort } from "./pledges-port";
 import { createMilestonesPort } from "./milestones-port";
 import { createPaymentMethodsPort } from "./payment-methods-port";
+import { createMetricsPort } from "./metrics-port";
 import { createUpdatesPort } from "./updates-port";
 
 /**
@@ -37,6 +38,7 @@ export function createAdminGateway(client: ServerSupabaseClient): AdminGateway {
     donations: createPledgesPort(client),
     audit: createAuditPort(client),
     roles: createRolesPort(client),
+    metrics: createMetricsPort(client),
   };
 }
 

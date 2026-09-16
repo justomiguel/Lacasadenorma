@@ -37,6 +37,8 @@ export type { ReviewAccountMail } from "./donors";
 export { cancelPledge, fulfillPledge } from "./pledges";
 export type { PledgeMail } from "./pledges";
 export { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
+export { getOwnerMetrics } from "./metrics";
+export type { OwnerMetricsResult } from "./metrics";
 export {
   addUpdateMedia,
   addUpdatePhoto,

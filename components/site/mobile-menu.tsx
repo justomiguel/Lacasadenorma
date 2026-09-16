@@ -18,8 +18,9 @@ import { PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 /**
  * El menú del teléfono, a pantalla completa (ADR-032).
  *
- * Es corto a propósito: la cuenta —y Backoffice, si hay rol— primero, para que
- * no queden debajo de las cinco secciones en un teléfono chico; después las
+ * Es corto a propósito: la cuenta —y Backoffice, si hay rol, y Métricas si es
+ * owner— primero, para que no queden debajo de las cinco secciones en un
+ * teléfono chico; después las
  * secciones en la serif de display, los enlaces chicos, el idioma y la acción
  * de ayudar. Respeta las áreas seguras del teléfono con `safe-top` y `safe-bottom`.
  * Cada ítem entra con un escalón de 40 ms; con `prefers-reduced-motion` no se

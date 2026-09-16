@@ -561,6 +561,7 @@ desde el resumen del banco.
 | Cada | Qué | Quién |
 |---|---|---|
 | Semana | Conciliación (sección 6) | `owner` |
+| Semana | Tablero de métricas en `/admin/metricas`: señales primero, después el alcance y los gráficos | `owner` |
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
 | Semana | Pedidos de cuenta pendientes en `/admin/donantes`. Si no se miran, la persona espera | `admin` |
 | Día | Recordatorios de reservas a tres días del vencimiento: `node scripts/remind-pledges.mjs` (sección 12) | Cron, con `DATABASE_URL` y `RESEND_API_KEY` |
@@ -569,6 +570,12 @@ desde el resumen del banco.
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
 | Antes de cada despliegue | `npm run verify` en verde | CI, y conviene también en local |
 | Cuando cambia una página, y sin excepción cuando lleguen las fotos | El loop de revisión visual: `node scripts/screenshots.mjs` y mirar las páginas de `PAGINAS_PUBLICAS` en los dos anchos. Los seis criterios medibles ya los sostiene CI; lo que hay que mirar son los cuatro que son un juicio (`docs/testing.md`) | Quien la cambió |
+
+El tablero de métricas lee el alcance (visitas, fuentes, dispositivos, eventos) del Stats API
+del proveedor. Hace falta `ANALYTICS_API_KEY` en el servidor, además del script público. Se
+crea en la cuenta del proveedor (en Plausible: Settings → API keys → Stats API). Sin ella el
+sitio puede estar midiendo y el tablero no lo muestra: una señal lo dice. `ANALYTICS_API_URL`
+sólo si el script y la API no comparten host.
 
 ## 11. Publicar el enlace de PayPal
 

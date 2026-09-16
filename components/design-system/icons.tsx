@@ -4,10 +4,10 @@ import type { ReactNode, SVGProps } from "react";
  * Una sola familia de iconos: trazo de 1.5, esquinas redondas, 20 px.
  *
  * Van al lado del nombre cuando identifican un control, un campo, un canal o
- * un camino (ADR-047). Las acciones (copiar, cerrar, menú, flecha) ya estaban.
- * Los bancos de la transferencia son marcas, no pictogramas: van en
- * `content/brands.ts`. Las banderas, en `flags.tsx`. No hay iconos de relleno
- * ni packs.
+ * un camino (ADR-047). Las acciones (copiar, cerrar, menú, flecha, salir) y el
+ * bloque de cuenta del drawer (persona, panel, gráfico) también. Los bancos de
+ * la transferencia son marcas, no pictogramas: van en `content/brands.ts`. Las
+ * banderas, en `flags.tsx`. No hay iconos de relleno ni packs.
  */
 
 export type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };
@@ -193,6 +193,37 @@ export function LayersIcon(props: IconProps) {
       <path d="m4 14 8 4 8-4" />
       <path d="m4 10 8 4 8-4" />
       <path d="m4 6 8 4 8-4" />
+    </Svg>
+  );
+}
+
+export function GridIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="4.5" y="4.5" width="6.5" height="6.5" rx="1" />
+      <rect x="13" y="4.5" width="6.5" height="6.5" rx="1" />
+      <rect x="4.5" y="13" width="6.5" height="6.5" rx="1" />
+      <rect x="13" y="13" width="6.5" height="6.5" rx="1" />
+    </Svg>
+  );
+}
+
+export function ChartIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M5 19V10" />
+      <path d="M12 19V5" />
+      <path d="M19 19v-7" />
+    </Svg>
+  );
+}
+
+export function LeaveIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M9 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H9" />
+      <path d="M10 12h9" />
+      <path d="m16 8 4 4-4 4" />
     </Svg>
   );
 }

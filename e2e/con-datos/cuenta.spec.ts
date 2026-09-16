@@ -129,6 +129,7 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(menu.getByRole("button", { name: /cerrar sesión/i })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^ingresar$/i })).toHaveCount(0);
     await expect(menu.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
+    await expect(menu.getByRole("link", { name: /^métricas$/i })).toHaveCount(0);
 
     // Axe del overlay abierto no: el menú es `fixed` dentro del encabezado, y
     // el muestreo de contraste toma la fotografía de la home que queda detrás.

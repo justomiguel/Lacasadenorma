@@ -44,15 +44,15 @@ Agregar o cambiar la foto, cambiar la contraseña y borrar la cuenta siguen en
 índice editorial (`SectionTabs`): reservas, cómo aparecer, acceso y borrar.
 
 **4. El backoffice se nombra en el chrome público sólo si hay rol.** El snapshot
-de `/cuenta/sesion` incluye `staff`. Quien dona no lo ve; quien carga el catálogo
-o las novedades ve «Backoffice» en el encabezado de escritorio y en el menú del
-teléfono, y un enlace en `/cuenta` que no espera a hidratar. En el menú, la cuenta
-—y Backoffice— van **arriba** de las cinco secciones: en 360×640 esas secciones
-llenan la pantalla y un enlace debajo no se ve. En el encabezado de escritorio no
-se suma «Cerrar sesión»: un tercer enlace recorta la acción de ayudar. El pie no
-lo muestra. En `/admin` el chrome público sigue sin personalizarse. La prosa
-editorial del sitio **no** se edita desde ahí: sigue en `content/*.json`
-(ADR-007).
+de `/cuenta/sesion` incluye `staff` y `owner`. Quien dona no lo ve; quien carga el
+catálogo o las novedades ve «Backoffice» en el encabezado de escritorio y en el
+menú del teléfono, y un enlace en `/cuenta` que no espera a hidratar. En el menú,
+la cuenta —y Backoffice, y Métricas si es owner— van **arriba** de las cinco
+secciones: en 360×640 esas secciones llenan la pantalla y un enlace debajo no se
+ve. El encabezado de escritorio no suma «Cerrar sesión» ni «Métricas»: un enlace
+más recorta la acción de ayudar. El pie no los muestra. En `/admin` el chrome
+público sigue sin personalizarse. La prosa editorial del sitio **no** se edita
+desde ahí: sigue en `content/*.json` (ADR-007).
 
 ## Alternativas descartadas
 
@@ -89,3 +89,15 @@ que el perfil: propiedad, no rol. Borrar la cuenta borra el archivo.
   lo ve: no tiene rol.
 - `FR-238` se amplía: el mínimo ahora admite una foto optativa, que no se publica.
   La política de privacidad se actualiza en el mismo cambio.
+
+## Enmienda · Métricas en el drawer (2026-09-16)
+
+El snapshot de `/cuenta/sesion` también incluye `owner` (un boolean, no el nombre del rol). En el
+menú del teléfono, debajo de Backoffice, quien es owner ve **Métricas** hacia `/admin/metricas`
+(FR-615). El encabezado de escritorio no lo suma: un enlace más recorta Ayudar, igual que «Cerrar
+sesión». Un editor ve Backoffice y no ve Métricas: el enlace no puede prometer una pantalla que
+después dice sin permiso.
+
+El bloque de cuenta de ese menú lleva un icono de trazo de `icons.tsx` en cada salida (cuenta,
+backoffice, métricas, cerrar sesión), para barrer una lista chica. Las cinco secciones de display
+siguen sin pictograma: son capítulos, no un menú de aplicación (ADR-032).

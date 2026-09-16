@@ -24,6 +24,11 @@ describe("can", () => {
       expect(can("auditor", "donaciones.leer")).toBe(true);
     });
 
+    it("no ve el tablero de métricas", () => {
+      // Junta colas que un auditor recorre por sección. El permiso es de owner.
+      expect(can("auditor", "metricas.leer")).toBe(false);
+    });
+
     it("no escribe absolutamente nada", () => {
       // Es la razón por la que la tabla existe: con una jerarquía numérica,
       // "al menos auditor" habilitaría toda escritura, y el rol perdería su
@@ -58,6 +63,10 @@ describe("can", () => {
       expect(can("editor", "auditoria.leer")).toBe(false);
     });
 
+    it("no ve el tablero de métricas", () => {
+      expect(can("editor", "metricas.leer")).toBe(false);
+    });
+
     it("no ve ni una reserva de donación", () => {
       // La misma lección que obligó a escribir `can_read_ledger()`, aplicada a
       // datos personales: `editor` es de rango mayor que `auditor`, así que
@@ -83,11 +92,12 @@ describe("can", () => {
       expect(can("admin", "donaciones.escribir")).toBe(true);
     });
 
-    it("no administra cuentas bancarias ni roles", () => {
+    it("no administra cuentas bancarias ni roles, ni ve el tablero de métricas", () => {
       // Quien pueda cambiar un CBU puede desviar todos los aportes de la campaña.
       // No hay ninguna razón por la que un admin lo necesite.
       expect(can("admin", "cuentas.escribir")).toBe(false);
       expect(can("admin", "roles.escribir")).toBe(false);
+      expect(can("admin", "metricas.leer")).toBe(false);
     });
   });
 

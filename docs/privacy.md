@@ -90,6 +90,11 @@ El adaptador no instala ningún SDK. Llama la global `plausible(name, { props })
 contrato que implementan Plausible, Umami y varios más. Elegir proveedor es cambiar dos variables,
 no cambiar código.
 
+El tablero del owner (`/admin/metricas`) puede **leer** los totales que el proveedor ya agregó,
+con `ANALYTICS_API_KEY` en el servidor (ADR-049). Esa lectura no recolecta nada nuevo: pide
+agregados que el proveedor ya tiene. Sin la clave, el tablero omite el alcance. Las visitas
+siguen sin escribirse en Postgres (ADR-010).
+
 Al elegirlo hay tres obligaciones que no son técnicas:
 
 1. **Verificar que no ponga cookies ni identificadores persistentes.** La página pública promete que
@@ -127,8 +132,10 @@ puede cachear ni razonar. Es también lo que hace que el HTML público sea idén
 
 El menú, después de hidratar, pide un snapshot privado a `/cuenta/sesion`. Esa petición sí lleva la
 cookie, y por eso el nombre, el retrato y —si hay rol interno— el enlace al backoffice aparecen en
-el drawer de quien ya entró, no en el HTML que se cachea. Las páginas de `/cuenta` son la otra
-excepción y no debilitan nada: dependen de la sesión por definición y por eso no se cachean.
+el drawer de quien ya entró, no en el HTML que se cachea. Si el rol es `owner`, el mismo snapshot
+enciende el atajo a Métricas debajo de Backoffice; no viaja el nombre del rol. Las páginas de
+`/cuenta` son la otra excepción y no debilitan nada: dependen de la sesión por definición y por eso
+no se cachean.
 
 ---
 

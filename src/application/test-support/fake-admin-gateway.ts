@@ -1,4 +1,5 @@
 import type { Campaign } from "@/src/domain/entities";
+import { EMPTY_METRICS_FACTS, type MetricsFacts } from "@/src/domain/metrics";
 import type { AdminGateway, AuditEntry } from "@/src/domain/ports/admin";
 
 /**
@@ -23,6 +24,7 @@ export function fakeAdminGateway(
     auditFailsWith: Error;
     newId: string;
     campaign: Campaign | null;
+    metrics: MetricsFacts;
   }> = {},
 ): FakeGateway {
   const calls: { name: string; input: unknown }[] = [];
@@ -152,6 +154,10 @@ export function fakeAdminGateway(
     },
     roles: {
       listRoles: () => record("listRoles", null, []),
+    },
+    metrics: {
+      readSnapshot: (campaignId) =>
+        record("readSnapshot", campaignId, overrides.metrics ?? EMPTY_METRICS_FACTS),
     },
   };
 

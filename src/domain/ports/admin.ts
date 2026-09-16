@@ -18,6 +18,7 @@ import type {
   UpdateRecord,
 } from "../entities";
 import type { AppRole } from "../entities/role";
+import type { MetricsFacts } from "../metrics";
 import type { Money } from "../money";
 import type { AdminDonationsPort } from "./donations";
 
@@ -270,6 +271,14 @@ export interface AdminRolePort {
   listRoles(): Promise<readonly { userId: string; role: AppRole }[]>;
 }
 
+export interface AdminMetricsPort {
+  /**
+   * Hechos para el tablero. Sin correos, nombres ni notas: lo que no está
+   * en el tipo no puede filtrarse a la página (ADR-048).
+   */
+  readSnapshot(campaignId: string): Promise<MetricsFacts>;
+}
+
 /** Todo el backoffice en un objeto, para que la composición ocurra en un solo lugar. */
 export interface AdminGateway {
   readonly campaign: AdminCampaignPort;
@@ -283,4 +292,5 @@ export interface AdminGateway {
   readonly donations: AdminDonationsPort;
   readonly audit: AuditPort;
   readonly roles: AdminRolePort;
+  readonly metrics: AdminMetricsPort;
 }

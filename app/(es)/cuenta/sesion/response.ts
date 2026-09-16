@@ -1,6 +1,6 @@
 import { readOwnChrome } from "@/src/application/accounts/own-portrait";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
-import { isStaff, readViewer } from "@/src/infrastructure/auth/viewer";
+import { isOwner, isStaff, readViewer } from "@/src/infrastructure/auth/viewer";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,8 @@ const HEADERS = {
 /**
  * Snapshot privado del chrome. No crea el perfil: abrir el menú no es pedir una
  * cuenta (ADR-037). `staff` es si hay rol interno, para mostrar Backoffice en el
- * encabezado público sin personalizar el HTML cacheado.
+ * encabezado público sin personalizar el HTML cacheado. `owner` enciende el
+ * atajo a Métricas en el drawer; no viaja el nombre del rol.
  */
 export async function accountSessionResponse(): Promise<Response> {
   const viewer = await readViewer();
@@ -31,6 +32,7 @@ export async function accountSessionResponse(): Promise<Response> {
         email: viewer.email,
         hasPortrait: false,
         staff: isStaff(viewer),
+        owner: isOwner(viewer),
       },
       { headers: HEADERS },
     );
@@ -43,6 +45,7 @@ export async function accountSessionResponse(): Promise<Response> {
       email: viewer.email,
       hasPortrait: chrome.value.hasPortrait,
       staff: isStaff(viewer),
+      owner: isOwner(viewer),
     },
     { headers: HEADERS },
   );

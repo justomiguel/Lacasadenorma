@@ -17,6 +17,12 @@ export interface AdminSection {
 
 export const ADMIN_SECTIONS: readonly AdminSection[] = [
   {
+    href: "/admin/metricas",
+    label: "Métricas",
+    permission: "metricas.leer",
+    description: "El pulso de la campaña, con gráficos y señales.",
+  },
+  {
     href: "/admin/novedades",
     label: "Novedades",
     permission: "contenido.escribir",

@@ -47,7 +47,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [034](./034-editor-novedades.md) | El cuerpo de una novedad se edita a ojo y se guarda como árbol, no como HTML | Aceptada |
 | [035](./035-simbolo-de-la-marca.md) | El símbolo de la marca es el círculo 01 ORIGINAL | Aceptada |
 | [036](./036-tarjeta-de-compartir.md) | Al compartir se ve el símbolo y el texto de esa página | Aceptada; enmendada por ADR-038 para el artículo con portada |
-| [037](./037-chrome-de-cuenta.md) | El chrome de cuenta no personaliza las páginas públicas | Aceptada |
+| [037](./037-chrome-de-cuenta.md) | El chrome de cuenta no personaliza las páginas públicas | Aceptada; enmendada: Métricas en el drawer del owner |
 | [038](./038-portada-de-novedad.md) | La portada de una novedad es el primer visual, también al compartir | Aceptada |
 | [039](./039-oauth-nativo.md) | Alta con las redes sociales nativas de Supabase Auth | Aceptada |
 | [040](./040-plata-publica-en-porcentaje.md) | En público la plata se habla en porcentajes, y el 100% no se publica | Aceptada; enmendada por ADR-041 (estimado de la ficha) y ADR-042 (porcentaje de un aporte en el muro) |
@@ -58,3 +58,5 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [045](./045-tres-caminos-para-ayudar.md) | Tres caminos para ayudar, no pestañas | Aceptada |
 | [046](./046-compromiso-con-datos-de-retiro.md) | El compromiso pide datos de retiro, no una cuenta como prueba | Aceptada |
 | [047](./047-iconos-que-identifican.md) | Un icono al lado del nombre, siempre que identifique | Aceptada |
+| [048](./048-tablero-de-metricas-del-owner.md) | Tablero de métricas del owner, con gráficos y señales | Aceptada; enmendada por ADR-049 |
+| [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada |

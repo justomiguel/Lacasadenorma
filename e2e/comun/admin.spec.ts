@@ -21,6 +21,7 @@ import { esperarSinViolaciones } from "../soporte/axe";
 
 const SECCIONES = [
   "/admin",
+  "/admin/metricas",
   "/admin/novedades",
   "/admin/gastos",
   "/admin/aportes",
