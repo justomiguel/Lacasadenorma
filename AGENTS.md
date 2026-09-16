@@ -34,6 +34,9 @@ build, a propósito.
   impone ESLint `max-lines`. Si se acerca, se parte; no se sube el número.
 - Una marca de terceros (PayPal, Mercado Pago, WhatsApp, etc.) que aparece como tab,
   botón o enlace lleva su logo al lado del nombre. Lo impone `npm run check:marcas`.
+- Donde un control, un campo, un canal o un camino se reconoce de un vistazo, el
+  icono va al lado del nombre (ADR-047). Lo impone `npm run check:iconos`. Skills:
+  `iconos-en-la-interfaz` e `iconos-en-transferencia`.
 - Ninguna policy RLS que alcance a `authenticated` sin comprobar rol o propiedad, ninguna
   `for all`, ninguna función `security definer` sin `search_path` y ninguna vista sin
   `security_invoker`. Lo impone `npm run check:rls`, y el motivo está en
@@ -63,9 +66,9 @@ nunca al revés. Los tokens viven en `app/globals.css` dentro de `@theme`; **no*
 usan valores por defecto de Tailwind ni valores arbitrarios (`text-[13px]`) en producción.
 
 Prohibido: gradientes decorativos, glassmorphism, blobs, cards para todo, radios grandes, sombras
-difusas, emojis decorativos, iconos de relleno (los logos de marcas de terceros no son eso: van
-siempre al lado del nombre), animaciones sin función, copy de folleto, píldoras fuera de lo que es
-redondo por significado. Y los tres delatores que este sitio ya tuvo: la sobrelínea en VERSALES
+difusas, emojis decorativos, iconos de relleno (un logo de marca, una bandera de país o el
+pictograma de un CBU no son eso: van siempre al lado del nombre), animaciones sin función, copy
+de folleto, píldoras fuera de lo que es redondo por significado. Y los tres delatores que este sitio ya tuvo: la sobrelínea en VERSALES
 arriba de cada título (hoy existe **sólo** como etiqueta de los cinco momentos de la home, con
 `data-kicker`), un solo plano sin sangrado ni bandas, y un solo tamaño de texto haciendo de
 jerarquía. Tres familias de acción y ninguna más: primaria rectangular, secundaria texto + flecha,
@@ -91,6 +94,7 @@ npm run test:e2e         # Playwright
 npm run db:verify        # Postgres local: reset + migraciones + advisors + pgTAP
 npm run check:toolchain  # las versiones de las herramientas son las decididas
 npm run check:marcas     # cada marca de terceros tiene logo y se usa al lado del nombre
+npm run check:iconos     # CBU, país, canal y camino de ayudar llevan su marca
 npm run check:marca      # cada variante propia tiene archivo y las medidas del catálogo
 npm run check:rls        # ninguna policy le abre el acceso a cualquiera que se registre
 ```

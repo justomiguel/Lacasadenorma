@@ -1,13 +1,24 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 
 import { useUiOptional } from "@/components/i18n/ui-provider";
 import { fill } from "@/src/i18n/fill";
 
 import { ICON_ACTION } from "./actions";
 import { cn } from "./cn";
-import { CheckIcon, CopyIcon } from "./icons";
+import {
+  AtIcon,
+  BankIcon,
+  CheckIcon,
+  CopyIcon,
+  HashIcon,
+  IdIcon,
+  LayersIcon,
+  MailIcon,
+  PersonIcon,
+  type IconProps,
+} from "./icons";
 
 /**
  * Dato bancario con su acción de copiar.
@@ -24,10 +35,28 @@ import { CheckIcon, CopyIcon } from "./icons";
  *
  * La acción es un icono de 44 px (ADR-032): el nombre accesible sigue siendo
  * «Copiar», y al copiar el icono pasa a un tilde y aparece «Copiado» durante un
- * segundo y medio.
+ * segundo y medio. La etiqueta lleva su pictograma (ADR-047): no reemplaza el
+ * nombre.
  */
 
 type CopyState = "idle" | "copied" | "failed";
+
+type FieldMark = (props: IconProps) => ReactNode;
+
+/** Cada etiqueta de dato bancario tiene marca. `check:iconos` lee estas claves. */
+export const COPY_FIELD_MARKS: Record<string, FieldMark> = {
+  Alias: AtIcon,
+  CBU: BankIcon,
+  "Número de cuenta": HashIcon,
+  Titular: PersonIcon,
+  "CUIT/CUIL": IdIcon,
+  RUT: IdIcon,
+  "Número Cuenta": HashIcon,
+  Correo: MailIcon,
+  Nombre: PersonIcon,
+  Banco: BankIcon,
+  Tipo: LayersIcon,
+};
 
 export function CopyField({
   label,
@@ -55,6 +84,7 @@ export function CopyField({
   const copyFailed =
     ui?.copyFailed ??
     "No pudimos copiar {label} automáticamente. Seleccionalo y copialo a mano.";
+  const Mark = COPY_FIELD_MARKS[label];
 
   async function copy() {
     if (timeout.current !== null) {
@@ -84,7 +114,14 @@ export function CopyField({
     <div className={cn("min-w-0 border-b border-rule py-sm last:border-b-0", className)}>
       <div className="flex items-center justify-between gap-md">
         <div className="min-w-0">
-          <p className="font-ui text-caption text-ink-muted">{label}</p>
+          <p className="flex items-center gap-xs font-ui text-caption text-ink-muted">
+            {Mark === undefined ? null : (
+              <span data-field-mark={label} className="inline-flex shrink-0 text-olive">
+                <Mark size={16} />
+              </span>
+            )}
+            {label}
+          </p>
           {/*
             `break-words` y no `break-all`: los dos parten un CBU de 22 dígitos que
             no entra en 360 px, pero `break-all` parte también donde no hace falta.

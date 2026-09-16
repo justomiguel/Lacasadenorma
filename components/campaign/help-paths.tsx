@@ -1,5 +1,6 @@
 import { SecondaryAction } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
+import { BanknoteIcon, BoxIcon, HandsIcon } from "@/components/design-system/icons";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -10,18 +11,21 @@ const PATHS = [
     lead: "pathHandsLead",
     action: "pathHandsCta",
     href: "/contacto",
+    icon: HandsIcon,
   },
   {
     title: "pathMoney",
     lead: "pathMoneyLead",
     action: "pathMoneyCta",
     href: "/ayudar/dinero",
+    icon: BanknoteIcon,
   },
   {
     title: "pathArticles",
     lead: "pathArticlesLead",
     action: "pathArticlesCta",
     href: "/catalogo",
+    icon: BoxIcon,
   },
 ] as const;
 
@@ -53,7 +57,13 @@ export function HelpPaths({
             key={path.href}
             className={index === 0 ? undefined : "mt-xl border-t border-rule pt-xl"}
           >
-            <Heading className="font-display text-section-title">
+            <Heading className="flex items-center gap-sm font-display text-section-title">
+              <span
+                data-path-mark={path.href}
+                className="inline-flex shrink-0 text-olive"
+              >
+                <path.icon />
+              </span>
               {ui.home[path.title]}
             </Heading>
             <p className="mt-sm text-body text-ink-muted">{ui.home[path.lead]}</p>

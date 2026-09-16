@@ -46,5 +46,7 @@ describe("ContactActions", () => {
     expect(retrato.className, "un retrato chico, no un avatar").toMatch(/rounded-sm/);
     expect(retrato.className).not.toMatch(/rounded-full/);
     expect(retrato.className).toMatch(/object-cover/);
+    expect(document.querySelector('[data-contact-mark="tel"]')).not.toBeNull();
+    expect(document.querySelector('[data-contact-mark="mail"]')).not.toBeNull();
   });
 });

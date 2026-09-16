@@ -59,6 +59,13 @@ describe("CopyField", { timeout: 15_000 }, () => {
     expect(writeText.mock.calls[0]?.[0]).toBe(CBU);
   });
 
+  it("la etiqueta CBU lleva su pictograma al lado del nombre", () => {
+    const { container } = render(<CopyField label="CBU" value={CBU} />);
+
+    expect(container.querySelector('[data-field-mark="CBU"]')).not.toBeNull();
+    expect(screen.getByText("CBU")).toBeInTheDocument();
+  });
+
   it("anuncia la confirmación en una región viva que ya estaba en el documento", async () => {
     const { user } = conPortapapeles();
 

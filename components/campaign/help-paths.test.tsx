@@ -17,6 +17,9 @@ describe("HelpPaths", () => {
     expect(html).toContain('href="/contacto"');
     expect(html).toContain('href="/ayudar/dinero"');
     expect(html).toContain('href="/catalogo"');
+    expect(html).toContain('data-path-mark="/contacto"');
+    expect(html).toContain('data-path-mark="/ayudar/dinero"');
+    expect(html).toContain('data-path-mark="/catalogo"');
     expect(html).not.toContain('role="tablist"');
     expect(html).not.toContain('role="tab"');
   });

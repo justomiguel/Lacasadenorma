@@ -3,13 +3,14 @@ import type { ReactNode, SVGProps } from "react";
 /**
  * Una sola familia de iconos: trazo de 1.5, esquinas redondas, 20 px.
  *
- * Son pocos a propósito. Un icono entra cuando aclara una acción (copiar,
- * cerrar), reduce texto (la flecha del enlace) o mejora el barrido (el menú).
+ * Van al lado del nombre cuando identifican un control, un campo, un canal o
+ * un camino (ADR-047). Las acciones (copiar, cerrar, menú, flecha) ya estaban.
  * Los bancos de la transferencia son marcas, no pictogramas: van en
- * `content/brands.ts`. No hay iconos de relleno.
+ * `content/brands.ts`. Las banderas, en `flags.tsx`. No hay iconos de relleno
+ * ni packs.
  */
 
-type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };
+export type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };
 
 function Svg({ size = 20, ...rest }: IconProps & { children: ReactNode }) {
   return (
@@ -68,6 +69,130 @@ export function CloseIcon(props: IconProps) {
     <Svg {...props}>
       <path d="m6 6 12 12" />
       <path d="M18 6 6 18" />
+    </Svg>
+  );
+}
+
+export function GlobeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <ellipse cx="12" cy="12" rx="3.5" ry="8" />
+      <path d="M4 12h16" />
+    </Svg>
+  );
+}
+
+export function BankIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m4 10 8-6 8 6" />
+      <path d="M6 10v8" />
+      <path d="M10 10v8" />
+      <path d="M14 10v8" />
+      <path d="M18 10v8" />
+      <path d="M4 18h16" />
+    </Svg>
+  );
+}
+
+export function AtIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M15 12v1.6a2 2 0 0 0 3.8.6A7 7 0 1 0 12 19" />
+    </Svg>
+  );
+}
+
+export function HashIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m9 5-2 14" />
+      <path d="m17 5-2 14" />
+      <path d="M5 9h16" />
+      <path d="M4 15h16" />
+    </Svg>
+  );
+}
+
+export function PersonIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="3" />
+      <path d="M5 19c1.6-3.4 4-5 7-5s5.4 1.6 7 5" />
+    </Svg>
+  );
+}
+
+export function IdIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="3" y="6" width="18" height="12" rx="2" />
+      <circle cx="9" cy="12" r="2" />
+      <path d="M14 10h5" />
+      <path d="M14 14h4" />
+    </Svg>
+  );
+}
+
+export function MailIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="4" y="6" width="16" height="12" rx="1.5" />
+      <path d="m4 8 8 6 8-6" />
+    </Svg>
+  );
+}
+
+export function PhoneIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="8" y="3" width="8" height="18" rx="2" />
+      <path d="M11 6h2" />
+      <path d="M11 18h2" />
+    </Svg>
+  );
+}
+
+export function HandsIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M8 11V8.5a1.5 1.5 0 0 1 3 0V11" />
+      <path d="M11 10.5V7.5a1.5 1.5 0 0 1 3 0V11" />
+      <path d="M14 10.5V8.5a1.5 1.5 0 1 1 3 0V13" />
+      <path d="M8 11c0 3.5 1.8 7 4 7s4-3.5 4-7" />
+    </Svg>
+  );
+}
+
+export function BanknoteIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="3" y="7" width="18" height="10" rx="1.5" />
+      <circle cx="12" cy="12" r="2" />
+      <path d="M6 10v4" />
+      <path d="M18 10v4" />
+    </Svg>
+  );
+}
+
+export function BoxIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 8h16v11H4z" />
+      <path d="m4 8 8-4 8 4" />
+      <path d="M12 4v15" />
+    </Svg>
+  );
+}
+
+export function LayersIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m4 14 8 4 8-4" />
+      <path d="m4 10 8 4 8-4" />
+      <path d="m4 6 8 4 8-4" />
     </Svg>
   );
 }

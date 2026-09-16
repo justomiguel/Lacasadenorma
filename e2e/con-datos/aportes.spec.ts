@@ -32,6 +32,14 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
 
     await expect(paises).toBeVisible();
     await expect(paises.getByRole("tab")).toHaveCount(3);
+    await expect(
+      paises.getByRole("tab", { name: ui.countries.AR }).locator("[data-flag=AR]"),
+    ).toBeVisible();
+    await expect(
+      paises
+        .getByRole("tab", { name: ui.home.international })
+        .locator("[data-country-mark=INT]"),
+    ).toBeVisible();
     await expect(panelDePais(page)).toBeVisible();
 
     const primera = paises.getByRole("tab").first();
@@ -65,6 +73,7 @@ test.describe("flujo 4 · elegir desde dónde aportar", () => {
 
     await expect(panel.getByText(help.accounts.AR.alias, { exact: true })).toBeVisible();
     await expect(panel.getByText(help.accounts.AR.cbu, { exact: true })).toBeVisible();
+    await expect(panel.locator('[data-field-mark="CBU"]')).toBeVisible();
     await expect(panel.getByText(help.accounts.CL.rut, { exact: true })).toHaveCount(0);
 
     await paises.getByRole("tab", { name: ui.countries.CL }).click();

@@ -6,6 +6,7 @@ import { ArgentinaTransfer, ChileTransfer } from "@/components/campaign/bank-tra
 import { ExternalPayment } from "@/components/campaign/external-payment";
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
+import { BankIcon, BoxIcon } from "@/components/design-system/icons";
 import type {
   AccountContent,
   CatalogContent,
@@ -154,15 +155,17 @@ function ChannelRadios({
     value: CoverChannel;
     label: string;
     brand: "mercadopago" | "paypal" | null;
+    Icon: typeof BankIcon | typeof BoxIcon | null;
   }[] = [
-    { value: "bring", label: copy.coverBringChannel, brand: null },
-    { value: "transfer", label: copy.coverTransferChannel, brand: null },
+    { value: "bring", label: copy.coverBringChannel, brand: null, Icon: BoxIcon },
+    { value: "transfer", label: copy.coverTransferChannel, brand: null, Icon: BankIcon },
     {
       value: "mercadopago",
       label: copy.coverMercadoPagoChannel,
       brand: "mercadopago",
+      Icon: null,
     },
-    { value: "paypal", label: copy.coverPaypalChannel, brand: "paypal" },
+    { value: "paypal", label: copy.coverPaypalChannel, brand: "paypal", Icon: null },
   ];
 
   return (
@@ -189,7 +192,17 @@ function ChannelRadios({
               className="flex items-center gap-xs font-ui text-small text-ink"
             >
               {option.brand === null ? (
-                option.label
+                <>
+                  {option.Icon === null ? null : (
+                    <span
+                      data-channel-mark={option.value}
+                      className="inline-flex shrink-0 text-olive"
+                    >
+                      <option.Icon size={16} />
+                    </span>
+                  )}
+                  {option.label}
+                </>
               ) : (
                 <BrandLabel id={option.brand}>{option.label}</BrandLabel>
               )}

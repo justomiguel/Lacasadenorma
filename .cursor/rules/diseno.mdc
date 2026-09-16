@@ -67,8 +67,9 @@ viene. No hay índice de capítulos: la página es la navegación.
   fondo. En la home no hay ninguna.
 - **Aportar** es `DonationSelector` en `/ayudar/dinero`: `CountrySelector` (Argentina, Chile, Internacional) y,
   en Argentina y Chile, dos cards —transferencia (Brubank con logo en Argentina) y Mercado
-  Pago con su logo—. `ExternalPayment` es un botón con los colores de la marca y letra papel;
-  Mercado Pago lleva la banderita del país. Sin JavaScript se apila y se transfiere igual.
+  Pago con su logo—. El tab de país lleva bandera o globo; cada `CopyField`, el pictograma
+  de la etiqueta (ADR-047). `ExternalPayment` es un botón con los colores de la marca y letra
+  papel; Mercado Pago lleva la banderita del país. Sin JavaScript se apila y se transfiere igual.
   El CTA «Ayudar a reconstruir» va a `/ayudar`, que es tres caminos a la vista (ir, plata,
   artículos), no pestañas (ADR-045).
 - **Norma** es `NormaStory`: la única banda carbón del sitio, el retrato a cinco sextos del
