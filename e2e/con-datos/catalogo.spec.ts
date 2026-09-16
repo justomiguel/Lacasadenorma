@@ -34,15 +34,21 @@ test.describe("fase D · reservas", () => {
     await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
     const articulo = articuloDelCatalogo(page);
 
-    await expect(articulo.getByRole("heading", { name: /cómo donar esto/i })).toBeVisible();
+    await expect(
+      articulo.getByRole("heading", { name: /cómo donar esto/i }),
+    ).toBeVisible();
     await expect(articulo.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
     await expect(articulo.getByText(/solamente ilustrativa/i)).toBeVisible();
     await expect(articulo.getByText(/no representa el objeto real/i)).toBeVisible();
-    await expect(articulo.getByText(/estimado, no un precio fijo/i).first()).toBeVisible();
+    await expect(
+      articulo.getByText(/estimado, no un precio fijo/i).first(),
+    ).toBeVisible();
     await expect(
       articulo.getByText(/traer el mismo bien o cubrirlo con plata/i),
     ).toBeVisible();
-    await expect(articulo.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
+    await expect(
+      articulo.getByRole("radio", { name: /traer el mismo bien/i }),
+    ).toBeChecked();
     await expect(articulo.locator("[data-pay=transfer]")).toBeHidden();
     await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(articulo.locator("[data-pay=paypal]")).toBeHidden();
