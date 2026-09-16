@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { catalogItemHref, CATALOG_ITEM_ID } from "@/src/application/accounts/return-path";
+import {
+  catalogItemHref,
+  CATALOG_ITEM_ID,
+  accountHref,
+} from "@/src/application/accounts/return-path";
 import { claimItem } from "@/src/application/use-cases/claim-item";
 import { isCoverChannel } from "@/src/domain/cover";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
@@ -15,9 +19,10 @@ import { failure, localeOf, textOf, type AccountFormState } from "../cuenta/form
 /**
  * Anotarse a traer un ítem.
  *
- * Sin sesión redirige a ingresar con `volver` validado, para volver a la
- * ficha (US1 escenario 6). Si alguien se adelantó, redirige a la ficha con
- * el aviso diseñado.
+ * Sin sesión redirige a crear una cuenta con `volver` validado, para volver a
+ * la ficha (US1 escenario 6). Quien ya tiene cuenta pasa a ingresar desde
+ * esa pantalla, con la misma vuelta. Si alguien se adelantó, redirige a la
+ * ficha con el aviso diseñado.
  */
 export async function claimItemAction(
   _state: AccountFormState,
@@ -30,9 +35,7 @@ export async function claimItemAction(
   const deps = await getAccountDeps();
 
   if (deps.session.status === "anonymous") {
-    const volver = encodeURIComponent(ficha);
-
-    redirect(`${localizeHref("/cuenta/ingresar", locale)}?volver=${volver}`);
+    redirect(accountHref("crear", locale, ficha));
   }
 
   const canal = textOf(formData, "canal");

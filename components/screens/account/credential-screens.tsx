@@ -2,6 +2,7 @@ import { AuthShell } from "@/components/account/auth-shell";
 import { SignInForm, SignUpForm } from "@/components/account/credential-forms";
 import { InlineLink } from "@/components/design-system/actions";
 import { getContent } from "@/content";
+import { accountHref } from "@/src/application/accounts/return-path";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { enabledSocialProviders } from "@/src/application/accounts/social-providers";
@@ -29,7 +30,13 @@ export function signUpMetadata(locale: Locale) {
   });
 }
 
-export function SignUpScreen({ locale }: { locale: Locale }) {
+export function SignUpScreen({
+  locale,
+  returnTo,
+}: {
+  locale: Locale;
+  returnTo?: string | null;
+}) {
   const { account } = getContent(locale);
   const { signUp, fields, errors, social } = account;
   const providers = enabledSocialProviders();
@@ -49,7 +56,7 @@ export function SignUpScreen({ locale }: { locale: Locale }) {
           </p>
           <p className="mt-md">
             {signUp.haveAccount}{" "}
-            <InlineLink href={localizedHref("/cuenta/ingresar", locale)}>
+            <InlineLink href={accountHref("ingresar", locale, returnTo)}>
               {signUp.haveAccountLink}
             </InlineLink>
           </p>
@@ -62,6 +69,7 @@ export function SignUpScreen({ locale }: { locale: Locale }) {
         fields={fields}
         locale={locale}
         providers={providers}
+        returnTo={returnTo ?? null}
         social={social}
       />
     </AuthShell>
@@ -110,7 +118,7 @@ export function SignInScreen({
         <>
           <p>
             {signIn.noAccount}{" "}
-            <InlineLink href={localizedHref("/cuenta/crear", locale)}>
+            <InlineLink href={accountHref("crear", locale, returnTo)}>
               {signIn.noAccountLink}
             </InlineLink>
           </p>

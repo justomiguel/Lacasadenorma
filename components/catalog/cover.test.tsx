@@ -46,7 +46,7 @@ describe("HowToDonate", () => {
     expect(screen.getByLabelText(/^nombre$/i)).toBeRequired();
     expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeRequired();
     expect(screen.getByLabelText(/^teléfono$/i)).not.toBeRequired();
-    expect(screen.getByText(/confirmar el correo no es una prueba/i)).toBeInTheDocument();
+    expect(screen.getByText(/quiero donar te lleva a crear una/i)).toBeInTheDocument();
   });
 
   it("al elegir transferencia no muestra el recargo de Mercado Pago", async () => {

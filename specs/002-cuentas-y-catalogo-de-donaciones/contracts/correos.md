@@ -1,15 +1,15 @@
 # Contrato — Los correos
 
 Dos caminos distintos por una razón que no es de gusto: los tres de identidad llevan un token que
-sólo GoTrue puede emitir, así que salen por SMTP; los del producto los arma la aplicación
-([ADR-028](../../../docs/adr/028-correo-resend.md),
+sólo GoTrue puede emitir. El transporte, a partir de la enmienda de 2026-09-16, es el mismo puerto
+`EmailSender` que el resto ([ADR-028](../../../docs/adr/028-correo-resend.md),
 [ADR-033](../../../docs/adr/033-aprobacion-de-cuentas.md)).
 
 | Correo | Camino | Disparador | Plantilla |
 |---|---|---|---|
-| Confirmación de cuenta | SMTP de Resend | `signUp` | Panel de Supabase |
-| Recuperación de contraseña | SMTP de Resend | `requestPasswordReset` | Panel de Supabase |
-| Cambio de dirección | SMTP de Resend | Cambio de correo | Panel de Supabase |
+| Confirmación de cuenta | API de Resend | `signUp` / hook `send_email` | `content/*/emails.json` |
+| Recuperación de contraseña | API de Resend (hook) o SMTP | `requestPasswordReset` | `content/*/emails.json` o panel |
+| Cambio de dirección | API de Resend (hook) o SMTP | Cambio de correo | `content/*/emails.json` o panel |
 | Pedido de cuenta recibido | API de Resend | Perfil creado en `/cuenta` | `content/*/emails.json` |
 | Cuenta habilitada | API de Resend | `review_donor_account('approved')` | `content/*/emails.json` |
 | Cuenta rechazada | API de Resend | `review_donor_account('declined')` | `content/*/emails.json` |
@@ -25,14 +25,18 @@ Los avisos al equipo viajan en el mismo disparador que el correo a la persona, c
 distinto. El cuerpo **no lleva datos de terceros**: el nombre y el correo se leen en el backoffice,
 con sesión.
 
-Qué **no** manda correo, y el motivo: está en ADR-033. Cambiar el perfil, fallar un envío, y los
-tres de identidad (que salen por SMTP) no duplican aviso.
+Qué **no** manda correo, y el motivo: está en ADR-033. Cambiar el perfil y fallar un envío no
+duplican aviso. Los tres de identidad ahora sí pasan por este puerto: el token lo emite GoTrue, el
+HTML lo arma la aplicación, Resend lo manda.
 
 ## El puerto
 
 ```ts
 // src/domain/ports/email.ts — TypeScript puro, sin fetch, sin Next
 export type EmailKind =
+  | "account.confirm"
+  | "account.recover"
+  | "account.email_change"
   | "account.received"
   | "account.approved"
   | "account.declined"

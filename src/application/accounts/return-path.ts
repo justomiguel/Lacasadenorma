@@ -67,3 +67,29 @@ export function safeAccountReturn(candidate: string | undefined, locale: Locale)
 
   return catalogItemHref(item, locale);
 }
+
+/**
+ * Crear o ingresar, con la vuelta al catálogo si venía de una ficha.
+ *
+ * El `volver` ya filtrado viaja en la query. Un destino que no es el catálogo
+ * no se agrega: no hay nada que preservar.
+ */
+export function accountHref(
+  screen: "crear" | "ingresar",
+  locale: Locale,
+  returnTo?: string | null,
+): string {
+  const path = localizeHref(`/cuenta/${screen}`, locale);
+
+  if (returnTo === undefined || returnTo === null || returnTo.length === 0) {
+    return path;
+  }
+
+  const safe = safeAccountReturn(returnTo, locale);
+
+  if (safe === localizeHref("/cuenta", locale)) {
+    return path;
+  }
+
+  return `${path}?volver=${encodeURIComponent(safe)}`;
+}

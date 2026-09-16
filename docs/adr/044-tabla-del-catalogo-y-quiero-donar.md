@@ -36,12 +36,13 @@ internet, con Formosa primero cuando hay un número de esa plaza.
 3. **«Quiero donar» es `SecondaryAction`.** Una primaria por pantalla, y esa
    sigue siendo «Ayudar a reconstruir». El CTA de fila abre la ficha
    (`/catalogo/{id}`). El HTML público es idéntico con o sin sesión
-   (ADR-037): si no hay sesión, el formulario de la ficha redirige a ingresar
-   con `volver` a esa ficha.
+   (ADR-037): si no hay sesión, el formulario de la ficha redirige a
+   **crear una cuenta** con `volver` a esa ficha. Quien ya tiene cuenta
+   pasa a ingresar desde ahí, con la misma vuelta.
 4. **El estimado del listado es el mismo de la ficha.** Sale de
    `estimated_unit_amount_minor` + `currency`. Etiquetado: no es un precio
    fijo. Si no hay número cargado, la celda es un em dash, no un cero. Los
-   promedios de internet de la casa básica viven en
+   estimados de la casa básica viven en
    `docs/sql/catalogo-casa-basica.sql`, con fuente y fecha en
    `docs/research/2026-09-precios-catalogo.md`. Un ítem sin fuente queda
    nulo. No se scrapea en runtime.
@@ -81,8 +82,8 @@ Mercado Pago. El owner se entera cuando alguien se anota de verdad.
 - Una tabla ancha en 360 px se desplaza de costado. Es una tabla, no una
   tarjeta. La miniatura en Qué hace la fila más alta; se queda adentro de
   `max-w-quote` para no recortar estimado ni donar en 1440.
-- Los promedios de internet se vencen. Se actualizan en el SQL y en la nota
-  de research, no en un comentario.
+- Los estimados se vencen. Se actualizan en el SQL y en la nota de research,
+  no en un comentario.
 - Un valor fiscal de Formosa no es el ticket del corralón. La etiqueta de
   estimado cubre esa distancia; no la niega.
 - `formatMoney` ahora tiene dos archivos públicos. La compuerta sigue siendo

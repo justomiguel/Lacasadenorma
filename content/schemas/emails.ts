@@ -6,8 +6,8 @@ import { paragraphs, phrase } from "./primitives";
  * El texto de los correos que arma la aplicación (ADR-028, ADR-033).
  *
  * Los tres de identidad —confirmar la cuenta, recuperar la contraseña, cambiar de
- * dirección— **no están acá y no pueden estar**: los manda el servidor de Auth
- * porque llevan un token firmado, y su plantilla se edita en el panel de Supabase.
+ * dirección— **sí están acá**: el token lo emite GoTrue, el HTML lo arma este
+ * repositorio y Resend lo manda (ADR-028). `{link}` es el canje, no una visita.
  *
  * **Las marcas de sustitución son tres y están cerradas**: `{what}` es lo que se
  * reservó, `{when}` es cuándo vence y `{link}` es a dónde ir. No hay motor de
@@ -39,6 +39,13 @@ export const emailsSchema = z.object({
   accountReceived: message,
   accountApproved: message,
   accountDeclined: message,
+  /**
+   * Los tres de identidad. Llevan un token en `{link}` a propósito: sin abrirlo
+   * no hay prueba de que la casilla existe (ADR-028).
+   */
+  accountConfirm: message,
+  accountRecover: message,
+  accountEmailChange: message,
   pledgeConfirmed: message,
   pledgeReminder: message,
   pledgeFulfilled: message,

@@ -201,10 +201,10 @@ falta en especie en `/admin/catalogo`.
 
 ### Cargar el catálogo básico de la casa
 
-Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga una casa de 60 m²
-para una persona que vive sola, agrupada por categoría: materiales (ladrillos, cal, cemento, arena),
-aberturas, instalaciones (baño y cocina desde cero: tina, inodoro, mesada, grifería de cocina), electrodomésticos, muebles y ajuar. **Sin montos.** Las cantidades de
-mampostería están calculadas en el encabezado del archivo. Es idempotente por título y pide la
+Producción nace sin ítems. El SQL de `docs/sql/catalogo-casa-basica.sql` carga el cómputo de
+reconstrucción de ~102,5 m² (2 dormitorios, living, comedor, cocina, 2 baños y lavadero),
+agrupado por categoría, con estimados de esa lista. Es idempotente por título: inserta lo que
+falta, actualiza lo que coincide y despublica títulos que ya no están. No borra filas. Pide la
 campaña `casa-de-norma`.
 
 Correrlo en el SQL Editor del proyecto, entero. El `select` del final lista lo que quedó. Cada ítem
@@ -224,47 +224,27 @@ primer registro público (ADR-028).
    - **DKIM** — firma cada correo. Sin esto, Gmail lo manda a spam aunque el SPF esté.
    - **DMARC** — dice qué hacer con lo que falle. Empieza en `p=none`; no pases a `quarantine` hasta
      haber mandado unos cuantos y mirado el reporte.
-3. En Vercel (y en el panel de Supabase Auth → SMTP), las mismas variables de `.env.example`:
-   `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_STAFF_ADDRESS`. Sin la del equipo, el aviso al staff
-   no sale y el correo a la persona **sí**.
-4. En el panel de Supabase, **Authentication → Emails → SMTP Settings**: host `smtp.resend.com`,
-   puerto `587`, usuario `resend`, contraseña = la API key. El remitente visible es
-   `La Casa de Norma`. El archivo `supabase/config.toml` ya lo declara para quien aplique con el
-   CLI; el panel hay que tocarlo una vez si el proyecto se creó antes.
+3. En Vercel, `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_STAFF_ADDRESS` y, si el hook está
+   habilitado, `SEND_EMAIL_HOOK_SECRET`. Sin la del equipo, el aviso al staff no sale y el correo a
+   la persona **sí**. Para que el alta mande la confirmación por la API **antes** de habilitar el
+   hook, hace falta también `SUPABASE_SECRET_KEY` (sólo `generateLink`, nunca la base).
+4. En el panel de Supabase, **Authentication → Hooks → Send Email**: URL
+   `https://lacasadenorma.org/api/correo/identidad`, secreto Standard Webhooks (el mismo
+   `SEND_EMAIL_HOOK_SECRET`). Con el hook prendido, Auth no manda por SMTP: el correo de confirmar,
+   recuperar y cambiar dirección lo arma el repositorio y lo manda Resend. El SMTP
+   (`smtp.resend.com`, puerto `587`, usuario `resend`) queda de respaldo si el hook no está.
 
-**Rotar `RESEND_API_KEY` son dos lugares**, no uno: el entorno de la aplicación (Vercel) y el SMTP de
-Auth (panel de Supabase, o `config.toml` más `supabase config push`). Rotar sólo el primero deja los
-correos de identidad saliendo con una clave muerta; rotar sólo el segundo deja las reservas y las
-habilitaciones sin aviso. Después de rotar: un "olvidé mi contraseña" a una casilla propia, y un
-pedido de cuenta de prueba.
+**Rotar `RESEND_API_KEY` son dos lugares** mientras el SMTP siga activo: Vercel y el SMTP de Auth.
+Cuando el hook toma los tres, alcanza con Vercel. Después de rotar: crear una cuenta de prueba y
+abrir el enlace.
 
-Los tres correos de identidad **se editan en el panel de Supabase**, no en el repositorio: llevan un
-token que esta aplicación no emite. Si alguien los pisa, reponerlos de acá. Un solo idioma —el
-castellano— porque Auth no sabe todavía el idioma de la cuenta: el perfil nace después de confirmar.
+Los tres correos de identidad **viven en `content/es/emails.json` y `content/en/emails.json`**,
+igual que los del producto. El idioma lo pone `user_metadata.locale` al registrarse. El texto del
+panel de Supabase ya no se usa cuando el hook está prendido.
 
-**Confirmación de cuenta.** Asunto: `Confirmá tu correo — La Casa de Norma`.
-
-```
-Pediste una cuenta en el sitio de la reconstrucción de la casa de Norma. Para que el
-pedido quede anotado, abrí este enlace:
-
-{{ .ConfirmationURL }}
-
-Si no fuiste vos, ignorá este correo. Nadie va a reservar nada a tu nombre hasta que
-el equipo habilite la cuenta, y eso también te llega por acá.
-```
-
-**Recuperación de contraseña.** Asunto: `Poner una contraseña nueva — La Casa de Norma`.
-
-```
-Alguien pidió poner una contraseña nueva en una cuenta de La Casa de Norma. Si fuiste
-vos, abrí este enlace. Vence; si no llegás, pedí otro desde el sitio.
-
-{{ .ConfirmationURL }}
-
-Si no fuiste vos, ignorá este correo. La contraseña no cambia hasta que alguien abra
-el enlace y escriba una nueva.
-```
+**Confirmación de cuenta.** Asunto: `Confirmá tu correo`. El enlace lleva `token_hash` y abre
+`/cuenta/confirmar`. Hasta que alguien lo abre, no hay sesión: eso es la prueba de que la casilla
+existe.
 
 ### Redes sociales (ADR-039)
 

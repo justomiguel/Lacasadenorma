@@ -5,6 +5,15 @@ import {
 
 export const metadata = signUpMetadata("en");
 
-export default function CreateAccountPage() {
-  return <SignUpScreen locale="en" />;
+export default async function CreateAccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const volver = params["volver"];
+
+  return (
+    <SignUpScreen locale="en" returnTo={typeof volver === "string" ? volver : null} />
+  );
 }

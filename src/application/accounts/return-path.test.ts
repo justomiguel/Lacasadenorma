@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { safeAccountReturn } from "./return-path";
+import { accountHref, safeAccountReturn } from "./return-path";
 
 describe("safeAccountReturn", () => {
   it("sin destino vuelve a la cuenta", () => {
@@ -32,5 +32,27 @@ describe("safeAccountReturn", () => {
     expect(
       safeAccountReturn("/catalogo?item=ab700000-0000-4000-8000-000000000003&x=1", "es"),
     ).toBe("/catalogo");
+  });
+});
+
+describe("accountHref", () => {
+  it("sin vuelta es la pantalla pedida", () => {
+    expect(accountHref("crear", "es")).toBe("/cuenta/crear");
+    expect(accountHref("ingresar", "en")).toBe("/en/cuenta/ingresar");
+  });
+
+  it("lleva la ficha en volver, ya filtrada", () => {
+    expect(
+      accountHref("crear", "es", "/catalogo/ab700000-0000-4000-8000-000000000003"),
+    ).toBe("/cuenta/crear?volver=%2Fcatalogo%2Fab700000-0000-4000-8000-000000000003");
+    expect(
+      accountHref("ingresar", "en", "/en/catalogo/AB700000-0000-4000-8000-000000000003"),
+    ).toBe(
+      "/en/cuenta/ingresar?volver=%2Fen%2Fcatalogo%2Fab700000-0000-4000-8000-000000000003",
+    );
+  });
+
+  it("un destino ajeno no se agrega", () => {
+    expect(accountHref("crear", "es", "https://otro.example")).toBe("/cuenta/crear");
   });
 });

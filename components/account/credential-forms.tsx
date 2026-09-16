@@ -33,6 +33,7 @@ export function SignUpForm({
   fields,
   locale,
   providers,
+  returnTo,
   social,
 }: {
   copy: AccountContent["signUp"];
@@ -40,6 +41,7 @@ export function SignUpForm({
   fields: AccountContent["fields"];
   locale: Locale;
   providers: readonly SocialProviderId[];
+  returnTo?: string | null;
   social: AccountContent["social"];
 }) {
   const [state, formAction] = useActionState<AccountFormState, FormData>(signUp, IDLE);
@@ -69,6 +71,9 @@ export function SignUpForm({
     <>
       <form action={formAction} className="max-w-measure space-y-lg">
         <LocaleField locale={locale} />
+        {returnTo === null || returnTo === undefined || returnTo.length === 0 ? null : (
+          <input type="hidden" name="volver" value={returnTo} />
+        )}
 
         <TextField
           name="email"
@@ -91,7 +96,13 @@ export function SignUpForm({
 
         <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
       </form>
-      <SocialAuth copy={social} errors={errors} locale={locale} providers={providers} />
+      <SocialAuth
+        copy={social}
+        errors={errors}
+        locale={locale}
+        providers={providers}
+        returnTo={returnTo ?? null}
+      />
     </>
   );
 }

@@ -29,7 +29,7 @@
     "haveAccountLink": "Sign in",
     "checkInboxTitle": "Check your email",
     "checkInboxBody": [
-      "We sent a link to the address you typed. You have to open it for the account to become active; until then it isn't created.",
+      "We sent a link to the address you typed. You have to open it: that is how we know that mailbox exists and that we can write to you. Until then the account is not active.",
       "If it doesn't arrive within a few minutes, look in your spam folder."
     ]
   },

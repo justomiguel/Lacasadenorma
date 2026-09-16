@@ -5,11 +5,14 @@ import { redirect } from "next/navigation";
 import type { Provider } from "@supabase/supabase-js";
 
 import {
+  ACCOUNT_RETURN_MAX_AGE,
+  OAUTH_RETURN_COOKIE,
+} from "@/src/application/accounts/oauth-result";
+import { safeAccountReturn } from "@/src/application/accounts/return-path";
+import {
   enabledSocialProviders,
   unknownSocialProviders,
 } from "@/src/application/accounts/social-providers";
-import { safeAccountReturn } from "@/src/application/accounts/return-path";
-import { OAUTH_RETURN_COOKIE } from "@/src/application/accounts/oauth-result";
 import { isSocialProvider, supabaseProviderOf } from "@/src/domain/auth/social-providers";
 import { localizeHref } from "@/src/i18n/locale";
 import { logger } from "@/src/infrastructure/logging/logger";
@@ -30,8 +33,6 @@ import { localeOf, rateLimited, textOf, type AccountFormState } from "./form-sta
  * en la URL del callback: un `next` en la query es un redirect abierto, y
  * ésta es la misma lección que `/cuenta/confirmar` (ADR-039).
  */
-
-const RETURN_MAX_AGE = 10 * 60;
 
 export async function startOAuth(
   _state: AccountFormState,
@@ -90,7 +91,7 @@ export async function startOAuth(
       httpOnly: true,
       sameSite: "lax",
       path: "/",
-      maxAge: RETURN_MAX_AGE,
+      maxAge: ACCOUNT_RETURN_MAX_AGE,
     },
   );
 

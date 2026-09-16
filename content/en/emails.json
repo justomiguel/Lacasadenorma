@@ -20,6 +20,36 @@
     "action": "See your account",
     "why": "You're getting this because the team approved your account on the site for rebuilding Norma's house."
   },
+  "accountConfirm": {
+    "subject": "Confirm your email",
+    "preheader": "Open the link so we know that mailbox exists.",
+    "body": [
+      "You asked for an account on the site for rebuilding Norma's house. Open the link so we know that mailbox exists and that we can write to you. Until then the account is not active.",
+      "If this wasn't you, ignore this email. Nobody will write anything down in your name until someone opens the link."
+    ],
+    "action": "Confirm the email",
+    "why": "You're getting this because someone typed this address when creating an account on the site for rebuilding Norma's house."
+  },
+  "accountRecover": {
+    "subject": "Set a new password",
+    "preheader": "The link expires. If you miss it, ask for another one from the site.",
+    "body": [
+      "Someone asked to set a new password on an account for La Casa de Norma. If that was you, open the link. It expires; if you miss it, ask for another one from the site.",
+      "If this wasn't you, ignore this email. The password does not change until someone opens the link and types a new one."
+    ],
+    "action": "Set a new password",
+    "why": "You're getting this because someone asked to recover access to an account on the site for rebuilding Norma's house."
+  },
+  "accountEmailChange": {
+    "subject": "Confirm the new address",
+    "preheader": "Open the link so the change goes through.",
+    "body": [
+      "Someone asked to change the email on an account on the site for rebuilding Norma's house. If that was you, open the link.",
+      "If this wasn't you, ignore this email. The address does not change until someone opens the link."
+    ],
+    "action": "Confirm the new address",
+    "why": "You're getting this because someone asked to change the email of an account on the site for rebuilding Norma's house."
+  },
   "accountDeclined": {
     "subject": "We're not approving the account this time",
     "preheader": "The team reviewed the request and will not approve it this time.",

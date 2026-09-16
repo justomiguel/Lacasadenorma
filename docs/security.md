@@ -319,10 +319,15 @@ formulario, ese comentario deja de ser cierto.
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Sí, a propósito | Cliente de Supabase. La protección es RLS, no el secreto de esta clave |
 | `NEXT_PUBLIC_SITE_URL` | Sí | Canónicas, sitemap, JSON-LD, OpenGraph |
 | `NEXT_PUBLIC_ANALYTICS_*` | Sí | Script del proveedor y su origen en la CSP |
-| `SUPABASE_SECRET_KEY` | **No** | En ningún lugar del código de la aplicación. Sólo para tareas administrativas fuera de la web |
+| `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink` en el servidor, si el hook de correo no está. Nunca para la base |
+| `RESEND_API_KEY` | **No** | `ResendSender` y, de respaldo, SMTP de Auth |
+| `SEND_EMAIL_HOOK_SECRET` | **No** | Verificar la firma del hook `send_email` |
+| `EMAIL_FROM_ADDRESS` | **No** | Remitente de Resend |
+| `EMAIL_STAFF_ADDRESS` | **No** | Aviso al equipo |
 
-La clave secreta no se lee desde `src/` ni desde `app/`, y no tiene prefijo `NEXT_PUBLIC_`. Eso lo
-verifica `npm run check:secrets`, que hace tres cosas:
+La clave secreta no tiene prefijo `NEXT_PUBLIC_`. En `src/` se lee **sólo** en
+`src/infrastructure/supabase/auth-admin.ts` para emitir el enlace de confirmación.
+Eso lo verifica `npm run check:secrets`, que hace tres cosas:
 
 1. Rechaza nombres con forma de secreto que lleven prefijo `NEXT_PUBLIC_`.
 2. Rechaza que un módulo `"use client"` lea una variable de entorno sin ese prefijo.

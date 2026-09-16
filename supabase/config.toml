@@ -77,6 +77,14 @@ email_sent = 30
 sign_in_sign_ups = 30
 token_verifications = 30
 
+# El hook toma el envío: Auth entrega el token, la aplicación manda por Resend
+# (ADR-028). Sin este bloque, o sin el secreto en el proyecto hospedado, el alta
+# usa `generateLink` si hay `SUPABASE_SECRET_KEY`, o `signUp` + SMTP.
+# [auth.hook.send_email]
+# enabled = true
+# uri = "https://lacasadenorma.org/api/correo/identidad"
+# secrets = "env(SEND_EMAIL_HOOK_SECRET)"
+
 [auth.hook.custom_access_token]
 # El rol viaja en el token como claim de `app_metadata`, que sólo el servidor de
 # auth puede escribir. Leerlo de `user_metadata` sería una escalada de privilegios
