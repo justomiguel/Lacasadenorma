@@ -7,6 +7,7 @@
  */
 
 import { cn } from "./cn";
+import { IdentifyingMark } from "./identifying-mark";
 import { GlobeIcon } from "./icons";
 
 export function CountryFlag({
@@ -23,7 +24,7 @@ export function CountryFlag({
       width={24}
       height={16}
       viewBox="0 0 36 24"
-      className={cn("h-md w-lg shrink-0", className)}
+      className={cn("identifying-flag", className)}
     >
       {country === "AR" ? <ArgentinaFlagMarks /> : <ChileFlagMarks />}
     </svg>
@@ -34,9 +35,9 @@ export function CountryFlag({
 export function CountryMark({ region }: { region: "AR" | "CL" | "INT" }) {
   if (region === "INT") {
     return (
-      <span data-country-mark="INT" className="inline-flex shrink-0 text-olive">
-        <GlobeIcon size={16} />
-      </span>
+      <IdentifyingMark data-country-mark="INT" className="text-olive">
+        <GlobeIcon />
+      </IdentifyingMark>
     );
   }
 

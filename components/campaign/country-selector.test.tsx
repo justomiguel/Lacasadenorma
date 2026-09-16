@@ -25,5 +25,8 @@ describe("CountrySelector", () => {
     expect(container.querySelector("[data-flag=AR]")).not.toBeNull();
     expect(container.querySelector("[data-flag=CL]")).not.toBeNull();
     expect(container.querySelector("[data-country-mark=INT]")).not.toBeNull();
+    expect(container.querySelector("[data-country-mark=INT]")?.className).toMatch(
+      /identifying-mark/,
+    );
   });
 });

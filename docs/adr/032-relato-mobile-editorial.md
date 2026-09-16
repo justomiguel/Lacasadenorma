@@ -117,8 +117,8 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
   `DonationMethods` se borran. `ui.home.chaptersLabel` y `ui.home.quoteOverlay` salen
   del contenido.
 - `check:marcas` sigue exigiendo el logo al lado del nombre de cada marca.
-  `check:iconos` exige bandera o globo en el tab de país, pictograma en cada
-  `CopyField` de la transferencia y marca en los caminos de `/ayudar` (ADR-047).
+  `check:iconos` exige bandera o globo **antes** del nombre del país, a 1.15 em,
+  pictograma en cada `CopyField` y marca en los caminos de `/ayudar` (ADR-047).
 - `revision-visual.spec.ts` acepta el gradiente marcado con `data-scrim` y sigue
   rechazando cualquier otro, igual que las versales fuera de `data-kicker`.
 - `aportes.spec.ts` se reescribe sobre el nuevo selector; `help-bar.test.tsx`

@@ -1,13 +1,12 @@
 import type { ReactNode, SVGProps } from "react";
 
 /**
- * Una sola familia de iconos: trazo de 1.5, esquinas redondas, 20 px.
+ * Una sola familia de iconos: trazo de 1.5, esquinas redondas, viewBox 24.
  *
- * Van al lado del nombre cuando identifican un control, un campo, un canal o
- * un camino (ADR-047). Las acciones (copiar, cerrar, menú, flecha, salir) y el
- * bloque de cuenta del drawer (persona, panel, gráfico) también. Los bancos de
- * la transferencia son marcas, no pictogramas: van en `content/brands.ts`. Las
- * banderas, en `flags.tsx`. No hay iconos de relleno ni packs.
+ * Los que identifican van **antes del nombre**, a 1.15 em de esa letra, en
+ * `IdentifyingMark` (ADR-047). El default de 20 px queda para las acciones
+ * (copiar, cerrar, menú, flecha) dentro de `ICON_ACTION`. Los bancos son
+ * marcas (`content/brands.ts`). Las banderas, `flags.tsx`. Sin relleno ni packs.
  */
 
 export type IconProps = Omit<SVGProps<SVGSVGElement>, "children"> & { size?: number };

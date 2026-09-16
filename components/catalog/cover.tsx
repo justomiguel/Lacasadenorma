@@ -6,6 +6,7 @@ import { ArgentinaTransfer, ChileTransfer } from "@/components/campaign/bank-tra
 import { ExternalPayment } from "@/components/campaign/external-payment";
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import { BankIcon, BoxIcon } from "@/components/design-system/icons";
 import type {
   AccountContent,
@@ -194,12 +195,12 @@ function ChannelRadios({
               {option.brand === null ? (
                 <>
                   {option.Icon === null ? null : (
-                    <span
+                    <IdentifyingMark
                       data-channel-mark={option.value}
-                      className="inline-flex shrink-0 text-olive"
+                      className="text-olive"
                     >
-                      <option.Icon size={16} />
-                    </span>
+                      <option.Icon />
+                    </IdentifyingMark>
                   )}
                   {option.label}
                 </>

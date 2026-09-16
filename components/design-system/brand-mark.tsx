@@ -10,7 +10,8 @@ import { cn } from "./cn";
  *
  * El mark es decorativo: el nombre lo dice el texto. `alt` vacío y `aria-hidden`
  * para no oír "PayPal PayPal". Las dimensiones del archivo son 24×24; el tamaño
- * visible sigue a la tipografía (`1.15em`) para no pelear con el botón o el tab.
+ * visible sigue a la letra (`identifying-mark`, 1.15 em) para no pelear
+ * con el botón, el tab o el título (ADR-047).
  */
 export function BrandMark({ id, className }: { id: BrandId; className?: string }) {
   const brand = BRANDS[id];
@@ -23,7 +24,7 @@ export function BrandMark({ id, className }: { id: BrandId; className?: string }
       height={brand.height}
       unoptimized
       aria-hidden={true}
-      className={cn("h-[1.15em] w-[1.15em] shrink-0", className)}
+      className={cn("identifying-mark", className)}
     />
   );
 }

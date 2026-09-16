@@ -335,8 +335,9 @@ Escritos a mano. Sin librería de componentes.
 | `PhotoEssay` | Serie de fotos a sangrado | Navegable con teclado si tiene desplazamiento |
 | `Figure` de datos (`Stat`) | Una cifra con su etiqueta y su fecha | Cifras tabulares; la etiqueta es parte del nombre accesible |
 | `ProgressBar` | Avance recaudado/objetivo | `role="progressbar"` con valores; el número también en texto |
-| `CopyField` | Dato bancario con marca de la etiqueta y botón de copiar | Confirmación por `aria-live="polite"`; funciona con teclado; falla visiblemente si el navegador niega el portapapeles; el pictograma no reemplaza el nombre (ADR-047) |
-| `CountrySelector` | Elegir país de aporte, con bandera o globo al lado del nombre | Patrón de tabs con flechas, `aria-selected`, sin JS: en no-JS se ven las tres |
+| `CopyField` | Dato bancario con marca **antes** de la etiqueta (`1.15em`) y botón de copiar | Confirmación por `aria-live="polite"`; funciona con teclado; falla visiblemente si el navegador niega el portapapeles; el pictograma no reemplaza el nombre (ADR-047) |
+| `CountrySelector` | Elegir país de aporte, con bandera o globo **antes** del nombre, a 1.15 em | Patrón de tabs con flechas, `aria-selected`, sin JS: en no-JS se ven las tres |
+| `IdentifyingMark` | Pictograma identificador: primer hijo del renglón, `1.15em` de esa letra | `aria-hidden` en el SVG; el nombre sigue siendo el texto |
 | `Timeline` | Hitos con estado | Lista ordenada real, no divs |
 | `Ledger` | Tabla de gastos | `<table>` con `<caption>` y encabezados asociados; en mobile se reordena, no se hace scroll horizontal |
 | `Callout` | Aviso (dato desactualizado, falta información) | `role="note"`; el color no es el único indicador |

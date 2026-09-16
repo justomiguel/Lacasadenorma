@@ -7,6 +7,7 @@ import { fill } from "@/src/i18n/fill";
 
 import { ICON_ACTION } from "./actions";
 import { cn } from "./cn";
+import { IdentifyingMark } from "./identifying-mark";
 import {
   AtIcon,
   BankIcon,
@@ -116,9 +117,9 @@ export function CopyField({
         <div className="min-w-0">
           <p className="flex items-center gap-xs font-ui text-caption text-ink-muted">
             {Mark === undefined ? null : (
-              <span data-field-mark={label} className="inline-flex shrink-0 text-olive">
-                <Mark size={16} />
-              </span>
+              <IdentifyingMark data-field-mark={label} className="text-olive">
+                <Mark />
+              </IdentifyingMark>
             )}
             {label}
           </p>
