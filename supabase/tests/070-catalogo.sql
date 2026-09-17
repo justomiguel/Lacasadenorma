@@ -343,7 +343,7 @@ select has_function(
 
 select has_function(
   'public', 'fulfill_donation_pledge',
-  array['uuid']::name[],
+  array['uuid', 'text', 'text']::name[],
   'existe fulfill_donation_pledge()'
 );
 

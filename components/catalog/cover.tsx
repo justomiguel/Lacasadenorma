@@ -8,6 +8,7 @@ import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
 import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import { BankIcon, BoxIcon } from "@/components/design-system/icons";
+import { useChromeSession } from "@/components/site/session";
 import type {
   AccountContent,
   CatalogContent,
@@ -21,14 +22,16 @@ import type { Locale } from "@/src/i18n/locale";
 
 import { ClaimForm } from "./claim-form";
 import { CoverAmounts } from "./cover-amount";
+import { OfferForm } from "./offer-form";
 
 /**
  * Cómo donar un ítem: traer el mismo bien (con datos de retiro) o cubrirlo
  * con plata sin reservar (ADR-044, ADR-046).
  *
  * Los datos de un medio de pago aparecen sólo cuando ese canal está elegido.
- * Sin JavaScript lo hace `:has()` sobre el radio. El formulario de reserva
- * sólo está en «traer el mismo bien».
+ * Sin JavaScript lo hace `:has()` sobre el radio. El formulario corto es el
+ * HTML público; el de retiro aparece al hidratar si hay sesión (ADR-037,
+ * ADR-051).
  */
 export function HowToDonate({
   itemId,
@@ -49,6 +52,7 @@ export function HowToDonate({
   ui: UiContent;
   locale: Locale;
 }) {
+  const { session } = useChromeSession();
   const [extra, setExtra] = useState("");
   const [channel, setChannel] = useState<CoverChannel>("bring");
 
@@ -86,15 +90,19 @@ export function HowToDonate({
       <div data-bring>
         <p className="mt-lg max-w-measure text-body text-ink-muted">{copy.bringLead}</p>
         {channel === "bring" ? (
-          <ClaimForm
-            itemId={itemId}
-            remaining={remaining}
-            copy={copy}
-            account={account}
-            locale={locale}
-            submitLabel={copy.donateCta}
-            pendingLabel={copy.coverClaiming}
-          />
+          session.status === "signed-in" ? (
+            <ClaimForm
+              itemId={itemId}
+              remaining={remaining}
+              copy={copy}
+              account={account}
+              locale={locale}
+              submitLabel={copy.donateCta}
+              pendingLabel={copy.coverClaiming}
+            />
+          ) : (
+            <OfferForm itemId={itemId} copy={copy} account={account} locale={locale} />
+          )
         ) : null}
       </div>
       <p data-money className="mt-lg max-w-measure text-body text-ink-muted">

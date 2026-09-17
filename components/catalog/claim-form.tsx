@@ -6,7 +6,6 @@ import { useFormStatus } from "react-dom";
 import { claimItemAction } from "@/app/(es)/catalogo/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
 import {
-  CheckboxField,
   FormError,
   LocaleField,
   SubmitButton,
@@ -20,8 +19,8 @@ import type { Locale } from "@/src/i18n/locale";
 import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
 
 /**
- * Anotarse a traer un bien: nombre, teléfono optativo y dirección de retiro
- * (ADR-046). La cuenta no es la prueba: es para ver y cancelar.
+ * Anotarse a traer un bien, con sesión: nombre, teléfono optativo y
+ * dirección de retiro (ADR-046, ADR-051). El HTML público no es éste.
  */
 export function ClaimForm({
   itemId,
@@ -92,7 +91,7 @@ export function ClaimForm({
       <TextField
         name="telefono"
         label={copy.contactPhone}
-        hint={copy.contactPhoneHint}
+        hint={copy.claimPhoneHint}
         required={false}
         autoComplete="tel"
         inputMode="tel"
@@ -103,24 +102,6 @@ export function ClaimForm({
         copy={copy}
         error={fieldError(state, account.errors, "pickupAddress")}
       />
-
-      <CheckboxField
-        name="aparecer"
-        label={copy.appearNamed}
-        hint={copy.appearNamedHint}
-        defaultChecked={false}
-      />
-
-      <TextField
-        name="nombre"
-        label={account.fields.displayName}
-        hint={account.fields.displayNameHint}
-        required={false}
-        autoComplete="nickname"
-        {...optional(fieldError(state, account.errors, "displayName"))}
-      />
-
-      <TextField name="nota" label={copy.note} hint={copy.noteHint} required={false} />
 
       {general === null ? null : <FormError>{general}</FormError>}
 

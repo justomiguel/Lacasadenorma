@@ -48,6 +48,9 @@ test.describe("fase D · reservas", () => {
     await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(articulo.locator("[data-pay=paypal]")).toBeHidden();
     await expect(articulo.getByLabel(/^nombre$/i)).toBeVisible();
+    await expect(articulo.getByLabel(/^teléfono$/i)).toBeVisible();
+    await expect(articulo.getByLabel(/^correo$/i)).toBeVisible();
+    await expect(articulo.getByLabel(/dirección donde ir a buscar/i)).toHaveCount(0);
     await expect(articulo.getByRole("button", { name: /quiero donar/i })).toBeVisible();
 
     await articulo.getByRole("radio", { name: /^transferencia$/i }).click();
@@ -128,7 +131,6 @@ test.describe("fase D · reservas", () => {
 
     const formulario = formularioDeTraer(articuloDelCatalogo(page));
     const nombre = formulario.getByLabel(/^nombre$/i);
-    const direccion = formulario.getByLabel(/dirección donde ir a buscar/i);
 
     await formulario.getByRole("button", { name: /quiero donar/i }).click();
 
@@ -139,9 +141,9 @@ test.describe("fase D · reservas", () => {
     await nombre.fill("Ana");
     await formulario.getByRole("button", { name: /quiero donar/i }).click();
 
-    await expect(direccion).toBeFocused();
-    await expect(direccion).toBeInViewport();
-    await expect(direccion).toHaveCSS("border-top-color", "rgb(138, 58, 42)");
+    await expect(
+      formulario.getByText(/teléfono o un correo, uno de los dos/i),
+    ).toBeVisible();
   });
 
   test("del listado a la ficha se ve la foto, no sólo el epígrafe", async ({ page }) => {

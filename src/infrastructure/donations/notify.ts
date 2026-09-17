@@ -1,5 +1,6 @@
 import type { DonationPledge } from "@/src/domain/entities/donation-pledge";
 import { buildPledgeEmail, buildStaffEmail } from "@/src/application/emails/messages";
+import { staffPledgeDecisionPath } from "@/src/domain/staff-pledge-decision";
 import type { Locale } from "@/src/i18n/locale";
 import { localizeHref } from "@/src/i18n/locale";
 
@@ -58,6 +59,8 @@ export async function notifyPledgeClaimed(
     staffAddress,
     what: pledge.itemTitle,
     backofficeUrl: `${siteUrl}/admin/donaciones`,
+    yesUrl: `${siteUrl}${staffPledgeDecisionPath(pledge.id, "si")}`,
+    noUrl: `${siteUrl}${staffPledgeDecisionPath(pledge.id, "no")}`,
   });
   const staffResult = await sender.send("staff.new_pledge", toStaff);
 

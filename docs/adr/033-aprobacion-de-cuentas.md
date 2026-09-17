@@ -1,6 +1,6 @@
 # ADR-033 · Una cuenta del público no reserva nada hasta que el equipo la habilita
 
-**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md): confirmar el correo alcanza para anotarse a traer un bien. `declined` sigue sin reservar.
+**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md): confirmar el correo alcanza para anotarse a traer un bien. `declined` sigue sin reservar. Enmendada por [ADR-051](./051-dos-puertas-para-traer.md): el teléfono reserva sin cuenta; el owner confirma o suelta desde el correo.
 
 ## Contexto
 

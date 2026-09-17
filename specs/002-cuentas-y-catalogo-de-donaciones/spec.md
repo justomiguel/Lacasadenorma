@@ -77,13 +77,17 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
    **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y completa la reserva
    con nombre, un teléfono si lo hay y la dirección de retiro, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta.
-7. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
+7. **Given** alguien sin sesión que deja nombre y teléfono, **When** confirma, **Then** el ítem queda
+   reservado a su nombre, el owner recibe un correo con dos enlaces (sí: se contactó y donan; no:
+   soltar la reserva), un sí aparece en Quiénes ayudaron como donado por esa persona con esa fecha,
+   y un no devuelve el ítem a la lista. No se crea una cuenta.
+8. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
    reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y
    cómo donarlo: traer el bien (formulario de retiro) o cubrirlo con plata (datos de pago, sin reserva).
-8. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
+9. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
    **Then** ve los datos de pago y **no** un formulario de reserva ni un pedido de cuenta. El nombre, si quiere aparecer,
    se pide cuando el equipo anota la transacción.
-9. **Given** un ítem publicado con foto de referencia o subida, **When** alguien abre `/catalogo`,
+10. **Given** un ítem publicado con foto de referencia o subida, **When** alguien abre `/catalogo`,
    **Then** ve una miniatura de esa foto junto al título, en la misma celda Qué. **Given** un ítem
    sin ninguna de las dos, **When** abre el listado, **Then** no ve un hueco reservado en esa fila:
    el título alcanza.
@@ -354,10 +358,29 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
   Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
   a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
-  Si falta un dato, el sistema MUST llevar el foco y el scroll al primer campo inválido y MUST
-  marcar su borde con el color de peligro. MUST NOT enviar el formulario.
+  MUST NOT pedir nombre para mostrar ni nota para la familia en esa ficha: quién se maneja con el
+  sistema lo elige en `/cuenta` (FR-225, FR-229). Si falta un dato, el sistema MUST llevar el foco
+  y el scroll al primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT
+  enviar el formulario.
 - **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
   catálogo.
+- **FR-259**: Alguien sin sesión MUST poder reservar un ítem publicado dejando nombre y teléfono,
+  sin crear una cuenta (ADR-051). La reserva MUST quedar anotada a esa persona (`contact_name`) y
+  MUST nacer anónima. MUST mover `reserved_quantity`. MUST NOT pedir dirección, nombre para mostrar
+  ni nota. Un mismo teléfono MUST NOT sostener dos veces el mismo ítem. El número y el nombre de
+  contacto MUST NOT publicarse.
+- **FR-260**: El aviso al equipo de una reserva nueva —por teléfono o por cuenta— MUST incluir dos
+  enlaces que piden sesión con `donaciones.escribir` y MUST NOT autenticar por el correo (FR-237):
+  sí confirma que el equipo se contactó y van a donar (`fulfill_donation_pledge`); no suelta la
+  reserva. El GET MUST NOT mutar: la confirmación es un POST con sesión.
+- **FR-261**: Un ítem confirmado por sí MUST aparecer en Quiénes ayudaron con la fecha de esa
+  confirmación (`fulfilled_at`) **sólo** si en esa pantalla cargaron un nombre porque la persona
+  aceptó aparecer (FR-262). MUST NOT publicar el teléfono, el nombre de contacto ni el
+  identificador de la reserva.
+- **FR-262**: En el sí de una reserva por teléfono, si la persona aceptó aparecer, el equipo MUST
+  poder cargar el nombre para mostrar y una nota privada. Sin ese nombre, el sí MUST cumplir la
+  reserva y MUST NOT publicarla. El camino del correo MUST NOT pedir esos campos en esa pantalla:
+  se eligen en `/cuenta`.
 - **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
   ejecuta no corra.
 - **FR-219**: El sistema MUST limitar la cantidad de reservas activas por cuenta.
@@ -374,9 +397,11 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 **Anonimato y muro**
 
 - **FR-225**: Toda reserva MUST tener una preferencia de anonimato, y el valor por defecto MUST ser
-  anónimo.
+  anónimo. El camino del teléfono no es una excepción: aparecer se carga en el sí, si aceptaron
+  (FR-262). El camino del correo lo elige en `/cuenta`.
 - **FR-226**: El sistema MUST publicar una sección con las donaciones **no** anónimas cuya llegada
-  fue confirmada, mostrando el nombre elegido, qué se donó y la fecha.
+  fue confirmada —incluido el sí del owner sobre una reserva por teléfono (FR-261)—, mostrando el
+  nombre elegido, qué se donó y la fecha.
 - **FR-227**: La sección pública MUST NOT exponer correo, identificador de cuenta, nota privada ni
   ningún otro dato de quien donó, y la imposibilidad MUST estar impuesta por privilegios de la base,
   no por la consulta que escriba la aplicación.
@@ -391,7 +416,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 - **FR-231**: El sistema MUST enviar, desde el dominio del proyecto: confirmación de cuenta,
   recuperación de contraseña, confirmación de reserva, recordatorio de vencimiento, agradecimiento
-  por donación recibida, y aviso al equipo de una reserva nueva.
+  por donación recibida, aviso al equipo de una reserva nueva, y aviso al equipo de un pedido por
+  teléfono.
 - **FR-232**: Todo correo MUST estar en el idioma en que la persona usó el sitio.
 - **FR-233**: El envío de correo MUST NOT ser condición para que la operación que lo dispara se
   complete.
@@ -401,14 +427,16 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-236**: Sin credencial del proveedor configurada, el sistema MUST seguir funcionando y MUST NOT
   ofrecer flujos que dependan del correo para completarse.
 - **FR-237**: Ningún correo MUST contener datos de otra persona, ni secretos, ni enlaces que
-  autentiquen sin expirar.
+  autentiquen sin expirar. Excepción acotada: `staff.phone_offer` nombra a quien dejó el teléfono,
+  no el número. Los dos enlaces de sí/no piden la sesión del equipo, no un token.
 
 **Privacidad**
 
 - **FR-238**: El sistema MUST recolectar el mínimo: correo; nombre para mostrar si la persona
-  lo escribe o si entra con una red que lo entrega; y una foto de retrato si la persona la
-  sube o si esa red entrega una. El local-part del correo MUST NOT usarse como nombre. La foto
-  MUST NOT publicarse.
+  lo escribe o si entra con una red que lo entrega; una foto de retrato si la persona la
+  sube o si esa red entrega una; y, en el camino del teléfono sin cuenta, nombre y teléfono
+  (ADR-051). El local-part del correo MUST NOT usarse como nombre. La foto MUST NOT publicarse.
+  El teléfono MUST NOT publicarse.
 - **FR-239**: La política de privacidad publicada MUST describir qué se guarda, para qué, cuánto
   tiempo y cómo se borra, en los dos idiomas, **en el mismo despliegue** que habilita el registro.
 - **FR-240**: Borrar la cuenta MUST eliminar los datos personales y MUST conservar la donación como
@@ -505,6 +533,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   y `pending`. Si esa dirección ya tenía cuenta, entra a ésa. Verificado en el harness local.
 - **SC-215**: Desde `/admin/catalogo` el owner ve, edita en la fila y borra un ítem sin reservas; el
   editor no ve borrar. Verificado en e2e, en viewport de teléfono y de escritorio.
+- **SC-216**: Un aviso por teléfono baja lo que falta; el sí del owner publica nombre y fecha en
+  Quiénes ayudaron; el no devuelve el ítem. Verificado en e2e.
 
 ---
 

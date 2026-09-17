@@ -105,12 +105,24 @@
   },
   "staffNewPledge": {
     "subject": "Reserva nueva en el catálogo",
-    "preheader": "Hay que ir a buscar. El contacto y la dirección están en el backoffice.",
+    "preheader": "Hay que confirmar si donan o soltar la reserva. El contacto está en el backoffice.",
     "body": [
-      "Alguien quiere donar {what}. Dejó nombre y dirección de retiro.",
-      "Los datos de contacto están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada."
+      "Alguien quiere donar {what}. La unidad quedó reservada.",
+      "Si te contactaste y van a donar, confirmá: aparece como donado con la fecha de hoy. Si no se concreta, soltá la reserva para que vuelva a la lista. Los datos de contacto están en el backoffice."
     ],
-    "action": "Abrir las donaciones",
+    "action": "Sí: donan",
+    "rejectAction": "No: soltar la reserva",
+    "why": "Recibís este correo porque sos parte del equipo de la campaña."
+  },
+  "staffPhoneOffer": {
+    "subject": "Alguien quiere donar un artículo",
+    "preheader": "Quedó reservado a su nombre. Confirmá si donan o soltá la reserva.",
+    "body": [
+      "{who} quiere donar {what}. Dejó un teléfono y la unidad quedó reservada a su nombre.",
+      "Si te contactaste y van a donar, confirmá. Si aceptó aparecer, en esa pantalla se carga el nombre. Si no, se cuenta sin publicarlo. Si no se concreta, soltá la reserva. El número está en el backoffice."
+    ],
+    "action": "Sí: donan",
+    "rejectAction": "No: soltar la reserva",
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   },
   "staffPledgeCancelled": {

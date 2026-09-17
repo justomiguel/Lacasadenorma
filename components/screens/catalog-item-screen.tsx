@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Unavailable } from "@/components/campaign/unavailable";
 import { CatalogItem } from "@/components/catalog/item";
 import { ConflictNotice } from "@/components/catalog/conflict-notice";
+import { OfferThanksNotice } from "@/components/catalog/offer-thanks";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { Container, Section } from "@/components/design-system/layout";
 import { PageHeader } from "@/components/site/page-header";
@@ -91,6 +92,7 @@ export async function CatalogItemScreen({
   ]);
   const claims = claimsResult.status === "ok" ? claimsResult.data : [];
   const conflicto = query["conflicto"];
+  const reservado = query["reservado"];
 
   if (result.status !== "ok") {
     return (
@@ -121,6 +123,7 @@ export async function CatalogItemScreen({
       <Container>
         <Section>
           {typeof conflicto === "string" ? <ConflictNotice copy={catalog} /> : null}
+          {typeof reservado === "string" ? <OfferThanksNotice copy={catalog} /> : null}
           <CatalogItem
             item={item}
             claims={claims}

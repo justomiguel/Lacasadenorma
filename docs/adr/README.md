@@ -59,9 +59,6 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [046](./046-compromiso-con-datos-de-retiro.md) | El compromiso pide datos de retiro, no una cuenta como prueba | Aceptada |
 | [047](./047-iconos-que-identifican.md) | Un icono antes del nombre, a 1.15 em de esa letra | Aceptada |
 | [048](./048-tablero-de-metricas-del-owner.md) | Tablero de métricas del owner, con gráficos y señales | Aceptada; enmendada por ADR-049 |
-<<<<<<< HEAD
 | [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada; enmendada: navegadores, entrada, propiedades, tasas |
-=======
-| [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada |
 | [050](./050-acciones-del-catalogo.md) | Acciones del catálogo: ver, editar la fila y borrar, en el backoffice | Aceptada |
->>>>>>> origin/main
+| [051](./051-dos-puertas-para-traer.md) | Dos puertas para traer un bien: el mail abre cuenta, el teléfono reserva | Aceptada |

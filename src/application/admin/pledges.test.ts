@@ -12,7 +12,7 @@ describe("fulfillPledge", () => {
 
     expect(result.status).toBe("ok");
     expect(fake.calls.find((call) => call.name === "fulfillPledge")).toMatchObject({
-      input: PLEDGE,
+      input: { id: PLEDGE, displayName: null, note: null },
     });
     expect(fake.audit).toHaveLength(1);
     expect(fake.audit[0]).toMatchObject({
@@ -20,6 +20,44 @@ describe("fulfillPledge", () => {
       entityTable: "donation_pledges",
       entityId: PLEDGE,
     });
+  });
+
+  it("si aceptaron aparecer, manda el nombre y la nota", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await fulfillPledge(
+      admin,
+      {
+        id: PLEDGE,
+        aparecer: "on",
+        nombre: "Ana Pérez",
+        nota: "La dejan el sábado.",
+      },
+      null,
+    );
+
+    expect(result.status).toBe("ok");
+    expect(fake.calls.find((call) => call.name === "fulfillPledge")).toMatchObject({
+      input: {
+        id: PLEDGE,
+        displayName: "Ana Pérez",
+        note: "La dejan el sábado.",
+      },
+    });
+  });
+
+  it("aceptar aparecer sin nombre se rechaza antes de llamar", async () => {
+    const { deps: admin, fake } = deps("admin");
+    const result = await fulfillPledge(
+      admin,
+      { id: PLEDGE, aparecer: "on", nombre: "  " },
+      null,
+    );
+
+    expect(result.status).toBe("invalid");
+    if (result.status === "invalid") {
+      expect(result.fieldErrors["nombre"]).toMatch(/nombre/i);
+    }
+    expect(fake.calls).toEqual([]);
   });
 
   it("rechaza a un editor y no toca el puerto", async () => {

@@ -26,12 +26,13 @@ campaigns
           └── donation_pledges   (quién se comprometió a qué; NO públicas salvo cinco columnas)
 
 email_deliveries             (cada intento de envío; sólo se agrega)
+donation_offers              (aviso por teléfono: nombre y número, nunca públicos)
 ```
 
 Vistas: `donation_catalog` (lo que falta, público), `donation_catalog_claims` (quién tomó y eligió aparecer) y `donation_wall` (quién ayudó, público).
 
-Funciones: `claim_donation_item`, `cancel_donation_pledge`, `fulfill_donation_pledge`,
-`release_expired_holds`, `record_email_delivery`.
+Funciones: `claim_donation_item`, `offer_donation_item`, `cancel_donation_pledge`,
+`fulfill_donation_pledge`, `release_expired_holds`, `record_email_delivery`.
 
 **No se toca** ninguna tabla existente. `campaign_totals` queda igual, y eso es una decisión, no una
 omisión (ADR-031).
@@ -116,11 +117,11 @@ cancelar, vencer y entregar (ADR-029, consecuencias).
 | Columna | Tipo | Notas |
 |---|---|---|
 | `item_id` | `uuid` → `donation_items` `on delete restrict` | `restrict`: un ítem con historia no se borra |
-| `user_id` | `uuid` **nullable** → `auth.users` `on delete set null` | Nulo = la cuenta se borró (FR-240) |
+| `user_id` | `uuid` **nullable** → `auth.users` `on delete set null` | Nulo = la cuenta se borró (FR-240), o es una reserva por teléfono sin cuenta (ADR-051) |
 | `quantity` | `integer` `check (> 0)` | |
 | `status` | enum `pledge_status` | `reserved` \| `fulfilled` \| `cancelled` \| `expired` |
 | `is_anonymous` | `boolean not null default true` | **El default es el anonimato** (FR-225) |
-| `donor_display_name` | `text` nullable | Copia al momento de reservar, editable por su dueña |
+| `donor_display_name` | `text` nullable | En el mail, lo elige su dueña en `/cuenta`. En el teléfono, se carga en el sí si aceptaron (FR-262) |
 | `donor_note` | `text` nullable | Mensaje privado a la familia. **Nunca público** |
 | `cover_channel` | enum `donation_cover_channel` `not null default 'bring'` | `bring` \| `transfer` \| `mercadopago` \| `paypal`. No se publica (ADR-041) |
 | `expires_at` | `timestamptz not null` | `now() + 14 días`, en un solo lugar del código |
@@ -158,6 +159,24 @@ reserved ──fulfill──▶ fulfilled   (terminal)
 
 Desde un estado terminal no se sale. Una donación entregada por error se corrige con una fila nueva y
 una cancelación con motivo, igual que un aporte mal registrado no se edita.
+
+`offer_donation_item()` es la otra vía de insert: crea una reserva con `user_id` nulo, nombre
+público y teléfono de contacto, y una fila en `donation_offers`. `claim_donation_item()` sigue
+siendo la vía con sesión. Nadie tiene `INSERT` sobre `donation_pledges`.
+
+### `donation_offers` — aviso por teléfono, sin cuenta
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `item_id` | `uuid` → `donation_items` `on delete restrict` | |
+| `pledge_id` | `uuid` nullable → `donation_pledges` `on delete restrict` | La reserva que sostiene el ítem. Nulo sólo en filas de prueba |
+| `contact_name` | `text not null` | Nombre para llamar. Nunca público |
+| `contact_phone` | `text not null` | Teléfono para llamar. Nunca público |
+| `created_at` | | |
+
+Único `(item_id, contact_phone)`: un mismo teléfono no deja dos avisos del mismo ítem. `anon` no
+tiene `SELECT`. La única vía de insert es `offer_donation_item()`, concedida a `anon` y
+`authenticated`.
 
 ### `email_deliveries` — qué se intentó mandar
 

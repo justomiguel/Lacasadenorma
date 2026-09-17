@@ -44,6 +44,8 @@ const errors = z.object({
   displayNameRequired: phrase,
   contactNameRequired: phrase,
   pickupAddressRequired: phrase,
+  contactChannelRequired: phrase,
+  phoneInvalid: phrase,
   coverIsNotAPledge: phrase,
   schemaBehind: phrase,
   noRecoverySession: phrase,
@@ -85,6 +87,12 @@ export const accountSchema = z.object({
     privacyTail: phrase,
     haveAccount: phrase,
     haveAccountLink: phrase,
+    /**
+     * Cuando se llega desde donar con mail (ADR-051): por qué hace falta
+     * la cuenta, en lugar del lead genérico.
+     */
+    donateLead: phrase,
+    donateWhy: paragraphs,
     /** Registrarse no abre sesión: hay que confirmar el correo primero. */
     checkInboxTitle: phrase,
     checkInboxBody: paragraphs,

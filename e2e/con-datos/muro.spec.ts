@@ -11,7 +11,7 @@ import {
   idDeItem,
   ocultarItemSiExiste,
 } from "../soporte/catalogo";
-import { correoDePrueba, crearCuenta } from "../soporte/cuentas";
+import { correoDePrueba, crearCuenta, elegirAparecerEnCuenta } from "../soporte/cuentas";
 import { PAGINAS_PUBLICAS } from "../soporte/paginas";
 
 /**
@@ -55,8 +55,9 @@ test.describe("fase E · muro", () => {
         const articuloSi = articuloDelCatalogo(paginaSi);
         await expect(articuloSi).toHaveCount(1);
         const traerSi = formularioDeTraer(articuloSi);
-        await completarTraer(traerSi, { aparecer: visible });
+        await completarTraer(traerSi);
         await expect(paginaSi).toHaveURL(/\/cuenta$/);
+        await elegirAparecerEnCuenta(paginaSi, visible);
 
         await paginaNo.goto("/catalogo");
         await abrirItemDelCatalogo(paginaNo, titulo);

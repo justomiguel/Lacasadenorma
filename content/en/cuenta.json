@@ -27,6 +27,11 @@
     "privacyTail": ", and you can delete the account from the site whenever you want.",
     "haveAccount": "Already have an account?",
     "haveAccountLink": "Sign in",
+    "donateLead": "You left an email to donate an item. The account is so we can confirm that mailbox, then ask where to pick it up, and so you can see and cancel what you signed up for.",
+    "donateWhy": [
+      "Confirming the email is the validation: that is how we know we can write to you. After that, on the item page, we ask for an address and reserve the item. We also write to the person who coordinates.",
+      "The phone number, if you prefer, is the other path: it asks someone to call you and does not open an account."
+    ],
     "checkInboxTitle": "Check your email",
     "checkInboxBody": [
       "We sent a link to the address you typed. You have to open it: that is how we know that mailbox exists and that we can write to you. Until then the account is not active.",
@@ -141,6 +146,8 @@
     "displayNameRequired": "Type the name you want to appear under, or leave it checked that you'd rather not appear.",
     "contactNameRequired": "Type a name so the team knows who they are talking to.",
     "pickupAddressRequired": "Type the address where the good can be picked up.",
+    "contactChannelRequired": "Leave a phone number or an email, one of the two.",
+    "phoneInvalid": "That phone number doesn't look like a number.",
     "coverIsNotAPledge": "Covering with money is not a reservation: transfer, and the team records it when it arrives.",
     "schemaBehind": "The list was updated and this hold cannot be placed yet. You can try again in a little while.",
     "noRecoverySession": "This link doesn't open a recovery session. Ask for a new one.",

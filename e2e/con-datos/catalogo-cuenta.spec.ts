@@ -1,12 +1,16 @@
 import { expect, test } from "@playwright/test";
 
-import { sufijoUnico } from "../soporte/backoffice";
+import { entrar, sufijoUnico } from "../soporte/backoffice";
 import {
   articuloDelCatalogo,
   abrirItemDelCatalogo,
-  completarTraer,
+  completarOfertaPorMail,
+  completarOfertaPorTelefono,
+  confirmarQueDonan,
   conItemPublicado,
+  filaDelCatalogo,
   formularioDeTraer,
+  idDeReservaActiva,
   ocultarItemSiExiste,
 } from "../soporte/catalogo";
 import {
@@ -17,6 +21,7 @@ import {
   enlacePendiente,
   urlDelEnlace,
 } from "../soporte/cuentas";
+import { esperarQueAparezca } from "../soporte/revalidar";
 
 /**
  * Quiero donar sin sesión: crear la cuenta, confirmar el correo, volver.
@@ -29,16 +34,18 @@ import {
 const ITEM_DEL_FIXTURE = "dddddddd-0000-4000-8000-000000000001";
 
 test.describe("fase D · Quiero donar pide cuenta", () => {
-  test("sin sesión, Quiero donar lleva a crear una cuenta", async ({ page }) => {
+  test("sin sesión, un correo lleva a crear una cuenta y explica por qué", async ({
+    page,
+  }) => {
     await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
-    await completarTraer(formularioDeTraer(articuloDelCatalogo(page)));
+    await completarOfertaPorMail(formularioDeTraer(articuloDelCatalogo(page)));
 
     await expect(page).toHaveURL(new RegExp(`/cuenta/crear\\?volver=`));
     await expect(page).toHaveURL(new RegExp(ITEM_DEL_FIXTURE));
     await expect(page.getByRole("heading", { name: /crear una cuenta/i })).toBeVisible();
-    await expect(
-      page.getByText(/el mail es para escribirte, no para verificar/i),
-    ).toBeVisible();
+    await expect(page.getByText(/dejaste un correo para donar/i)).toBeVisible();
+    await expect(page.getByText(/confirmar el correo es la validación/i)).toBeVisible();
+    await expect(page.getByLabel("Correo")).toHaveValue("ana@ejemplo.invalid");
     await expect(page.getByRole("link", { name: /^ingresá$/i })).toHaveAttribute(
       "href",
       new RegExp(`/cuenta/ingresar\\?volver=.*${ITEM_DEL_FIXTURE}`),
@@ -65,7 +72,10 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
         await conItemPublicado(request, staffPage, titulo, 1, async (itemId) => {
           await donantePage.goto("/catalogo");
           await abrirItemDelCatalogo(donantePage, titulo);
-          await completarTraer(formularioDeTraer(articuloDelCatalogo(donantePage)));
+          await completarOfertaPorMail(
+            formularioDeTraer(articuloDelCatalogo(donantePage)),
+            email,
+          );
 
           await expect(donantePage).toHaveURL(new RegExp(`/cuenta/crear\\?volver=`));
           await expect(donantePage).toHaveURL(new RegExp(itemId));
@@ -125,7 +135,7 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
 
           await expect(articulo).toHaveCount(1);
           await expect(articulo).toBeVisible();
-          await completarTraer(formularioDeTraer(articulo));
+          await completarOfertaPorMail(formularioDeTraer(articulo), email);
 
           await expect(donantePage).toHaveURL(new RegExp(`/cuenta/crear\\?volver=`));
           await expect(donantePage).toHaveURL(new RegExp(itemId));
@@ -144,6 +154,153 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
 
           await expect(donantePage).toHaveURL(new RegExp(`/catalogo/${itemId}$`));
           await expect(donantePage.getByRole("heading", { name: titulo })).toBeVisible();
+        });
+      } finally {
+        await donante.close();
+      }
+    } finally {
+      await ocultarItemSiExiste(staffPage.request, titulo);
+      await staff.close();
+    }
+  });
+
+  test("un teléfono reserva a su nombre y el sí del admin aparece en el muro", async ({
+    request,
+    browser,
+  }, info) => {
+    test.setTimeout(90_000);
+    const sufijo = sufijoUnico(info.project.name);
+    const titulo = `Chapas por teléfono (${sufijo})`;
+    const telefono = `11 ${sufijo.slice(-8)}`;
+
+    const staff = await browser.newContext();
+    const staffPage = await staff.newPage();
+
+    try {
+      const donante = await browser.newContext();
+      const donantePage = await donante.newPage();
+
+      try {
+        await conItemPublicado(request, staffPage, titulo, 1, async () => {
+          await donantePage.goto("/catalogo");
+          await abrirItemDelCatalogo(donantePage, titulo);
+          await completarOfertaPorTelefono(
+            formularioDeTraer(articuloDelCatalogo(donantePage)),
+            telefono,
+          );
+
+          await expect(donantePage).toHaveURL(/reservado=1/);
+          await expect(
+            donantePage.getByRole("heading", { name: /le escribimos a quien coordina/i }),
+          ).toBeVisible();
+          await expect(
+            donantePage.getByText(/queda reservado a tu nombre/i),
+          ).toBeVisible();
+          await expect(donantePage).not.toHaveURL(/\/cuenta/);
+
+          await donantePage.goto("/catalogo");
+          await expect(filaDelCatalogo(donantePage, titulo)).toContainText(
+            /ya está cubierto/i,
+          );
+          await expect(filaDelCatalogo(donantePage, titulo)).not.toContainText("Ana");
+
+          const salir = staffPage
+            .locator("#contenido")
+            .getByRole("button", { name: /cerrar sesión/i });
+
+          if (await salir.isVisible()) {
+            await salir.click();
+            await expect(staffPage).toHaveURL(/\/admin\/login/);
+          }
+
+          await entrar(staffPage, "admin");
+          await staffPage.goto("/admin/donaciones");
+          const aviso = staffPage
+            .getByRole("region", { name: /avisos por teléfono/i })
+            .locator("li")
+            .filter({ hasText: titulo });
+
+          await expect(aviso).toBeVisible();
+          await expect(aviso).toContainText("Ana");
+          await expect(aviso).toContainText(telefono);
+
+          const pledgeId = await idDeReservaActiva(request, titulo);
+
+          await staffPage.goto(`/admin/donaciones/decidir/${pledgeId}/si`);
+          await expect(staffPage.getByLabel(/aceptó aparecer con nombre/i)).toBeVisible();
+          await confirmarQueDonan(staffPage, { aparecer: "Ana" });
+          await expect(staffPage).toHaveURL(/\/admin\/donaciones/);
+
+          await esperarQueAparezca(request, "/quienes-ayudaron", titulo);
+          await donantePage.goto("/quienes-ayudaron");
+          const linea = donantePage.locator("li").filter({ hasText: titulo });
+          await expect(linea.getByRole("heading", { name: "Ana" })).toBeVisible();
+          await expect(linea.getByRole("time")).toBeVisible();
+        });
+      } finally {
+        await donante.close();
+      }
+    } finally {
+      await ocultarItemSiExiste(staffPage.request, titulo);
+      await staff.close();
+    }
+  });
+
+  test("el no del admin suelta la reserva del teléfono", async ({
+    request,
+    browser,
+  }, info) => {
+    test.setTimeout(90_000);
+    const sufijo = sufijoUnico(info.project.name);
+    const titulo = `Chapas sueltas (${sufijo})`;
+    const telefono = `11 ${sufijo.slice(-8)}`;
+
+    const staff = await browser.newContext();
+    const staffPage = await staff.newPage();
+
+    try {
+      const donante = await browser.newContext();
+      const donantePage = await donante.newPage();
+
+      try {
+        await conItemPublicado(request, staffPage, titulo, 1, async (itemId) => {
+          await donantePage.goto("/catalogo");
+          await abrirItemDelCatalogo(donantePage, titulo);
+          await completarOfertaPorTelefono(
+            formularioDeTraer(articuloDelCatalogo(donantePage)),
+            telefono,
+          );
+          await expect(donantePage).toHaveURL(/reservado=1/);
+          await expect(
+            donantePage.getByRole("heading", { name: /le escribimos a quien coordina/i }),
+          ).toBeVisible();
+
+          const salir = staffPage
+            .locator("#contenido")
+            .getByRole("button", { name: /cerrar sesión/i });
+
+          if (await salir.isVisible()) {
+            await salir.click();
+            await expect(staffPage).toHaveURL(/\/admin\/login/);
+          }
+
+          await entrar(staffPage, "admin");
+          const pledgeId = await idDeReservaActiva(request, titulo);
+
+          await staffPage.goto(`/admin/donaciones/decidir/${pledgeId}/no`);
+          await staffPage.getByRole("button", { name: /no: soltar la reserva/i }).click();
+          await expect(staffPage).toHaveURL(/\/admin\/donaciones/);
+
+          await esperarQueAparezca(request, `/catalogo/${itemId}`, "Faltan 1 de 1");
+          await expect(async () => {
+            await donantePage.goto("/catalogo");
+            await expect(filaDelCatalogo(donantePage, titulo)).toContainText(
+              /faltan 1 de 1/i,
+            );
+            await expect(filaDelCatalogo(donantePage, titulo)).not.toContainText(
+              /ya está cubierto/i,
+            );
+          }).toPass({ timeout: 15_000 });
         });
       } finally {
         await donante.close();

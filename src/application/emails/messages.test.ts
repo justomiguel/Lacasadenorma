@@ -143,6 +143,54 @@ describe("los avisos al equipo", () => {
     expect(message.subject).toBe(getContent("es").emails.staffNewPledge.subject);
     expect(message.text).toMatch(/quiere donar/i);
   });
+
+  it("el aviso de una reserva nueva lleva el sí y el no, sin token", () => {
+    const yes =
+      "https://lacasadenorma.example/admin/donaciones/decidir/7f1c9a52-0000-4000-8000-000000000001/si";
+    const no =
+      "https://lacasadenorma.example/admin/donaciones/decidir/7f1c9a52-0000-4000-8000-000000000001/no";
+    const message = buildStaffEmail("staff.new_pledge", {
+      subjectId: RESERVA.pledgeId,
+      staffAddress: "equipo@ejemplo.invalid",
+      what: RESERVA.what,
+      backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
+      yesUrl: yes,
+      noUrl: no,
+    });
+
+    expect(message.text).toContain(yes);
+    expect(message.text).toContain(no);
+    expect(message.html).toContain(yes);
+    expect(message.html).toContain(no);
+    expect(message.text).toMatch(/sí: donan/i);
+    expect(message.text).toMatch(/no: soltar la reserva/i);
+    expect(message.text).not.toMatch(/token|token_hash|access_token/i);
+  });
+
+  it("el aviso por teléfono nombra a quien llamó, no el número, y lleva el sí y el no", () => {
+    const yes =
+      "https://lacasadenorma.example/admin/donaciones/decidir/40000000-0000-4000-8000-000000000002/si";
+    const no =
+      "https://lacasadenorma.example/admin/donaciones/decidir/40000000-0000-4000-8000-000000000002/no";
+    const message = buildStaffEmail("staff.phone_offer", {
+      subjectId: "40000000-0000-4000-8000-000000000002",
+      staffAddress: "equipo@ejemplo.invalid",
+      what: "Chapas del techo",
+      who: "Ana Pérez",
+      backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
+      yesUrl: yes,
+      noUrl: no,
+    });
+
+    expect(message.text).toContain("Ana Pérez");
+    expect(message.text).toContain("Chapas del techo");
+    expect(message.text).toContain(yes);
+    expect(message.text).toContain(no);
+    expect(message.text).not.toMatch(/\b11[\s-]?\d{4}/);
+    expect(message.idempotencyKey).toBe(
+      idempotencyKeyFor("staff.phone_offer", "40000000-0000-4000-8000-000000000002"),
+    );
+  });
 });
 
 describe("la plantilla", () => {

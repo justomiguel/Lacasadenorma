@@ -171,6 +171,20 @@ insert into public.donation_pledges (
     now() + interval '14 days'
   );
 
+insert into public.donation_offers (id, item_id, contact_name, contact_phone) values
+  (
+    'ab000000-0000-4000-8000-0000000000f1',
+    'ab000000-0000-4000-8000-000000000001',
+    'Ana',
+    '1112345678'
+  ),
+  (
+    'ab000000-0000-4000-8000-0000000000f2',
+    'ab000000-0000-4000-8000-000000000001',
+    'Luis',
+    '1187654321'
+  );
+
 -- ── El ejecutor ─────────────────────────────────────────────────────────────
 -- Cambia de rol, fija el JWT igual que lo hace PostgREST por transacción, corre la
 -- sentencia y revierte. El `raise` con el código ZZ001 es el mecanismo de la
@@ -383,7 +397,13 @@ insert into caso (tabla, operacion, sentencia, etiqueta_una) values
   ('donation_pledges', 'lectura', $s$select 1 from public.donation_pledges$s$, 'sólo la propia'),
   ('donation_pledges', 'inserción', $s$insert into public.donation_pledges (item_id, user_id, quantity, expires_at) values ('ab000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', 1, now() + interval '14 days')$s$, 'sólo la propia'),
   ('donation_pledges', 'modificación', $s$update public.donation_pledges set donor_note = 'nota' where id = 'ab000000-0000-4000-8000-0000000000e2'$s$, 'sólo la propia'),
-  ('donation_pledges', 'borrado', $s$delete from public.donation_pledges where id = 'ab000000-0000-4000-8000-0000000000e1'$s$, 'sólo la propia');
+  ('donation_pledges', 'borrado', $s$delete from public.donation_pledges where id = 'ab000000-0000-4000-8000-0000000000e1'$s$, 'sólo la propia'),
+  -- Staff que lee ve las dos filas semilla ('todo'). `etiqueta_una` no se usa
+  -- mientras el recuento no sea 1; va 'todo' por si el seed se achica.
+  ('donation_offers', 'lectura', $s$select 1 from public.donation_offers$s$, 'todo'),
+  ('donation_offers', 'inserción', $s$insert into public.donation_offers (item_id, contact_name, contact_phone) values ('ab000000-0000-4000-8000-000000000001', 'Inyectado', '1100000000')$s$, 'todo'),
+  ('donation_offers', 'modificación', $s$update public.donation_offers set contact_name = 'Cambiado' where id = 'ab000000-0000-4000-8000-0000000000f1'$s$, 'todo'),
+  ('donation_offers', 'borrado', $s$delete from public.donation_offers where id = 'ab000000-0000-4000-8000-0000000000f2'$s$, 'todo');
 
 -- ── La matriz esperada ──────────────────────────────────────────────────────
 -- Se lee igual que la tabla de data-model.md §4, con una fila por rol y tabla.
@@ -433,7 +453,9 @@ insert into esperado values
   -- que la policy admite. En esta matriz las dos reservas están en `reserved`,
   -- así que ve cero —'nada'— y no las propias. Las cinco columnas y la vista se
   -- afirman en `080-donantes-y-muro.sql`.
-  ('anon', 'donation_pledges', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
+  ('anon', 'donation_pledges', 'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio'),
+  -- Un aviso por teléfono no es público. anon no recibe ni el GRANT de lectura.
+  ('anon', 'donation_offers',  'sin privilegio',    'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `donante` es la columna que ADR-027 agregó, y la que decide si abrir el registro
 -- fue seguro. Su token es válido y su `app_metadata` está vacío.
@@ -480,7 +502,10 @@ insert into esperado values
   ('donante', 'donor_profiles',   'sólo la propia',    'denegado (RLS)', 'denegado (RLS)', 'permitido'),
   -- Lee las propias. No inserta: la función es el único camino. El UPDATE de la
   -- prueba toca la reserva ajena, así que RLS lo niega. DELETE no tiene GRANT.
-  ('donante', 'donation_pledges', 'sólo la propia',    'sin privilegio', 'denegado (RLS)', 'sin privilegio');
+  ('donante', 'donation_pledges', 'sólo la propia',    'sin privilegio', 'denegado (RLS)', 'sin privilegio'),
+  -- El GRANT de SELECT existe (lo necesita `auditor`) y `can_read_donors()` no lo
+  -- incluye. Con `has_min_role('auditor')` esta celda diría 'todo'.
+  ('donante', 'donation_offers',  'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `auditor` es el rol que permite que alguien externo a la familia verifique sin
 -- poder alterar nada: lee todo, incluidos aportes y comprobantes, y **no escribe
@@ -515,7 +540,8 @@ insert into esperado values
   -- verificar quién donó qué es parte de verificar la campaña, y sigue siendo
   -- lectura sin escritura (E2).
   ('auditor', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  ('auditor', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
+  ('auditor', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio'),
+  ('auditor', 'donation_offers',  'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `editor` es el privilegio mínimo hecho rol: publica contenido y **no ve plata**.
 --
@@ -564,7 +590,10 @@ insert into esperado values
   ('editor', 'donor_profiles',   'nada',              'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   -- El GRANT de SELECT existe (lo necesita `auditor`) y `can_read_donors()` no lo
   -- incluye. Con `has_min_role('auditor')` esta celda diría 'todo'.
-  ('editor', 'donation_pledges', 'nada',              'sin privilegio', 'denegado (RLS)', 'sin privilegio');
+  ('editor', 'donation_pledges', 'nada',              'sin privilegio', 'denegado (RLS)', 'sin privilegio'),
+  -- Misma forma que las reservas: el GRANT existe y `can_read_donors()` no lo
+  -- incluye. El teléfono de un aviso no es del catálogo.
+  ('editor', 'donation_offers',  'nada',              'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `admin` registra aportes y gastos, y no toca dos cosas: las cuentas de aporte
 -- (amenaza T1) y los roles de las personas. Tampoco borra una campaña entera.
@@ -592,7 +621,8 @@ insert into esperado values
   -- pueda cambiarlo: el rol interno no sustituye a la propiedad (FR-230).
   ('admin', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
   -- Opera por función, no por INSERT. El UPDATE directo es de la dueña.
-  ('admin', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
+  ('admin', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio'),
+  ('admin', 'donation_offers',  'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- `owner` es el único que escribe cuentas de aporte y el único que otorga roles.
 -- Aun así hay tres cosas que tampoco puede hacer, y las tres son a propósito:
@@ -614,7 +644,8 @@ insert into esperado values
   ('owner', 'audit_log',        'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('owner', 'email_deliveries', 'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio'),
   ('owner', 'donor_profiles',   'todo', 'denegado (RLS)', 'denegado (RLS)', 'denegado (RLS)'),
-  ('owner', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio');
+  ('owner', 'donation_pledges', 'todo', 'sin privilegio', 'denegado (RLS)', 'sin privilegio'),
+  ('owner', 'donation_offers',  'todo', 'sin privilegio', 'sin privilegio', 'sin privilegio');
 
 -- ── Antes de medir: que lo medido sea lo que se cree ────────────────────────
 
@@ -875,12 +906,13 @@ select is_empty(
          'expense_receipts',
          'audit_log',
          'email_deliveries',
-         'donation_pledges'
+         'donation_pledges',
+         'donation_offers'
        )
        and veredicto <> 'nada'
      order by 1
   $q$,
-  'editor no lee ni un aporte, ni un comprobante, ni una línea del registro de auditoría, ni un envío de correo (E1)'
+  'editor no lee ni un aporte, ni un comprobante, ni una línea del registro de auditoría, ni un envío de correo, ni un aviso por teléfono (E1)'
 );
 
 select is_empty(

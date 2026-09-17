@@ -30,6 +30,9 @@ export interface EmailDocument {
   readonly highlight: string | null;
   readonly action: string;
   readonly link: string;
+  /** Segundo enlace, si el correo pide un sí y un no (ADR-051). */
+  readonly rejectAction: string | null;
+  readonly rejectLink: string | null;
   readonly why: string;
 }
 
@@ -46,6 +49,13 @@ export function renderEmailHtml(doc: EmailDocument): string {
     doc.highlight === null
       ? ""
       : `<p style="margin:8px 0 28px;padding:12px 0 12px 16px;border-left:4px solid ${SAGE};font-size:20px;line-height:1.3;color:${OLIVE};font-family:Georgia,'Times New Roman',serif;">${escapeHtml(doc.highlight)}</p>`;
+
+  const reject =
+    doc.rejectAction === null || doc.rejectLink === null
+      ? ""
+      : `<p style="margin:16px 0 0;">
+<a href="${escapeHtml(doc.rejectLink)}" style="display:inline-block;padding:12px 24px;background:${PAPER};color:${FOREST};border:1px solid ${FOREST};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1;border-radius:999px;">${escapeHtml(doc.rejectAction)}</a>
+</p>`;
 
   return `<!DOCTYPE html>
 <html lang="${doc.lang}">
@@ -70,6 +80,7 @@ ${highlight}
 <p style="margin:28px 0 0;">
 <a href="${escapeHtml(doc.link)}" style="display:inline-block;padding:12px 24px;background:${FOREST};color:${PAPER};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1;border-radius:999px;">${escapeHtml(doc.action)}</a>
 </p>
+${reject}
 </td></tr>
 <tr><td style="padding:24px 40px 36px;">
 <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.45;color:${MUTED};">${escapeHtml(doc.why)}</p>
@@ -90,6 +101,9 @@ export function renderEmailText(doc: EmailDocument): string {
     ...(doc.highlight === null ? [] : ["", doc.highlight]),
     "",
     `${doc.action}: ${doc.link}`,
+    ...(doc.rejectAction === null || doc.rejectLink === null
+      ? []
+      : [`${doc.rejectAction}: ${doc.rejectLink}`]),
     "",
     "—",
     doc.why,

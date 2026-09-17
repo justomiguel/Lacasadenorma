@@ -306,6 +306,69 @@ export type Database = {
           },
         ];
       };
+      donation_offers: {
+        Row: {
+          contact_name: string;
+          contact_phone: string;
+          created_at: string;
+          id: string;
+          item_id: string;
+          pledge_id: string | null;
+        };
+        Insert: {
+          contact_name: string;
+          contact_phone: string;
+          created_at?: string;
+          id?: string;
+          item_id: string;
+          pledge_id?: string | null;
+        };
+        Update: {
+          contact_name?: string;
+          contact_phone?: string;
+          created_at?: string;
+          id?: string;
+          item_id?: string;
+          pledge_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_offers_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_catalog";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_offers_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_offers_pledge_id_fkey";
+            columns: ["pledge_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_catalog_claims";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_offers_pledge_id_fkey";
+            columns: ["pledge_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_pledges";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "donation_offers_pledge_id_fkey";
+            columns: ["pledge_id"];
+            isOneToOne: false;
+            referencedRelation: "donation_wall";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       donation_pledges: {
         Row: {
           cancel_reason: string | null;
@@ -1171,12 +1234,28 @@ export type Database = {
       };
       donor_contact: { Args: { p_user_id: string }; Returns: string };
       fulfill_donation_pledge: {
-        Args: { p_pledge_id: string };
+        Args: { p_display_name?: string; p_note?: string; p_pledge_id: string };
         Returns: undefined;
       };
       mark_pledge_reminded: {
         Args: { p_pledge_id: string };
         Returns: undefined;
+      };
+      offer_donation_item: {
+        Args: {
+          p_contact_name: string;
+          p_contact_phone: string;
+          p_item_id: string;
+        };
+        Returns: {
+          contact_name: string;
+          contact_phone: string;
+          created_at: string;
+          id: string;
+          item_id: string;
+          item_title: string;
+          pledge_id: string;
+        }[];
       };
       record_audit: {
         Args: {

@@ -41,7 +41,11 @@ export interface StaffFacts {
   readonly subjectId: string;
   readonly staffAddress: string;
   readonly what: string | null;
+  /** El nombre de un aviso por teléfono. El resto de los avisos al equipo no lo usan. */
+  readonly who?: string | null;
   readonly backofficeUrl: string;
+  readonly yesUrl?: string | null;
+  readonly noUrl?: string | null;
 }
 
 const ACCOUNT_COPY: Record<AccountEmailKind, keyof EmailsContent> = {
@@ -59,6 +63,7 @@ const PLEDGE_COPY: Record<PledgeEmailKind, keyof EmailsContent> = {
 const STAFF_COPY: Record<StaffEmailKind, keyof EmailsContent> = {
   "staff.new_account": "staffNewAccount",
   "staff.new_pledge": "staffNewPledge",
+  "staff.phone_offer": "staffPhoneOffer",
   "staff.pledge_cancelled": "staffPledgeCancelled",
   "staff.pledge_expired": "staffPledgeExpired",
 };
@@ -75,6 +80,7 @@ export function buildAccountEmail(
     link: facts.accountUrl,
     replacements: { what: null, when: null },
     highlight: null,
+    rejectLink: null,
     idempotencyKey: idempotencyKeyFor(kind, facts.userId),
   });
 }
@@ -91,6 +97,7 @@ export function buildPledgeEmail(
     link: facts.accountUrl,
     replacements: { what: facts.what, when: facts.expiresOn },
     highlight: facts.what,
+    rejectLink: null,
     idempotencyKey: idempotencyKeyFor(kind, facts.pledgeId),
   });
 }
@@ -100,14 +107,18 @@ export function buildPledgeEmail(
  * idioma sería un lugar donde pasarle, por descuido, el de quien reservó.
  */
 export function buildStaffEmail(kind: StaffEmailKind, facts: StaffFacts): EmailMessage {
+  const yes = facts.yesUrl ?? facts.backofficeUrl;
+  const no = facts.noUrl ?? null;
+
   return compose({
     copy: getContent("es").emails[STAFF_COPY[kind]],
     kind,
     locale: "es",
     to: facts.staffAddress,
-    link: facts.backofficeUrl,
-    replacements: { what: facts.what, when: null },
+    link: yes,
+    replacements: { what: facts.what, when: null, who: facts.who ?? null },
     highlight: facts.what,
+    rejectLink: no,
     idempotencyKey: idempotencyKeyFor(kind, facts.subjectId),
   });
 }
@@ -118,13 +129,18 @@ interface Composition {
   readonly locale: Locale;
   readonly to: string;
   readonly link: string;
-  readonly replacements: { readonly what: string | null; readonly when: string | null };
+  readonly replacements: {
+    readonly what: string | null;
+    readonly when: string | null;
+    readonly who?: string | null;
+  };
   readonly highlight: string | null;
+  readonly rejectLink: string | null;
   readonly idempotencyKey: string;
 }
 
 function compose(input: Composition): EmailMessage {
-  const values = { ...input.replacements, link: input.link };
+  const values = { who: null, ...input.replacements, link: input.link };
   const fill = (text: string): string => substitute(text, values);
   const siteName = getContent(input.locale).site.name;
   const heading = fill(input.copy.subject);
@@ -142,6 +158,9 @@ function compose(input: Composition): EmailMessage {
     highlight,
     action,
     link: input.link,
+    rejectAction:
+      input.copy.rejectAction === undefined ? null : fill(input.copy.rejectAction),
+    rejectLink: input.rejectLink,
     why,
   };
 
@@ -162,7 +181,12 @@ function compose(input: Composition): EmailMessage {
  */
 function substitute(
   text: string,
-  values: { what: string | null; when: string | null; link: string },
+  values: {
+    what: string | null;
+    when: string | null;
+    who: string | null;
+    link: string;
+  },
 ): string {
   if (values.when === null && text.includes("{when}")) {
     return "";
@@ -172,8 +196,13 @@ function substitute(
     return "";
   }
 
+  if (values.who === null && text.includes("{who}")) {
+    return "";
+  }
+
   return text
     .replaceAll("{what}", values.what ?? "")
     .replaceAll("{when}", values.when ?? "")
+    .replaceAll("{who}", values.who ?? "")
     .replaceAll("{link}", values.link);
 }

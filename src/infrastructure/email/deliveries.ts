@@ -26,7 +26,8 @@ export async function recordEmailDelivery(input: {
   const pledgeId =
     input.kind.startsWith("pledge.") ||
     input.kind.startsWith("staff.pledge") ||
-    input.kind === "staff.new_pledge"
+    input.kind === "staff.new_pledge" ||
+    input.kind === "staff.phone_offer"
       ? input.subjectId
       : null;
 

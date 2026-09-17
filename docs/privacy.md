@@ -16,7 +16,7 @@ Vale empezar por acá porque es la mayor parte de la respuesta.
 
 | No existe | Consecuencia |
 |---|---|
-| Ningún formulario público **salvo el de la cuenta y el de anotarse a traer un bien** | Cubrir con plata no guarda nada. Traer un bien pide nombre, teléfono optativo y dirección de retiro, y exige sesión |
+| Ningún formulario público **salvo el de la cuenta, el de anotarse a traer un bien, y el aviso por teléfono** | Cubrir con plata no guarda nada. Traer un bien con cuenta pide nombre, teléfono optativo y dirección de retiro. El aviso por teléfono pide nombre y número, reserva el ítem, y no crea cuenta (ADR-051) |
 | Newsletter, lista de correo, envíos masivos | Un correo del sistema es siempre sobre la propia cuenta o sobre algo que esa persona ofreció traer |
 | Procesamiento de pagos en el sitio | La transferencia se hace en el homebanking de cada uno; el sitio nunca ve un número de tarjeta, un CBU ajeno ni un monto |
 | Cookies de publicidad, píxeles sociales, servicios de perfilado | No hay `<script>` de terceros más que el de analítica, y sólo si se configura |
@@ -167,9 +167,10 @@ Decisiones de esta tabla:
    cuando entra con esa red y el campo está vacío: es una propuesta, y el muro no la publica
    mientras el default sea el anonimato. Nulo significa "todavía no hay nombre", y hay un
    `check` que impide guardar una cadena de espacios.
-3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, y lo que
-   se afirma en las pruebas es el default de la columna: lo que importa es qué pasa cuando la
-   aplicación **no** manda el campo.
+3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, también
+   en el camino del teléfono: el nombre de contacto no se publica; el del muro se carga en el sí
+   si aceptaron (FR-262). Lo que se afirma en las pruebas es el default de la columna: lo que
+   importa es qué pasa cuando la aplicación **no** manda el campo.
 4. **La IP y el user-agent los guarda el proveedor de identidad, no la aplicación.** Esto es lo único
    de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
    una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.
@@ -199,7 +200,7 @@ existe. Desde ADR-046 también guardan cómo encontrar a esa persona para ir a b
 |---|---|---|
 | Cuánto, de qué ítem, estado y vencimiento | `donation_pledges` | **No.** Lo que se publica, si llega y la persona eligió aparecer, es una línea en `/quienes-ayudaron`: nombre, qué trajo, cuándo |
 | Nombre de contacto (`contact_name`) | `donation_pledges` | **Nunca.** Privilegio de columna |
-| Teléfono (`contact_phone`) | `donation_pledges` | **Nunca.** Privilegio de columna. Optativo: el correo de la cuenta ya es un canal |
+| Teléfono (`contact_phone`) | `donation_pledges` o `donation_offers` | **Nunca.** Privilegio de columna. En el camino con cuenta es optativo; en el aviso por teléfono es el canal |
 | Dirección de retiro (`pickup_address`) | `donation_pledges` | **Nunca.** Privilegio de columna |
 | Nota para la familia (`donor_note`) | `donation_pledges` | **Nunca.** Privilegio de columna: `anon` no puede nombrar el campo |
 | Si aparece con nombre (`is_anonymous`) | `donation_pledges` | No. Lo que se publica es su efecto, y sólo en entregas cumplidas |
@@ -213,7 +214,8 @@ como un hecho sobre la obra, sin correo, sin nombre, sin teléfono y sin direcci
 
 ## 4. Datos personales en la base
 
-Fuera de `donor_profiles` y de las columnas de retiro de `donation_pledges` (ADR-046), el proyecto
+Fuera de `donor_profiles`, de las columnas de retiro de `donation_pledges` (ADR-046) y de
+`donation_offers` (nombre y teléfono del aviso sin cuenta, ADR-051), el proyecto
 **no tiene** ninguna columna de correo electrónico, dirección IP ni user-agent. Se puede verificar
 leyendo `supabase/migrations/`: no aparecen. Los correos —de quienes administran y de quienes se
 registran— existen sólo en `auth.users`, que lo gestiona Supabase y a lo que la aplicación nunca

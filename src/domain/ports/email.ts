@@ -29,6 +29,7 @@ export const PLEDGE_EMAIL_KINDS = [
 export const STAFF_EMAIL_KINDS = [
   "staff.new_account",
   "staff.new_pledge",
+  "staff.phone_offer",
   "staff.pledge_cancelled",
   "staff.pledge_expired",
 ] as const;

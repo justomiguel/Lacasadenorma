@@ -1,4 +1,5 @@
 import type { CoverChannel } from "../cover";
+import type { DonationOffer } from "../entities/donation-offer";
 import type {
   AdminPledgeRecord,
   DonationPledge,
@@ -30,6 +31,20 @@ export interface OwnAppearance {
   readonly displayName: string | null;
 }
 
+export interface OfferInput {
+  readonly itemId: string;
+  readonly contactName: string;
+  readonly contactPhone: string;
+}
+
+/**
+ * Avisos por teléfono, sin cuenta (ADR-051). El sujeto no sale de la sesión:
+ * no hay sesión. La función de la base reserva a nombre de esa persona.
+ */
+export interface OffersPort {
+  offerItem(input: OfferInput): Promise<DonationOffer>;
+}
+
 export interface DonationsPort {
   claimItem(input: ClaimInput): Promise<DonationPledge>;
   listOwnPledges(): Promise<readonly OwnPledge[]>;
@@ -48,7 +63,12 @@ export interface DonationsPort {
  */
 export interface AdminDonationsPort {
   listPledges(): Promise<readonly AdminPledgeRecord[]>;
-  fulfillPledge(id: string): Promise<void>;
+  listOffers(): Promise<readonly DonationOffer[]>;
+  fulfillPledge(input: {
+    readonly id: string;
+    readonly displayName: string | null;
+    readonly note: string | null;
+  }): Promise<void>;
   cancelPledge(input: { id: string; reason: string }): Promise<void>;
   markReminded(id: string): Promise<void>;
 }

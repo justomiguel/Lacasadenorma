@@ -20,7 +20,7 @@ import { cancelPledgeAction, fulfillPledgeAction } from "./actions";
 
 const STATUS_LABEL = {
   reserved: "Reservada",
-  fulfilled: "Llegó",
+  fulfilled: "Donado",
   cancelled: "Cancelada",
   expired: "Vencida",
 } as const;
@@ -60,6 +60,7 @@ export default async function AdminDonacionesPage() {
   }
 
   const pledges = await scope.gateway.donations.listPledges();
+  const offers = await scope.gateway.donations.listOffers();
   const activas = pledges.filter((pledge) => isActivePledge(pledge));
   const otras = pledges.filter((pledge) => !isActivePledge(pledge));
 
@@ -69,11 +70,28 @@ export default async function AdminDonacionesPage() {
 
       <Callout title="Qué se decide acá">
         <p>
-          Una reserva no es una donación hasta que el material llega. Confirmarla saca las
-          unidades del listado de lo que falta. Cancelarla las devuelve. El motivo de una
-          cancelación ajena queda en el rastro.
+          Una reserva no es una donación hasta que el equipo confirma. Un aviso por
+          teléfono también reserva: el sí del correo (o Sí: donan) publica el nombre y la
+          fecha en Quiénes ayudaron; el no suelta el ítem. El motivo de una cancelación
+          ajena queda en el rastro.
         </p>
       </Callout>
+
+      <Panel id="avisos" title={`Avisos por teléfono · ${String(offers.length)}`}>
+        {offers.length === 0 ? (
+          <NoRecords>Nadie dejó un teléfono todavía.</NoRecords>
+        ) : (
+          <RecordList>
+            {offers.map((offer) => (
+              <Record
+                key={offer.id}
+                title={offer.itemTitle}
+                meta={`${offer.contactName} · ${offer.contactPhone} · ${formatLongDate(offer.createdAt.slice(0, 10))}`}
+              />
+            ))}
+          </RecordList>
+        )}
+      </Panel>
 
       <Panel id="activas" title={`En curso · ${String(activas.length)}`}>
         {activas.length === 0 ? (
@@ -146,7 +164,7 @@ function PledgeRow({
               <HiddenValue name="id" value={pledge.id} />
               <HiddenValue name="userId" value={pledge.userId ?? ""} />
               <HiddenValue name="what" value={pledge.itemTitle} />
-              <SubmitButton pendingLabel="Confirmando…">Llegó</SubmitButton>
+              <SubmitButton pendingLabel="Confirmando…">Sí: donan</SubmitButton>
             </ActionForm>
             <ActionForm action={cancelPledgeAction}>
               <HiddenValue name="id" value={pledge.id} />

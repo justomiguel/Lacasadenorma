@@ -62,6 +62,27 @@ export async function idDeItem(
   return id;
 }
 
+export async function idDeReservaActiva(
+  request: APIRequestContext,
+  titulo: string,
+): Promise<string> {
+  const token = await tokenDe(request, "admin");
+  const itemId = await idDeItem(request, titulo);
+  const respuesta = await request.get(
+    `${apiLocal()}/rest/v1/donation_pledges?select=id,status&item_id=eq.${itemId}&status=eq.reserved`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+
+  expect(respuesta.status(), `no se encontró la reserva de «${titulo}»`).toBe(200);
+
+  const { id } = primeraFila(
+    (await respuesta.json()) as { id: string }[],
+    `la reserva de «${titulo}»`,
+  );
+
+  return id;
+}
+
 /** Lo saca de `/catalogo` y tira la caché de ISR para no dejar un hueco de foto. */
 export async function ocultarItem(
   request: APIRequestContext,
@@ -233,21 +254,51 @@ export function formularioDeTraer(articulo: Locator) {
   return articulo.locator("form").filter({ hasText: /quiero donar/i });
 }
 
-/** Nombre y dirección de retiro, y envío (ADR-046). */
-export async function completarTraer(
-  formulario: Locator,
-  extra?: { readonly aparecer?: string },
-): Promise<void> {
+/** Nombre y dirección de retiro, y envío. El de retiro aparece al hidratar (ADR-051). */
+export async function completarTraer(formulario: Locator): Promise<void> {
+  await expect(formulario.getByLabel(/dirección donde ir a buscar/i)).toBeVisible();
   await formulario.getByLabel(/^nombre$/i).fill("Ana");
   await formulario
     .getByLabel(/dirección donde ir a buscar/i)
     .fill("Riacho He Hé, Formosa");
 
+  await formulario.getByRole("button", { name: /quiero donar/i }).click();
+}
+
+/** El sí del correo al owner. En el teléfono, aparecer y nota si aceptaron. */
+export async function confirmarQueDonan(
+  page: Page,
+  extra?: { readonly aparecer?: string; readonly nota?: string },
+): Promise<void> {
   if (extra?.aparecer !== undefined) {
-    await formulario.getByLabel(/quiero aparecer con nombre/i).check();
-    await formulario.getByLabel(/nombre para mostrar/i).fill(extra.aparecer);
+    await page.getByLabel(/aceptó aparecer con nombre/i).check();
+    await page.getByLabel(/nombre para mostrar/i).fill(extra.aparecer);
   }
 
+  if (extra?.nota !== undefined) {
+    await page.getByLabel(/nota para la familia/i).fill(extra.nota);
+  }
+
+  await page.getByRole("button", { name: /^sí: donan$/i }).click();
+}
+
+/** Nombre y correo: el camino que abre una cuenta (ADR-051). */
+export async function completarOfertaPorMail(
+  formulario: Locator,
+  email = "ana@ejemplo.invalid",
+): Promise<void> {
+  await formulario.getByLabel(/^nombre$/i).fill("Ana");
+  await formulario.getByLabel(/^correo$/i).fill(email);
+  await formulario.getByRole("button", { name: /quiero donar/i }).click();
+}
+
+/** Nombre y teléfono: reserva a su nombre y avisa al owner (ADR-051). */
+export async function completarOfertaPorTelefono(
+  formulario: Locator,
+  telefono = "11 1234-5678",
+): Promise<void> {
+  await formulario.getByLabel(/^nombre$/i).fill("Ana");
+  await formulario.getByLabel(/^teléfono$/i).fill(telefono);
   await formulario.getByRole("button", { name: /quiero donar/i }).click();
 }
 
@@ -274,7 +325,7 @@ export async function confirmarLlegada(page: Page, titulo: string): Promise<void
 
   await expect(fila).toBeVisible();
   await fila.getByText("Resolver esta reserva").click();
-  await fila.getByRole("button", { name: /^llegó$/i }).click();
+  await fila.getByRole("button", { name: /^sí: donan$/i }).click();
   await expect(cerradas.locator("li").filter({ hasText: titulo })).toHaveCount(
     yaCerradas + 1,
   );
