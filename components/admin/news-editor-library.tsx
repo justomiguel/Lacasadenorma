@@ -66,8 +66,16 @@ export function NewsMediaLibrary({
                   height={72}
                   className="h-auto w-4xl rounded-sm object-cover"
                 />
-              ) : (
+              ) : item.posterUrl === null ? (
                 <p className="w-4xl font-ui text-small text-ink-muted">Video</p>
+              ) : (
+                <Image
+                  src={item.posterUrl}
+                  alt={item.alt}
+                  width={item.posterWidth ?? 96}
+                  height={item.posterHeight ?? 72}
+                  className="h-auto w-4xl rounded-sm object-cover"
+                />
               )}
               <div className="min-w-0 space-y-2xs">
                 <p className="font-ui text-small text-ink-muted">{item.alt}</p>

@@ -3,7 +3,7 @@
 import Link from "@tiptap/extension-link";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/components/design-system/cn";
 import type { MediaAsset } from "@/src/domain/entities";
@@ -11,11 +11,9 @@ import type { MediaAsset } from "@/src/domain/entities";
 import { CONTROL, FieldFrame, useField } from "./form-field";
 import { editorJsonToMarkdown, markdownToEditorJson } from "./news-editor-document";
 import { NewsFormatToolbar } from "./news-editor-format";
-import { MediaInsertPanel } from "./news-editor-insert";
-import { NewsMediaLibrary } from "./news-editor-library";
 import { WorkMedia } from "./news-editor-media";
 import { withMediaSources } from "./news-editor-sources";
-import type { MediaUploadFn } from "./news-editor-toolbar";
+import { useNewsMediaInsert } from "./news-media-context";
 
 export function NewsBodyField({
   name,
@@ -23,26 +21,18 @@ export function NewsBodyField({
   hint,
   required,
   defaultValue,
-  allowMedia = false,
-  updateId,
-  slug,
   media = [],
-  uploadMedia,
 }: {
   name: string;
   label: string;
   hint?: string;
   required?: boolean;
   defaultValue: string;
-  allowMedia?: boolean;
-  updateId?: string;
-  slug?: string;
   media?: readonly MediaAsset[];
-  uploadMedia?: MediaUploadFn;
 }) {
   const field = useField(name, hint);
   const [body, setBody] = useState(defaultValue);
-  const [pendingKind, setPendingKind] = useState<"photo" | "video" | null>(null);
+  const mediaInsert = useNewsMediaInsert();
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -72,12 +62,27 @@ export function NewsBodyField({
     },
   });
 
-  const canInsert =
-    allowMedia &&
-    updateId !== undefined &&
-    slug !== undefined &&
-    uploadMedia !== undefined &&
-    editor !== null;
+  useEffect(() => {
+    if (editor === null || mediaInsert === null) {
+      return;
+    }
+
+    mediaInsert.register((item) => {
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: "workMedia",
+          attrs: {
+            mediaId: item.mediaId,
+            alt: item.alt,
+            kind: item.kind,
+            src: item.url,
+          },
+        })
+        .run();
+    });
+  }, [editor, mediaInsert]);
 
   return (
     <FieldFrame
@@ -106,66 +111,8 @@ export function NewsBodyField({
 
       {editor === null ? null : (
         <div className="space-y-sm">
-          <NewsFormatToolbar
-            editor={editor}
-            canInsert={canInsert}
-            pendingKind={pendingKind}
-            onInsert={(kind) => {
-              setPendingKind((current) => (current === kind ? null : kind));
-            }}
-          />
-
-          {pendingKind !== null &&
-          updateId !== undefined &&
-          slug !== undefined &&
-          uploadMedia !== undefined ? (
-            <MediaInsertPanel
-              kind={pendingKind}
-              updateId={updateId}
-              slug={slug}
-              upload={uploadMedia}
-              onCancel={() => setPendingKind(null)}
-              onInserted={(item) => {
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({
-                    type: "workMedia",
-                    attrs: {
-                      mediaId: item.mediaId,
-                      alt: item.alt,
-                      kind: item.kind,
-                      src: item.url,
-                    },
-                  })
-                  .run();
-                setPendingKind(null);
-              }}
-            />
-          ) : null}
-
+          <NewsFormatToolbar editor={editor} />
           <EditorContent editor={editor} />
-
-          {canInsert ? (
-            <NewsMediaLibrary
-              media={media}
-              onInsert={(item) => {
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({
-                    type: "workMedia",
-                    attrs: {
-                      mediaId: item.id,
-                      alt: item.alt,
-                      kind: item.kind,
-                      src: item.url,
-                    },
-                  })
-                  .run();
-              }}
-            />
-          ) : null}
         </div>
       )}
     </FieldFrame>

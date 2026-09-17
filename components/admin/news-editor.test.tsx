@@ -94,7 +94,7 @@ describe("MediaInsertPanel", () => {
         updateId="11111111-1111-4111-8111-111111111111"
         slug="obra"
         upload={upload}
-        onCancel={() => undefined}
+        onCancel={null}
         onInserted={() => undefined}
       />,
     );
@@ -106,7 +106,7 @@ describe("MediaInsertPanel", () => {
       screen.getByLabelText(/^qué se ve$/i),
       "Patio después de juntar escombros",
     );
-    await user.click(screen.getByRole("button", { name: /^insertar$/i }));
+    await user.click(screen.getByRole("button", { name: /adjuntar foto/i }));
 
     const panel = document.querySelector("[data-news-insert=photo]");
 
@@ -115,7 +115,6 @@ describe("MediaInsertPanel", () => {
     });
     expect(screen.getByRole("status")).toHaveTextContent("Subiendo la foto…");
     expect(screen.getByRole("button", { name: /subiendo la foto/i })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /cancelar/i })).toBeDisabled();
 
     finish({
       status: "ok",
@@ -124,7 +123,7 @@ describe("MediaInsertPanel", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /^insertar$/i })).toBeEnabled();
+      expect(screen.getByRole("button", { name: /adjuntar foto/i })).toBeEnabled();
     });
   });
 });

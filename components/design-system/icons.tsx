@@ -256,3 +256,21 @@ export function TrashIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function CameraIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H9l1.2-1.6A1 1 0 0 1 11 5h2a1 1 0 0 1 .8.4L15 7h3.5A1.5 1.5 0 0 1 20 8.5v8A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5z" />
+      <circle cx="12" cy="12.5" r="3" />
+    </Svg>
+  );
+}
+
+export function VideoIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="3.5" y="6.5" width="12" height="11" rx="1.5" />
+      <path d="m15.5 10 5-2.5v9L15.5 14" />
+    </Svg>
+  );
+}
