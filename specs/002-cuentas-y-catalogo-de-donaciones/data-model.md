@@ -362,7 +362,9 @@ no un error que delate que la fila existe.
    mira `user_metadata.email_verified`, que lo escribe la propia persona (`research.md` §4). El
    comentario de la función lo dice, para que nadie "refuerce" el chequeo con el campo equivocado.
 2. El perfil no está `declined`. `pending` y `approved` reservan (ADR-046).
-3. Si el canal es `bring`: nombre de contacto y dirección de retiro, o error `datos_de_retiro`.
+3. Si el canal es `bring`, los datos de retiro son optativos. Con sesión no se exigen: la cuenta
+   identifica (ADR-051). Si vienen, se guardan. El aviso por teléfono sigue pidiendo nombre
+   (`datos_de_retiro` si falta).
 4. `release_expired_holds(item_id)` — el vencimiento auto-sanante de FR-218.
 5. Tope de reservas activas por cuenta, o error (FR-219).
 6. El `update` condicional que resuelve la concurrencia:
@@ -381,8 +383,8 @@ end if;
 ```
 
 5. Inserta la reserva con `user_id = auth.uid()` — no con un parámetro, así que **no se puede reservar
-   a nombre de otro** — y, si el canal es `bring`, los datos de retiro. El formulario público no llama
-   esta función para cubrir con plata (ADR-046).
+   a nombre de otro**. Los datos de retiro, si vienen, se guardan; con sesión no se exigen (ADR-051).
+   El formulario público no llama esta función para cubrir con plata (ADR-046).
 
 Probado con dos sesiones concurrentes: la segunda espera el lock, reevalúa, y pierde (`research.md`
 §8).

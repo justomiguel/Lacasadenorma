@@ -271,6 +271,12 @@ la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
       botón con el número. La ficha, con `?reservado=1#gracias`, muestra «Gracias por donar» y
       que nos vamos a estar comunicando (`role="status"`). Spec FR-237 / FR-264 / SC-218.
 
+### Fase I — Con sesión, un clic (ADR-051)
+
+- [x] **T080** Con sesión, «Quiero donar» es un clic: no pide nombre ni dirección.
+      `claim_donation_item` reserva sin `datos_de_retiro`. El owner recibe `staff.new_pledge`.
+      Spec FR-216 / FR-265.
+
 ---
 
 ## Dependencias

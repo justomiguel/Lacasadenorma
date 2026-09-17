@@ -25,13 +25,12 @@ import { CoverAmounts } from "./cover-amount";
 import { OfferForm } from "./offer-form";
 
 /**
- * Cómo donar un ítem: traer el mismo bien (con datos de retiro) o cubrirlo
- * con plata sin reservar (ADR-044, ADR-046).
+ * Cómo donar un ítem: traer el mismo bien o cubrirlo con plata sin
+ * reservar (ADR-044, ADR-046, ADR-051).
  *
  * Los datos de un medio de pago aparecen sólo cuando ese canal está elegido.
  * Sin JavaScript lo hace `:has()` sobre el radio. El formulario corto es el
- * HTML público; el de retiro aparece al hidratar si hay sesión (ADR-037,
- * ADR-051).
+ * HTML público; con sesión, al hidratar, un clic reserva (ADR-037, ADR-051).
  */
 export function HowToDonate({
   itemId,
@@ -88,7 +87,9 @@ export function HowToDonate({
       )}
       <ChannelRadios copy={copy} onChannel={setChannel} />
       <div data-bring>
-        <p className="mt-lg max-w-measure text-body text-ink-muted">{copy.bringLead}</p>
+        <p className="mt-lg max-w-measure text-body text-ink-muted">
+          {session.status === "signed-in" ? copy.bringSignedInLead : copy.bringLead}
+        </p>
         {channel === "bring" ? (
           session.status === "signed-in" ? (
             <ClaimForm

@@ -76,7 +76,7 @@ describe("HowToDonate", () => {
     expect(screen.getByText(/teléfono o un correo/i)).toBeInTheDocument();
   });
 
-  it("con sesión hidratada pide la dirección de retiro", () => {
+  it("con sesión hidratada reserva con un clic, sin nombre ni dirección", () => {
     mockDeSesion.mockReturnValue({
       session: {
         status: "signed-in",
@@ -92,13 +92,19 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
-    expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeRequired();
+    expect(screen.queryByLabelText(/^nombre$/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^teléfono$/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/^correo$/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/dirección donde ir a buscar/i),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByLabelText(/quiero aparecer con nombre/i),
     ).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/nombre para mostrar/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/nota para la familia/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /quiero donar/i })).toBeInTheDocument();
+    expect(screen.getByText(/un clic reserva/i)).toBeInTheDocument();
   });
 
   it("al elegir transferencia no muestra el recargo de Mercado Pago", async () => {

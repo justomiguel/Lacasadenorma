@@ -16,7 +16,7 @@ Vale empezar por acá porque es la mayor parte de la respuesta.
 
 | No existe | Consecuencia |
 |---|---|
-| Ningún formulario público **salvo el de la cuenta, el de anotarse a traer un bien, y el aviso por teléfono** | Cubrir con plata no guarda nada. Traer un bien con cuenta pide nombre, teléfono optativo y dirección de retiro. El aviso por teléfono pide nombre y número, reserva el ítem, y no crea cuenta (ADR-051) |
+| Ningún formulario público **salvo el de la cuenta, el de anotarse a traer un bien, y el aviso por teléfono** | Cubrir con plata no guarda nada. Traer un bien con cuenta es un clic: no pide nombre ni dirección (ADR-051). El aviso por teléfono pide nombre y número, reserva el ítem, y no crea cuenta |
 | Newsletter, lista de correo, envíos masivos | Un correo del sistema es siempre sobre la propia cuenta o sobre algo que esa persona ofreció traer |
 | Procesamiento de pagos en el sitio | La transferencia se hace en el homebanking de cada uno; el sitio nunca ve un número de tarjeta, un CBU ajeno ni un monto |
 | Cookies de publicidad, píxeles sociales, servicios de perfilado | No hay `<script>` de terceros más que el de analítica, y sólo si se configura |
@@ -144,7 +144,9 @@ no se cachean.
 
 Crear una cuenta es opcional y sirve para una sola cosa: poder ofrecerse a traer algo y que quede
 anotado a nombre de esa persona. Confirmar el correo no es la prueba de que la ayuda es real: es
-para escribirle y para que pueda cancelar. Los datos de retiro viven en la reserva (ADR-046).
+para escribirle y para que pueda cancelar. Con sesión no se piden datos de retiro: la cuenta
+identifica (ADR-051). Las reservas viejas pueden tenerlos; el aviso por teléfono sigue guardando
+nombre y número.
 
 | Dato | Dónde vive | Quién lo escribe | Se publica |
 |---|---|---|---|

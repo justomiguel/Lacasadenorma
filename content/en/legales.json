@@ -4,13 +4,13 @@
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
     "paragraphs": [
-      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, if there are any, a name to show and a photo of you that is not published. If you sign up to bring a good, we also keep the contact name, a phone number if you leave one, and the address to pick it up. If you leave only a phone number, with no account, we keep your name and that number so we can call you, and the item stays reserved in your name until the person who coordinates confirms. We do not use third-party cookies and we do not follow you across other pages."
+      "The short version: you do not need to give us anything to read this site. If you create an account, we keep your email and, if there are any, a name to show and a photo of you that is not published. If you sign up to bring a good with that account, one click reserves it: we do not ask again for a name or an address. If you leave only a phone number, with no account, we keep your name and that number so we can call you, and the item stays reserved in your name until the person who coordinates confirms. We do not use third-party cookies and we do not follow you across other pages."
     ],
     "sections": [
       {
         "heading": "What we do not do",
         "paragraphs": [
-          "You do not need an account to browse the site, and browsing asks for nothing. There is no newsletter. Covering an item with money does not ask for an account or a phone: the transfer is the proof. Signing up to bring a good asks for a name and a phone number or an email. With the email an account is created and then we ask for the address to pick it up. With the phone number, with no account, the item is reserved in your name until the person who coordinates confirms.",
+          "You do not need an account to browse the site, and browsing asks for nothing. There is no newsletter. Covering an item with money does not ask for an account or a phone: the transfer is the proof. Signing up to bring a good asks for a name and a phone number or an email. With the email an account is created; when you come back, one click reserves the item. With the phone number, with no account, the item is reserved in your name until the person who coordinates confirms.",
           "Payments are not processed on the site: you make the transfer from your bank, and that operation is between your bank and ours.",
           "We do not use advertising cookies, social-media pixels or services that build a profile of you."
         ]
@@ -54,7 +54,7 @@
       {
         "heading": "If you offer to bring something",
         "paragraphs": [
-          "Signing up to bring a material stores, besides your email, your contact name, a phone number if you leave one, the address to pick it up, how much you committed to bring and until when that hold is good. None of that is published. How you appear is chosen in your account.",
+          "Signing up to bring a material with an account stores that account's email, how much you committed to bring and until when that hold is good. It does not ask for a contact name or an address: the account already says who you are. None of that is published. How you appear is chosen in your account.",
           "If you leave a phone number without creating an account, we keep your name and that number, and the item stays reserved. The number is not published. The contact name is not either: it is not the name on the wall. If the person who coordinates confirms they got in touch and you agreed to appear, that screen is where the display name and, if you want, a private note are recorded. If they do not confirm, the hold is released.",
           "The name you want shown, on the account path, is optional, and the default is not to appear. It is chosen in your account, not when you sign up. If you write it and uncheck that you prefer not to appear, it is published on Who helped only when the material arrives.",
           "If you delete the account, your email, your name, your photo, your phone and the pickup address are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",

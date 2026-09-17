@@ -76,8 +76,9 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
 6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
-   **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y completa la reserva
-   con nombre, un teléfono si lo hay y la dirección de retiro, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta.
+   **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y, con un clic,
+   reserva: no se pide de nuevo el nombre ni una dirección. No espera a que el equipo habilite la cuenta. El owner
+   recibe un correo.
 7. **Given** alguien sin sesión que deja nombre y teléfono, **When** confirma, **Then** el ítem queda
    reservado a su nombre, esa persona ve en la ficha «Gracias por donar» y que nos vamos a estar
    comunicando, el owner recibe un correo con un botón de WhatsApp al número que dejó y dos
@@ -85,7 +86,7 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    donado por esa persona con esa fecha, y un no devuelve el ítem a la lista. No se crea una cuenta.
 8. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
    reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y
-   cómo donarlo: traer el bien (formulario de retiro) o cubrirlo con plata (datos de pago, sin reserva).
+   cómo donarlo: traer el bien (con sesión, un clic; sin sesión, nombre y un canal) o cubrirlo con plata (datos de pago, sin reserva).
 9. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
    **Then** ve los datos de pago y **no** un formulario de reserva ni un pedido de cuenta. El nombre, si quiere aparecer,
    se pide cuando el equipo anota la transacción.
@@ -369,12 +370,11 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-216**: Una persona con sesión y correo confirmado MUST poder reservar una o más unidades de un
   ítem disponible para **traerlo**, y la reserva MUST quedar asignada a su cuenta. MUST NOT exigir
   que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
-  Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
-  a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
-  MUST NOT pedir nombre para mostrar ni nota para la familia en esa ficha: quién se maneja con el
-  sistema lo elige en `/cuenta` (FR-225, FR-229). Si falta un dato, el sistema MUST llevar el foco
-  y el scroll al primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT
-  enviar el formulario.
+  MUST NOT pedir nombre de contacto, teléfono ni dirección de retiro: la cuenta ya identifica a
+  esa persona. El owner MUST recibir `staff.new_pledge`. MUST NOT pedir nombre para mostrar ni nota
+  para la familia en esa ficha: quién se maneja con el sistema lo elige en `/cuenta` (FR-225, FR-229).
+  Si falta un dato (la cantidad, cuando se pide), el sistema MUST llevar el foco y el scroll al
+  primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT enviar el formulario.
 - **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
   catálogo.
 - **FR-259**: Alguien sin sesión MUST poder reservar un ítem publicado dejando nombre y teléfono,
@@ -382,6 +382,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   MUST nacer anónima. MUST mover `reserved_quantity`. MUST NOT pedir dirección, nombre para mostrar
   ni nota. Un mismo teléfono MUST NOT sostener dos veces el mismo ítem. El número y el nombre de
   contacto MUST NOT publicarse.
+- **FR-265**: Con sesión, «Quiero donar» MUST reservar y MUST avisar al owner (`staff.new_pledge`)
+  sin pedir nombre, teléfono ni dirección. MUST NOT inventar un nombre a partir del correo.
 - **FR-260**: El aviso al equipo de una reserva nueva —por teléfono o por cuenta— MUST incluir dos
   enlaces que piden sesión con `donaciones.escribir` y MUST NOT autenticar por el correo (FR-237):
   sí confirma que el equipo se contactó y van a donar (`fulfill_donation_pledge`); no suelta la
@@ -616,9 +618,9 @@ el listado y la ficha lo publican etiquetado como estimado, no fijo. El libro no
 - Sin captcha en esta versión. La confirmación de correo más el tope de reservas activas son la
   defensa. Queda escrito como riesgo aceptado, con el disparador para revisarlo: la primera reserva
   de mala fe.
-- La entrega física se coordina con los datos de retiro de la reserva (nombre, correo o teléfono,
-  dirección). Los canales de `/contacto` siguen publicados. El sitio ya no asume que la logística
-  vive sólo afuera: guarda la dirección para que el equipo pueda ir a buscar (ADR-046).
+- La entrega física se coordina por el teléfono, WhatsApp o el correo de la cuenta, no con un
+  domicilio pedido al donar. Los canales de `/contacto` siguen publicados. La columna
+  `pickup_address` puede quedar en reservas viejas; el formulario ya no la pide (ADR-051).
 - Cubrir un ítem con plata no reserva. La transacción (transferencia, PayPal, Mercado Pago) es la
   prueba. El nombre se pide si la transacción se hace, cuando el equipo la anota.
 - Una donación en especie no es plata y no entra en el libro. Si alguien prefiere transferir el monto

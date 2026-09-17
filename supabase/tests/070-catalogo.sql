@@ -397,7 +397,7 @@ set local "request.jwt.claims" =
 
 select lives_ok(
   $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000008') $q$,
-  'una cuenta pendiente con datos de retiro sí reserva (ADR-046)'
+  'una cuenta pendiente sí reserva (ADR-046)'
 );
 
 reset role;
@@ -417,11 +417,13 @@ set local role authenticated;
 set local "request.jwt.claims" =
   '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
 
-select throws_ok(
-  $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000004') $q$,
-  '23514',
-  'datos_de_retiro',
-  'traer un bien sin nombre y dirección se rechaza'
+select is(
+  (
+    select contact_name
+      from public.claim_donation_item('ab700000-0000-4000-8000-000000000004')
+  ),
+  null,
+  'con sesión, sin nombre ni dirección, reserva igual (ADR-051)'
 );
 
 -- ── Dos reservas secuenciales por la última unidad ──────────────────────────

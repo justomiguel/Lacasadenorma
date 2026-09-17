@@ -35,7 +35,7 @@ import { revalidateDonationPages } from "../revalidate-donations";
  * El correo abre `/cuenta/crear` con el mail en cookie, no en la URL. El
  * teléfono reserva a nombre de esa persona y manda `staff.phone_offer` con
  * un botón de WhatsApp y dos enlaces. Sin sesión es el camino público; con
- * sesión el HTML hidratado ya muestra el de retiro.
+ * sesión el HTML hidratado es un clic que reserva.
  */
 export async function startDonateAction(
   _state: AccountFormState,
@@ -122,7 +122,7 @@ export async function startDonateAction(
 /**
  * Anotarse a traer un ítem, con sesión.
  *
- * El formulario de retiro aparece al hidratar. Un POST sin sesión —el HTML
+ * Un clic reserva y manda `staff.new_pledge`. Un POST sin sesión —el HTML
  * público no es éste— redirige a crear una cuenta con `volver` a la ficha.
  */
 export async function claimItemAction(
@@ -149,9 +149,6 @@ export async function claimItemAction(
       itemId,
       quantity: textOf(formData, "cantidad") || "1",
       coverChannel: isCoverChannel(canal) ? canal : "bring",
-      contactName: textOf(formData, "contacto"),
-      contactPhone: textOf(formData, "telefono"),
-      pickupAddress: textOf(formData, "direccion"),
     },
   );
 

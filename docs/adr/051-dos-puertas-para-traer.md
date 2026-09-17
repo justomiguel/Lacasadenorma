@@ -36,19 +36,19 @@ el segundo en dos caminos:
 1. **El HTML público de la ficha pide nombre y (teléfono o correo).** Ni
    dirección, ni cantidad, ni «aparecer». Cubrir con plata no cambia. El HTML
    servido es el de alguien sin sesión (ADR-037, SC-213). Quien ya tiene
-   sesión ve el formulario de retiro **después de hidratar**, igual que el
-   chrome muestra Backoffice: el documento inicial no se personaliza.
+   sesión ve **después de hidratar** un botón: no se pide nombre, teléfono ni
+   dirección. La cuenta ya dice quién es. Un clic reserva y manda
+   `staff.new_pledge`.
 2. **El correo abre el sistema.** Un POST con mail y sin sesión redirige a
    `/cuenta/crear` con la vuelta a esa ficha. El mail no viaja en la URL: va
    en una cookie httpOnly de diez minutos, y el alta lo precarga. En esa
    pantalla, si se viene de donar, el texto explica por qué hace falta la
-   cuenta: confirmar el correo, dejar después dónde ir a buscar, ver y
-   cancelar lo anotado. Confirmar el correo sigue siendo la validación
-   (ADR-046): `pending` reserva, `declined` no. Al volver a la ficha, con
-   sesión, se pide la dirección y se reserva. No se pide «nombre para
-   mostrar» ni nota para la familia: quien se maneja con el sistema lo elige
-   después en `/cuenta`. El owner recibe `staff.new_account` al nacer el
-   perfil y `staff.new_pledge` al anotarse.
+   cuenta: confirmar el correo, ver y cancelar lo anotado. Confirmar el
+   correo sigue siendo la validación (ADR-046): `pending` reserva, `declined`
+   no. Al volver a la ficha, con sesión, un clic reserva. No se pide
+   dirección, ni «nombre para mostrar», ni nota para la familia: quién se
+   maneja con el sistema lo elige después en `/cuenta`. El owner recibe
+   `staff.new_account` al nacer el perfil y `staff.new_pledge` al anotarse.
 3. **El teléfono reserva a nombre de esa persona.** Un POST con teléfono y
    sin mail no crea cuenta. Persiste el aviso en `donation_offers` y crea una
    reserva en `donation_pledges` (`user_id` nulo, anónima: el nombre de
@@ -85,8 +85,8 @@ el segundo en dos caminos:
    un `alert()`, ni un modal: es el estado diseñado de esa pantalla
    (ADR-032). El formulario se desmonta si ya no queda cupo; por eso el
    aviso vive en la ficha, igual que `?conflicto=1`.
-6. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono
-   queda para más adelante, en el formulario de retiro, si lo quieren dejar.
+6. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono no
+   se pide de nuevo al volver con sesión: el correo de la cuenta alcanza.
 
 ## Alternativas descartadas
 
@@ -98,8 +98,9 @@ el segundo en dos caminos:
 | Un token de capacidad en el correo que cumple o cancela sin sesión | FR-237. El enlace pide la sesión de quien administra |
 | Sólo mandar el correo, sin persistir | Si Resend falla, el owner no tiene a quién llamar. El hecho vive en la base; el correo avisa |
 | Poner el teléfono en el cuerpo, sin enlace | El pedido del 17 de septiembre de 2026 es escribirle ya: el número va en un botón `wa.me`, no como un renglón para copiar. El resto de los avisos al equipo sigue sin datos de terceros |
-| Un `alert()` o un modal de «gracias» | ADR-032: los estados se diseñan. Un diálogo de JavaScript no existe sin JS y no es el patrón del sitio. Es un aviso en la ficha |
-| Personalizar la ficha según haya sesión | Rompe ADR-037 y el caché. El formulario de retiro aparece al hidratar, como el chrome |
+| Pedir dirección al donar, con o sin sesión | El pedido del 17 de septiembre de 2026 es nombre y un canal. La coordinación es por teléfono, WhatsApp o el correo de la cuenta, no un domicilio en el formulario |
+| Pedir de nuevo el nombre a quien ya tiene sesión | La cuenta ya dice quién es. Un clic reserva y avisa al owner (`staff.new_pledge`) |
+| Personalizar la ficha según haya sesión | Rompe ADR-037 y el caché. El botón aparece al hidratar, como el chrome |
 | Pedir los dos, mail y teléfono | El mínimo es uno. El mail abre el sistema; el teléfono, la llamada y la reserva |
 | Pedir «nombre para mostrar» y nota en la ficha | El primer clic es nombre y un canal. Aparecer se decide después: en `/cuenta` si hay mail, en el sí del owner si hay teléfono |
 | Publicar el nombre de contacto del teléfono al confirmar | Ese nombre es para llamarlos. El del muro es el que aceptaron poner, en la pantalla del sí |
@@ -108,8 +109,9 @@ el segundo en dos caminos:
 
 **Buenas.** El primer clic pide poco. Quien no quiere cuenta deja un teléfono
 y el ítem queda a su nombre hasta que el owner confirma o suelta. Quien sí,
-entiende en la pantalla de alta para qué sirve, confirma el correo, deja la
-dirección y se anota. Un sí con nombre aceptado aparece en el muro con fecha.
+entiende en la pantalla de alta para qué sirve, confirma el correo y, al
+volver a la ficha, con un clic se anota. Un sí con nombre aceptado aparece
+en el muro con fecha.
 
 **Malas y aceptadas.**
 
@@ -117,9 +119,9 @@ dirección y se anota. Un sí con nombre aceptado aparece en el muro con fecha.
   catorce días suelta lo que nadie confirmó.
 - El sí del teléfono pide un dato más si aceptaron aparecer. Es un paso del
   owner, no de quien dejó el número: esa persona no tiene cuenta.
-- Sin JavaScript, quien ya tiene sesión ve el formulario corto. Si pone
-  mail, el alta lo manda a `/cuenta` a completar el retiro. Con JavaScript
-  ve el de siempre, en la ficha, al hidratar.
+- Sin JavaScript, quien ya tiene sesión ve el formulario corto (nombre y
+  canal). Si pone mail, el alta lo manda a `/cuenta`; al volver, con
+  JavaScript, un clic reserva. Con JavaScript ve el botón al hidratar.
 - El nombre y el teléfono de quien avisó viajan en el correo al owner. Es
   una excepción deliberada a «los avisos al equipo no llevan datos de
   terceros», acotada a `staff.phone_offer`: el nombre, y el número como

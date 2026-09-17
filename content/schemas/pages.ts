@@ -192,6 +192,7 @@ export const catalogSchema = pageSchema.extend({
   coverBringChannel: z.string().min(1),
   coverHow: z.string().min(1),
   bringLead: z.string().min(1),
+  bringSignedInLead: z.string().min(1),
   moneyLead: z.string().min(1),
   contactName: z.string().min(1),
   contactNameHint: z.string().min(1),

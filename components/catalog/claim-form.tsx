@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef } from "react";
-import { useFormStatus } from "react-dom";
+import { useActionState, useEffect, useRef } from "react";
 
 import { claimItemAction } from "@/app/(es)/catalogo/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
@@ -12,15 +11,15 @@ import {
   TextField,
 } from "@/components/account/fields";
 import { fieldError, generalError } from "@/components/account/error-text";
-import { cn } from "@/components/design-system/cn";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
 
 import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
 
 /**
- * Anotarse a traer un bien, con sesión: nombre, teléfono optativo y
- * dirección de retiro (ADR-046, ADR-051). El HTML público no es éste.
+ * Anotarse a traer un bien, con sesión: un clic reserva y avisa al owner
+ * (`staff.new_pledge`). No se pide nombre ni dirección: la cuenta ya dice
+ * quién es (ADR-051). El HTML público no es éste.
  */
 export function ClaimForm({
   itemId,
@@ -80,80 +79,10 @@ export function ClaimForm({
         <input type="hidden" name="cantidad" value="1" />
       )}
 
-      <TextField
-        name="contacto"
-        label={copy.contactName}
-        hint={copy.contactNameHint}
-        autoComplete="name"
-        {...optional(fieldError(state, account.errors, "contactName"))}
-      />
-
-      <TextField
-        name="telefono"
-        label={copy.contactPhone}
-        hint={copy.claimPhoneHint}
-        required={false}
-        autoComplete="tel"
-        inputMode="tel"
-        {...optional(fieldError(state, account.errors, "contactPhone"))}
-      />
-
-      <AddressField
-        copy={copy}
-        error={fieldError(state, account.errors, "pickupAddress")}
-      />
-
       {general === null ? null : <FormError>{general}</FormError>}
 
       <SubmitButton pendingLabel={pendingLabel ?? copy.claiming}>{label}</SubmitButton>
     </form>
-  );
-}
-
-function AddressField({
-  copy,
-  error,
-}: {
-  copy: CatalogContent;
-  error: string | undefined;
-}) {
-  const { pending } = useFormStatus();
-  const id = useId();
-  const hintId = `${id}-ayuda`;
-  const errorId = `${id}-error`;
-  const describedBy = [hintId, error === undefined ? null : errorId]
-    .filter((value) => value !== null)
-    .join(" ");
-
-  return (
-    <div className="space-y-2xs">
-      <label htmlFor={id} className="block font-ui text-small font-medium text-ink">
-        {copy.pickupAddress}
-      </label>
-      <textarea
-        id={id}
-        name="direccion"
-        rows={3}
-        autoComplete="street-address"
-        required
-        disabled={pending}
-        aria-describedby={describedBy}
-        {...(error === undefined ? {} : { "aria-invalid": true })}
-        className={cn(
-          "w-full min-h-touch scroll-mt-3xl rounded-sm border border-rule bg-paper px-sm py-xs font-ui text-body text-ink",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
-          "aria-invalid:border-danger user-invalid:border-danger user-invalid:focus-visible:outline-danger disabled:opacity-60",
-        )}
-      />
-      <p id={hintId} className="font-ui text-small text-ink-muted">
-        {copy.pickupAddressHint}
-      </p>
-      {error === undefined ? null : (
-        <p id={errorId} className="font-ui text-small text-danger">
-          {error}
-        </p>
-      )}
-    </div>
   );
 }
 

@@ -4,13 +4,13 @@
     "title": "Privacidad",
     "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
     "paragraphs": [
-      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y, si los hay, un nombre para mostrar y una foto tuya que no se publica. Si te anotás a traer un bien, también el nombre, un teléfono si lo dejás y la dirección donde ir a buscar. Si dejás sólo un teléfono, sin cuenta, guardamos tu nombre y ese número para llamarte, y el ítem queda reservado a tu nombre hasta que quien coordina confirme. No usamos cookies de terceros y no te seguimos por otras páginas."
+      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y, si los hay, un nombre para mostrar y una foto tuya que no se publica. Si te anotás a traer un bien con esa cuenta, un clic reserva: no se pide de nuevo el nombre ni una dirección. Si dejás sólo un teléfono, sin cuenta, guardamos tu nombre y ese número para llamarte, y el ítem queda reservado a tu nombre hasta que quien coordina confirme. No usamos cookies de terceros y no te seguimos por otras páginas."
     ],
     "sections": [
       {
         "heading": "Qué no hacemos",
         "paragraphs": [
-          "Para navegar el sitio no hace falta cuenta y no se pide ningún dato. No hay newsletter. Cubrir un ítem con plata no pide cuenta ni teléfono: la transferencia es la prueba. Anotarse a traer un bien pide nombre y un teléfono o un correo. Con el correo se abre una cuenta y después se pide la dirección donde ir a buscar. Con el teléfono, sin cuenta, se reserva el ítem a tu nombre hasta que quien coordina confirme.",
+          "Para navegar el sitio no hace falta cuenta y no se pide ningún dato. No hay newsletter. Cubrir un ítem con plata no pide cuenta ni teléfono: la transferencia es la prueba. Anotarse a traer un bien pide nombre y un teléfono o un correo. Con el correo se abre una cuenta; al volver, un clic reserva. Con el teléfono, sin cuenta, se reserva el ítem a tu nombre hasta que quien coordina confirme.",
           "No se procesan pagos en el sitio: las transferencias las hacés desde tu banco, y esa operación es entre tu banco y el nuestro.",
           "No usamos cookies publicitarias, ni píxeles de redes sociales, ni servicios que armen un perfil tuyo."
         ]
@@ -54,7 +54,7 @@
       {
         "heading": "Si ofrecés traer algo",
         "paragraphs": [
-          "Anotarte para traer un material guarda, además del correo, tu nombre de contacto, un teléfono si lo dejás, la dirección donde ir a buscar, cuánto te comprometiste a traer y hasta cuándo vale esa reserva. Nada de eso se publica. Cómo aparecer se elige en tu cuenta.",
+          "Anotarte para traer un material con cuenta guarda el correo de esa cuenta, cuánto te comprometiste a traer y hasta cuándo vale esa reserva. No se pide nombre de contacto ni dirección: la cuenta ya dice quién sos. Nada de eso se publica. Cómo aparecer se elige en tu cuenta.",
           "Si dejás un teléfono sin crear cuenta, se guarda tu nombre y ese número, y el ítem queda reservado. El número no se publica. El nombre de contacto tampoco: no es el del muro. Si quien coordina confirma que se contactó y aceptaste aparecer, en esa pantalla se carga el nombre para mostrar y, si querés, una nota privada. Si no confirma, la reserva se suelta.",
           "El nombre con el que querés aparecer, en el camino con cuenta, es optativo y el valor por defecto es no aparecer. Se elige en tu cuenta, no al anotarte. Si lo escribís y desmarcás que preferís no aparecer, se publica en Quiénes ayudaron recién cuando el material llega.",
           "Si borrás la cuenta, se borra tu correo, tu nombre, tu foto, tu teléfono y la dirección de retiro. Las reservas que ya se cumplieron se quedan como un hecho sobre la obra, sin identificarte.",

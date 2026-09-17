@@ -254,21 +254,16 @@ export function formularioDeTraer(articulo: Locator) {
   return articulo.locator("form").filter({ hasText: /quiero donar/i });
 }
 
-/** Nombre y dirección de retiro, y envío. El de retiro aparece al hidratar (ADR-051). */
+/** Un clic reserva. El formulario corto se va al hidratar (ADR-051). */
 export async function completarTraer(
   formulario: Locator,
   extra?: { readonly quantity?: number },
 ): Promise<void> {
-  await expect(formulario.getByLabel(/dirección donde ir a buscar/i)).toBeVisible();
-  await formulario.getByLabel(/^nombre$/i).fill("Ana");
+  await expect(formulario.getByLabel(/^nombre$/i)).toHaveCount(0);
 
   if (extra?.quantity !== undefined) {
     await formulario.getByLabel(/^cuántas$/i).fill(String(extra.quantity));
   }
-
-  await formulario
-    .getByLabel(/dirección donde ir a buscar/i)
-    .fill("Riacho He Hé, Formosa");
 
   await formulario.getByRole("button", { name: /quiero donar/i }).click();
 }

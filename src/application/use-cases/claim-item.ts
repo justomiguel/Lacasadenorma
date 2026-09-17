@@ -3,18 +3,18 @@ import { z } from "zod";
 import type { DonationPledge } from "@/src/domain/entities/donation-pledge";
 import type { DonationsPort } from "@/src/domain/ports/donations";
 import type { Logger } from "@/src/domain/ports/logger";
-import { parsePhysicalPledgeContact } from "@/src/domain/pledge-contact";
 
 import { accountError, accountOk, type AccountOutcome } from "../accounts/outcome";
 import type { AccountSession } from "../accounts/own-account";
 import { describePledgeFailure } from "../accounts/pledge-failure";
 
 /**
- * Reservar un ítem del catálogo para traerlo (ADR-046, ADR-051).
+ * Reservar un ítem del catálogo para traerlo, con sesión (ADR-051).
  *
- * Nace anónima. Cómo aparecer se elige en `/cuenta`, no acá. Cubrir con
- * plata no pasa por acá: la transacción es la prueba. Llama la función de
- * la base y **después** intenta el correo. El correo no está en la
+ * No pide nombre, teléfono ni dirección: la cuenta ya identifica. Nace
+ * anónima. Cómo aparecer se elige en `/cuenta`, no acá. Cubrir con plata
+ * no pasa por acá: la transacción es la prueba. Llama la función de la
+ * base y **después** intenta el correo. El correo no está en la
  * transacción: si no sale, la reserva ya existe (ADR-028, FR-233).
  *
  * No pasa por `perform()`. `record_audit()` pide un rol interno, y el registro
@@ -30,9 +30,6 @@ const inputSchema = z.object({
     .enum(["bring", "transfer", "mercadopago", "paypal"])
     .optional()
     .default("bring"),
-  contactName: z.string().nullable().optional(),
-  contactPhone: z.string().nullable().optional(),
-  pickupAddress: z.string().nullable().optional(),
 });
 
 export interface ClaimDeps {
@@ -83,18 +80,6 @@ export async function claimItem(
     return accountError("coverIsNotAPledge");
   }
 
-  const contact = parsePhysicalPledgeContact({
-    contactName: parsed.data.contactName,
-    contactPhone: parsed.data.contactPhone,
-    pickupAddress: parsed.data.pickupAddress,
-  });
-
-  if (contact.status === "error") {
-    return contact.field === "contactName"
-      ? accountError("contactNameRequired", "contactName")
-      : accountError("pickupAddressRequired", "pickupAddress");
-  }
-
   try {
     const pledge = await port.claimItem({
       itemId: parsed.data.itemId,
@@ -103,9 +88,9 @@ export async function claimItem(
       displayName: null,
       note: null,
       coverChannel: "bring",
-      contactName: contact.value.contactName,
-      contactPhone: contact.value.contactPhone,
-      pickupAddress: contact.value.pickupAddress,
+      contactName: null,
+      contactPhone: null,
+      pickupAddress: null,
     });
 
     if (deps.afterClaim !== undefined) {

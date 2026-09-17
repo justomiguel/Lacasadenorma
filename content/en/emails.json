@@ -3,7 +3,7 @@
     "subject": "We received your account request",
     "preheader": "You confirmed the email. You can already sign up to bring a good.",
     "body": [
-      "You confirmed the email, so the account is on the list. You can already go to the catalogue and say what you'll bring, with a name, a phone number if you have one, and the address to pick it up.",
+      "You confirmed the email, so the account is on the list. You can already go to the catalogue and, with one click, sign up to bring a good. We write to the person who coordinates.",
       "The team hears about it when you sign up, not now. If they need to stop the account, they do that by hand.",
       "If you'd rather not appear in the list of people who helped, you choose that from your account. The default is not to appear."
     ],
@@ -97,7 +97,7 @@
     "subject": "Hay una cuenta para revisar",
     "preheader": "Alguien confirmó el correo. Ya puede anotarse a traer un bien.",
     "body": [
-      "Alguien confirmó su correo. Ya puede anotarse a traer un bien, con nombre y dirección de retiro.",
+      "Alguien confirmó su correo. Ya puede anotarse a traer un bien con un clic. Le llega un aviso al equipo cuando se anota.",
       "Los datos están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada. Si hay que frenar la cuenta, se rechaza desde ahí."
     ],
     "action": "Abrir las cuentas del público",

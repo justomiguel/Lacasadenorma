@@ -61,12 +61,6 @@ const silent: Logger = {
 
 const ITEM = "ab700000-0000-4000-8000-000000000003";
 
-const TRAER = {
-  contactName: "Ana",
-  contactPhone: null as string | null,
-  pickupAddress: "Riacho He Hé, Formosa",
-};
-
 function ready(donations: DonationsPort) {
   return {
     session: {
@@ -90,7 +84,7 @@ describe("claimItem", () => {
           avisos.push(pledge.id);
         },
       },
-      { itemId: ITEM, quantity: 1, anonymous: "si", ...TRAER },
+      { itemId: ITEM, quantity: 1, anonymous: "si" },
     );
 
     expect(result.status).toBe("ok");
@@ -99,8 +93,9 @@ describe("claimItem", () => {
       quantity: 1,
       isAnonymous: true,
       coverChannel: "bring",
-      contactName: "Ana",
-      pickupAddress: "Riacho He Hé, Formosa",
+      contactName: null,
+      contactPhone: null,
+      pickupAddress: null,
     });
     expect(avisos).toEqual(["30000000-0000-4000-8000-000000000001"]);
   });
@@ -114,7 +109,7 @@ describe("claimItem", () => {
           throw new Error("resend caído");
         },
       },
-      { itemId: ITEM, quantity: "1", anonymous: "si", ...TRAER },
+      { itemId: ITEM, quantity: "1", anonymous: "si" },
     );
 
     expect(result.status).toBe("ok");
@@ -140,7 +135,6 @@ describe("claimItem", () => {
       itemId: ITEM,
       quantity: 1,
       anonymous: "si",
-      ...TRAER,
     });
 
     expect(result).toEqual({ status: "error", code: "ahead", field: null });
@@ -154,7 +148,6 @@ describe("claimItem", () => {
       anonymous: "no",
       displayName: "Ana",
       note: "una nota",
-      ...TRAER,
     });
 
     expect(result.status).toBe("ok");
@@ -181,38 +174,37 @@ describe("claimItem", () => {
     expect(donations.claimed).toBeNull();
   });
 
-  it("sin nombre de contacto no llega al puerto", async () => {
+  it("sin nombre ni dirección reserva igual: la cuenta ya dice quién es", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {
       itemId: ITEM,
       quantity: 1,
-      anonymous: "si",
-      pickupAddress: TRAER.pickupAddress,
     });
 
-    expect(result).toEqual({
-      status: "error",
-      code: "contactNameRequired",
-      field: "contactName",
+    expect(result.status).toBe("ok");
+    expect(donations.claimed).toMatchObject({
+      contactName: null,
+      contactPhone: null,
+      pickupAddress: null,
     });
-    expect(donations.claimed).toBeNull();
   });
 
-  it("sin dirección de retiro no llega al puerto", async () => {
+  it("un nombre o una dirección en el POST no se guardan: no se piden", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {
       itemId: ITEM,
       quantity: 1,
-      anonymous: "si",
       contactName: "Ana",
+      contactPhone: "3704123456",
+      pickupAddress: "Riacho He Hé, Formosa",
     });
 
-    expect(result).toEqual({
-      status: "error",
-      code: "pickupAddressRequired",
-      field: "pickupAddress",
+    expect(result.status).toBe("ok");
+    expect(donations.claimed).toMatchObject({
+      contactName: null,
+      contactPhone: null,
+      pickupAddress: null,
     });
-    expect(donations.claimed).toBeNull();
   });
 
   it("si el caché de PostgREST no tiene la función, no filtra el error de esquema", async () => {
@@ -225,7 +217,6 @@ describe("claimItem", () => {
       itemId: ITEM,
       quantity: 1,
       anonymous: "si",
-      ...TRAER,
     });
 
     expect(result).toEqual({ status: "error", code: "schemaBehind", field: null });
