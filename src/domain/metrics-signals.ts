@@ -5,6 +5,7 @@ import type { CurrencyCode } from "./money";
 import type { MetricSignal, MetricsCampaign, MetricsFacts } from "./metrics";
 
 const VOIDED_SHARE_PERCENT = 10;
+const PULSE_STALE_DAYS = 14;
 
 function push(
   signals: MetricSignal[],
@@ -47,6 +48,61 @@ function expiresWithinReminder(expiresAt: string, now: Date): boolean {
   const horizon = now.getTime() + PLEDGE_REMINDER_DAYS * 86_400_000;
 
   return expires <= horizon;
+}
+
+function latestIso(values: readonly (string | null)[]): string | null {
+  let latest: string | null = null;
+  let latestTime = Number.NEGATIVE_INFINITY;
+
+  for (const value of values) {
+    if (value === null) continue;
+
+    const time = new Date(value).getTime();
+
+    if (Number.isNaN(time) || time <= latestTime) continue;
+
+    latestTime = time;
+    latest = value;
+  }
+
+  return latest;
+}
+
+function pushStale(
+  signals: MetricSignal[],
+  input: {
+    readonly id: string;
+    readonly title: string;
+    readonly body: string;
+    readonly href: string;
+    readonly latest: string | null;
+    readonly now: Date;
+  },
+): void {
+  if (input.latest === null) {
+    return;
+  }
+
+  const time = new Date(input.latest).getTime();
+
+  if (Number.isNaN(time) || time > input.now.getTime()) {
+    return;
+  }
+
+  const days = Math.floor((input.now.getTime() - time) / 86_400_000);
+
+  if (days <= PULSE_STALE_DAYS) {
+    return;
+  }
+
+  push(signals, {
+    id: input.id,
+    severity: "warning",
+    title: input.title,
+    body: input.body,
+    href: input.href,
+    count: days,
+  });
 }
 
 /**
@@ -223,6 +279,27 @@ export function collectSignals(
     body: "Hay pasos de la obra pendientes o en curso.",
     href: "/admin/hitos",
     count: openMilestones,
+  });
+
+  pushStale(signals, {
+    id: "news_stale",
+    title: "Sin novedad publicada",
+    body: "Hace más de catorce días que no se publica un avance. El silencio se lee como que algo salió mal.",
+    href: "/admin/novedades",
+    latest: latestIso(facts.updates.map((item) => item.publishedAt)),
+    now,
+  });
+  pushStale(signals, {
+    id: "contributions_stale",
+    title: "Sin aportes nuevos",
+    body: "Hace más de catorce días que no entra un aporte vivo en el libro.",
+    href: "/admin/aportes",
+    latest: latestIso(
+      facts.contributions
+        .filter((item) => item.voidedAt === null)
+        .map((item) => item.receivedAt),
+    ),
+    now,
   });
 
   const rank: Record<MetricSignal["severity"], number> = {

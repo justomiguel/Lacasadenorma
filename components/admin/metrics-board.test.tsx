@@ -21,8 +21,14 @@ const SNAPSHOT: AnalyticsSnapshot = {
   pages: [{ name: "/ayudar", value: 40 }],
   sources: [{ name: "(direct)", value: 25 }],
   devices: [{ name: "mobile", value: 50 }],
+  browsers: [{ name: "Chrome", value: 48 }],
+  entryPages: [{ name: "/", value: 30 }],
   countries: [{ name: "Argentina", value: 60 }],
   events: [{ name: "ayudar_click", value: 12 }],
+  helpOrigins: [{ name: "encabezado", value: 8 }],
+  copiedFields: [],
+  shareChannels: [],
+  paymentMedia: [],
 };
 
 describe("MetricsBoard", () => {
@@ -47,6 +53,12 @@ describe("MetricsBoard", () => {
     const alcance = screen.getByRole("heading", { name: "Alcance" }).closest("section");
     expect(alcance).toHaveTextContent("Visitantes");
     expect(alcance).toHaveTextContent("Clic en Ayudar");
+    expect(alcance).toHaveTextContent(/15\s*%/);
     expect(screen.getByRole("img", { name: /visitantes y vistas/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /navegadores/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /por dónde entran/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: /desde dónde tocan ayudar/i }),
+    ).toBeInTheDocument();
   });
 });

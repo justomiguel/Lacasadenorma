@@ -49,9 +49,9 @@ libro, al menos un gráfico con su tabla, y las señales que el fixture dispara.
    unidades, nunca en pesos (ADR-031).
 5. **Given** una clave de Stats API y un proveedor que responde, **When** abre `/admin/metricas`,
    **Then** ve un panel de alcance (visitantes, vistas, rebote, duración, páginas, fuentes,
-   dispositivos, países y eventos de ADR-010) con gráficos de librería y tabla. **Given** que
-   no hay clave o la lectura falla, **Then** ese panel se omite y una señal lo dice; el libro
-   no se esconde.
+   dispositivos, navegadores, entrada, países, eventos de ADR-010 y propiedades ya emitidas)
+   con gráficos de librería y tabla. **Given** que no hay clave o la lectura falla, **Then**
+   ese panel se omite y una señal lo dice; el libro no se esconde.
 
 ---
 
@@ -71,7 +71,10 @@ es el segundo pedido, y sin él el tablero sólo habla de plata.
 
 1. **Given** `ANALYTICS_API_KEY` y un Stats API que responde, **When** se arma el tablero,
    **Then** hay cifras de visitantes y vistas de treinta días, una serie diaria, y barras de
-   páginas, fuentes, dispositivos, países y eventos semánticos cuando hay observaciones.
+   páginas, fuentes, dispositivos, navegadores, páginas de entrada, países, eventos
+   semánticos y propiedades ya emitidas (origen de Ayudar, campo copiado, canal de
+   compartir, medio externo) cuando hay observaciones. Las tasas de intención contra
+   visitantes se muestran; sin denominador se omiten.
 2. **Given** que no hay clave, **When** se arma el tablero, **Then** no hay gráfico de visitas
    y una señal `info` dice que el alcance no se puede leer acá.
 3. **Given** clave configurada y la lectura falla, **When** se arma el tablero, **Then** el
@@ -109,6 +112,10 @@ actúa.
    detalle operativo se nombra en el cuerpo—, `/admin/cuentas`).
 4. **Given** que no hay ninguna excepción, **When** se renderiza el tablero, **Then** no se
    inventa un aviso: se dice que no hay señales pendientes.
+5. **Given** al menos una novedad publicada, **When** la última tiene más de catorce días,
+   **Then** una señal `warning` enlaza a `/admin/novedades`. **Given** que nunca se publicó
+   una, **Then** no se finge un silencio. Lo mismo para el último aporte vivo hacia
+   `/admin/aportes`.
 
 ---
 
@@ -150,8 +157,9 @@ actúa.
 - **FR-611**: `/admin` MUST, para `owner`, resumir las señales de tono `warning` y `danger` con
   enlace al tablero. Si la lectura falla, MUST decirlo.
 - **FR-612**: El tablero MUST leer el alcance (visitantes, vistas, rebote, duración, páginas,
-  fuentes, dispositivos, países, eventos) del Stats API del proveedor cuando hay
-  `ANALYTICS_API_KEY`. Sin clave, MUST omitir la sección y decirlo.
+  fuentes, dispositivos, navegadores, páginas de entrada, países, eventos y propiedades ya
+  emitidas) del Stats API del proveedor cuando hay `ANALYTICS_API_KEY`. Sin clave, MUST omitir
+  la sección y decirlo.
 - **FR-613**: Un fallo del Stats API MUST NOT esconder el libro. MUST producir una señal, no un
   tablero en cero de visitas.
 - **FR-614**: `ANALYTICS_API_KEY` MUST ser de servidor. MUST NOT llevar prefijo `NEXT_PUBLIC_`.
@@ -159,6 +167,14 @@ actúa.
   `/admin/metricas` a quien tiene `metricas.leer`. MUST NOT mostrarlo a otros roles, ni en el
   encabezado de escritorio, ni en el pie. El bloque de cuenta de ese menú MUST llevar un icono
   de trazo de `icons.tsx` en cada salida (cuenta, backoffice, métricas, cerrar sesión).
+- **FR-616**: El alcance MUST incluir, cuando el proveedor las devuelve: navegadores, páginas
+  de entrada, y desgloses de propiedades que el sitio ya emite (`origen` de Ayudar, `campo`
+  copiado, `canal` de compartir, `medio` externo). MUST calcular tasas de esas intenciones
+  contra visitantes. MUST omitir un desglose o una tasa sin observaciones o sin denominador.
+  MUST NOT pedir propiedades que el sitio no emite, ni copiar esos totales a Postgres.
+- **FR-617**: El dominio MUST señalar novedad publicada y aporte vivo sin movimiento en
+  catorce días, sólo si hubo al menos una observación. MUST NOT avisar si nunca se publicó
+  una novedad o nunca llegó un aporte vivo.
 
 ---
 
@@ -176,6 +192,9 @@ actúa.
   produce serie y barras. Un error de Stats API no esconde el libro.
 - **SC-606**: Un `owner` abre el menú en 360 px y ve Métricas debajo de Backoffice, con icono, y
   llega a `/admin/metricas`. Un editor ve Backoffice y no ve Métricas.
+- **SC-607**: Un snapshot con navegadores y orígenes de Ayudar produce esas barras. Sin
+  visitantes, las tasas no se dibujan. Una novedad publicada hace quince días dispara
+  `news_stale`; un sitio que nunca publicó no.
 
 ---
 

@@ -92,8 +92,9 @@ no cambiar código.
 
 El tablero del owner (`/admin/metricas`) puede **leer** los totales que el proveedor ya agregó,
 con `ANALYTICS_API_KEY` en el servidor (ADR-049). Esa lectura no recolecta nada nuevo: pide
-agregados que el proveedor ya tiene. Sin la clave, el tablero omite el alcance. Las visitas
-siguen sin escribirse en Postgres (ADR-010).
+agregados y desgloses (páginas, fuentes, dispositivos, navegadores, entrada, eventos y las
+propiedades que el sitio ya emite) que el proveedor ya tiene. Sin la clave, el tablero omite
+el alcance. Las visitas siguen sin escribirse en Postgres (ADR-010).
 
 Al elegirlo hay tres obligaciones que no son técnicas:
 

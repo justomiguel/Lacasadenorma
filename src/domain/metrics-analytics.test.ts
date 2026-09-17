@@ -26,11 +26,18 @@ function snapshot(partial: Partial<AnalyticsSnapshot> = {}): AnalyticsSnapshot {
     pages: [{ name: "/ayudar", value: 40 }],
     sources: [{ name: "(direct)", value: 25 }],
     devices: [{ name: "Mobile", value: 50 }],
+    browsers: [{ name: "Chrome", value: 48 }],
+    entryPages: [{ name: "/", value: 30 }],
     countries: [{ name: "Argentina", value: 60 }],
     events: [
       { name: "ayudar_click", value: 12 },
       { name: "dato_copiado", value: 5 },
+      { name: "compartir", value: 4 },
     ],
+    helpOrigins: [{ name: "encabezado", value: 8 }],
+    copiedFields: [{ name: "cbu", value: 3 }],
+    shareChannels: [{ name: "whatsapp", value: 4 }],
+    paymentMedia: [{ name: "mercadopago", value: 2 }],
     ...partial,
   };
 }
@@ -63,6 +70,10 @@ describe("buildReach", () => {
       visitDurationSeconds: 94,
       helpClicks: 12,
       copies: 5,
+      shares: 4,
+      helpRate: 15,
+      copyRate: 6.25,
+      shareRate: 5,
     });
     expect(reach.pageviews?.series.map((series) => series.id)).toEqual([
       "visitors",
@@ -73,9 +84,18 @@ describe("buildReach", () => {
     );
     expect(reach.topSources?.bars[0]?.label).toBe("Directo");
     expect(reach.devices?.bars[0]?.label).toBe("Teléfono");
+    expect(reach.browsers?.bars[0]).toEqual(
+      expect.objectContaining({ label: "Chrome", value: 48 }),
+    );
+    expect(reach.entryPages?.bars[0]?.label).toBe("Inicio");
+    expect(reach.helpOrigins?.bars[0]?.label).toBe("Encabezado");
+    expect(reach.copiedFields?.bars[0]?.label).toBe("CBU");
+    expect(reach.shareChannels?.bars[0]?.label).toBe("WhatsApp");
+    expect(reach.paymentMedia?.bars[0]?.label).toBe("Mercado Pago");
     expect(reach.events?.bars.map((bar) => bar.label)).toEqual([
       "Clic en Ayudar",
       "Copió un dato",
+      "Compartir",
     ]);
   });
 
@@ -87,14 +107,42 @@ describe("buildReach", () => {
         pages: [],
         sources: [],
         devices: [],
+        browsers: [],
+        entryPages: [],
         countries: [],
         events: [],
+        helpOrigins: [],
+        copiedFields: [],
+        shareChannels: [],
+        paymentMedia: [],
       }),
     };
 
     expect(buildReach(read).pageviews).toBeNull();
     expect(buildReach(read).topPages).toBeNull();
     expect(buildReach(read).events).toBeNull();
+    expect(buildReach(read).browsers).toBeNull();
+    expect(buildReach(read).helpOrigins).toBeNull();
+  });
+
+  it("sin visitantes no finge una tasa de 0 %", () => {
+    const reach = buildReach({
+      status: "ok",
+      snapshot: snapshot({
+        totals: {
+          visitors: 0,
+          pageviews: 3,
+          bounceRate: null,
+          visitDurationSeconds: null,
+        },
+        events: [{ name: "ayudar_click", value: 2 }],
+      }),
+    });
+
+    expect(reach.headline?.helpClicks).toBe(2);
+    expect(reach.headline?.helpRate).toBeNull();
+    expect(reach.headline?.copyRate).toBeNull();
+    expect(reach.headline?.shareRate).toBeNull();
   });
 });
 

@@ -4,6 +4,9 @@
 
 Enmienda ADR-048 (gráficos SVG propios; analítica de visitas fuera del tablero).
 No enmienda ADR-010: las visitas **no** se copian a Postgres.
+Enmienda de 2026-09-16: el alcance suma navegadores, páginas de entrada, desgloses de
+propiedades de ADR-010 y tasas contra visitantes (FR-616). El pulso de novedad y de aporte
+a catorce días vive en el dominio del libro (FR-617), no en el proveedor.
 
 ## Contexto
 
@@ -38,8 +41,12 @@ Tres tensiones que ya estaban escritas:
    un 0 de visitas. Un fallo de alcance **no** tumba el libro: son dos fuentes.
 
 La lista de lo medible en alcance: visitantes y vistas de los últimos treinta días, serie
-diaria, rebote, duración media, páginas, fuentes, dispositivos, países, y los eventos
-semánticos de ADR-010. No hay recorridos por persona.
+diaria, rebote, duración media, páginas, fuentes, dispositivos, navegadores, páginas de
+entrada, países, los eventos semánticos de ADR-010, y desgloses de las propiedades que esos
+eventos ya emiten (`origen`, `campo`, `canal`, `medio`). Las tasas de intención se calculan
+contra visitantes y se omiten sin denominador. No hay recorridos por persona, ni UTM, ni
+comparación con el período anterior: eso se agrega el día que haya una pregunta que no
+respondan estas dimensiones.
 
 ## Alternativas descartadas
 

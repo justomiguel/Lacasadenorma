@@ -76,6 +76,42 @@ function okFetch() {
       });
     }
 
+    if (dimension === "visit:browser") {
+      return jsonResponse({
+        results: [{ metrics: [48], dimensions: ["Chrome"] }],
+      });
+    }
+
+    if (dimension === "visit:entry_page") {
+      return jsonResponse({
+        results: [{ metrics: [30], dimensions: ["/"] }],
+      });
+    }
+
+    if (dimension === "event:props:origen") {
+      return jsonResponse({
+        results: [{ metrics: [8], dimensions: ["encabezado"] }],
+      });
+    }
+
+    if (dimension === "event:props:campo") {
+      return jsonResponse({
+        results: [{ metrics: [3], dimensions: ["cbu"] }],
+      });
+    }
+
+    if (dimension === "event:props:canal") {
+      return jsonResponse({
+        results: [{ metrics: [4], dimensions: ["whatsapp"] }],
+      });
+    }
+
+    if (dimension === "event:props:medio") {
+      return jsonResponse({
+        results: [{ metrics: [2], dimensions: ["mercadopago"] }],
+      });
+    }
+
     return jsonResponse({ results: [] });
   });
 }
@@ -122,8 +158,24 @@ describe("createAnalyticsStatsPort", () => {
     ]);
     expect(read.snapshot.pages).toEqual([{ name: "/ayudar", value: 40 }]);
     expect(read.snapshot.devices).toEqual([{ name: "Mobile", value: 50 }]);
+    expect(read.snapshot.browsers).toEqual([{ name: "Chrome", value: 48 }]);
+    expect(read.snapshot.entryPages).toEqual([{ name: "/", value: 30 }]);
+    expect(read.snapshot.helpOrigins).toEqual([{ name: "encabezado", value: 8 }]);
+    expect(read.snapshot.copiedFields).toEqual([{ name: "cbu", value: 3 }]);
+    expect(read.snapshot.shareChannels).toEqual([{ name: "whatsapp", value: 4 }]);
+    expect(read.snapshot.paymentMedia).toEqual([{ name: "mercadopago", value: 2 }]);
     expect(read.snapshot.countries[0]?.name).toBe("Argentina");
     expect(read.snapshot.events.map((item) => item.name)).toEqual(["ayudar_click"]);
+
+    const origenInit = fetchImpl.mock.calls
+      .map((call) => call[1])
+      .find((init) => dimensionOf(init) === "event:props:origen");
+    const origenBody =
+      typeof origenInit?.body === "string"
+        ? (JSON.parse(origenInit.body) as { filters?: unknown })
+        : {};
+
+    expect(origenBody.filters).toEqual([["is", "event:goal", ["ayudar_click"]]]);
 
     const [url, init] = fetchImpl.mock.calls[0] as [string, RequestInit];
 

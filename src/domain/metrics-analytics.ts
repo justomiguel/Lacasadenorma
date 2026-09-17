@@ -1,6 +1,18 @@
-import type { AnalyticsEvent } from "./ports/analytics";
-import type { BarChart, ChartPoint, MetricSignal, SeriesChart } from "./metrics";
-import { countBar } from "./metrics-counts";
+import type { BarChart, MetricSignal, SeriesChart } from "./metrics";
+import { ratioAsPercentage } from "./percentage";
+import {
+  deviceLabel,
+  entryPageLabel,
+  eventLabel,
+  eventTotal,
+  fieldLabel,
+  namedChart,
+  originLabel,
+  pageviewsChart,
+  paymentLabel,
+  shareLabel,
+  sourceLabel,
+} from "./metrics-analytics-charts";
 
 /**
  * Totales de alcance que el proveedor ya agregó. Sin personas (ADR-010, ADR-049).
@@ -30,8 +42,14 @@ export interface AnalyticsSnapshot {
   readonly pages: readonly AnalyticsNamedCount[];
   readonly sources: readonly AnalyticsNamedCount[];
   readonly devices: readonly AnalyticsNamedCount[];
+  readonly browsers: readonly AnalyticsNamedCount[];
+  readonly entryPages: readonly AnalyticsNamedCount[];
   readonly countries: readonly AnalyticsNamedCount[];
   readonly events: readonly AnalyticsNamedCount[];
+  readonly helpOrigins: readonly AnalyticsNamedCount[];
+  readonly copiedFields: readonly AnalyticsNamedCount[];
+  readonly shareChannels: readonly AnalyticsNamedCount[];
+  readonly paymentMedia: readonly AnalyticsNamedCount[];
 }
 
 export type AnalyticsRead =
@@ -46,6 +64,10 @@ export interface AnalyticsHeadline {
   readonly visitDurationSeconds: number | null;
   readonly helpClicks: number | null;
   readonly copies: number | null;
+  readonly shares: number | null;
+  readonly helpRate: number | null;
+  readonly copyRate: number | null;
+  readonly shareRate: number | null;
 }
 
 export interface OwnerReach {
@@ -55,31 +77,15 @@ export interface OwnerReach {
   readonly topPages: BarChart | null;
   readonly topSources: BarChart | null;
   readonly devices: BarChart | null;
+  readonly browsers: BarChart | null;
+  readonly entryPages: BarChart | null;
   readonly countries: BarChart | null;
   readonly events: BarChart | null;
+  readonly helpOrigins: BarChart | null;
+  readonly copiedFields: BarChart | null;
+  readonly shareChannels: BarChart | null;
+  readonly paymentMedia: BarChart | null;
 }
-
-const EVENT_LABELS: Record<AnalyticsEvent["name"], string> = {
-  ayudar_click: "Clic en Ayudar",
-  metodo_visto: "Vio un método",
-  dato_copiado: "Copió un dato",
-  compartir: "Compartir",
-  whatsapp_click: "WhatsApp",
-  llamar_click: "Llamar",
-  medio_externo_click: "Medio externo",
-};
-
-const DEVICE_LABELS: Record<string, string> = {
-  desktop: "Escritorio",
-  laptop: "Portátil",
-  mobile: "Teléfono",
-  tablet: "Tableta",
-};
-
-const SOURCE_LABELS: Record<string, string> = {
-  "(direct)": "Directo",
-  direct: "Directo",
-};
 
 const QUIET_DAYS = 7;
 
@@ -90,8 +96,14 @@ export const EMPTY_REACH: OwnerReach = {
   topPages: null,
   topSources: null,
   devices: null,
+  browsers: null,
+  entryPages: null,
   countries: null,
   events: null,
+  helpOrigins: null,
+  copiedFields: null,
+  shareChannels: null,
+  paymentMedia: null,
 };
 
 export function buildReach(read: AnalyticsRead): OwnerReach {
@@ -100,20 +112,26 @@ export function buildReach(read: AnalyticsRead): OwnerReach {
   }
 
   const { snapshot } = read;
+  const visitors = snapshot.totals.visitors;
   const helpClicks = eventTotal(snapshot.events, "ayudar_click");
   const copies = eventTotal(snapshot.events, "dato_copiado");
+  const shares = eventTotal(snapshot.events, "compartir");
 
   return {
     status: "ok",
     headline: {
-      visitors: snapshot.totals.visitors,
+      visitors,
       pageviews: snapshot.totals.pageviews,
       bounceRate: snapshot.totals.bounceRate,
       visitDurationSeconds: snapshot.totals.visitDurationSeconds,
       helpClicks,
       copies,
+      shares,
+      helpRate: rateAgainstVisitors(helpClicks, visitors),
+      copyRate: rateAgainstVisitors(copies, visitors),
+      shareRate: rateAgainstVisitors(shares, visitors),
     },
-    pageviews: pageviewsChart(snapshot),
+    pageviews: pageviewsChart(snapshot.periodDays, snapshot.timeseries),
     topPages: namedChart("top-pages", "Páginas más vistas", snapshot.pages),
     topSources: namedChart(
       "top-sources",
@@ -122,12 +140,43 @@ export function buildReach(read: AnalyticsRead): OwnerReach {
       sourceLabel,
     ),
     devices: namedChart("devices", "Aparatos", snapshot.devices, deviceLabel),
+    browsers: namedChart("browsers", "Navegadores", snapshot.browsers),
+    entryPages: namedChart(
+      "entry-pages",
+      "Por dónde entran",
+      snapshot.entryPages,
+      entryPageLabel,
+    ),
     countries: namedChart("countries", "Países", snapshot.countries),
     events: namedChart(
       "site-events",
       "Intenciones en el sitio",
       snapshot.events,
       eventLabel,
+    ),
+    helpOrigins: namedChart(
+      "help-origins",
+      "Desde dónde tocan Ayudar",
+      snapshot.helpOrigins,
+      originLabel,
+    ),
+    copiedFields: namedChart(
+      "copied-fields",
+      "Qué dato copian",
+      snapshot.copiedFields,
+      fieldLabel,
+    ),
+    shareChannels: namedChart(
+      "share-channels",
+      "Por dónde comparten",
+      snapshot.shareChannels,
+      shareLabel,
+    ),
+    paymentMedia: namedChart(
+      "payment-media",
+      "Medio externo",
+      snapshot.paymentMedia,
+      paymentLabel,
     ),
   };
 }
@@ -194,66 +243,12 @@ export function formatDurationSeconds(seconds: number): string {
   return `${String(minutes)} min ${String(rest)} s`;
 }
 
-function pageviewsChart(snapshot: AnalyticsSnapshot): SeriesChart | null {
-  if (snapshot.timeseries.every((day) => day.pageviews === 0 && day.visitors === 0)) {
+function rateAgainstVisitors(part: number | null, visitors: number): number | null {
+  if (part === null) {
     return null;
   }
 
-  const points: ChartPoint[] = snapshot.timeseries.map((day) => ({
-    key: day.date,
-    label: formatDay(day.date),
-    values: { visitors: day.visitors, pageviews: day.pageviews },
-  }));
-
-  return {
-    id: "pageviews",
-    title: `Visitantes y vistas · ${String(snapshot.periodDays)} días`,
-    unit: "count",
-    currency: null,
-    series: [
-      { id: "visitors", label: "Visitantes" },
-      { id: "pageviews", label: "Vistas" },
-    ],
-    points,
-    signals: [],
-  };
-}
-
-function namedChart(
-  id: string,
-  title: string,
-  items: readonly AnalyticsNamedCount[],
-  label: (name: string) => string = (name) => name,
-): BarChart | null {
-  return countBar(
-    id,
-    title,
-    items.map((item) => ({ id: item.name, label: label(item.name), value: item.value })),
-    false,
-  );
-}
-
-function eventTotal(
-  events: readonly AnalyticsNamedCount[],
-  name: AnalyticsEvent["name"],
-): number | null {
-  const found = events.find((item) => item.name === name);
-
-  return found === undefined ? null : found.value;
-}
-
-function eventLabel(name: string): string {
-  return EVENT_LABELS[name as AnalyticsEvent["name"]] ?? name;
-}
-
-function deviceLabel(name: string): string {
-  return DEVICE_LABELS[name.toLowerCase()] ?? name;
-}
-
-function sourceLabel(name: string): string {
-  const key = name.trim() === "" ? "(direct)" : name.trim().toLowerCase();
-
-  return SOURCE_LABELS[key] ?? name;
+  return ratioAsPercentage(part, visitors);
 }
 
 function recentPageviews(snapshot: AnalyticsSnapshot, now: Date): number {
@@ -266,18 +261,4 @@ function recentPageviews(snapshot: AnalyticsSnapshot, now: Date): number {
       return !Number.isNaN(time) && time >= horizon;
     })
     .reduce((total, day) => total + day.pageviews, 0);
-}
-
-function formatDay(isoDate: string): string {
-  const date = new Date(`${isoDate}T00:00:00.000Z`);
-
-  if (Number.isNaN(date.getTime())) {
-    return isoDate;
-  }
-
-  return new Intl.DateTimeFormat("es-AR", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  }).format(date);
 }
