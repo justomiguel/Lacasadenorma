@@ -146,22 +146,23 @@ describe("claimItem", () => {
     expect(result).toEqual({ status: "error", code: "ahead", field: null });
   });
 
-  it("pedir aparecer sin nombre se rechaza antes de llamar", async () => {
+  it("nace anónima: el nombre para mostrar no se pide en la ficha", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {
       itemId: ITEM,
       quantity: 1,
       anonymous: "no",
-      displayName: "   ",
+      displayName: "Ana",
+      note: "una nota",
       ...TRAER,
     });
 
-    expect(result).toEqual({
-      status: "error",
-      code: "displayNameRequired",
-      field: "displayName",
+    expect(result.status).toBe("ok");
+    expect(donations.claimed).toMatchObject({
+      isAnonymous: true,
+      displayName: null,
+      note: null,
     });
-    expect(donations.claimed).toBeNull();
   });
 
   it("una cantidad que no es un entero positivo señala el campo", async () => {

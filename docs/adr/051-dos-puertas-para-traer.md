@@ -6,7 +6,7 @@ Enmienda a [ADR-046](./046-compromiso-con-datos-de-retiro.md) (el primer paso ya
 no pide dirección), a [ADR-044](./044-tabla-del-catalogo-y-quiero-donar.md) (el
 CTA de traer no manda de entrada a crear una cuenta) y a
 [ADR-033](./033-aprobacion-de-cuentas.md) (un aviso más al equipo). Cubre
-FR-259…FR-261. El HTML público de la ficha sigue siendo el mismo con o sin
+FR-259…FR-262. El HTML público de la ficha sigue siendo el mismo con o sin
 sesión ([ADR-037](./037-chrome-de-cuenta.md)).
 
 ## Contexto
@@ -45,12 +45,14 @@ el segundo en dos caminos:
    cuenta: confirmar el correo, dejar después dónde ir a buscar, ver y
    cancelar lo anotado. Confirmar el correo sigue siendo la validación
    (ADR-046): `pending` reserva, `declined` no. Al volver a la ficha, con
-   sesión, se pide la dirección y se reserva. El owner recibe
-   `staff.new_account` al nacer el perfil y `staff.new_pledge` al anotarse.
+   sesión, se pide la dirección y se reserva. No se pide «nombre para
+   mostrar» ni nota para la familia: quien se maneja con el sistema lo elige
+   después en `/cuenta`. El owner recibe `staff.new_account` al nacer el
+   perfil y `staff.new_pledge` al anotarse.
 3. **El teléfono reserva a nombre de esa persona.** Un POST con teléfono y
    sin mail no crea cuenta. Persiste el aviso en `donation_offers` y crea una
-   reserva en `donation_pledges` (`user_id` nulo, `is_anonymous` falso,
-   `donor_display_name` = el nombre que dejaron) que mueve
+   reserva en `donation_pledges` (`user_id` nulo, anónima: el nombre de
+   contacto es para quien coordina, no para el muro) que mueve
    `reserved_quantity`. El plazo de catorce días sigue siendo la red de
    seguridad. Un mismo teléfono no deja dos reservas del mismo ítem: el
    segundo es el mismo aviso. El spam ya no es «un correo y una fila»: es un
@@ -61,16 +63,18 @@ el segundo en dos caminos:
    `donaciones.escribir`, no un token en el mail (FR-237):
 
    - `/admin/donaciones/decidir/{id}/si` — «me contacté y donan». Cumple la
-     reserva (`fulfill_donation_pledge`). El muro publica el nombre y la
-     fecha (`fulfilled_at`).
+     reserva (`fulfill_donation_pledge`). En el camino del teléfono, esa
+     pantalla es la segunda: si la persona aceptó aparecer, se carga el
+     nombre para mostrar y, si quiere, una nota privada. Sin ese nombre, el
+     sí cuenta la donación y no la publica. En el camino del mail no se
+     piden: se eligen en `/cuenta`.
    - `/admin/donaciones/decidir/{id}/no` — no se concreta. Cancela la reserva
      y devuelve las unidades.
 
    Los enlaces no mutan en el GET: piden una confirmación con sesión. El
    número de teléfono no viaja en el correo; se lee en `/admin/donaciones`.
    El nombre sí va en `staff.phone_offer`: «tal persona quiere donar» es el
-   pedido. Dejar el nombre en este camino **es** elegir aparecer: no hay un
-   casillero aparte porque el formulario es nombre y teléfono.
+   pedido, no el renglón del muro.
 5. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono
    queda para más adelante, en el formulario de retiro, si lo quieren dejar.
 
@@ -86,20 +90,22 @@ el segundo en dos caminos:
 | Poner el teléfono en el cuerpo del correo | El resto de los avisos al equipo no llevan datos de terceros. El número se lee en el backoffice. El nombre sí va: «tal persona quiere donar» es el pedido |
 | Personalizar la ficha según haya sesión | Rompe ADR-037 y el caché. El formulario de retiro aparece al hidratar, como el chrome |
 | Pedir los dos, mail y teléfono | El mínimo es uno. El mail abre el sistema; el teléfono, la llamada y la reserva |
+| Pedir «nombre para mostrar» y nota en la ficha | El primer clic es nombre y un canal. Aparecer se decide después: en `/cuenta` si hay mail, en el sí del owner si hay teléfono |
+| Publicar el nombre de contacto del teléfono al confirmar | Ese nombre es para llamarlos. El del muro es el que aceptaron poner, en la pantalla del sí |
 
 ## Consecuencias
 
 **Buenas.** El primer clic pide poco. Quien no quiere cuenta deja un teléfono
 y el ítem queda a su nombre hasta que el owner confirma o suelta. Quien sí,
 entiende en la pantalla de alta para qué sirve, confirma el correo, deja la
-dirección y se anota. Un sí aparece en el muro con nombre y fecha.
+dirección y se anota. Un sí con nombre aceptado aparece en el muro con fecha.
 
 **Malas y aceptadas.**
 
 - Un teléfono sostiene el catálogo. El dueño tiene que decidir. El plazo de
   catorce días suelta lo que nadie confirmó.
-- Dejar el nombre en el camino del teléfono es aparecer. No hay un segundo
-  paso para ocultarse: el formulario es corto a propósito.
+- El sí del teléfono pide un dato más si aceptaron aparecer. Es un paso del
+  owner, no de quien dejó el número: esa persona no tiene cuenta.
 - Sin JavaScript, quien ya tiene sesión ve el formulario corto. Si pone
   mail, el alta lo manda a `/cuenta` a completar el retiro. Con JavaScript
   ve el de siempre, en la ficha, al hidratar.

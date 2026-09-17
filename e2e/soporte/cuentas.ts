@@ -112,6 +112,19 @@ export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise
   await expect(tab).toHaveAttribute("aria-selected", "true");
 }
 
+/** Cómo aparecer: se elige en la cuenta, no en la ficha (ADR-051, FR-216). */
+export async function elegirAparecerEnCuenta(page: Page, nombre: string): Promise<void> {
+  if (!/\/cuenta(\?|$)/.test(new URL(page.url()).pathname)) {
+    await page.goto("/cuenta");
+  }
+
+  await abrirSeccionDeCuenta(page, /cómo aparecer/i);
+  await page.getByLabel(/nombre para mostrar/i).fill(nombre);
+  await page.getByLabel(/prefiero no aparecer/i).uncheck();
+  await page.getByRole("button", { name: /^guardar$/i }).click();
+  await expect(page.getByText(/^guardado/i)).toBeVisible();
+}
+
 /**
  * Cierra la sesión del público.
  *

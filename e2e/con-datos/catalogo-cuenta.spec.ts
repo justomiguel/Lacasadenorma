@@ -6,6 +6,7 @@ import {
   abrirItemDelCatalogo,
   completarOfertaPorMail,
   completarOfertaPorTelefono,
+  confirmarQueDonan,
   conItemPublicado,
   filaDelCatalogo,
   formularioDeTraer,
@@ -201,7 +202,7 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
           await expect(filaDelCatalogo(donantePage, titulo)).toContainText(
             /ya está cubierto/i,
           );
-          await expect(filaDelCatalogo(donantePage, titulo)).toContainText("Ana");
+          await expect(filaDelCatalogo(donantePage, titulo)).not.toContainText("Ana");
 
           const salir = staffPage
             .locator("#contenido")
@@ -226,7 +227,8 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
           const pledgeId = await idDeReservaActiva(request, titulo);
 
           await staffPage.goto(`/admin/donaciones/decidir/${pledgeId}/si`);
-          await staffPage.getByRole("button", { name: /^sí: donan$/i }).click();
+          await expect(staffPage.getByLabel(/aceptó aparecer con nombre/i)).toBeVisible();
+          await confirmarQueDonan(staffPage, { aparecer: "Ana" });
           await expect(staffPage).toHaveURL(/\/admin\/donaciones/);
 
           await esperarQueAparezca(request, "/quienes-ayudaron", titulo);

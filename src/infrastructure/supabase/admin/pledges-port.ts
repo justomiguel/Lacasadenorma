@@ -86,9 +86,11 @@ export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsP
       return data.map((row) => mapOffer(row as OfferWithItem));
     },
 
-    async fulfillPledge(id): Promise<void> {
+    async fulfillPledge(input): Promise<void> {
       const { error } = await client.rpc("fulfill_donation_pledge", {
-        p_pledge_id: id,
+        p_pledge_id: input.id,
+        p_display_name: input.displayName as string,
+        p_note: input.note as string,
       });
 
       if (error !== null) {

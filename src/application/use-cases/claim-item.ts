@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { normalizeDisplayName } from "@/src/domain/entities/donor";
 import type { DonationPledge } from "@/src/domain/entities/donation-pledge";
 import type { DonationsPort } from "@/src/domain/ports/donations";
 import type { Logger } from "@/src/domain/ports/logger";
@@ -11,11 +10,12 @@ import type { AccountSession } from "../accounts/own-account";
 import { describePledgeFailure } from "../accounts/pledge-failure";
 
 /**
- * Reservar un ítem del catálogo para traerlo (ADR-046).
+ * Reservar un ítem del catálogo para traerlo (ADR-046, ADR-051).
  *
- * Cubrir con plata no pasa por acá: la transacción es la prueba. Llama la
- * función de la base y **después** intenta el correo. El correo no está en
- * la transacción: si no sale, la reserva ya existe (ADR-028, FR-233).
+ * Nace anónima. Cómo aparecer se elige en `/cuenta`, no acá. Cubrir con
+ * plata no pasa por acá: la transacción es la prueba. Llama la función de
+ * la base y **después** intenta el correo. El correo no está en la
+ * transacción: si no sale, la reserva ya existe (ADR-028, FR-233).
  *
  * No pasa por `perform()`. `record_audit()` pide un rol interno, y el registro
  * de auditoría existe para responder "quién del equipo cambió esto". Una fila
@@ -26,9 +26,6 @@ import { describePledgeFailure } from "../accounts/pledge-failure";
 const inputSchema = z.object({
   itemId: z.string().uuid(),
   quantity: z.coerce.number().int().positive(),
-  anonymous: z.enum(["si", "no"]).optional(),
-  displayName: z.string().nullable().optional(),
-  note: z.string().max(500).optional(),
   coverChannel: z
     .enum(["bring", "transfer", "mercadopago", "paypal"])
     .optional()
@@ -86,9 +83,6 @@ export async function claimItem(
     return accountError("coverIsNotAPledge");
   }
 
-  const isAnonymous = parsed.data.anonymous !== "no";
-  const displayName = normalizeDisplayName(parsed.data.displayName);
-  const note = parsed.data.note?.trim() ? parsed.data.note.trim() : null;
   const contact = parsePhysicalPledgeContact({
     contactName: parsed.data.contactName,
     contactPhone: parsed.data.contactPhone,
@@ -101,17 +95,13 @@ export async function claimItem(
       : accountError("pickupAddressRequired", "pickupAddress");
   }
 
-  if (!isAnonymous && displayName === null) {
-    return accountError("displayNameRequired", "displayName");
-  }
-
   try {
     const pledge = await port.claimItem({
       itemId: parsed.data.itemId,
       quantity: parsed.data.quantity,
-      isAnonymous,
-      displayName,
-      note,
+      isAnonymous: true,
+      displayName: null,
+      note: null,
       coverChannel: "bring",
       contactName: contact.value.contactName,
       contactPhone: contact.value.contactPhone,

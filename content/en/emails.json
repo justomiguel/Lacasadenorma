@@ -119,7 +119,7 @@
     "preheader": "Quedó reservado a su nombre. Confirmá si donan o soltá la reserva.",
     "body": [
       "{who} quiere donar {what}. Dejó un teléfono y la unidad quedó reservada a su nombre.",
-      "Si te contactaste y van a donar, confirmá: aparece como donado por esa persona, con la fecha de hoy. Si no se concreta, soltá la reserva. El número está en el backoffice."
+      "Si te contactaste y van a donar, confirmá. Si aceptó aparecer, en esa pantalla se carga el nombre. Si no, se cuenta sin publicarlo. Si no se concreta, soltá la reserva. El número está en el backoffice."
     ],
     "action": "Sí: donan",
     "rejectAction": "No: soltar la reserva",

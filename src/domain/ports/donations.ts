@@ -64,7 +64,11 @@ export interface DonationsPort {
 export interface AdminDonationsPort {
   listPledges(): Promise<readonly AdminPledgeRecord[]>;
   listOffers(): Promise<readonly DonationOffer[]>;
-  fulfillPledge(id: string): Promise<void>;
+  fulfillPledge(input: {
+    readonly id: string;
+    readonly displayName: string | null;
+    readonly note: string | null;
+  }): Promise<void>;
   cancelPledge(input: { id: string; reason: string }): Promise<void>;
   markReminded(id: string): Promise<void>;
 }

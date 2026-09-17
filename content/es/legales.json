@@ -1,5 +1,5 @@
 {
-  "updatedOn": "2026-09-16",
+  "updatedOn": "2026-09-17",
   "privacy": {
     "title": "Privacidad",
     "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
@@ -54,9 +54,9 @@
       {
         "heading": "Si ofrecés traer algo",
         "paragraphs": [
-          "Anotarte para traer un material guarda, además del correo, tu nombre de contacto, un teléfono si lo dejás, la dirección donde ir a buscar, cuánto te comprometiste a traer y hasta cuándo vale esa reserva. Si dejás una nota para la familia, queda en el registro interno. Nada de eso se publica.",
-          "Si dejás un teléfono sin crear cuenta, se guarda tu nombre y ese número, y el ítem queda reservado a tu nombre. El número no se publica. El nombre sí aparece en Quiénes ayudaron, con la fecha, si quien coordina confirma que se contactó y van a donar. Si no confirma, la reserva se suelta.",
-          "El nombre con el que querés aparecer, en el camino con cuenta, es optativo y el valor por defecto es no aparecer. Si lo escribís y marcás que querés aparecer, se publica en Quiénes ayudaron recién cuando el material llega. Si no lo marcás, lo que trajiste se cuenta sin tu nombre.",
+          "Anotarte para traer un material guarda, además del correo, tu nombre de contacto, un teléfono si lo dejás, la dirección donde ir a buscar, cuánto te comprometiste a traer y hasta cuándo vale esa reserva. Nada de eso se publica. Cómo aparecer se elige en tu cuenta.",
+          "Si dejás un teléfono sin crear cuenta, se guarda tu nombre y ese número, y el ítem queda reservado. El número no se publica. El nombre de contacto tampoco: no es el del muro. Si quien coordina confirma que se contactó y aceptaste aparecer, en esa pantalla se carga el nombre para mostrar y, si querés, una nota privada. Si no confirma, la reserva se suelta.",
+          "El nombre con el que querés aparecer, en el camino con cuenta, es optativo y el valor por defecto es no aparecer. Se elige en tu cuenta, no al anotarte. Si lo escribís y desmarcás que preferís no aparecer, se publica en Quiénes ayudaron recién cuando el material llega.",
           "Si borrás la cuenta, se borra tu correo, tu nombre, tu foto, tu teléfono y la dirección de retiro. Las reservas que ya se cumplieron se quedan como un hecho sobre la obra, sin identificarte.",
           "Los correos que te mandamos son sobre tu cuenta o sobre una reserva tuya: que la recibimos, que quedó anotada, que se acerca el vencimiento, que llegó, o que se canceló. No hay lista ni envíos de difusión."
         ]

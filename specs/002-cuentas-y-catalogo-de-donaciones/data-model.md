@@ -121,7 +121,7 @@ cancelar, vencer y entregar (ADR-029, consecuencias).
 | `quantity` | `integer` `check (> 0)` | |
 | `status` | enum `pledge_status` | `reserved` \| `fulfilled` \| `cancelled` \| `expired` |
 | `is_anonymous` | `boolean not null default true` | **El default es el anonimato** (FR-225) |
-| `donor_display_name` | `text` nullable | Copia al momento de reservar, editable por su dueña |
+| `donor_display_name` | `text` nullable | En el mail, lo elige su dueña en `/cuenta`. En el teléfono, se carga en el sí si aceptaron (FR-262) |
 | `donor_note` | `text` nullable | Mensaje privado a la familia. **Nunca público** |
 | `cover_channel` | enum `donation_cover_channel` `not null default 'bring'` | `bring` \| `transfer` \| `mercadopago` \| `paypal`. No se publica (ADR-041) |
 | `expires_at` | `timestamptz not null` | `now() + 14 días`, en un solo lugar del código |

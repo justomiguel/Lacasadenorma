@@ -94,6 +94,11 @@ describe("HowToDonate", () => {
 
     expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeRequired();
     expect(screen.queryByLabelText(/^correo$/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/quiero aparecer con nombre/i),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/nombre para mostrar/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/nota para la familia/i)).not.toBeInTheDocument();
   });
 
   it("al elegir transferencia no muestra el recargo de Mercado Pago", async () => {

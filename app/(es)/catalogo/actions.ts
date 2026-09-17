@@ -148,9 +148,6 @@ export async function claimItemAction(
     {
       itemId,
       quantity: textOf(formData, "cantidad") || "1",
-      anonymous: formData.get("aparecer") === null ? "si" : "no",
-      displayName: textOf(formData, "nombre"),
-      note: textOf(formData, "nota"),
       coverChannel: isCoverChannel(canal) ? canal : "bring",
       contactName: textOf(formData, "contacto"),
       contactPhone: textOf(formData, "telefono"),

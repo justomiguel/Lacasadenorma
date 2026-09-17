@@ -1,5 +1,5 @@
 {
-  "updatedOn": "2026-09-16",
+  "updatedOn": "2026-09-17",
   "privacy": {
     "title": "Privacy",
     "lead": "What this site collects, what for, and how long it is kept.",
@@ -54,9 +54,9 @@
       {
         "heading": "If you offer to bring something",
         "paragraphs": [
-          "Signing up to bring a material stores, besides your email, your contact name, a phone number if you leave one, the address to pick it up, how much you committed to bring and until when that hold is good. If you leave a note for the family, it stays in the internal record. None of that is published.",
-          "If you leave a phone number without creating an account, we keep your name and that number, and the item stays reserved in your name. The number is not published. The name does appear on Who helped, with the date, if the person who coordinates confirms they got in touch and you will donate. If they do not confirm, the hold is released.",
-          "The name you want shown, on the account path, is optional, and the default is not to appear. If you write it and check that you want to appear, it is published on Who helped only when the material arrives. If you leave it unchecked, what you brought is counted without your name.",
+          "Signing up to bring a material stores, besides your email, your contact name, a phone number if you leave one, the address to pick it up, how much you committed to bring and until when that hold is good. None of that is published. How you appear is chosen in your account.",
+          "If you leave a phone number without creating an account, we keep your name and that number, and the item stays reserved. The number is not published. The contact name is not either: it is not the name on the wall. If the person who coordinates confirms they got in touch and you agreed to appear, that screen is where the display name and, if you want, a private note are recorded. If they do not confirm, the hold is released.",
+          "The name you want shown, on the account path, is optional, and the default is not to appear. It is chosen in your account, not when you sign up. If you write it and uncheck that you prefer not to appear, it is published on Who helped only when the material arrives.",
           "If you delete the account, your email, your name, your photo, your phone and the pickup address are deleted. Holds that were already fulfilled stay as a fact about the work, without identifying you.",
           "The emails we send you are about your account or a hold of yours: that we received it, that it was written down, that expiry is near, that it arrived, or that it was cancelled. There is no list and no broadcast."
         ]

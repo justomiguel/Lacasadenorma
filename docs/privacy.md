@@ -166,9 +166,10 @@ Decisiones de esta tabla:
    cuando entra con esa red y el campo está vacío: es una propuesta, y el muro no la publica
    mientras el default sea el anonimato. Nulo significa "todavía no hay nombre", y hay un
    `check` que impide guardar una cadena de espacios.
-3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, y lo que
-   se afirma en las pruebas es el default de la columna: lo que importa es qué pasa cuando la
-   aplicación **no** manda el campo.
+3. **El default es el anonimato** (FR-225). Aparecer con nombre es una decisión explícita, también
+   en el camino del teléfono: el nombre de contacto no se publica; el del muro se carga en el sí
+   si aceptaron (FR-262). Lo que se afirma en las pruebas es el default de la columna: lo que
+   importa es qué pasa cuando la aplicación **no** manda el campo.
 4. **La IP y el user-agent los guarda el proveedor de identidad, no la aplicación.** Esto es lo único
    de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
    una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.

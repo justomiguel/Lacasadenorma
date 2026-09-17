@@ -5,7 +5,7 @@
 -- El sí del admin cumple y nombra; el no suelta.
 
 begin;
-select plan(25);
+select plan(26);
 
 insert into auth.users (id, email) values
   ('ab810000-0000-4000-8000-0000000000ff', 'avisos.admin@ejemplo.invalid');
@@ -111,11 +111,12 @@ select is(
      from public.donation_pledges
     where item_id = 'ab810000-0000-4000-8000-000000000001'
       and status = 'reserved'
-      and is_anonymous = false
-      and donor_display_name = 'Ana'
-      and user_id is null),
+      and is_anonymous = true
+      and donor_display_name is null
+      and user_id is null
+      and contact_name = 'Ana'),
   1,
-  'la reserva queda a nombre de quien avisó, sin cuenta'
+  'la reserva queda anotada a quien avisó, anónima, sin cuenta'
 );
 
 set local role anon;
@@ -154,12 +155,21 @@ select is(
 );
 
 select is(
-  (select donor_display_name
+  (select contact_name
      from public.donation_pledges
     where item_id = 'ab810000-0000-4000-8000-000000000001'
       and status = 'reserved'),
   'Ana María',
-  'el nombre público de la reserva se actualiza'
+  'el nombre de contacto de la reserva se actualiza'
+);
+
+select is(
+  (select donor_display_name
+     from public.donation_pledges
+    where item_id = 'ab810000-0000-4000-8000-000000000001'
+      and status = 'reserved'),
+  null,
+  'el segundo aviso no publica el nombre'
 );
 
 set local role anon;
@@ -247,10 +257,12 @@ select lives_ok(
   $q$
     select public.fulfill_donation_pledge(
       (select pledge_id from public.donation_offers
-        where item_id = 'ab810000-0000-4000-8000-000000000001')
+        where item_id = 'ab810000-0000-4000-8000-000000000001'),
+      'Ana María',
+      'La dejan el sábado.'
     )
   $q$,
-  'el admin confirma que donan'
+  'el admin confirma que donan y carga el nombre si aceptaron'
 );
 
 select lives_ok(

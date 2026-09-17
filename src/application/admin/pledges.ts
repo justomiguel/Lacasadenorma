@@ -5,11 +5,29 @@ import type { EmailSender } from "@/src/domain/ports/email";
 import { buildPledgeEmail, buildStaffEmail } from "@/src/application/emails/messages";
 import type { Locale } from "@/src/i18n/locale";
 
-import { requiredText, uuid } from "./fields";
+import { checkbox, optionalText, requiredText, uuid } from "./fields";
 
-const fulfillSchema = z.object({
-  id: uuid("la reserva"),
-});
+const fulfillSchema = z
+  .object({
+    id: uuid("la reserva"),
+    aparecer: checkbox,
+    nombre: optionalText(80),
+    nota: optionalText(500),
+  })
+  .superRefine((data, ctx) => {
+    if (data.aparecer && data.nombre === null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["nombre"],
+        message: "Para aparecer en la lista hace falta un nombre.",
+      });
+    }
+  })
+  .transform(({ id, aparecer, nombre, nota }) => ({
+    id,
+    displayName: aparecer ? nombre : null,
+    note: nota,
+  }));
 
 const cancelSchema = z.object({
   id: uuid("la reserva"),
@@ -47,7 +65,7 @@ export async function fulfillPledge(
     schema: fulfillSchema,
     input,
     run: async (parsed) => {
-      await deps.gateway.donations.fulfillPledge(parsed.id);
+      await deps.gateway.donations.fulfillPledge(parsed);
 
       return parsed;
     },

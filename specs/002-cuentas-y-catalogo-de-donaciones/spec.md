@@ -358,22 +358,29 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
   Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
   a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
-  Si falta un dato, el sistema MUST llevar el foco y el scroll al primer campo inválido y MUST
-  marcar su borde con el color de peligro. MUST NOT enviar el formulario.
+  MUST NOT pedir nombre para mostrar ni nota para la familia en esa ficha: quién se maneja con el
+  sistema lo elige en `/cuenta` (FR-225, FR-229). Si falta un dato, el sistema MUST llevar el foco
+  y el scroll al primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT
+  enviar el formulario.
 - **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
   catálogo.
 - **FR-259**: Alguien sin sesión MUST poder reservar un ítem publicado dejando nombre y teléfono,
-  sin crear una cuenta (ADR-051). La reserva MUST quedar a su nombre (`is_anonymous` falso) y MUST
-  mover `reserved_quantity`. MUST NOT pedir dirección. Un mismo teléfono MUST NOT sostener dos
-  veces el mismo ítem. El número MUST NOT publicarse. Dejar el nombre en este camino MUST contar
-  como elegir aparecer.
+  sin crear una cuenta (ADR-051). La reserva MUST quedar anotada a esa persona (`contact_name`) y
+  MUST nacer anónima. MUST mover `reserved_quantity`. MUST NOT pedir dirección, nombre para mostrar
+  ni nota. Un mismo teléfono MUST NOT sostener dos veces el mismo ítem. El número y el nombre de
+  contacto MUST NOT publicarse.
 - **FR-260**: El aviso al equipo de una reserva nueva —por teléfono o por cuenta— MUST incluir dos
   enlaces que piden sesión con `donaciones.escribir` y MUST NOT autenticar por el correo (FR-237):
   sí confirma que el equipo se contactó y van a donar (`fulfill_donation_pledge`); no suelta la
   reserva. El GET MUST NOT mutar: la confirmación es un POST con sesión.
-- **FR-261**: Un ítem confirmado por sí MUST aparecer en Quiénes ayudaron como donado por el nombre
-  que dejaron, con la fecha de esa confirmación (`fulfilled_at`). MUST NOT publicar el teléfono ni
-  el identificador de la reserva.
+- **FR-261**: Un ítem confirmado por sí MUST aparecer en Quiénes ayudaron con la fecha de esa
+  confirmación (`fulfilled_at`) **sólo** si en esa pantalla cargaron un nombre porque la persona
+  aceptó aparecer (FR-262). MUST NOT publicar el teléfono, el nombre de contacto ni el
+  identificador de la reserva.
+- **FR-262**: En el sí de una reserva por teléfono, si la persona aceptó aparecer, el equipo MUST
+  poder cargar el nombre para mostrar y una nota privada. Sin ese nombre, el sí MUST cumplir la
+  reserva y MUST NOT publicarla. El camino del correo MUST NOT pedir esos campos en esa pantalla:
+  se eligen en `/cuenta`.
 - **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
   ejecuta no corra.
 - **FR-219**: El sistema MUST limitar la cantidad de reservas activas por cuenta.
@@ -390,8 +397,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 **Anonimato y muro**
 
 - **FR-225**: Toda reserva MUST tener una preferencia de anonimato, y el valor por defecto MUST ser
-  anónimo, salvo el camino del teléfono sin cuenta (FR-259): ahí el nombre que dejaron es el
-  nombre público.
+  anónimo. El camino del teléfono no es una excepción: aparecer se carga en el sí, si aceptaron
+  (FR-262). El camino del correo lo elige en `/cuenta`.
 - **FR-226**: El sistema MUST publicar una sección con las donaciones **no** anónimas cuya llegada
   fue confirmada —incluido el sí del owner sobre una reserva por teléfono (FR-261)—, mostrando el
   nombre elegido, qué se donó y la fecha.

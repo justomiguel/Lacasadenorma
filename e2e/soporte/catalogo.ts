@@ -255,22 +255,31 @@ export function formularioDeTraer(articulo: Locator) {
 }
 
 /** Nombre y dirección de retiro, y envío. El de retiro aparece al hidratar (ADR-051). */
-export async function completarTraer(
-  formulario: Locator,
-  extra?: { readonly aparecer?: string },
-): Promise<void> {
+export async function completarTraer(formulario: Locator): Promise<void> {
   await expect(formulario.getByLabel(/dirección donde ir a buscar/i)).toBeVisible();
   await formulario.getByLabel(/^nombre$/i).fill("Ana");
   await formulario
     .getByLabel(/dirección donde ir a buscar/i)
     .fill("Riacho He Hé, Formosa");
 
+  await formulario.getByRole("button", { name: /quiero donar/i }).click();
+}
+
+/** El sí del correo al owner. En el teléfono, aparecer y nota si aceptaron. */
+export async function confirmarQueDonan(
+  page: Page,
+  extra?: { readonly aparecer?: string; readonly nota?: string },
+): Promise<void> {
   if (extra?.aparecer !== undefined) {
-    await formulario.getByLabel(/quiero aparecer con nombre/i).check();
-    await formulario.getByLabel(/nombre para mostrar/i).fill(extra.aparecer);
+    await page.getByLabel(/aceptó aparecer con nombre/i).check();
+    await page.getByLabel(/nombre para mostrar/i).fill(extra.aparecer);
   }
 
-  await formulario.getByRole("button", { name: /quiero donar/i }).click();
+  if (extra?.nota !== undefined) {
+    await page.getByLabel(/nota para la familia/i).fill(extra.nota);
+  }
+
+  await page.getByRole("button", { name: /^sí: donan$/i }).click();
 }
 
 /** Nombre y correo: el camino que abre una cuenta (ADR-051). */

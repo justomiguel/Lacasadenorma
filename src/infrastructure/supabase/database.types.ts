@@ -1234,7 +1234,7 @@ export type Database = {
       };
       donor_contact: { Args: { p_user_id: string }; Returns: string };
       fulfill_donation_pledge: {
-        Args: { p_pledge_id: string };
+        Args: { p_display_name?: string; p_note?: string; p_pledge_id: string };
         Returns: undefined;
       };
       mark_pledge_reminded: {
