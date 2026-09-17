@@ -77,6 +77,11 @@ const REQUIRED = [
     needles: ["IdentifyingMark"],
     why: "cuenta, backoffice, métricas y salir llevan marca a 1.15 em.",
   },
+  {
+    file: path.join("components", "admin", "news-media-kind.tsx"),
+    needles: ["CameraIcon", "VideoIcon", "IdentifyingMark"],
+    why: "foto y video se reconocen de un vistazo al adjuntar (ADR-047).",
+  },
 ];
 
 const problems = [];
@@ -197,5 +202,5 @@ if (problems.length > 0) {
 
 console.log(
   `${String(usedLabels.length)} CopyField con marca, ${String(markKeys.length)} etiquetas en el mapa, ` +
-    `1.15 em, sin packs. País, caminos, canales, contacto y drawer llevan pictograma.`,
+    `1.15 em, sin packs. País, caminos, canales, contacto, drawer y novedades llevan pictograma.`,
 );

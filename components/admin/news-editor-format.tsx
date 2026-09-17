@@ -6,17 +6,7 @@ import { useEditorState } from "@tiptap/react";
 import { editorFormat } from "./news-editor-marks";
 import { EditorToolButton } from "./news-editor-toolbar";
 
-export function NewsFormatToolbar({
-  editor,
-  canInsert,
-  pendingKind,
-  onInsert,
-}: {
-  editor: Editor;
-  canInsert: boolean;
-  pendingKind: "photo" | "video" | null;
-  onInsert: (kind: "photo" | "video") => void;
-}) {
+export function NewsFormatToolbar({ editor }: { editor: Editor }) {
   const marks = useEditorState({
     editor,
     selector: ({ editor: instance }) => editorFormat(instance),
@@ -79,28 +69,6 @@ export function NewsFormatToolbar({
       >
         Link
       </EditorToolButton>
-      {canInsert ? (
-        <>
-          <EditorToolButton
-            label="Insertar foto"
-            pressed={pendingKind === "photo"}
-            onClick={() => {
-              onInsert("photo");
-            }}
-          >
-            Foto
-          </EditorToolButton>
-          <EditorToolButton
-            label="Insertar video"
-            pressed={pendingKind === "video"}
-            onClick={() => {
-              onInsert("video");
-            }}
-          >
-            Video
-          </EditorToolButton>
-        </>
-      ) : null}
     </div>
   );
 }

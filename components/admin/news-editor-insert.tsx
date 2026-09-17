@@ -7,7 +7,10 @@ import { ChosenFile } from "@/components/design-system/chosen-file";
 import { cn } from "@/components/design-system/cn";
 
 import { extractCoverFrame } from "./extract-video-cover";
-import { TOOL, type MediaUploadFn, type UploadedMedia } from "./news-editor-toolbar";
+import type { MediaUploadFn, UploadedMedia } from "./news-editor-toolbar";
+
+const INSERT =
+  "inline-flex min-h-touch items-center justify-center rounded-sm bg-aqua px-lg py-xs font-ui text-small font-medium text-paper hover:bg-aqua-strong disabled:opacity-60";
 
 export function MediaInsertPanel({
   kind,
@@ -21,7 +24,7 @@ export function MediaInsertPanel({
   updateId: string;
   slug: string;
   upload: MediaUploadFn;
-  onCancel: () => void;
+  onCancel: (() => void) | null;
   onInserted: (item: UploadedMedia) => void;
 }) {
   const [error, setError] = useState<string | null>(null);
@@ -30,16 +33,10 @@ export function MediaInsertPanel({
   const accept =
     kind === "video" ? "video/mp4,video/webm" : "image/jpeg,image/png,image/webp";
   const pendingLabel = kind === "video" ? "Subiendo el video…" : "Subiendo la foto…";
+  const actionLabel = kind === "video" ? "Adjuntar video" : "Adjuntar foto";
 
   return (
-    <div
-      className="space-y-sm border border-rule bg-paper-sunk p-md"
-      data-news-insert={kind}
-      aria-busy={pending || undefined}
-    >
-      <p className="font-ui text-small font-medium text-ink">
-        {kind === "video" ? "Video" : "Foto"}
-      </p>
+    <div className="space-y-sm" data-news-insert={kind} aria-busy={pending || undefined}>
       <fieldset disabled={pending} className="space-y-sm border-0 p-0">
         <label className="block font-ui text-small text-ink">
           Archivo
@@ -107,7 +104,7 @@ export function MediaInsertPanel({
       <div className="flex flex-wrap gap-sm">
         <button
           type="button"
-          className={TOOL}
+          className={INSERT}
           disabled={pending}
           aria-busy={pending}
           onClick={(event) => {
@@ -175,11 +172,13 @@ export function MediaInsertPanel({
             })();
           }}
         >
-          {pending ? pendingLabel : "Insertar"}
+          {pending ? pendingLabel : actionLabel}
         </button>
-        <button type="button" className={TOOL} disabled={pending} onClick={onCancel}>
-          Cancelar
-        </button>
+        {onCancel === null ? null : (
+          <button type="button" className={INSERT} disabled={pending} onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
       </div>
     </div>
   );

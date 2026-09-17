@@ -9,6 +9,7 @@ import {
 import { NewsBodyField } from "@/components/admin/news-body-field";
 import { NoRecords, Record, RecordList } from "@/components/admin/records";
 import { AdminHeading, Panel, SinDatos } from "@/components/admin/shell";
+import { Callout } from "@/components/design-system/callout";
 import { getAdminScope } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
 
@@ -57,6 +58,12 @@ export default async function AdminNovedadesPage() {
         tone="sunk"
         description="Se guarda como borrador. Las fotos, los videos y la publicación son el paso siguiente."
       >
+        <Callout title="Fotos y videos" className="mb-lg bg-paper">
+          <p>
+            Primero se guarda el borrador. En la pantalla siguiente se adjunta la foto o
+            el video y se intercala en el texto.
+          </p>
+        </Callout>
         <ActionForm action={saveUpdateAction}>
           <HiddenValue name="campaignId" value={campaign.id} />
           <TextField
@@ -78,7 +85,7 @@ export default async function AdminNovedadesPage() {
             label="Texto"
             required
             defaultValue=""
-            hint="Se ve como va a quedar. Sin JavaScript se escribe en texto. Las fotos y los videos se intercalan después de guardar."
+            hint="Se ve como va a quedar. Sin JavaScript se escribe en texto. Las fotos y los videos se adjuntan después de guardar."
           />
           <SubmitButton pendingLabel="Guardando…">Guardar borrador</SubmitButton>
         </ActionForm>

@@ -114,6 +114,12 @@ export async function uploadUpdateMediaAction(formData: FormData) {
   if (result.status === "ok") {
     revalidatePath("/admin/novedades");
 
+    const updateId = formData.get("updateId");
+
+    if (typeof updateId === "string") {
+      revalidatePath(`/admin/novedades/${updateId}`);
+    }
+
     const slug = formData.get("slug");
 
     if (typeof slug === "string") {

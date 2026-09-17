@@ -73,6 +73,11 @@ test.describe("flujo 9 · publicar una novedad", () => {
       // ── Escribir el borrador ──────────────────────────────────────────────────
       await page.goto("/admin/novedades");
 
+      await expect(page.getByText(/primero se guarda el borrador/i)).toBeVisible();
+      await expect(
+        page.getByText(/en la pantalla siguiente se adjunta la foto o el video/i),
+      ).toBeVisible();
+
       await page.getByLabel("Título", { exact: true }).fill(titulo);
       await page.getByLabel(/dirección web/i).fill(slug);
       await escribirCuerpo(page, texto);
@@ -86,6 +91,22 @@ test.describe("flujo 9 · publicar una novedad", () => {
       pantallaDeLaNovedad = page.url();
       await expect(page.getByRole("heading", { level: 1, name: titulo })).toBeVisible();
       await expect(page.getByText(/es un borrador/i)).toBeVisible();
+
+      // Foto y video se adjuntan acá, a la vista: no están escondidos en la
+      // barra de formato. Storage local no sube el archivo (runbook §7), pero
+      // si el panel no está, no hay forma de adjuntar ni en producción.
+      const medios = page.getByRole("region", { name: /fotos y videos/i });
+
+      await expect(medios).toBeVisible();
+      await expect(medios.getByRole("tab", { name: /^foto$/i })).toBeVisible();
+      await expect(medios.getByRole("tab", { name: /^video$/i })).toBeVisible();
+      await expect(medios.getByLabel(/^archivo$/i)).toBeVisible();
+      await expect(medios.getByLabel(/^qué se ve$/i)).toBeVisible();
+      await expect(medios.getByRole("button", { name: /adjuntar foto/i })).toBeVisible();
+
+      await medios.getByRole("tab", { name: /^video$/i }).click();
+      await expect(medios.getByRole("button", { name: /adjuntar video/i })).toBeVisible();
+      await medios.getByRole("tab", { name: /^foto$/i }).click();
 
       // ── Un borrador no tiene camino público ───────────────────────────────────
       // Antes de publicar, no después: si la URL contestara 200 acá, el paso siguiente
