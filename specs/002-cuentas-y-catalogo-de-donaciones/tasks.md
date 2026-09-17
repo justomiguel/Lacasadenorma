@@ -265,6 +265,12 @@ la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
       publican «donó el 50%» de ese bien; «Quiero donar» sigue mientras `remaining > 0`. Spec
       FR-263 / SC-217. Verificado en dominio y e2e.
 
+### Fase H — WhatsApp en el aviso por teléfono y gracias en la ficha (ADR-051)
+
+- [x] **T079** `whatsappHrefFor` arma `wa.me` con código de país. `staff.phone_offer` lleva ese
+      botón con el número. La ficha, con `?reservado=1#gracias`, muestra «Gracias por donar» y
+      que nos vamos a estar comunicando (`role="status"`). Spec FR-237 / FR-264 / SC-218.
+
 ---
 
 ## Dependencias

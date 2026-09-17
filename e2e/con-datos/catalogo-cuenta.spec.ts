@@ -191,10 +191,10 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
 
           await expect(donantePage).toHaveURL(/reservado=1/);
           await expect(
-            donantePage.getByRole("heading", { name: /le escribimos a quien coordina/i }),
+            donantePage.getByRole("heading", { name: /gracias por donar/i }),
           ).toBeVisible();
           await expect(
-            donantePage.getByText(/queda reservado a tu nombre/i),
+            donantePage.getByText(/nos vamos a estar comunicando con vos/i),
           ).toBeVisible();
           await expect(donantePage).not.toHaveURL(/\/cuenta/);
 
@@ -272,7 +272,7 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
           );
           await expect(donantePage).toHaveURL(/reservado=1/);
           await expect(
-            donantePage.getByRole("heading", { name: /le escribimos a quien coordina/i }),
+            donantePage.getByRole("heading", { name: /gracias por donar/i }),
           ).toBeVisible();
 
           const salir = staffPage

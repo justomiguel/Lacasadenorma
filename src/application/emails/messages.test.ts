@@ -167,7 +167,7 @@ describe("los avisos al equipo", () => {
     expect(message.text).not.toMatch(/token|token_hash|access_token/i);
   });
 
-  it("el aviso por teléfono nombra a quien llamó, no el número, y lleva el sí y el no", () => {
+  it("el aviso por teléfono nombra a quien llamó, lleva WhatsApp al número, y el sí y el no", () => {
     const yes =
       "https://lacasadenorma.example/admin/donaciones/decidir/40000000-0000-4000-8000-000000000002/si";
     const no =
@@ -177,6 +177,7 @@ describe("los avisos al equipo", () => {
       staffAddress: "equipo@ejemplo.invalid",
       what: "Chapas del techo",
       who: "Ana Pérez",
+      phone: "11 1234-5678",
       backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
       yesUrl: yes,
       noUrl: no,
@@ -184,12 +185,29 @@ describe("los avisos al equipo", () => {
 
     expect(message.text).toContain("Ana Pérez");
     expect(message.text).toContain("Chapas del techo");
+    expect(message.text).toContain("11 1234-5678");
+    expect(message.text).toContain("https://wa.me/5491112345678");
+    expect(message.html).toContain("https://wa.me/5491112345678");
+    expect(message.html).toMatch(/WhatsApp: 11 1234-5678/);
     expect(message.text).toContain(yes);
     expect(message.text).toContain(no);
-    expect(message.text).not.toMatch(/\b11[\s-]?\d{4}/);
     expect(message.idempotencyKey).toBe(
       idempotencyKeyFor("staff.phone_offer", "40000000-0000-4000-8000-000000000002"),
     );
+  });
+
+  it("el aviso de una reserva por cuenta no lleva teléfono ni WhatsApp", () => {
+    const message = buildStaffEmail("staff.new_pledge", {
+      subjectId: RESERVA.pledgeId,
+      staffAddress: "equipo@ejemplo.invalid",
+      what: RESERVA.what,
+      phone: "11 1234-5678",
+      backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
+    });
+
+    expect(message.text).not.toContain("11 1234-5678");
+    expect(message.text).not.toContain("wa.me");
+    expect(message.html).not.toContain("wa.me");
   });
 });
 

@@ -34,8 +34,8 @@ import { revalidateDonationPages } from "../revalidate-donations";
  *
  * El correo abre `/cuenta/crear` con el mail en cookie, no en la URL. El
  * teléfono reserva a nombre de esa persona y manda `staff.phone_offer` con
- * dos enlaces. Sin sesión es el camino público; con sesión el HTML hidratado
- * ya muestra el de retiro.
+ * un botón de WhatsApp y dos enlaces. Sin sesión es el camino público; con
+ * sesión el HTML hidratado ya muestra el de retiro.
  */
 export async function startDonateAction(
   _state: AccountFormState,
@@ -116,7 +116,7 @@ export async function startDonateAction(
   }
 
   revalidateDonationPages();
-  redirect(`${ficha}?reservado=1`);
+  redirect(`${ficha}?reservado=1#gracias`);
 }
 
 /**

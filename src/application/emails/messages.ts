@@ -8,6 +8,7 @@ import {
   type PledgeEmailKind,
   type StaffEmailKind,
 } from "@/src/domain/ports/email";
+import { whatsappHrefFor } from "@/src/domain/whatsapp";
 import type { Locale } from "@/src/i18n/locale";
 
 import { renderEmailHtml, renderEmailText } from "./layout";
@@ -18,7 +19,7 @@ import { renderEmailHtml, renderEmailText } from "./layout";
  * Vive en `application/` y no en `infrastructure/` porque no sabe mandar nada:
  * convierte hechos en un `EmailMessage`. Quién lo pone en la red es el adaptador.
  *
- * **No hay motor de plantillas.** Son tres sustituciones con nombre cerrado.
+ * **No hay motor de plantillas.** Son cinco sustituciones con nombre cerrado.
  */
 
 export interface AccountFacts {
@@ -43,6 +44,8 @@ export interface StaffFacts {
   readonly what: string | null;
   /** El nombre de un aviso por teléfono. El resto de los avisos al equipo no lo usan. */
   readonly who?: string | null;
+  /** El número de un aviso por teléfono. Viaja como botón de WhatsApp, no en el resto. */
+  readonly phone?: string | null;
   readonly backofficeUrl: string;
   readonly yesUrl?: string | null;
   readonly noUrl?: string | null;
@@ -81,6 +84,7 @@ export function buildAccountEmail(
     replacements: { what: null, when: null },
     highlight: null,
     rejectLink: null,
+    extraLink: null,
     idempotencyKey: idempotencyKeyFor(kind, facts.userId),
   });
 }
@@ -98,6 +102,7 @@ export function buildPledgeEmail(
     replacements: { what: facts.what, when: facts.expiresOn },
     highlight: facts.what,
     rejectLink: null,
+    extraLink: null,
     idempotencyKey: idempotencyKeyFor(kind, facts.pledgeId),
   });
 }
@@ -109,6 +114,10 @@ export function buildPledgeEmail(
 export function buildStaffEmail(kind: StaffEmailKind, facts: StaffFacts): EmailMessage {
   const yes = facts.yesUrl ?? facts.backofficeUrl;
   const no = facts.noUrl ?? null;
+  const extraLink =
+    kind === "staff.phone_offer" && facts.phone !== undefined && facts.phone !== null
+      ? whatsappHrefFor(facts.phone)
+      : null;
 
   return compose({
     copy: getContent("es").emails[STAFF_COPY[kind]],
@@ -116,9 +125,15 @@ export function buildStaffEmail(kind: StaffEmailKind, facts: StaffFacts): EmailM
     locale: "es",
     to: facts.staffAddress,
     link: yes,
-    replacements: { what: facts.what, when: null, who: facts.who ?? null },
+    replacements: {
+      what: facts.what,
+      when: null,
+      who: facts.who ?? null,
+      phone: kind === "staff.phone_offer" ? (facts.phone ?? null) : null,
+    },
     highlight: facts.what,
     rejectLink: no,
+    extraLink,
     idempotencyKey: idempotencyKeyFor(kind, facts.subjectId),
   });
 }
@@ -133,14 +148,16 @@ interface Composition {
     readonly what: string | null;
     readonly when: string | null;
     readonly who?: string | null;
+    readonly phone?: string | null;
   };
   readonly highlight: string | null;
   readonly rejectLink: string | null;
+  readonly extraLink: string | null;
   readonly idempotencyKey: string;
 }
 
 function compose(input: Composition): EmailMessage {
-  const values = { who: null, ...input.replacements, link: input.link };
+  const values = { who: null, phone: null, ...input.replacements, link: input.link };
   const fill = (text: string): string => substitute(text, values);
   const siteName = getContent(input.locale).site.name;
   const heading = fill(input.copy.subject);
@@ -148,6 +165,8 @@ function compose(input: Composition): EmailMessage {
   const action = fill(input.copy.action);
   const why = fill(input.copy.why);
   const highlight = input.highlight === null ? null : fill(input.highlight) || null;
+  const extraAction =
+    input.copy.extraAction === undefined ? null : fill(input.copy.extraAction) || null;
 
   const doc = {
     lang: input.locale,
@@ -156,6 +175,8 @@ function compose(input: Composition): EmailMessage {
     heading,
     paragraphs,
     highlight,
+    extraAction,
+    extraLink: extraAction === null ? null : input.extraLink,
     action,
     link: input.link,
     rejectAction:
@@ -174,10 +195,11 @@ function compose(input: Composition): EmailMessage {
 }
 
 /**
- * Las tres marcas, y ninguna más.
+ * Las cinco marcas, y ninguna más.
  *
  * `when` puede no existir —una reserva sin vencimiento—, y en ese caso la frase
- * que la nombraba **se cae entera** en lugar de quedar con un hueco.
+ * que la nombraba **se cae entera** en lugar de quedar con un hueco. Lo mismo
+ * con `{who}` y `{phone}` si el aviso no es por teléfono.
  */
 function substitute(
   text: string,
@@ -185,6 +207,7 @@ function substitute(
     what: string | null;
     when: string | null;
     who: string | null;
+    phone: string | null;
     link: string;
   },
 ): string {
@@ -200,9 +223,14 @@ function substitute(
     return "";
   }
 
+  if (values.phone === null && text.includes("{phone}")) {
+    return "";
+  }
+
   return text
     .replaceAll("{what}", values.what ?? "")
     .replaceAll("{when}", values.when ?? "")
     .replaceAll("{who}", values.who ?? "")
+    .replaceAll("{phone}", values.phone ?? "")
     .replaceAll("{link}", values.link);
 }

@@ -23,8 +23,9 @@ sólo GoTrue puede emitir. El transporte, a partir de la enmienda de 2026-09-16,
 | Aviso al equipo: vencimiento | API de Resend | `release_expired_holds` | `content/*/emails.json` |
 
 Los avisos al equipo viajan en el mismo disparador que el correo a la persona, con destinatario
-distinto. El cuerpo **no lleva el teléfono ni el correo** de terceros: se leen en el backoffice,
-con sesión. `staff.phone_offer` nombra a quien avisó: es el motivo de ese camino (ADR-051).
+distinto. El cuerpo **no lleva el correo** de terceros: se lee en el backoffice, con sesión.
+`staff.phone_offer` nombra a quien avisó y lleva un botón de WhatsApp al número que dejó: es el
+motivo de ese camino (ADR-051, FR-237). El resto de los avisos al equipo no lleva teléfono.
 
 Qué **no** manda correo, y el motivo: está en ADR-033. Cambiar el perfil y fallar un envío no
 duplican aviso. Los tres de identidad ahora sí pasan por este puerto: el token lo emite GoTrue, el
@@ -92,8 +93,8 @@ Reglas del cuerpo:
   tabla de cuerpo. Lo afirma `messages.test.ts` contando exactamente dos `<table`.
 - **Sin imágenes remotas y sin pixel de seguimiento.** Georgia y Arial, que ya están en el aparato.
   Es ADR-010 aplicado al correo.
-- **Sin datos de terceros** en los avisos al equipo, salvo el nombre en `staff.phone_offer`
-  (ADR-051). El teléfono no viaja.
+- **Sin datos de terceros** en los avisos al equipo, salvo `staff.phone_offer` (ADR-051): el
+  nombre, y el número como botón `wa.me`. Sin logo: el correo no lleva imágenes remotas.
 - El cuerpo de texto se escribe a mano, no se genera desde el HTML.
 - Sin enlaces que autentiquen. El correo lleva a `/cuenta` o a `/admin`, y ahí se pide sesión
   (FR-237). Los dos enlaces de sí/no de una reserva nueva van a

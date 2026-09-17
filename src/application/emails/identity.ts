@@ -76,6 +76,8 @@ export function buildIdentityEmail(
     highlight: null,
     action: fill(copy.action),
     link,
+    extraAction: null,
+    extraLink: null,
     rejectAction: null,
     rejectLink: null,
     why: fill(copy.why),

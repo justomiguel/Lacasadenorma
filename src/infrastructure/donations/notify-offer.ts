@@ -9,7 +9,7 @@ import { getSiteUrl } from "../site-url";
 /**
  * Avisa al owner que alguien dejó un teléfono y el ítem quedó reservado
  * (ADR-051). El nombre va en el correo: es el motivo de este camino. El
- * número se lee en el backoffice. Un fallo no borra la reserva (FR-233).
+ * número viaja como botón de WhatsApp. Un fallo no borra la reserva (FR-233).
  */
 export async function notifyPhoneOffer(offer: DonationOffer): Promise<void> {
   const staffAddress = readStaffAddress();
@@ -25,6 +25,7 @@ export async function notifyPhoneOffer(offer: DonationOffer): Promise<void> {
     staffAddress,
     what: offer.itemTitle,
     who: offer.contactName,
+    phone: offer.contactPhone,
     backofficeUrl: `${siteUrl}/admin/donaciones`,
     yesUrl: `${siteUrl}${staffPledgeDecisionPath(offer.pledgeId, "si")}`,
     noUrl: `${siteUrl}${staffPledgeDecisionPath(offer.pledgeId, "no")}`,

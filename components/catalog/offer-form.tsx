@@ -15,6 +15,7 @@ import type { AccountContent, CatalogContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
 
 import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
+import { OfferThanksNotice } from "./offer-thanks";
 
 /**
  * El primer paso de traer un bien, sin sesión (ADR-051): nombre y teléfono
@@ -49,12 +50,7 @@ export function OfferForm({
   }, [state]);
 
   if (state.phase === "done") {
-    return (
-      <div className="mt-lg max-w-measure border-t border-rule pt-lg">
-        <h3 className="font-ui text-subheading text-ink">{copy.offerThanksTitle}</h3>
-        <p className="mt-sm text-body text-ink-muted">{copy.offerThanksBody}</p>
-      </div>
-    );
+    return <OfferThanksNotice copy={copy} className="mt-lg" />;
   }
 
   return (

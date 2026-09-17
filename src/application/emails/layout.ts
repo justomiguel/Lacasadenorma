@@ -33,6 +33,9 @@ export interface EmailDocument {
   /** Segundo enlace, si el correo pide un sí y un no (ADR-051). */
   readonly rejectAction: string | null;
   readonly rejectLink: string | null;
+  /** Tercer enlace: WhatsApp al número de un aviso por teléfono (ADR-051). */
+  readonly extraAction: string | null;
+  readonly extraLink: string | null;
   readonly why: string;
 }
 
@@ -49,6 +52,13 @@ export function renderEmailHtml(doc: EmailDocument): string {
     doc.highlight === null
       ? ""
       : `<p style="margin:8px 0 28px;padding:12px 0 12px 16px;border-left:4px solid ${SAGE};font-size:20px;line-height:1.3;color:${OLIVE};font-family:Georgia,'Times New Roman',serif;">${escapeHtml(doc.highlight)}</p>`;
+
+  const extra =
+    doc.extraAction === null || doc.extraLink === null
+      ? ""
+      : `<p style="margin:28px 0 0;">
+<a href="${escapeHtml(doc.extraLink)}" style="display:inline-block;padding:12px 24px;background:${FOREST};color:${PAPER};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1;border-radius:999px;">${escapeHtml(doc.extraAction)}</a>
+</p>`;
 
   const reject =
     doc.rejectAction === null || doc.rejectLink === null
@@ -77,7 +87,8 @@ export function renderEmailHtml(doc: EmailDocument): string {
 <tr><td style="padding:36px 40px 8px;">
 ${paragraphs}
 ${highlight}
-<p style="margin:28px 0 0;">
+${extra}
+<p style="margin:${extra === "" ? "28px" : "16px"} 0 0;">
 <a href="${escapeHtml(doc.link)}" style="display:inline-block;padding:12px 24px;background:${FOREST};color:${PAPER};text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1;border-radius:999px;">${escapeHtml(doc.action)}</a>
 </p>
 ${reject}
@@ -100,6 +111,9 @@ export function renderEmailText(doc: EmailDocument): string {
     ...doc.paragraphs.filter(noVacio),
     ...(doc.highlight === null ? [] : ["", doc.highlight]),
     "",
+    ...(doc.extraAction === null || doc.extraLink === null
+      ? []
+      : [`${doc.extraAction}: ${doc.extraLink}`]),
     `${doc.action}: ${doc.link}`,
     ...(doc.rejectAction === null || doc.rejectLink === null
       ? []

@@ -79,9 +79,10 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y completa la reserva
    con nombre, un teléfono si lo hay y la dirección de retiro, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta.
 7. **Given** alguien sin sesión que deja nombre y teléfono, **When** confirma, **Then** el ítem queda
-   reservado a su nombre, el owner recibe un correo con dos enlaces (sí: se contactó y donan; no:
-   soltar la reserva), un sí aparece en Quiénes ayudaron como donado por esa persona con esa fecha,
-   y un no devuelve el ítem a la lista. No se crea una cuenta.
+   reservado a su nombre, esa persona ve en la ficha «Gracias por donar» y que nos vamos a estar
+   comunicando, el owner recibe un correo con un botón de WhatsApp al número que dejó y dos
+   enlaces (sí: se contactó y donan; no: soltar la reserva), un sí aparece en Quiénes ayudaron como
+   donado por esa persona con esa fecha, y un no devuelve el ítem a la lista. No se crea una cuenta.
 8. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
    reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y
    cómo donarlo: traer el bien (formulario de retiro) o cubrirlo con plata (datos de pago, sin reserva).
@@ -444,8 +445,13 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-236**: Sin credencial del proveedor configurada, el sistema MUST seguir funcionando y MUST NOT
   ofrecer flujos que dependan del correo para completarse.
 - **FR-237**: Ningún correo MUST contener datos de otra persona, ni secretos, ni enlaces que
-  autentiquen sin expirar. Excepción acotada: `staff.phone_offer` nombra a quien dejó el teléfono,
-  no el número. Los dos enlaces de sí/no piden la sesión del equipo, no un token.
+  autentiquen sin expirar. Excepción acotada: `staff.phone_offer` nombra a quien dejó el teléfono
+  y MUST incluir un botón `https://wa.me/` a ese número, con el número en el texto del botón, para
+  escribirle. MUST NOT llevar el logo de WhatsApp (no hay imágenes remotas). Los dos enlaces de
+  sí/no piden la sesión del equipo, no un token.
+- **FR-264**: Después de un aviso por teléfono exitoso, la ficha MUST mostrar un aviso
+  `role="status"` que agradece la donación y dice que nos vamos a estar comunicando. MUST NOT ser
+  un diálogo de JavaScript ni un modal. MUST NOT inventar un dato de contacto.
 
 **Privacidad**
 
@@ -552,6 +558,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   editor no ve borrar. Verificado en e2e, en viewport de teléfono y de escritorio.
 - **SC-216**: Un aviso por teléfono baja lo que falta; el sí del owner publica nombre y fecha en
   Quiénes ayudaron; el no devuelve el ítem. Verificado en e2e.
+- **SC-218**: Después de dejar nombre y teléfono, la ficha muestra «Gracias por donar» y que nos
+  vamos a estar comunicando. El correo `staff.phone_offer` incluye `wa.me` con los dígitos de ese
+  número. Verificado en dominio, en el armado del correo y en e2e.
 - **SC-217**: Cinco unidades entregadas de un ítem de diez se publican como el 50% de ese bien, y
   el listado sigue ofreciendo donar; al cubrir las diez, el CTA desaparece. Verificado en dominio
   y en e2e.

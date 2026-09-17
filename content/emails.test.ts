@@ -12,7 +12,7 @@ import { getContent } from "./pack";
  * están en castellano en los dos (ADR-014).
  */
 
-const MARCAS = ["{what}", "{when}", "{who}", "{link}"] as const;
+const MARCAS = ["{what}", "{when}", "{who}", "{phone}", "{link}"] as const;
 
 const STAFF = [
   "staffNewAccount",
@@ -40,6 +40,7 @@ function todoElTexto(correo: {
   body: readonly string[];
   action: string;
   rejectAction?: string;
+  extraAction?: string;
   why: string;
 }): string {
   return [
@@ -48,6 +49,7 @@ function todoElTexto(correo: {
     ...correo.body,
     correo.action,
     correo.rejectAction ?? "",
+    correo.extraAction ?? "",
     correo.why,
   ].join("\n");
 }
@@ -76,6 +78,24 @@ describe("el texto de los correos", () => {
         for (const marca of encontradas) {
           expect(MARCAS, `${locale}/${clase}: ${marca}`).toContain(marca);
         }
+      }
+    }
+  });
+
+  it("sólo el aviso por teléfono nombra el número", () => {
+    for (const locale of LOCALES) {
+      expect(todoElTexto(getContent(locale).emails.staffPhoneOffer)).toContain("{phone}");
+      expect(getContent(locale).emails.staffPhoneOffer.extraAction).toContain("WhatsApp");
+
+      for (const clase of [...DONANTE, ...STAFF] as const) {
+        if (clase === "staffPhoneOffer") {
+          continue;
+        }
+
+        expect(
+          todoElTexto(getContent(locale).emails[clase]),
+          `${locale}/${clase}`,
+        ).not.toContain("{phone}");
       }
     }
   });

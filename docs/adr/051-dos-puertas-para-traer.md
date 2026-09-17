@@ -72,10 +72,20 @@ el segundo en dos caminos:
      y devuelve las unidades.
 
    Los enlaces no mutan en el GET: piden una confirmación con sesión. El
-   número de teléfono no viaja en el correo; se lee en `/admin/donaciones`.
-   El nombre sí va en `staff.phone_offer`: «tal persona quiere donar» es el
-   pedido, no el renglón del muro.
-5. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono
+   nombre va en `staff.phone_offer`: «tal persona quiere donar» es el pedido,
+   no el renglón del muro. El número viaja **como botón de WhatsApp**
+   (`https://wa.me/` con código de país, sin `+`): es el acceso directo para
+   escribirle. No es un enlace que autentique. El logo de WhatsApp no entra
+   al HTML del correo —no hay imágenes remotas (ADR-010)—; el texto del
+   botón nombra la marca y el número. El número también se lee en
+   `/admin/donaciones`.
+5. **Quien dejó el teléfono ve un gracias en la ficha, no un diálogo.** El
+   POST redirige a `?reservado=1#gracias`. Ahí hay un aviso `role="status"`
+   que dice «Gracias por donar» y que nos vamos a estar comunicando. No es
+   un `alert()`, ni un modal: es el estado diseñado de esa pantalla
+   (ADR-032). El formulario se desmonta si ya no queda cupo; por eso el
+   aviso vive en la ficha, igual que `?conflicto=1`.
+6. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono
    queda para más adelante, en el formulario de retiro, si lo quieren dejar.
 
 ## Alternativas descartadas
@@ -87,7 +97,8 @@ el segundo en dos caminos:
 | Reservar con el teléfono y cumplirla sin el owner | Vuelve el problema que ADR-046 pagó: cualquiera sostiene el catálogo. El dueño confirma, o suelta |
 | Un token de capacidad en el correo que cumple o cancela sin sesión | FR-237. El enlace pide la sesión de quien administra |
 | Sólo mandar el correo, sin persistir | Si Resend falla, el owner no tiene a quién llamar. El hecho vive en la base; el correo avisa |
-| Poner el teléfono en el cuerpo del correo | El resto de los avisos al equipo no llevan datos de terceros. El número se lee en el backoffice. El nombre sí va: «tal persona quiere donar» es el pedido |
+| Poner el teléfono en el cuerpo, sin enlace | El pedido del 17 de septiembre de 2026 es escribirle ya: el número va en un botón `wa.me`, no como un renglón para copiar. El resto de los avisos al equipo sigue sin datos de terceros |
+| Un `alert()` o un modal de «gracias» | ADR-032: los estados se diseñan. Un diálogo de JavaScript no existe sin JS y no es el patrón del sitio. Es un aviso en la ficha |
 | Personalizar la ficha según haya sesión | Rompe ADR-037 y el caché. El formulario de retiro aparece al hidratar, como el chrome |
 | Pedir los dos, mail y teléfono | El mínimo es uno. El mail abre el sistema; el teléfono, la llamada y la reserva |
 | Pedir «nombre para mostrar» y nota en la ficha | El primer clic es nombre y un canal. Aparecer se decide después: en `/cuenta` si hay mail, en el sí del owner si hay teléfono |
@@ -109,6 +120,7 @@ dirección y se anota. Un sí con nombre aceptado aparece en el muro con fecha.
 - Sin JavaScript, quien ya tiene sesión ve el formulario corto. Si pone
   mail, el alta lo manda a `/cuenta` a completar el retiro. Con JavaScript
   ve el de siempre, en la ficha, al hidratar.
-- El nombre de quien avisó viaja en el correo al owner. Es una excepción
-  deliberada a «los avisos al equipo no llevan datos de terceros», acotada a
-  `staff.phone_offer` y al nombre, no al teléfono.
+- El nombre y el teléfono de quien avisó viajan en el correo al owner. Es
+  una excepción deliberada a «los avisos al equipo no llevan datos de
+  terceros», acotada a `staff.phone_offer`: el nombre, y el número como
+  botón de WhatsApp. El resto de los avisos no los lleva.

@@ -9,10 +9,11 @@ import { paragraphs, phrase } from "./primitives";
  * dirección— **sí están acá**: el token lo emite GoTrue, el HTML lo arma este
  * repositorio y Resend lo manda (ADR-028). `{link}` es el canje, no una visita.
  *
- * **Las marcas de sustitución son cuatro y están cerradas**: `{what}` es lo que se
+ * **Las marcas de sustitución son cinco y están cerradas**: `{what}` es lo que se
  * reservó, `{when}` es cuándo vence, `{who}` es el nombre de un aviso por
- * teléfono y `{link}` es a dónde ir. No hay motor de plantillas.
- * `messages.test.ts` falla si algún correo sale con una marca sin reemplazar.
+ * teléfono, `{phone}` es el número de ese aviso y `{link}` es a dónde ir. No hay
+ * motor de plantillas. `messages.test.ts` falla si algún correo sale con una
+ * marca sin reemplazar.
  */
 
 const message = z.object({
@@ -56,7 +57,7 @@ export const emailsSchema = z.object({
    */
   staffNewAccount: message,
   staffNewPledge: message.extend({ rejectAction: phrase }),
-  staffPhoneOffer: message.extend({ rejectAction: phrase }),
+  staffPhoneOffer: message.extend({ rejectAction: phrase, extraAction: phrase }),
   staffPledgeCancelled: message,
   staffPledgeExpired: message,
 });
@@ -64,4 +65,5 @@ export const emailsSchema = z.object({
 export type EmailsContent = z.infer<typeof emailsSchema>;
 export type EmailCopy = EmailsContent[keyof EmailsContent] & {
   readonly rejectAction?: string;
+  readonly extraAction?: string;
 };
