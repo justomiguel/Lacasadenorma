@@ -193,7 +193,7 @@ components/
 ├── screens/catalog-screen.tsx           # y sus partes en components/catalog/
 ├── screens/wall-screen.tsx
 ├── screens/account/…                    # formularios de cuenta
-├── catalog/item-card.tsx, claim-form.tsx, availability.tsx, conflict-notice.tsx
+├── catalog/item.tsx, offer-form.tsx, cover.tsx
 └── design-system/field.tsx              # primitivo de campo de formulario, si no alcanza el actual
 
 content/

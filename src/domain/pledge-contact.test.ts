@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { parsePhysicalPledgeContact } from "./pledge-contact";
 
 describe("parsePhysicalPledgeContact", () => {
-  it("pide nombre y dirección; el teléfono puede faltar", () => {
+  it("pide nombre; el teléfono y la dirección pueden faltar", () => {
     expect(
       parsePhysicalPledgeContact({
         contactName: "  Ana  ",
@@ -43,13 +43,16 @@ describe("parsePhysicalPledgeContact", () => {
     ).toEqual({ status: "error", field: "contactName" });
   });
 
-  it("sin dirección señala el campo", () => {
+  it("sin dirección igual alcanza: la ficha ya no la pide", () => {
     expect(
       parsePhysicalPledgeContact({
         contactName: "Ana",
         contactPhone: null,
         pickupAddress: "",
       }),
-    ).toEqual({ status: "error", field: "pickupAddress" });
+    ).toEqual({
+      status: "ok",
+      value: { contactName: "Ana", contactPhone: null, pickupAddress: null },
+    });
   });
 });

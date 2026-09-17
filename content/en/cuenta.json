@@ -27,9 +27,9 @@
     "privacyTail": ", and you can delete the account from the site whenever you want.",
     "haveAccount": "Already have an account?",
     "haveAccountLink": "Sign in",
-    "donateLead": "You left an email to donate an item. The account is so we can confirm that mailbox, then ask where to pick it up, and so you can see and cancel what you signed up for.",
+    "donateLead": "You left an email to donate an item. The account is so we can confirm that mailbox, and so you can see and cancel what you signed up for.",
     "donateWhy": [
-      "Confirming the email is the validation: that is how we know we can write to you. After that, on the item page, we ask for an address and reserve the item. We also write to the person who coordinates.",
+      "Confirming the email is the validation: that is how we know we can write to you. After that you go back to the item page, sign up with your name and a phone number or an email, and we write to the person who coordinates.",
       "The phone number, if you prefer, is the other path: it asks someone to call you and does not open an account."
     ],
     "checkInboxTitle": "Check your email",

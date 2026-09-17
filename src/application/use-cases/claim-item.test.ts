@@ -198,7 +198,7 @@ describe("claimItem", () => {
     expect(donations.claimed).toBeNull();
   });
 
-  it("sin dirección de retiro no llega al puerto", async () => {
+  it("sin dirección de retiro igual reserva", async () => {
     const donations = new FakeDonationsPort();
     const result = await claimItem(ready(donations), {
       itemId: ITEM,
@@ -207,12 +207,11 @@ describe("claimItem", () => {
       contactName: "Ana",
     });
 
-    expect(result).toEqual({
-      status: "error",
-      code: "pickupAddressRequired",
-      field: "pickupAddress",
+    expect(result.status).toBe("ok");
+    expect(donations.claimed).toMatchObject({
+      contactName: "Ana",
+      pickupAddress: null,
     });
-    expect(donations.claimed).toBeNull();
   });
 
   it("si el caché de PostgREST no tiene la función, no filtra el error de esquema", async () => {

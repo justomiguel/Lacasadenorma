@@ -12,6 +12,9 @@ import { describePledgeFailure } from "../accounts/pledge-failure";
 /**
  * Reservar un ítem del catálogo para traerlo (ADR-046, ADR-051).
  *
+ * La ficha pide nombre y un canal, no domicilio. `pickup_address` queda
+ * nulo si no llegó.
+ *
  * Nace anónima. Cómo aparecer se elige en `/cuenta`, no acá. Cubrir con
  * plata no pasa por acá: la transacción es la prueba. Llama la función de
  * la base y **después** intenta el correo. El correo no está en la
@@ -90,9 +93,7 @@ export async function claimItem(
   });
 
   if (contact.status === "error") {
-    return contact.field === "contactName"
-      ? accountError("contactNameRequired", "contactName")
-      : accountError("pickupAddressRequired", "pickupAddress");
+    return accountError("contactNameRequired", "contactName");
   }
 
   try {

@@ -97,7 +97,7 @@
     "subject": "Hay una cuenta para revisar",
     "preheader": "Alguien confirmó el correo. Ya puede anotarse a traer un bien.",
     "body": [
-      "Alguien confirmó su correo. Ya puede anotarse a traer un bien, con nombre y dirección de retiro.",
+      "Alguien confirmó su correo. Ya puede anotarse a traer un bien, con nombre y un teléfono o un correo.",
       "Los datos están en el backoffice. No van por correo a propósito: se leen con sesión, no desde una bandeja de entrada. Si hay que frenar la cuenta, se rechaza desde ahí."
     ],
     "action": "Abrir las cuentas del público",

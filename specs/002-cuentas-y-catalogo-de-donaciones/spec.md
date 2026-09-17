@@ -69,15 +69,16 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    **When** las dos confirman, **Then** una lo obtiene y la otra recibe un mensaje que explica que
    alguien se adelantó y le ofrece el catálogo actualizado. En ningún caso quedan reservadas más
    unidades que las necesarias.
-4. **Given** alguien con sesión que reserva dos de los cinco ejemplares que faltan, **When** guarda,
-   **Then** el catálogo pasa a mostrar que faltan tres, su reserva queda visible en su propia
+4. **Given** alguien con sesión que reserva uno de los cinco ejemplares que faltan, **When** guarda,
+   **Then** el catálogo pasa a mostrar que faltan cuatro, su reserva queda visible en su propia
    cuenta, y «Quiero donar» **sigue** en ese ítem. Si eligió aparecer, el listado nombra que donó
-   el 40% de ese bien (ADR-052).
+   el 20% de ese bien (ADR-052).
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
 6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
    **Then** después de ingresar o registrarse y confirmar el correo vuelve a la ficha del mismo ítem y completa la reserva
-   con nombre, un teléfono si lo hay y la dirección de retiro, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta.
+   con nombre y un teléfono o un correo, sin buscarlo de nuevo. No espera a que el equipo habilite la cuenta. No se pide
+   dirección.
 7. **Given** alguien sin sesión que deja nombre y teléfono, **When** confirma, **Then** el ítem queda
    reservado a su nombre, esa persona ve en la ficha «Gracias por donar» y que nos vamos a estar
    comunicando, el owner recibe un correo con un botón de WhatsApp al número que dejó y dos
@@ -85,7 +86,7 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    donado por esa persona con esa fecha, y un no devuelve el ítem a la lista. No se crea una cuenta.
 8. **Given** un ítem publicado, **When** alguien abre su ficha, **Then** ve la foto o el espacio
    reservado, la descripción, las cantidades, quién se anotó con nombre si eligió aparecer, y
-   cómo donarlo: traer el bien (formulario de retiro) o cubrirlo con plata (datos de pago, sin reserva).
+   cómo donarlo: traer el bien (nombre y teléfono o correo) o cubrirlo con plata (datos de pago, sin reserva).
 9. **Given** alguien que elige transferencia, Mercado Pago o PayPal en la ficha, **When** mira esa opción,
    **Then** ve los datos de pago y **no** un formulario de reserva ni un pedido de cuenta. El nombre, si quiere aparecer,
    se pide cuando el equipo anota la transacción.
@@ -369,8 +370,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-216**: Una persona con sesión y correo confirmado MUST poder reservar una o más unidades de un
   ítem disponible para **traerlo**, y la reserva MUST quedar asignada a su cuenta. MUST NOT exigir
   que el equipo haya habilitado la cuenta (`approved`). Una cuenta `declined` MUST NOT reservar.
-  Reservar un bien físico MUST pedir nombre de contacto, correo o teléfono, y la dirección donde ir
-  a buscar. El correo de la cuenta satisface «mail o teléfono». Esos datos MUST NOT publicarse.
+  Reservar un bien físico MUST pedir nombre de contacto y correo o teléfono. MUST NOT pedir la
+  dirección donde ir a buscar en la ficha, con o sin sesión (ADR-051). El correo de la cuenta
+  satisface «mail o teléfono». Esos datos MUST NOT publicarse.
   MUST NOT pedir nombre para mostrar ni nota para la familia en esa ficha: quién se maneja con el
   sistema lo elige en `/cuenta` (FR-225, FR-229). Si falta un dato, el sistema MUST llevar el foco
   y el scroll al primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT
@@ -616,9 +618,9 @@ el listado y la ficha lo publican etiquetado como estimado, no fijo. El libro no
 - Sin captcha en esta versión. La confirmación de correo más el tope de reservas activas son la
   defensa. Queda escrito como riesgo aceptado, con el disparador para revisarlo: la primera reserva
   de mala fe.
-- La entrega física se coordina con los datos de retiro de la reserva (nombre, correo o teléfono,
-  dirección). Los canales de `/contacto` siguen publicados. El sitio ya no asume que la logística
-  vive sólo afuera: guarda la dirección para que el equipo pueda ir a buscar (ADR-046).
+- La entrega física se coordina con el canal que dejó quien dona (nombre y teléfono o correo).
+  Los canales de `/contacto` siguen publicados. El domicilio no se pide en la ficha (ADR-051);
+  si alguna reserva vieja lo tiene, no se publica.
 - Cubrir un ítem con plata no reserva. La transacción (transferencia, PayPal, Mercado Pago) es la
   prueba. El nombre se pide si la transacción se hace, cuando el equipo la anota.
 - Una donación en especie no es plata y no entra en el libro. Si alguien prefiere transferir el monto

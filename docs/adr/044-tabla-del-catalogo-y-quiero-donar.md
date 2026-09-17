@@ -54,8 +54,8 @@ internet, con Formosa primero cuando hay un número de esa plaza.
    transferencia, Mercado Pago, PayPal. Los datos de un medio —CBU, link,
    extra de Mercado Pago— se muestran **sólo** cuando ese canal está elegido.
    Sin JavaScript lo hace `:has()` sobre el radio. Enmenda ADR-046: el
-   formulario de reserva aparece **sólo** en traer el bien, con nombre,
-   teléfono optativo y dirección de retiro. Cubrir con plata no reserva.
+   formulario de reserva aparece **sólo** en traer el bien, con nombre y
+   teléfono o correo (ADR-051). Cubrir con plata no reserva.
 7. **El aviso al equipo es el de siempre.** Quien completa «Quiero donar»
    **a traer** reserva, y `notifyPledgeClaimed` manda `staff.new_pledge` a
    `EMAIL_STAFF_ADDRESS` (el buzón del owner). Un click en el listado no

@@ -16,7 +16,7 @@ Vale empezar por acá porque es la mayor parte de la respuesta.
 
 | No existe | Consecuencia |
 |---|---|
-| Ningún formulario público **salvo el de la cuenta, el de anotarse a traer un bien, y el aviso por teléfono** | Cubrir con plata no guarda nada. Traer un bien con cuenta pide nombre, teléfono optativo y dirección de retiro. El aviso por teléfono pide nombre y número, reserva el ítem, y no crea cuenta (ADR-051) |
+| Ningún formulario público **salvo el de la cuenta, el de anotarse a traer un bien, y el aviso por teléfono** | Cubrir con plata no guarda nada. Traer un bien pide nombre y un teléfono o un correo. El aviso por teléfono reserva el ítem y no crea cuenta; el correo abre una (ADR-051) |
 | Newsletter, lista de correo, envíos masivos | Un correo del sistema es siempre sobre la propia cuenta o sobre algo que esa persona ofreció traer |
 | Procesamiento de pagos en el sitio | La transferencia se hace en el homebanking de cada uno; el sitio nunca ve un número de tarjeta, un CBU ajeno ni un monto |
 | Cookies de publicidad, píxeles sociales, servicios de perfilado | No hay `<script>` de terceros más que el de analítica, y sólo si se configura |

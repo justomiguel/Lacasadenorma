@@ -19,7 +19,6 @@ const { mockDeSesion } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/app/(es)/catalogo/actions", () => ({
-  claimItemAction: vi.fn(async () => ({ status: "idle" })),
   startDonateAction: vi.fn(async () => ({ status: "idle" })),
 }));
 
@@ -37,7 +36,6 @@ function renderDonate() {
   return render(
     <HowToDonate
       itemId="item-tina"
-      remaining={1}
       estimated={money(10_000, "ARS")}
       copy={catalog}
       account={account}
@@ -76,7 +74,7 @@ describe("HowToDonate", () => {
     expect(screen.getByText(/teléfono o un correo/i)).toBeInTheDocument();
   });
 
-  it("con sesión hidratada pide la dirección de retiro", () => {
+  it("con sesión hidratada sigue pidiendo nombre, teléfono o correo, no dirección", () => {
     mockDeSesion.mockReturnValue({
       session: {
         status: "signed-in",
@@ -92,8 +90,12 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
-    expect(screen.getByLabelText(/dirección donde ir a buscar/i)).toBeRequired();
-    expect(screen.queryByLabelText(/^correo$/i)).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/^nombre$/i)).toBeRequired();
+    expect(screen.getByLabelText(/^teléfono$/i)).not.toBeRequired();
+    expect(screen.getByLabelText(/^correo$/i)).not.toBeRequired();
+    expect(
+      screen.queryByLabelText(/dirección donde ir a buscar/i),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByLabelText(/quiero aparecer con nombre/i),
     ).not.toBeInTheDocument();

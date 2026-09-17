@@ -24,7 +24,7 @@ traducir.
 |---|---|---|---|
 | `claim_donation_item` | Cuenta con sesión, no `declined` | `sin_sesion` | Se la manda a ingresar, y vuelve al mismo ítem |
 | | | `sin_habilitacion` | La cuenta fue rechazada |
-| | | `datos_de_retiro` | Falta el nombre o la dirección para ir a buscar |
+| | | `datos_de_retiro` | Falta el nombre de contacto |
 | | | `sin_disponibilidad` | "Alguien se adelantó": estado **diseñado**, con el catálogo actualizado al lado |
 | | | `demasiadas_reservas` | Cuántas tiene y cuáles puede cancelar |
 | | | `cantidad_invalida` | Error asociado al campo |

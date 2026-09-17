@@ -29,7 +29,7 @@ export const ACCOUNT_ERROR_CODES = [
   "displayNameRequired",
   /** Traer un bien sin nombre de contacto. */
   "contactNameRequired",
-  /** Traer un bien sin dirección de retiro. */
+  /** Traer un bien sin nombre de contacto (la ficha ya no pide domicilio). */
   "pickupAddressRequired",
   /** El primer paso de traer pide teléfono o correo, uno de los dos (ADR-051). */
   "contactChannelRequired",
