@@ -15,6 +15,7 @@ function entry(partial: Partial<DonationWallEntry> = {}): DonationWallEntry {
     itemId: "ab700000-0000-4000-8000-000000000001",
     itemTitle: "Chapas del techo",
     quantity: 2,
+    percentOfItem: 20,
     donorDisplayName: "Vecina de la esquina",
     fulfilledAt: "2026-09-12T00:00:00.000Z",
     ...partial,

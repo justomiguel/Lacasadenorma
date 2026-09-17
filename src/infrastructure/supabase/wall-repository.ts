@@ -1,5 +1,6 @@
 import type { ContributionWallEntry, DonationWallEntry } from "@/src/domain/entities";
 import { isCurrencyCode } from "@/src/domain/money";
+import { shareOfItem } from "@/src/domain/percentage";
 import type { DonationWallRepository } from "@/src/domain/ports/repositories";
 
 import type { Database } from "./database.types";
@@ -9,7 +10,8 @@ import type { ServerSupabaseClient } from "./server-client";
  * Lectura pública del muro. Consulta **las vistas**, nunca las tablas.
  *
  * En especie: `donation_wall`, cinco columnas. Un `select *` sobre
- * `donation_pledges` lo rechaza la base (ADR-030).
+ * `donation_pledges` lo rechaza la base (ADR-030). El % de ese ítem se
+ * calcula en el dominio con `needed_quantity` ya público (ADR-052).
  *
  * En plata: `contribution_wall`, nombre y porcentaje opcional. Un `select`
  * sobre `contributions` lo rechaza la base (ADR-016, ADR-042). El monto no
@@ -40,13 +42,13 @@ export function createDonationWallRepository(
         throw new Error(`leer el muro: ${error.message}`);
       }
 
-      const titles = await loadTitles(
+      const items = await loadItems(
         client,
         data.map((row) => row.item_id),
       );
 
       return data.flatMap((row) => {
-        const entry = toEntry(row, titles);
+        const entry = toEntry(row, items);
 
         return entry === null ? [] : [entry];
       });
@@ -72,10 +74,10 @@ export function createDonationWallRepository(
   };
 }
 
-async function loadTitles(
+async function loadItems(
   client: ServerSupabaseClient,
   ids: readonly (string | null)[],
-): Promise<Map<string, string>> {
+): Promise<Map<string, { title: string; needed: number }>> {
   const unique = [...new Set(ids.filter((id): id is string => id !== null))];
 
   if (unique.length === 0) {
@@ -84,17 +86,22 @@ async function loadTitles(
 
   const { data, error } = await client
     .from("donation_items")
-    .select("id, title")
+    .select("id, title, needed_quantity")
     .in("id", unique);
 
   if (error !== null) {
     throw new Error(`leer los ítems del muro: ${error.message}`);
   }
 
-  return new Map(data.map((row) => [row.id, row.title]));
+  return new Map(
+    data.map((row) => [row.id, { title: row.title, needed: row.needed_quantity }]),
+  );
 }
 
-function toEntry(row: WallRow, titles: Map<string, string>): DonationWallEntry | null {
+function toEntry(
+  row: WallRow,
+  items: Map<string, { title: string; needed: number }>,
+): DonationWallEntry | null {
   if (
     row.id === null ||
     row.item_id === null ||
@@ -105,11 +112,14 @@ function toEntry(row: WallRow, titles: Map<string, string>): DonationWallEntry |
     return null;
   }
 
+  const item = items.get(row.item_id);
+
   return {
     id: row.id,
     itemId: row.item_id,
-    itemTitle: titles.get(row.item_id) ?? null,
+    itemTitle: item?.title ?? null,
     quantity: row.quantity,
+    percentOfItem: shareOfItem(row.quantity, item?.needed ?? null),
     donorDisplayName: row.donor_display_name,
     fulfilledAt: row.fulfilled_at,
   };

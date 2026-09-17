@@ -199,6 +199,37 @@ describe("CatalogTable", () => {
     );
 
     expect(screen.getByText("Sí")).toBeInTheDocument();
-    expect(screen.getByText("María")).toBeInTheDocument();
+    expect(screen.getByText("María donó el 100%")).toBeInTheDocument();
+  });
+
+  it("una toma parcial nombra el % de ese ítem y sigue ofreciendo donar", () => {
+    const claims: CatalogClaim[] = [
+      {
+        id: "c1",
+        itemId: "item-tina",
+        quantity: 5,
+        donorDisplayName: "Ana",
+        fulfilledAt: "2026-09-17T00:00:00.000Z",
+      },
+    ];
+
+    render(
+      <CatalogTable
+        items={[
+          item({
+            neededQuantity: 10,
+            remainingQuantity: 5,
+            fulfilledQuantity: 5,
+          }),
+        ]}
+        claims={claims}
+        copy={COPY}
+        locale="es"
+      />,
+    );
+
+    expect(screen.getByText("Ana donó el 50%")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /quiero donar tina/i })).toBeInTheDocument();
+    expect(screen.getByText(/faltan 5 de 10/i)).toBeInTheDocument();
   });
 });

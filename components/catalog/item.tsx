@@ -18,6 +18,7 @@ import { fill } from "@/src/i18n/fill";
 import type { Locale } from "@/src/i18n/locale";
 
 import { HowToDonate } from "./cover";
+import { formatTakenNames } from "./taken-names";
 import { unitLabel } from "./units";
 
 /**
@@ -65,7 +66,7 @@ export function CatalogItem({
         needed: String(item.neededQuantity),
         unit,
       });
-  const names = taken.names.join(", ");
+  const names = formatTakenNames(taken.names, copy);
   const photo = catalogItemPhotograph<Photograph>(
     item.photo,
     copy.referencePhotos[item.title] ?? null,

@@ -5,13 +5,15 @@ import {
   articuloDelCatalogo,
   abrirItemDelCatalogo,
   completarTraer,
+  confirmarLlegada,
   conItemPublicado,
   filaDelCatalogo,
   formularioDeTraer,
   ocultarItemSiExiste,
   vencerReserva,
 } from "../soporte/catalogo";
-import { correoDePrueba, crearCuenta } from "../soporte/cuentas";
+import { correoDePrueba, crearCuenta, elegirAparecerEnCuenta } from "../soporte/cuentas";
+import { esperarQueAparezca } from "../soporte/revalidar";
 
 /**
  * Reservar un ítem, el conflicto, cancelar y el vencimiento (fase D).
@@ -281,6 +283,62 @@ test.describe("fase D · reservas", () => {
           await expect(filaDelCatalogo(donantePage, titulo)).toHaveCount(1);
           await expect(
             filaDelCatalogo(donantePage, titulo).getByText(/faltan 1/i),
+          ).toBeVisible();
+        });
+      } finally {
+        await donante.close();
+      }
+    } finally {
+      await ocultarItemSiExiste(staffPage.request, titulo);
+      await staff.close();
+    }
+  });
+
+  test("una donación parcial muestra el % de ese ítem y sigue ofreciendo donar", async ({
+    request,
+    browser,
+  }, info) => {
+    test.setTimeout(90_000);
+    const sufijo = sufijoUnico(info.project.name);
+    const titulo = `Bolsas a medias (${sufijo})`;
+    const visible = `Ana Parcial ${sufijo}`;
+    const email = correoDePrueba(info.project.name, "parcial");
+
+    const staff = await browser.newContext();
+    const staffPage = await staff.newPage();
+
+    try {
+      const donante = await browser.newContext();
+      const pagina = await donante.newPage();
+
+      try {
+        await conItemPublicado(request, staffPage, titulo, 10, async () => {
+          await crearCuenta(pagina, request, email);
+          await pagina.goto("/catalogo");
+          await abrirItemDelCatalogo(pagina, titulo);
+          await completarTraer(formularioDeTraer(articuloDelCatalogo(pagina)), {
+            quantity: 5,
+          });
+          await expect(pagina).toHaveURL(/\/cuenta$/);
+          await elegirAparecerEnCuenta(pagina, visible);
+
+          await confirmarLlegada(staffPage, titulo);
+          await esperarQueAparezca(request, "/catalogo", "donó el 50%");
+          await esperarQueAparezca(request, "/quienes-ayudaron", "donó el 50%");
+
+          await pagina.goto("/catalogo");
+          const fila = filaDelCatalogo(pagina, titulo);
+
+          await expect(fila.getByText(`${visible} donó el 50%`)).toBeVisible();
+          await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
+          await expect(fila.getByText(/faltan 5 de 10/i)).toBeVisible();
+
+          await pagina.goto("/quienes-ayudaron");
+          const linea = pagina.locator("li").filter({ hasText: titulo });
+
+          await expect(linea.getByRole("heading", { name: visible })).toBeVisible();
+          await expect(
+            linea.getByText(`${visible} donó el 50% de ${titulo}`),
           ).toBeVisible();
         });
       } finally {

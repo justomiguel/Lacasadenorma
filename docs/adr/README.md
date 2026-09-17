@@ -41,7 +41,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [028](./028-correo-resend.md) | Correos de identidad y de producto por Resend; el token lo sigue emitiendo GoTrue | Aceptada |
 | [029](./029-reserva-sin-sobreventa.md) | La reserva se decide con un contador y un CHECK, no leyendo antes de escribir | Aceptada |
 | [030](./030-muro-por-privilegio-de-columna.md) | El muro se expone por privilegio de columna, y borrar la cuenta anonimiza | Aceptada |
-| [031](./031-donacion-en-especie-no-es-plata.md) | Una donación en especie no entra en el libro | Aceptada |
+| [031](./031-donacion-en-especie-no-es-plata.md) | Una donación en especie no entra en el libro | Aceptada; enmendada por ADR-052 (el % público es de ese ítem) |
 | [032](./032-relato-mobile-editorial.md) | El relato mobile editorial: fotografía, aire y tres familias de acción | Aceptada |
 | [033](./033-aprobacion-de-cuentas.md) | Una cuenta del público nace `pending`; `declined` no reserva | Aceptada; enmendada por ADR-046: confirmar el correo alcanza para anotarse a traer |
 | [034](./034-editor-novedades.md) | El cuerpo de una novedad se edita a ojo y se guarda como árbol, no como HTML | Aceptada |
@@ -54,7 +54,7 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [041](./041-estimado-publico-y-cubrir-con-plata.md) | El estimado se publica en la ficha, y se puede cubrir con plata | Aceptada; enmendada por ADR-044 (listado y canal elegido) y ADR-046 (cubrir con plata no reserva) |
 | [042](./042-muro-de-aportes-con-porcentaje.md) | El muro de aportes publica el nombre, y el porcentaje sólo si se prende | Aceptada |
 | [043](./043-fotos-de-referencia-en-el-catalogo.md) | El catálogo puede mostrar una foto de referencia del tipo | Aceptada |
-| [044](./044-tabla-del-catalogo-y-quiero-donar.md) | El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar» | Aceptada; enmendada por ADR-046 (datos de retiro / plata sin reserva) |
+| [044](./044-tabla-del-catalogo-y-quiero-donar.md) | El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar» | Aceptada; enmendada por ADR-046 (datos de retiro / plata sin reserva) y por ADR-052 (Donar hasta el 100%) |
 | [045](./045-tres-caminos-para-ayudar.md) | Tres caminos para ayudar, no pestañas | Aceptada |
 | [046](./046-compromiso-con-datos-de-retiro.md) | El compromiso pide datos de retiro, no una cuenta como prueba | Aceptada |
 | [047](./047-iconos-que-identifican.md) | Un icono antes del nombre, a 1.15 em de esa letra | Aceptada |
@@ -62,3 +62,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [049](./049-graficos-con-recharts-y-alcance.md) | Gráficos con Recharts y alcance leído del proveedor | Aceptada; enmendada: navegadores, entrada, propiedades, tasas |
 | [050](./050-acciones-del-catalogo.md) | Acciones del catálogo: ver, editar la fila y borrar, en el backoffice | Aceptada |
 | [051](./051-dos-puertas-para-traer.md) | Dos puertas para traer un bien: el mail abre cuenta, el teléfono reserva | Aceptada |
+| [052](./052-porcentaje-de-ese-item.md) | El porcentaje en especie es de ese ítem, y Donar queda hasta el 100% | Aceptada |

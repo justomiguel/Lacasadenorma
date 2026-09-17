@@ -78,3 +78,34 @@ export function formatPercentage(
     maximumFractionDigits: decimals,
   }).format(value / 100);
 }
+
+/**
+ * Qué parte es una donación en especie de **ese** ítem, en entero truncado.
+ *
+ * Misma cuenta que la plata: `(parte * 100) / total` en enteros. Devuelve
+ * `null` cuando no hay denominador o cuando el truncado es 0: publicar `0%`
+ * sería fingir un dato (ADR-052).
+ */
+export function shareOfItem(
+  quantity: number,
+  needed: number | null | undefined,
+): number | null {
+  if (
+    needed === null ||
+    needed === undefined ||
+    !Number.isInteger(quantity) ||
+    !Number.isInteger(needed) ||
+    quantity <= 0 ||
+    needed <= 0
+  ) {
+    return null;
+  }
+
+  const pct = Math.trunc((quantity * 100) / needed);
+
+  if (pct < 1) {
+    return null;
+  }
+
+  return pct > 100 ? 100 : pct;
+}

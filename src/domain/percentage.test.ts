@@ -5,6 +5,7 @@ import {
   formatPercentage,
   percentage,
   ratioAsPercentage,
+  shareOfItem,
   shareOfReceived,
 } from "./percentage";
 
@@ -76,6 +77,32 @@ describe("shareOfReceived", () => {
 
   it("acota en 100 cuando la parte supera al total", () => {
     expect(shareOfReceived(150n, 100n)).toBe(100);
+  });
+});
+
+describe("shareOfItem", () => {
+  it("cinco de diez es el 50% de ese ítem (ADR-052)", () => {
+    expect(shareOfItem(5, 10)).toBe(50);
+  });
+
+  it("trunca a entero", () => {
+    expect(shareOfItem(1, 3)).toBe(33);
+    expect(shareOfItem(2, 3)).toBe(66);
+  });
+
+  it("omite el 0% en lugar de publicarlo", () => {
+    expect(shareOfItem(1, 200)).toBeNull();
+  });
+
+  it("devuelve null cuando no hay denominador", () => {
+    expect(shareOfItem(5, 0)).toBeNull();
+    expect(shareOfItem(5, null)).toBeNull();
+    expect(shareOfItem(5, undefined)).toBeNull();
+    expect(shareOfItem(0, 10)).toBeNull();
+  });
+
+  it("acota en 100 cuando la parte supera al total", () => {
+    expect(shareOfItem(12, 10)).toBe(100);
   });
 });
 

@@ -226,7 +226,8 @@ Cinco columnas, las mismas cinco del `grant`. La vista no nombra `status` ni `is
 `anon` no tiene privilegio para esas columnas. El recorte a lo **entregado** usa `fulfilled_at`,
 que sí está otorgado, para que una reserva con nombre no llegue al muro (D2) aunque la policy de
 `anon` ahora admita reservas con nombre —las necesita el catálogo (FR-255). Lo anónimo lo sigue
-filtrando la policy.
+filtrando la policy. El porcentaje de ese ítem no es una columna: se calcula en el dominio sobre
+`quantity` y `needed_quantity`, ambos ya públicos (ADR-052).
 
 ```sql
 create view public.donation_catalog_claims with (security_invoker = true) as

@@ -7,6 +7,7 @@ import {
 } from "./entities/donation-item";
 import { DomainError } from "./errors";
 import { isCurrencyCode, money, type Money } from "./money";
+import { shareOfItem } from "./percentage";
 
 export type { CatalogClaim } from "./entities/catalog-claim";
 export type {
@@ -52,11 +53,18 @@ export function canClaim(quantities: ItemQuantities): boolean {
  *
  * Lo anónimo no llega acá: la vista no lo nombra (FR-255). `taken` sale de las
  * cantidades, que sí son públicas, así que una reserva sin nombre se ve como
- * tomada y la columna de nombre queda vacía.
+ * tomada y la columna de nombre queda vacía. `percentOfItem` es la parte de
+ * `neededQuantity` de **ese** ítem; un truncado menor a 1 se omite (ADR-052).
  */
+export interface NamedTake {
+  readonly name: string;
+  readonly quantity: number;
+  readonly percentOfItem: number | null;
+}
+
 export interface ItemTakenStatus {
   readonly taken: boolean;
-  readonly names: readonly string[];
+  readonly names: readonly NamedTake[];
 }
 
 export function takenStatus(
@@ -67,22 +75,39 @@ export function takenStatus(
   },
   claims: readonly CatalogClaim[],
 ): ItemTakenStatus {
-  const names: string[] = [];
-  const seen = new Set<string>();
+  const quantities = new Map<string, number>();
+  const order: string[] = [];
 
   for (const claim of claims) {
-    if (claim.itemId !== item.id || seen.has(claim.donorDisplayName)) {
+    if (claim.itemId !== item.id) {
       continue;
     }
 
-    seen.add(claim.donorDisplayName);
-    names.push(claim.donorDisplayName);
+    const previous = quantities.get(claim.donorDisplayName);
+
+    if (previous === undefined) {
+      order.push(claim.donorDisplayName);
+      quantities.set(claim.donorDisplayName, claim.quantity);
+      continue;
+    }
+
+    quantities.set(claim.donorDisplayName, previous + claim.quantity);
   }
 
-  return {
-    taken: item.remainingQuantity < item.neededQuantity,
-    names: item.remainingQuantity < item.neededQuantity ? names : [],
-  };
+  const taken = item.remainingQuantity < item.neededQuantity;
+  const names: NamedTake[] = taken
+    ? order.map((name) => {
+        const quantity = quantities.get(name) ?? 0;
+
+        return {
+          name,
+          quantity,
+          percentOfItem: shareOfItem(quantity, item.neededQuantity),
+        };
+      })
+    : [];
+
+  return { taken, names };
 }
 
 /**

@@ -12,6 +12,7 @@ import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 import { formatCatalogEstimate } from "./money";
+import { formatTakenNames } from "./taken-names";
 import { unitLabel } from "./units";
 
 /**
@@ -110,7 +111,7 @@ function CatalogRow({
         needed: String(item.neededQuantity),
         unit,
       });
-  const names = taken.names.join(", ");
+  const names = formatTakenNames(taken.names, copy);
   const href = localizedHref(`/catalogo/${item.id}`, locale);
   const photo = catalogItemPhotograph<Photograph>(
     item.photo,

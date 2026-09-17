@@ -160,6 +160,7 @@ const muro: DonationWallEntry[] = [
     itemId: "item-privado-1",
     itemTitle: "Chapas del techo",
     quantity: 5,
+    percentOfItem: 50,
     donorDisplayName: SENTINELS.contributorName,
     fulfilledAt: "2026-09-10T00:00:00.000Z",
   },

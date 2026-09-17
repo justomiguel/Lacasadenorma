@@ -39,6 +39,7 @@ describe("get_donation_catalog", () => {
                 itemId: item.id,
                 itemTitle: item.title,
                 quantity: 5,
+                percentOfItem: 50,
                 donorDisplayName: SENTINELS.contributorName,
                 fulfilledAt: "2026-09-10T00:00:00.000Z",
               },

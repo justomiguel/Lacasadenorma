@@ -9,7 +9,8 @@
   "inKindHeading": "They brought materials",
   "moneyHeading": "They gave money",
   "moneyShare": "It was {percent} of what has already arrived.",
-  "brought": "{name} brought {what}.",
+  "brought": "{name} donated {what}.",
+  "itemShare": "{percent} of {item}",
   "quantityOnly": "{count}",
   "previewAction": "See who helped",
   "previewSummary": "The names of people who chose to appear, once the material has arrived. No one is listed for signing up."

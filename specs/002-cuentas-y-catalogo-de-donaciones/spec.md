@@ -70,8 +70,9 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    alguien se adelantó y le ofrece el catálogo actualizado. En ningún caso quedan reservadas más
    unidades que las necesarias.
 4. **Given** alguien con sesión que reserva dos de los cinco ejemplares que faltan, **When** guarda,
-   **Then** el catálogo pasa a mostrar que faltan tres y su reserva queda visible en su propia
-   cuenta.
+   **Then** el catálogo pasa a mostrar que faltan tres, su reserva queda visible en su propia
+   cuenta, y «Quiero donar» **sigue** en ese ítem. Si eligió aparecer, el listado nombra que donó
+   el 40% de ese bien (ADR-052).
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
 6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
@@ -91,6 +92,10 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    **Then** ve una miniatura de esa foto junto al título, en la misma celda Qué. **Given** un ítem
    sin ninguna de las dos, **When** abre el listado, **Then** no ve un hueco reservado en esa fila:
    el título alcanza.
+11. **Given** un ítem de diez unidades del que alguien entregó cinco y eligió aparecer, **When** se
+    renderiza el catálogo o Quiénes ayudaron, **Then** se lee que esa persona donó el 50% de ese
+    bien, y el listado **sigue** ofreciendo «Quiero donar». **Given** las diez cubiertas, **Then**
+    el ítem se marca cubierto y ya no ofrece donar.
 
 ---
 
@@ -150,7 +155,9 @@ ninguna parte, ni en el HTML servido.
 **Acceptance Scenarios**:
 
 1. **Given** una donación no anónima cuya llegada la familia confirmó, **When** alguien abre la
-   sección de quienes ayudaron, **Then** ve el nombre que esa persona eligió, qué donó y la fecha.
+   sección de quienes ayudaron, **Then** ve el nombre que esa persona eligió, qué parte de ese
+   ítem donó (el porcentaje entero de `needed_quantity`, no las unidades sueltas ni un monto) y
+   la fecha. Un truncado menor a 1% omite la cifra; el nombre, si eligió aparecer, sí.
 2. **Given** una donación anónima confirmada, **When** se renderiza cualquier página pública,
    **Then** su nombre no aparece, y tampoco aparece el correo ni ningún identificador de nadie.
 3. **Given** una reserva que todavía no llegó, **When** se renderiza el muro, **Then** **no** figura:
@@ -303,11 +310,14 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   una foto compacta del tipo en la misma celda que el título cuando hay una (la subida o la de
   referencia; MUST NOT reservar un hueco de foto en la fila), cuántas unidades hacen falta, en qué
   unidad se cuenta, cuántas siguen faltando, si alguien ya la tomó, el nombre público o la ausencia
-  de nombre, el estimado por unidad y el estimado total de lo que falta cuando hay un valor
+  de nombre —y, si hay nombre, el porcentaje entero de ese ítem que esa persona cubre (ADR-052)—,
+  el estimado por unidad y el estimado total de lo que falta cuando hay un valor
   cargado, y un control «Quiero donar» al final de la fila que abre la ficha (ADR-043, ADR-044).
   MUST NOT usar una acción primaria en la fila. MUST NOT agregar una columna sólo para la foto.
+  MUST seguir ofreciendo «Quiero donar» mientras quede algo; MUST NOT esconderlo porque alguien
+  ya tomó parte.
 - **FR-210**: El sistema MUST calcular lo que falta descontando lo reservado y lo ya entregado, y
-  MUST NOT ofrecer para reservar un ítem cubierto.
+  MUST NOT ofrecer para reservar un ítem cubierto. MUST seguir ofreciendo mientras `remaining > 0`.
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
   necesarias, incluso con pedidos simultáneos. La garantía MUST estar en la base de datos y MUST NOT
   depender de una comprobación previa en la aplicación.
@@ -341,7 +351,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   por fila y sin hueco si no hay. El epígrafe y el crédito completos viven en la ficha.
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
-  reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre.
+  reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre. Si hay
+  nombre, MUST publicar el porcentaje entero de `needed_quantity` de ese ítem que cubren sus
+  unidades públicas, y MUST omitir un truncado menor a 1% (ADR-052).
 - **FR-256**: Cubrir un ítem con plata MUST ofrecer transferencia (estimado neto), Mercado Pago
   (estimado más 10%, con la posibilidad de sumar más) y PayPal (estimado neto). MUST NOT
   convertir monedas. MUST decir que el monto es estimado, no fijo. MUST NOT mostrar los datos de
@@ -381,6 +393,10 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   poder cargar el nombre para mostrar y una nota privada. Sin ese nombre, el sí MUST cumplir la
   reserva y MUST NOT publicarla. El camino del correo MUST NOT pedir esos campos en esa pantalla:
   se eligen en `/cuenta`.
+- **FR-263**: Una donación en especie con nombre MUST publicarse como el porcentaje entero de las
+  unidades de **ese** ítem (`needed_quantity`) que esa persona cubre. MUST seguir ofreciendo
+  donar el resto hasta cubrir el 100%. MUST NOT esconder «Quiero donar» porque `taken` sea
+  verdadero. MUST NOT convertir esas unidades a plata. Un truncado menor a 1 MUST omitirse.
 - **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
   ejecuta no corra.
 - **FR-219**: El sistema MUST limitar la cantidad de reservas activas por cuenta.
@@ -401,7 +417,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   (FR-262). El camino del correo lo elige en `/cuenta`.
 - **FR-226**: El sistema MUST publicar una sección con las donaciones **no** anónimas cuya llegada
   fue confirmada —incluido el sí del owner sobre una reserva por teléfono (FR-261)—, mostrando el
-  nombre elegido, qué se donó y la fecha.
+  nombre elegido, qué parte de ese ítem se donó (porcentaje entero de `needed_quantity`, ADR-052)
+  y la fecha. MUST NOT usar el total de plata como denominador. MUST NOT publicar un 0%.
 - **FR-227**: La sección pública MUST NOT exponer correo, identificador de cuenta, nota privada ni
   ningún otro dato de quien donó, y la imposibilidad MUST estar impuesta por privilegios de la base,
   no por la consulta que escriba la aplicación.
@@ -535,6 +552,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   editor no ve borrar. Verificado en e2e, en viewport de teléfono y de escritorio.
 - **SC-216**: Un aviso por teléfono baja lo que falta; el sí del owner publica nombre y fecha en
   Quiénes ayudaron; el no devuelve el ítem. Verificado en e2e.
+- **SC-217**: Cinco unidades entregadas de un ítem de diez se publican como el 50% de ese bien, y
+  el listado sigue ofreciendo donar; al cubrir las diez, el CTA desaparece. Verificado en dominio
+  y en e2e.
 
 ---
 

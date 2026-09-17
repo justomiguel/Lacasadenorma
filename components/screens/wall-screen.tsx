@@ -82,6 +82,7 @@ export async function WallScreen({ locale }: { locale: Locale }) {
                         key={entry.id}
                         entry={entry}
                         brought={wall.brought}
+                        itemShare={wall.itemShare}
                         quantityOnly={wall.quantityOnly}
                         locale={locale}
                       />
@@ -151,18 +152,17 @@ function WallKindSection({
 function InKindLine({
   entry,
   brought,
+  itemShare,
   quantityOnly,
   locale,
 }: {
   entry: DonationWallEntry;
   brought: string;
+  itemShare: string;
   quantityOnly: string;
   locale: Locale;
 }) {
-  const what =
-    entry.itemTitle === null
-      ? fill(quantityOnly, { count: String(entry.quantity) })
-      : `${String(entry.quantity)} · ${entry.itemTitle}`;
+  const what = inKindWhat(entry, itemShare, quantityOnly);
   const when = formatLongDate(entry.fulfilledAt.slice(0, 10), intlLocale(locale));
 
   return (
@@ -204,4 +204,27 @@ function MoneyLine({
       </p>
     </li>
   );
+}
+
+function inKindWhat(
+  entry: DonationWallEntry,
+  itemShare: string,
+  quantityOnly: string,
+): string {
+  if (entry.percentOfItem !== null && entry.itemTitle !== null) {
+    return fill(itemShare, {
+      percent: formatPercentage(entry.percentOfItem),
+      item: entry.itemTitle,
+    });
+  }
+
+  if (entry.percentOfItem !== null) {
+    return formatPercentage(entry.percentOfItem);
+  }
+
+  if (entry.itemTitle !== null) {
+    return entry.itemTitle;
+  }
+
+  return fill(quantityOnly, { count: String(entry.quantity) });
 }

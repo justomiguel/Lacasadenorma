@@ -34,6 +34,7 @@
   "takenYes": "Yes",
   "takenNo": "No",
   "nameNone": "—",
+  "namedShare": "{name} donated {percent}",
   "quantityOf": "{remaining} of {needed} {unit} still needed.",
   "backToList": "Back to the list",
   "coverTitle": "How to donate this",

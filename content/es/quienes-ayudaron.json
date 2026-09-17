@@ -9,7 +9,8 @@
   "inKindHeading": "Trajeron materiales",
   "moneyHeading": "Aportaron en plata",
   "moneyShare": "Representó el {percent} de lo que ya llegó.",
-  "brought": "{name} trajo {what}.",
+  "brought": "{name} donó {what}.",
+  "itemShare": "el {percent} de {item}",
   "quantityOnly": "{count}",
   "previewAction": "Ver quiénes ayudaron",
   "previewSummary": "Los nombres de quienes eligieron aparecer, cuando el material ya llegó. Nadie figura por haberse anotado."

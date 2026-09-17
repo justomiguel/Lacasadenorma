@@ -7,6 +7,8 @@ import type { CurrencyCode } from "../money";
  * la vista `donation_wall` y `anon` no tiene privilegio para nombrarlas
  * (ADR-030). `itemTitle` puede ser nulo si el ítem dejó de estar publicado:
  * el nombre y la cantidad siguen siendo un hecho sobre la obra.
+ * `percentOfItem` es nulo cuando no se conoce `needed_quantity` o cuando el
+ * truncado es 0 (ADR-052).
  */
 
 export interface DonationWallEntry {
@@ -14,6 +16,7 @@ export interface DonationWallEntry {
   readonly itemId: string;
   readonly itemTitle: string | null;
   readonly quantity: number;
+  readonly percentOfItem: number | null;
   readonly donorDisplayName: string;
   readonly fulfilledAt: string;
 }

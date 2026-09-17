@@ -1,6 +1,6 @@
 # ADR-044 · El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar»
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md) y por [ADR-051](./051-dos-puertas-para-traer.md): el primer clic pide nombre y teléfono o correo; el teléfono reserva.
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md), por [ADR-051](./051-dos-puertas-para-traer.md) (el primer clic pide nombre y teléfono o correo; el teléfono reserva) y por [ADR-052](./052-porcentaje-de-ese-item.md): «Quiero donar» sigue mientras falte algo; el nombre, si aparece, va con el % de ese ítem.
 
 Enmienda a [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md) (el estimado
 también se publica en el listado), a [ADR-032](./032-relato-mobile-editorial.md)
@@ -32,7 +32,9 @@ internet, con Formosa primero cuando hay un número de esa plaza.
    donar». En Qué, una miniatura de la foto (subida o de referencia) junto al
    título, no una columna más (ADR-043). Sin foto, el título solo: MUST NOT
    reservar un hueco. El total es `netCoverAmount(unit, remaining)`: lo que
-   queda, no lo pedido original. Ítem cubierto: sin botón y sin total.
+   queda, no lo pedido original. Ítem cubierto: sin botón y sin total. Una
+   toma parcial no cubre: el nombre, si eligió aparecer, se publica con el
+   porcentaje de ese ítem, y «Quiero donar» sigue (ADR-052).
 3. **«Quiero donar» es `SecondaryAction`.** Una primaria por pantalla, y esa
    sigue siendo «Ayudar a reconstruir». El CTA de fila abre la ficha
    (`/catalogo/{id}`). El HTML público es idéntico con o sin sesión

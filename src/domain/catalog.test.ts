@@ -55,6 +55,10 @@ describe("canClaim", () => {
     expect(canClaim({ needed: 10, reserved: 4, fulfilled: 6 })).toBe(false);
     expect(canClaim({ needed: 10, reserved: 3, fulfilled: 6 })).toBe(true);
   });
+
+  it("sigue ofreciendo cuando alguien ya cubrió parte (ADR-052)", () => {
+    expect(canClaim({ needed: 10, reserved: 0, fulfilled: 5 })).toBe(true);
+  });
 });
 
 describe("takenStatus", () => {
@@ -75,7 +79,7 @@ describe("takenStatus", () => {
     });
   });
 
-  it("tomada con nombre: lista una vez cada quien eligió aparecer", () => {
+  it("tomada con nombre: lista una vez cada quien eligió aparecer, con el % de ese ítem", () => {
     expect(
       takenStatus({ ...item, remainingQuantity: 2 }, [
         {
@@ -100,7 +104,45 @@ describe("takenStatus", () => {
           fulfilledAt: null,
         },
       ]),
-    ).toEqual({ taken: true, names: ["María"] });
+    ).toEqual({
+      taken: true,
+      names: [{ name: "María", quantity: 3, percentOfItem: 60 }],
+    });
+  });
+
+  it("cinco de diez es el 50% de ese ítem, y todavía se puede donar el resto", () => {
+    expect(
+      takenStatus({ id: "item-1", neededQuantity: 10, remainingQuantity: 5 }, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 5,
+          donorDisplayName: "Ana",
+          fulfilledAt: "2026-09-17T00:00:00.000Z",
+        },
+      ]),
+    ).toEqual({
+      taken: true,
+      names: [{ name: "Ana", quantity: 5, percentOfItem: 50 }],
+    });
+    expect(canClaim({ needed: 10, reserved: 0, fulfilled: 5 })).toBe(true);
+  });
+
+  it("omite un % truncado a 0 y deja el nombre", () => {
+    expect(
+      takenStatus({ id: "item-1", neededQuantity: 200, remainingQuantity: 199 }, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "Ana",
+          fulfilledAt: "2026-09-17T00:00:00.000Z",
+        },
+      ]),
+    ).toEqual({
+      taken: true,
+      names: [{ name: "Ana", quantity: 1, percentOfItem: null }],
+    });
   });
 
   it("si volvió a estar libre, no publica nombres viejos", () => {

@@ -1,6 +1,6 @@
 # ADR-042 · El muro de aportes publica el nombre, y el porcentaje sólo si se prende
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · El % en especie de un ítem es [ADR-052](./052-porcentaje-de-ese-item.md), no éste.
 
 Enmienda a [ADR-016](./016-totales-recibidos-agregados.md): el detalle de un aporte sigue
 sin camino de lectura pública; el **nombre**, con consentimiento, sí. Enmienda a
@@ -53,9 +53,10 @@ sólo si la campaña lo prende, y lo calcula la base.**
    está apagado, si no hay recibido en esa moneda, o si el truncado
    `(amount_minor * 100) / received_minor` es menor a 1, la columna es `null`.
    PostgREST no puede pedir un porcentaje que la función no devuelve.
-5. **`/quienes-ayudaron` suma una sección de plata.** El muro en especie no cambia.
-   Las capacidades para agentes no ganan nombres ni porcentajes de aportes (FR-242,
-   amenaza A5): que estén en la página no los vuelve aptos para una API.
+5. **`/quienes-ayudaron` suma una sección de plata.** El muro en especie no
+   toma este denominador: su % es de ese ítem (ADR-052). Las capacidades para
+   agentes no ganan nombres ni porcentajes de aportes (FR-242, amenaza A5):
+   que estén en la página no los vuelve aptos para una API.
 
 El libro interno no cambia: `bigint` + moneda, anulaciones, SC-007 sobre los montos.
 

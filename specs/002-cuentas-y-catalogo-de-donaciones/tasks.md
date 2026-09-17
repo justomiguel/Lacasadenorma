@@ -259,6 +259,12 @@ la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
 - [x] **T077** [P] Privacidad pública, `docs/privacy.md` y ADR-037 en el mismo cambio que la
       columna nueva.
 
+### Fase G — Porcentaje de ese ítem (ADR-052)
+
+- [x] **T078** `shareOfItem` y `takenStatus` con el % de `needed_quantity`; el catálogo y el muro
+      publican «donó el 50%» de ese bien; «Quiero donar» sigue mientras `remaining > 0`. Spec
+      FR-263 / SC-217. Verificado en dominio y e2e.
+
 ---
 
 ## Dependencias

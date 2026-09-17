@@ -1,6 +1,6 @@
 # ADR-031 · Una donación en especie no entra en el libro
 
-**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md): el estimado se publica en la ficha, etiquetado. Sigue sin entrar al libro.
+**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md): el estimado se publica en la ficha, etiquetado. Sigue sin entrar al libro. Enmendada por [ADR-052](./052-porcentaje-de-ese-item.md): en público, quien trajo se nombra en partes de **ese** ítem, no en plata.
 
 ## Contexto
 
@@ -34,7 +34,8 @@ publica, siempre como estimado y no como precio fijo (ADR-041). El listado y el 
 
 Las donaciones en especie se cuentan **en unidades y en cosas**: "de las 40 chapas, 30 ya están".
 Esa es una frase verificable, la puede confirmar cualquiera que mire el techo, y no necesita que nadie
-se ponga de acuerdo en un precio.
+se ponga de acuerdo en un precio. En el muro y en la columna de nombre del catálogo, esa parte se
+publica como porcentaje de **ese** ítem (5 de 10 es el 50% de esas chapas), no como monto (ADR-052).
 
 Si alguien prefiere transferir el monto para que la familia compre, eso **es un aporte** y sigue el
 camino que ya existe (ADR-006): entra al libro, se concilia y aparece en el total. Las dos formas de
