@@ -1,17 +1,17 @@
 import { normalizeDisplayName } from "./entities/donor";
 
 /**
- * Lo que hace falta para ir a buscar un bien físico (ADR-046).
+ * Lo que hace falta para coordinar un bien físico (ADR-046, ADR-051).
  *
  * El correo de la cuenta satisface «mail o teléfono». El teléfono es para
- * llamar. La dirección es el dato sin el cual el equipo no puede ir.
- * Nada de esto se publica.
+ * llamar. La dirección, si alguna vez se cargó, se guarda; la ficha ya no
+ * la pide. Nada de esto se publica.
  */
 
 export interface PhysicalPledgeContact {
   readonly contactName: string;
   readonly contactPhone: string | null;
-  readonly pickupAddress: string;
+  readonly pickupAddress: string | null;
 }
 
 export type PledgeContactField = "contactName" | "contactPhone" | "pickupAddress";
@@ -31,10 +31,6 @@ export function parsePhysicalPledgeContact(input: {
 
   if (contactName === null) {
     return { status: "error", field: "contactName" };
-  }
-
-  if (pickupAddress === null) {
-    return { status: "error", field: "pickupAddress" };
   }
 
   return {

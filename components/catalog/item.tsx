@@ -94,7 +94,6 @@ export function CatalogItem({
       {canClaim(quantities) ? (
         <HowToDonate
           itemId={item.id}
-          remaining={item.remainingQuantity}
           estimated={item.estimatedValue}
           copy={copy}
           account={account}

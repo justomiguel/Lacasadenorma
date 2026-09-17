@@ -312,13 +312,11 @@ test.describe("fase D · reservas", () => {
       const pagina = await donante.newPage();
 
       try {
-        await conItemPublicado(request, staffPage, titulo, 10, async () => {
+        await conItemPublicado(request, staffPage, titulo, 2, async () => {
           await crearCuenta(pagina, request, email);
           await pagina.goto("/catalogo");
           await abrirItemDelCatalogo(pagina, titulo);
-          await completarTraer(formularioDeTraer(articuloDelCatalogo(pagina)), {
-            quantity: 5,
-          });
+          await completarTraer(formularioDeTraer(articuloDelCatalogo(pagina)));
           await expect(pagina).toHaveURL(/\/cuenta$/);
           await elegirAparecerEnCuenta(pagina, visible);
 
@@ -331,7 +329,7 @@ test.describe("fase D · reservas", () => {
 
           await expect(fila.getByText(`${visible} donó el 50%`)).toBeVisible();
           await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
-          await expect(fila.getByText(/faltan 5 de 10/i)).toBeVisible();
+          await expect(fila.getByText(/faltan 1 de 2/i)).toBeVisible();
 
           await pagina.goto("/quienes-ayudaron");
           const linea = pagina.locator("li").filter({ hasText: titulo });

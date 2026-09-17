@@ -1,6 +1,6 @@
 # ADR-046 · El compromiso pide datos de retiro, no una cuenta como prueba
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-051](./051-dos-puertas-para-traer.md): el primer paso ya no pide dirección; el teléfono reserva sin cuenta.
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-051](./051-dos-puertas-para-traer.md): la ficha no pide dirección, ni al hidratar; el teléfono reserva sin cuenta.
 
 Enmienda a [ADR-033](./033-aprobacion-de-cuentas.md) (confirmar el correo
 alcanza para anotarse a traer), a [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md)

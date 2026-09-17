@@ -134,8 +134,7 @@ as $$
       p_is_anonymous := p_is_anonymous,
       p_display_name := p_display_name,
       p_note := p_note,
-      p_contact_name := 'Ana',
-      p_pickup_address := 'Riacho He Hé, Formosa'
+      p_contact_name := 'Ana'
     );
 $$;
 
@@ -421,7 +420,7 @@ select throws_ok(
   $q$ select public.claim_donation_item('ab700000-0000-4000-8000-000000000004') $q$,
   '23514',
   'datos_de_retiro',
-  'traer un bien sin nombre y dirección se rechaza'
+  'traer un bien sin nombre se rechaza'
 );
 
 -- ── Dos reservas secuenciales por la última unidad ──────────────────────────

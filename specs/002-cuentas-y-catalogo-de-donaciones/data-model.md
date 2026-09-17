@@ -362,7 +362,8 @@ no un error que delate que la fila existe.
    mira `user_metadata.email_verified`, que lo escribe la propia persona (`research.md` §4). El
    comentario de la función lo dice, para que nadie "refuerce" el chequeo con el campo equivocado.
 2. El perfil no está `declined`. `pending` y `approved` reservan (ADR-046).
-3. Si el canal es `bring`: nombre de contacto y dirección de retiro, o error `datos_de_retiro`.
+3. Si el canal es `bring`: nombre de contacto, o error `datos_de_retiro`. La dirección de retiro
+   es optativa.
 4. `release_expired_holds(item_id)` — el vencimiento auto-sanante de FR-218.
 5. Tope de reservas activas por cuenta, o error (FR-219).
 6. El `update` condicional que resuelve la concurrencia:

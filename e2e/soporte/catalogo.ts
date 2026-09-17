@@ -254,22 +254,11 @@ export function formularioDeTraer(articulo: Locator) {
   return articulo.locator("form").filter({ hasText: /quiero donar/i });
 }
 
-/** Nombre y dirección de retiro, y envío. El de retiro aparece al hidratar (ADR-051). */
-export async function completarTraer(
-  formulario: Locator,
-  extra?: { readonly quantity?: number },
-): Promise<void> {
-  await expect(formulario.getByLabel(/dirección donde ir a buscar/i)).toBeVisible();
+/** Nombre y correo: el camino de la cuenta (ADR-051). El de retiro no aparece. */
+export async function completarTraer(formulario: Locator): Promise<void> {
+  await expect(formulario.getByLabel(/dirección donde ir a buscar/i)).toHaveCount(0);
   await formulario.getByLabel(/^nombre$/i).fill("Ana");
-
-  if (extra?.quantity !== undefined) {
-    await formulario.getByLabel(/^cuántas$/i).fill(String(extra.quantity));
-  }
-
-  await formulario
-    .getByLabel(/dirección donde ir a buscar/i)
-    .fill("Riacho He Hé, Formosa");
-
+  await formulario.getByLabel(/^correo$/i).fill("ana@ejemplo.invalid");
   await formulario.getByRole("button", { name: /quiero donar/i }).click();
 }
 

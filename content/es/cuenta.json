@@ -27,9 +27,9 @@
     "privacyTail": ", y la cuenta se borra desde el sitio cuando quieras.",
     "haveAccount": "¿Ya tenés cuenta?",
     "haveAccountLink": "Ingresá",
-    "donateLead": "Dejaste un correo para donar un artículo. La cuenta es para confirmar esa casilla, después pedir dónde ir a buscar, y para que veas y canceles lo anotado.",
+    "donateLead": "Dejaste un correo para donar un artículo. La cuenta es para confirmar esa casilla, y para que veas y canceles lo anotado.",
     "donateWhy": [
-      "Confirmar el correo es la validación: así sabemos que podemos escribirte. Después, en la ficha, se pide la dirección y se reserva el ítem. También le avisamos a quien coordina.",
+      "Confirmar el correo es la validación: así sabemos que podemos escribirte. Después volvés a la ficha, te anotás con nombre y un teléfono o un correo, y le avisamos a quien coordina.",
       "El teléfono, si lo preferís, es el otro camino: avisa para que te llamen y no abre una cuenta."
     ],
     "checkInboxTitle": "Revisá tu correo",

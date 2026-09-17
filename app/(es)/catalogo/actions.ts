@@ -17,7 +17,6 @@ import {
 import { claimItem } from "@/src/application/use-cases/claim-item";
 import { offerItemByPhone } from "@/src/application/use-cases/offer-item-by-phone";
 import { parseDonateStart } from "@/src/domain/donate-start";
-import { isCoverChannel } from "@/src/domain/cover";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { notifyPhoneOffer } from "@/src/infrastructure/donations/notify-offer";
 import { notifyPledgeClaimed } from "@/src/infrastructure/donations/notify";
@@ -32,10 +31,9 @@ import { revalidateDonationPages } from "../revalidate-donations";
 /**
  * El primer paso de traer un bien (ADR-051): nombre y teléfono o correo.
  *
- * El correo abre `/cuenta/crear` con el mail en cookie, no en la URL. El
- * teléfono reserva a nombre de esa persona y manda `staff.phone_offer` con
- * un botón de WhatsApp y dos enlaces. Sin sesión es el camino público; con
- * sesión el HTML hidratado ya muestra el de retiro.
+ * El correo sin sesión abre `/cuenta/crear` con el mail en cookie, no en la
+ * URL. Con sesión, reserva en ese POST, sin pedir domicilio. El teléfono
+ * reserva a nombre de esa persona y manda `staff.phone_offer`.
  */
 export async function startDonateAction(
   _state: AccountFormState,
@@ -66,6 +64,15 @@ export async function startDonateAction(
   }
 
   if (start.value.channel === "email") {
+    const deps = await getAccountDeps();
+
+    if (deps.session.status === "ready") {
+      return claimFromDonate(deps, locale, itemId, catalog, ficha, {
+        contactName: start.value.name,
+        contactPhone: textOf(formData, "telefono"),
+      });
+    }
+
     const cookieStore = await cookies();
 
     cookieStore.set(
@@ -119,27 +126,14 @@ export async function startDonateAction(
   redirect(`${ficha}?reservado=1#gracias`);
 }
 
-/**
- * Anotarse a traer un ítem, con sesión.
- *
- * El formulario de retiro aparece al hidratar. Un POST sin sesión —el HTML
- * público no es éste— redirige a crear una cuenta con `volver` a la ficha.
- */
-export async function claimItemAction(
-  _state: AccountFormState,
-  formData: FormData,
+async function claimFromDonate(
+  deps: Awaited<ReturnType<typeof getAccountDeps>>,
+  locale: Locale,
+  itemId: string,
+  catalog: string,
+  ficha: string,
+  contact: { readonly contactName: string; readonly contactPhone: string | null },
 ): Promise<AccountFormState> {
-  const locale = localeOf(formData);
-  const itemId = textOf(formData, "itemId");
-  const catalog = localizeHref("/catalogo", locale);
-  const ficha = CATALOG_ITEM_ID.test(itemId) ? catalogItemHref(itemId, locale) : catalog;
-  const deps = await getAccountDeps();
-
-  if (deps.session.status === "anonymous") {
-    redirect(accountHref("crear", locale, ficha));
-  }
-
-  const canal = textOf(formData, "canal");
   const result = await claimItem(
     {
       ...deps,
@@ -147,11 +141,11 @@ export async function claimItemAction(
     },
     {
       itemId,
-      quantity: textOf(formData, "cantidad") || "1",
-      coverChannel: isCoverChannel(canal) ? canal : "bring",
-      contactName: textOf(formData, "contacto"),
-      contactPhone: textOf(formData, "telefono"),
-      pickupAddress: textOf(formData, "direccion"),
+      quantity: "1",
+      coverChannel: "bring",
+      contactName: contact.contactName,
+      contactPhone: contact.contactPhone,
+      pickupAddress: null,
     },
   );
 

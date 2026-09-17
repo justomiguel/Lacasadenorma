@@ -18,9 +18,11 @@ import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
 import { OfferThanksNotice } from "./offer-thanks";
 
 /**
- * El primer paso de traer un bien, sin sesión (ADR-051): nombre y teléfono
- * o correo. El HTML público es éste. Quien ya tiene sesión ve el de retiro
- * después de hidratar.
+ * El primer paso de traer un bien (ADR-051): nombre y teléfono o correo.
+ *
+ * El HTML público es éste, también con sesión. El correo sin sesión abre
+ * `/cuenta/crear`. Con sesión, reserva en ese POST. El teléfono reserva
+ * a nombre de esa persona, con o sin cuenta.
  */
 export function OfferForm({
   itemId,
