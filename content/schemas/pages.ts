@@ -204,6 +204,8 @@ export const catalogSchema = pageSchema.extend({
   claimPhoneHint: z.string().min(1),
   offerThanksTitle: z.string().min(1),
   offerThanksBody: z.string().min(1),
+  offerThanksDismiss: z.string().min(1),
+  offerThanksClose: z.string().min(1),
   pickupAddress: z.string().min(1),
   pickupAddressHint: z.string().min(1),
   units: z.object({

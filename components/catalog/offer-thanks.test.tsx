@@ -5,14 +5,26 @@ import { getContent } from "@/content/pack";
 
 import { OfferThanksNotice } from "./offer-thanks";
 
+const { catalog } = getContent("es");
+
 describe("OfferThanksNotice", () => {
-  it("confirma el gracias y que nos vamos a comunicar, sin un diálogo", () => {
-    render(<OfferThanksNotice copy={getContent("es").catalog} />);
+  it("es un diálogo centrado que tapa la ficha y agradece", () => {
+    render(<OfferThanksNotice copy={catalog} dismissHref="/catalogo/item" />);
 
-    const aviso = screen.getByRole("status");
+    const dialogo = screen.getByRole("dialog", { name: /gracias por donar/i });
 
-    expect(aviso).toHaveAttribute("id", "gracias");
+    expect(dialogo).toHaveAttribute("id", "gracias");
+    expect(dialogo).toHaveAttribute("aria-modal", "true");
     expect(screen.getByRole("heading", { name: /gracias por donar/i })).toBeVisible();
     expect(screen.getByText(/nos vamos a estar comunicando con vos/i)).toBeVisible();
+    expect(screen.getByRole("link", { name: /^entendido$/i })).toHaveAttribute(
+      "href",
+      "/catalogo/item",
+    );
+    expect(screen.getByRole("link", { name: /^cerrar$/i })).toHaveAttribute(
+      "href",
+      "/catalogo/item",
+    );
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });

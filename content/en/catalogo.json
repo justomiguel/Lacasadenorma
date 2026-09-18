@@ -52,6 +52,8 @@
   "claimPhoneHint": "Optional. If you leave it blank, we write to the email on the account.",
   "offerThanksTitle": "Thank you for donating",
   "offerThanksBody": "We'll be in touch with you. The item stays reserved in your name until the person who coordinates confirms.",
+  "offerThanksDismiss": "Got it",
+  "offerThanksClose": "Close",
   "pickupAddress": "Address to pick it up",
   "pickupAddressHint": "Street, town, a landmark. Without the address nobody can come and get the good. It is not published.",
   "coverNoEstimate": "This item has no estimate loaded. If you cover it with money, you choose the amount.",

@@ -123,7 +123,12 @@ export async function CatalogItemScreen({
       <Container>
         <Section>
           {typeof conflicto === "string" ? <ConflictNotice copy={catalog} /> : null}
-          {typeof reservado === "string" ? <OfferThanksNotice copy={catalog} /> : null}
+          {typeof reservado === "string" ? (
+            <OfferThanksNotice
+              copy={catalog}
+              dismissHref={localizedHref(`/catalogo/${id}`, locale)}
+            />
+          ) : null}
           <CatalogItem
             item={item}
             claims={claims}

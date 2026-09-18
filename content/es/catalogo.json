@@ -52,6 +52,8 @@
   "claimPhoneHint": "Optativo. Si no lo dejás, te escribimos al mail de la cuenta.",
   "offerThanksTitle": "Gracias por donar",
   "offerThanksBody": "Nos vamos a estar comunicando con vos. El ítem queda reservado a tu nombre hasta que quien coordina confirme.",
+  "offerThanksDismiss": "Entendido",
+  "offerThanksClose": "Cerrar",
   "pickupAddress": "Dirección donde ir a buscar",
   "pickupAddressHint": "Calle, pueblo, una referencia. Sin la dirección no se puede ir a buscar el bien. No se publica.",
   "coverNoEstimate": "Este artículo no tiene un estimado cargado. Si lo cubrís con plata, el monto lo elegís vos.",

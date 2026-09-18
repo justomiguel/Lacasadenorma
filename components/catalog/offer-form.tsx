@@ -12,6 +12,7 @@ import {
 } from "@/components/account/fields";
 import { fieldError, generalError } from "@/components/account/error-text";
 import type { AccountContent, CatalogContent } from "@/content/schema";
+import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 import { captureFirstInvalid, revealFormError } from "./reveal-invalid";
@@ -19,7 +20,7 @@ import { OfferThanksNotice } from "./offer-thanks";
 
 /**
  * El primer paso de traer un bien, sin sesión (ADR-051): nombre y teléfono
- * o correo. El HTML público es éste. Quien ya tiene sesión ve el de retiro
+ * o correo. El HTML público es éste. Quien ya tiene sesión ve el botón
  * después de hidratar.
  */
 export function OfferForm({
@@ -50,7 +51,12 @@ export function OfferForm({
   }, [state]);
 
   if (state.phase === "done") {
-    return <OfferThanksNotice copy={copy} className="mt-lg" />;
+    return (
+      <OfferThanksNotice
+        copy={copy}
+        dismissHref={localizedHref(`/catalogo/${itemId}`, locale)}
+      />
+    );
   }
 
   return (

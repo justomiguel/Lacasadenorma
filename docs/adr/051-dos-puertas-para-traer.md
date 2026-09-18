@@ -79,12 +79,15 @@ el segundo en dos caminos:
    al HTML del correo —no hay imágenes remotas (ADR-010)—; el texto del
    botón nombra la marca y el número. El número también se lee en
    `/admin/donaciones`.
-5. **Quien dejó el teléfono ve un gracias en la ficha, no un diálogo.** El
-   POST redirige a `?reservado=1#gracias`. Ahí hay un aviso `role="status"`
-   que dice «Gracias por donar» y que nos vamos a estar comunicando. No es
-   un `alert()`, ni un modal: es el estado diseñado de esa pantalla
-   (ADR-032). El formulario se desmonta si ya no queda cupo; por eso el
-   aviso vive en la ficha, igual que `?conflicto=1`.
+5. **Quien dejó el teléfono ve el gracias en un diálogo centrado.** El POST
+   redirige a `?reservado=1#gracias`. Ahí se abre un `role="dialog"`
+   `aria-modal` en el centro, sobre un velo de tinta que tapa la ficha: no
+   se toca otra cosa hasta cerrarlo. Dice «Gracias por donar» y que nos
+   vamos a estar comunicando. Se cierra con «Entendido», con el icono de
+   cerrar o con Escape; vuelve a la misma ficha sin el query. No es
+   `alert()`: el HTML del diálogo es el estado diseñado, y sin JavaScript
+   el velo y el enlace «Entendido» siguen ahí. El formulario se desmonta
+   si ya no queda cupo; el diálogo vive en la ficha, no en un script.
 6. **Si llenan los dos, gana el mail.** Eligieron el sistema. El teléfono no
    se pide de nuevo al volver con sesión: el correo de la cuenta alcanza.
 
@@ -102,6 +105,7 @@ el segundo en dos caminos:
 | Pedir de nuevo el nombre a quien ya tiene sesión | La cuenta ya dice quién es. Un clic reserva y avisa al owner (`staff.new_pledge`) |
 | Personalizar la ficha según haya sesión | Rompe ADR-037 y el caché. El botón aparece al hidratar, como el chrome |
 | Pedir los dos, mail y teléfono | El mínimo es uno. El mail abre el sistema; el teléfono, la llamada y la reserva |
+| Un `alert()` o un toast que se va solo | El pedido del 18 de septiembre de 2026 es ver el gracias: un diálogo centrado que bloquea, no un aviso en el margen ni un cuadro del navegador |
 | Pedir «nombre para mostrar» y nota en la ficha | El primer clic es nombre y un canal. Aparecer se decide después: en `/cuenta` si hay mail, en el sí del owner si hay teléfono |
 | Publicar el nombre de contacto del teléfono al confirmar | Ese nombre es para llamarlos. El del muro es el que aceptaron poner, en la pantalla del sí |
 

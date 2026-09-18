@@ -269,7 +269,10 @@ la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
 
 - [x] **T079** `whatsappHrefFor` arma `wa.me` con código de país. `staff.phone_offer` lleva ese
       botón con el número. La ficha, con `?reservado=1#gracias`, muestra «Gracias por donar» y
-      que nos vamos a estar comunicando (`role="status"`). Spec FR-237 / FR-264 / SC-218.
+      que nos vamos a estar comunicando. Spec FR-237 / FR-264 / SC-218.
+
+- [x] **T081** El gracias es un diálogo centrado (`role="dialog"` `aria-modal`) que tapa la
+      ficha hasta «Entendido», el icono de cerrar o Escape. Spec FR-264 / SC-218.
 
 ### Fase I — Con sesión, un clic (ADR-051)
 
