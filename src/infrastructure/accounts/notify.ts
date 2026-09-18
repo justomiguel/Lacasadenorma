@@ -37,6 +37,7 @@ export async function notifyAccountOpened(profile: DonorProfile): Promise<void> 
     kind: "account.received",
     subjectId: profile.userId,
     result: personResult,
+    userId: profile.userId,
   });
 
   const staffAddress = readStaffAddress();
@@ -57,5 +58,6 @@ export async function notifyAccountOpened(profile: DonorProfile): Promise<void> 
     kind: "staff.new_account",
     subjectId: profile.userId,
     result: staffResult,
+    userId: profile.userId,
   });
 }

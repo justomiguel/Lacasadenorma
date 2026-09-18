@@ -100,17 +100,23 @@ describe("createLogger", () => {
     expect(payload.campaignId).toBe("c1");
   });
 
-  it("serializa un Error con su nombre, mensaje y causa", () => {
+  it("serializa un Error con su nombre, mensaje, stack y causa", () => {
     const cause = new Error("connection refused");
 
     createLogger().error("no se pudo conectar", { error: new Error("fallo", { cause }) });
 
     const payload = JSON.parse(String(consoleError.mock.calls[0]?.[0])) as {
-      error: { name: string; message: string; cause: { name: string; message: string } };
+      error: {
+        name: string;
+        message: string;
+        stack: string;
+        cause: { name: string; message: string };
+      };
     };
 
     expect(payload.error.name).toBe("Error");
     expect(payload.error.message).toBe("fallo");
+    expect(payload.error.stack).toContain("fallo");
     // La causa conserva su mensaje: es el dato con el que se diagnostica. Un
     // `String(cause)` lo habría dejado en `[object Object]` (principio X).
     expect(payload.error.cause.message).toBe("connection refused");

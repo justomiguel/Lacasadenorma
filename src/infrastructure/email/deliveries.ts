@@ -1,15 +1,16 @@
 import type { EmailKind, EmailResult } from "@/src/domain/ports/email";
 
+import { publishErrorDiagnostic } from "../logging/diagnostic";
 import { QueryError } from "../supabase/admin/query";
+import { createAuthAdminClient } from "../supabase/auth-admin";
 import { createServerSupabaseClient } from "../supabase/server-client";
 
 /**
  * Anota el intento en `email_deliveries`. La dirección **no viaja**: la resuelve
  * `record_email_delivery()` desde `auth.users` (ADR-028).
  *
- * `subjectId` es la reserva o la cuenta, según la clase. `pledge_id` sólo se
- * llena cuando el correo habla de una reserva; los de cuenta van con
- * `about_user_id`, que resuelve la función.
+ * Con sesión usa el cliente de quien donó. Sin sesión —oferta por teléfono—
+ * usa la clave secreta: `anon` no tiene EXECUTE y PostgREST responde 401.
  */
 export async function recordEmailDelivery(input: {
   readonly kind: EmailKind;
@@ -17,10 +18,35 @@ export async function recordEmailDelivery(input: {
   readonly result: EmailResult;
   readonly userId?: string;
 }): Promise<void> {
-  const client = await createServerSupabaseClient();
+  const sessionClient = await createServerSupabaseClient();
+  const secretClient = createAuthAdminClient();
+
+  if (sessionClient === null && secretClient === null) {
+    return;
+  }
+
+  const userId = await resolveUserId(input.userId, sessionClient);
+  const client = secretClient ?? sessionClient;
 
   if (client === null) {
     return;
+  }
+
+  if (secretClient === null && userId === null && !input.kind.startsWith("staff.")) {
+    await throwDeliveryError({
+      message: "Registrar un envío de persona necesita una sesión o de quién es.",
+      code: "42501",
+      status: 401,
+    });
+  }
+
+  if (secretClient === null && userId === null) {
+    await throwDeliveryError({
+      message:
+        "sin sesión: anon no puede ejecutar record_email_delivery (401). Hace falta SUPABASE_SECRET_KEY para anotar un correo de equipo.",
+      code: "42501",
+      status: 401,
+    });
   }
 
   const pledgeId =
@@ -42,10 +68,40 @@ export async function recordEmailDelivery(input: {
       ? input.result.providerId
       : null) as string,
     p_error: (input.result.status === "failed" ? input.result.error : null) as string,
-    p_user_id: (input.userId ?? null) as string,
+    p_user_id: (userId ?? null) as string,
   });
 
   if (error !== null) {
-    throw new QueryError("registrar el envío", error);
+    await throwDeliveryError(error);
   }
+}
+
+async function resolveUserId(
+  explicit: string | undefined,
+  sessionClient: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+): Promise<string | null> {
+  if (explicit !== undefined) {
+    return explicit;
+  }
+
+  if (sessionClient === null) {
+    return null;
+  }
+
+  const { data } = await sessionClient.auth.getUser();
+
+  return data.user?.id ?? null;
+}
+
+async function throwDeliveryError(cause: {
+  message: string;
+  code?: string | undefined;
+  details?: string | undefined;
+  hint?: string | undefined;
+  status?: number | undefined;
+}): Promise<never> {
+  const error = new QueryError("registrar el envío", cause);
+
+  await publishErrorDiagnostic(error);
+  throw error;
 }

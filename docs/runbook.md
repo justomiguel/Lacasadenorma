@@ -469,12 +469,21 @@ en Vercel no tiene efecto hasta el próximo build.
 ### Una página falla
 
 Los logs son JSON estructurado, en Vercel → Deployment → Functions. Cada entrada trae nivel, mensaje,
-servicio y contexto, con las claves sensibles redactadas —tokens, cookies, correos, CBU, alias, y
+servicio, stack y contexto, con las claves sensibles redactadas —tokens, cookies, correos, CBU, alias, y
 varias más— antes de escribirse.
 
 El sitio no muestra errores técnicos a quien lo visita. Cuando un dato no está disponible, la página
 dice que no está disponible y por qué; el detalle va al log. Así que si alguien reporta "no se ve el
 total", el mensaje que vio **no** es el error: hay que buscarlo en los logs.
+
+Para ver el stack **en el navegador**, en marcha blanca:
+
+```
+SHOW_ERROR_STACK=1
+```
+
+en el entorno del servidor de Vercel, **sin** `NEXT_PUBLIC_`, y redeployar. Apagarlo es sacarla o
+ponerla en `0` y volver a desplegar. El procedimiento está en [ADR-053](./adr/053-stack-detras-de-un-toggle.md).
 
 ### Algo cambió y no se ve
 

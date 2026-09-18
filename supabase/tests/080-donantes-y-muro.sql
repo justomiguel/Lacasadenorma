@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(64);
+select plan(68);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -467,6 +467,13 @@ select function_privs_are(
   'y anon no puede invocarla: Postgres otorga EXECUTE a PUBLIC en toda función nueva y esta migración lo revoca (E3)'
 );
 
+select function_privs_are(
+  'public', 'record_email_delivery',
+  array['text', 'uuid', 'text', 'text', 'text', 'uuid'],
+  'service_role', array['EXECUTE']::text[],
+  'service_role puede anotar: es el servidor, cuando no hay sesión (oferta por teléfono, ADR-028)'
+);
+
 -- ── Anotar lo propio, sin nombrar a nadie ───────────────────────────────────
 
 set local role authenticated;
@@ -533,6 +540,43 @@ select results_eq(
   'la dirección guardada es la de auth.users de quien llamó, y la del aviso al equipo es nula (ADR-028)'
 );
 
+-- Sin sesión el cliente público recibe 401 de PostgREST. El servidor anota con
+-- service_role: staff.* no pide persona; un correo de persona pide p_user_id.
+set local role service_role;
+
+select lives_ok(
+  $s$
+    select public.record_email_delivery(
+      'staff.phone_offer', '30000000-0000-4000-8000-000000000003', 'skipped', null, null
+    )
+  $s$,
+  'service_role anota un correo de equipo sin sesión: es la oferta por teléfono'
+);
+
+select throws_ok(
+  $s$
+    select public.record_email_delivery(
+      'pledge.confirmed', '30000000-0000-4000-8000-000000000003', 'sent', 're_x', null
+    )
+  $s$,
+  '42501',
+  null,
+  'y sin de quién es, no anota un correo de persona: hace falta p_user_id o una sesión'
+);
+
+select lives_ok(
+  $s$
+    select public.record_email_delivery(
+      'pledge.confirmed', '30000000-0000-4000-8000-000000000003', 'sent', 're_srv', null,
+      '20000000-0000-4000-8000-000000000001'
+    )
+  $s$,
+  'con p_user_id, service_role anota el correo de esa persona'
+);
+
+reset role;
+set local "request.jwt.claims" = '';
+
 -- La segunda capa de idempotencia, la que no vence. La clave de Resend dura 24
 -- horas y el proceso de recordatorios corre todos los días: a las 25 horas ya no
 -- frenaría nada (FR-235, SC-210). Esto sí.
@@ -565,7 +609,7 @@ set local "request.jwt.claims" =
 
 select is(
   (select count(*)::int from public.email_deliveries),
-  2,
+  4,
   'auditor lee el registro de envíos: para eso existe, para que un correo que no salió sea visible en el backoffice'
 );
 

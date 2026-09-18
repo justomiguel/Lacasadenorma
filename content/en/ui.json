@@ -239,6 +239,14 @@
     "lead": "That link does not lead to a page of La Casa de Norma.",
     "home": "Back to the home page"
   },
+  "errorPage": {
+    "title": "This could not be completed",
+    "lead": "Something the site could not resolve happened. The detail is in the server log.",
+    "retry": "Try again",
+    "home": "Back to the home page",
+    "stackLabel": "Technical detail",
+    "close": "Close"
+  },
   "paypalReturn": {
     "completed": {
       "title": "Thank you",

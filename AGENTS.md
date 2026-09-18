@@ -57,6 +57,8 @@ build, a propósito.
   en el árbol.
 - Toda imagen por `next/image` con `width`/`height` reales y `alt` que aporte información.
 - Los estados vacío, de carga y de error se diseñan. Un estado sin diseñar es un bug abierto.
+- Los errores de servidor se registran con causa y stack. Quien visita ve un mensaje
+  comprensible. El stack en el navegador es `SHOW_ERROR_STACK=1` (ADR-053), no el default.
 
 ## Diseño
 

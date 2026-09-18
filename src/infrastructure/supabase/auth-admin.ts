@@ -4,11 +4,16 @@ import { readSupabaseConfig } from "./config";
 import type { Database } from "./database.types";
 
 /**
- * Cliente con la clave secreta, **sólo** para `auth.admin.generateLink`.
+ * Cliente con la clave secreta.
  *
- * No se usa para leer ni escribir la base: eso saltaría RLS (ADR-019). Si no
- * hay clave, el alta cae en `signUp` del cliente de sesión, que es lo que el
- * harness local sabe emular.
+ * Dos usos, y ninguno lee una tabla (ADR-019, ADR-028):
+ *
+ * 1. `auth.admin.generateLink` cuando el hook de correo todavía no está.
+ * 2. `record_email_delivery` cuando no hay sesión —la oferta por teléfono—
+ *    porque `anon` no tiene `EXECUTE` y PostgREST responde 401.
+ *
+ * Si no hay clave, el alta cae en `signUp` del cliente de sesión, y el
+ * teléfono reserva igual sin anotar el envío.
  */
 export function createAuthAdminClient(): SupabaseClient<Database> | null {
   const config = readSupabaseConfig();

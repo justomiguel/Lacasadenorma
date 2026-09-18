@@ -63,3 +63,4 @@ Formato: contexto → decisión → alternativas descartadas → consecuencias. 
 | [050](./050-acciones-del-catalogo.md) | Acciones del catálogo: ver, editar la fila y borrar, en el backoffice | Aceptada |
 | [051](./051-dos-puertas-para-traer.md) | Dos puertas para traer un bien: el mail abre cuenta, el teléfono reserva | Aceptada |
 | [052](./052-porcentaje-de-ese-item.md) | El porcentaje en especie es de ese ítem, y Donar queda hasta el 100% | Aceptada |
+| [053](./053-stack-detras-de-un-toggle.md) | El stack va a los logs; al navegador, detrás de `SHOW_ERROR_STACK` | Aceptada |

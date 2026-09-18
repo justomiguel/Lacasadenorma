@@ -78,7 +78,7 @@ una mitigación sin verificación es una intención.
 | I3 | Una vista expone datos privados | **Las vistas bypasean RLS por defecto.** Toda vista se crea con `security_invoker = true` | pgTAP que recorre `pg_views` y falla si alguna vista carece de la opción |
 | I4 | La clave secreta de Supabase llega al navegador | Nunca con prefijo `NEXT_PUBLIC_`; sólo se usa en código de servidor bajo `infrastructure/`; verificación automática en CI | Script en CI que falla si la clave secreta aparece fuera de la lista permitida |
 | I5 | Los logs contienen datos sensibles | El logger redacta por lista de claves (token, cookie, authorization, clave, email) antes de emitir | Test unitario del logger con un objeto que contiene un token |
-| I6 | Un mensaje de error revela estructura interna | Los errores de servidor se registran completos y al usuario se le muestra un mensaje comprensible sin detalle técnico | Test del manejador de errores |
+| I6 | Un mensaje de error revela estructura interna | Los errores de servidor se registran con causa y stack. Quien visita ve un mensaje comprensible. El stack en el navegador sólo con `SHOW_ERROR_STACK=1` (ADR-053) | Test del manejador de errores: sin toggle no hay stack; con toggle sí |
 | I7 | Enumeración de borradores por URL | Los borradores no tienen ruta pública; el `slug` sólo resuelve si `published_at` no es nulo | E2E: un borrador devuelve 404 |
 
 ### Denial of service

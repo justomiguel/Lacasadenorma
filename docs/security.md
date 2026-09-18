@@ -326,15 +326,16 @@ formulario, ese comentario deja de ser cierto.
 | `NEXT_PUBLIC_ANALYTICS_*` | Sí | Script del proveedor y su origen en la CSP |
 | `ANALYTICS_API_KEY` | **No** | Stats API, sólo para armar `/admin/metricas` (ADR-049) |
 | `ANALYTICS_API_URL` | **No** | Origen del Stats API si no coincide con el del script |
-| `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink` en el servidor, si el hook de correo no está. Nunca para la base |
+| `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink`, y `record_email_delivery` cuando no hay sesión (oferta por teléfono). No lee tablas |
 | `RESEND_API_KEY` | **No** | `ResendSender` y, de respaldo, SMTP de Auth |
 | `SEND_EMAIL_HOOK_SECRET` | **No** | Verificar la firma del hook `send_email` |
 | `EMAIL_FROM_ADDRESS` | **No** | Remitente de Resend |
 | `EMAIL_STAFF_ADDRESS` | **No** | Aviso al equipo |
 
 La clave secreta no tiene prefijo `NEXT_PUBLIC_`. En `src/` se lee **sólo** en
-`src/infrastructure/supabase/auth-admin.ts` para emitir el enlace de confirmación.
-Eso lo verifica `npm run check:secrets`, que hace tres cosas:
+`src/infrastructure/supabase/auth-admin.ts`: el enlace de confirmación, y anotar
+un envío de equipo cuando quien donó no tiene sesión (ADR-028). No se usa para
+leer tablas. Eso lo verifica `npm run check:secrets`, que hace tres cosas:
 
 1. Rechaza nombres con forma de secreto que lleven prefijo `NEXT_PUBLIC_` (`SECRET`,
    `SERVICE_ROLE`, `PRIVATE`, `PASSWORD`, `TOKEN`, `API_KEY`).
@@ -357,7 +358,9 @@ de un `echo` ni de una URL. La rotación está en
 ## 8. Logs
 
 `src/infrastructure/logging/logger.ts` emite JSON estructurado y **redacta por lista de claves antes de
-escribir**. La lista, tal como está en el código: `token`, `accesstoken`, `refreshtoken`, `idtoken`,
+escribir**. Un `Error` sale con `name`, `message`, `stack`, `cause` y, si existen, `code`, `details`,
+`hint` y `status` (ADR-053). La lista de claves redactadas, tal como está en el código: `token`,
+`accesstoken`, `refreshtoken`, `idtoken`,
 `authorization`, `cookie`, `setcookie`, `password`, `secret`, `apikey`, `key`, `clave`, `email`,
 `phone`, `telefono`, `dni`, `cbu`, `cvu`, `alias`, `iban`, `accountnumber`, `routingnumber`, `rut`,
 `contributorname`, `contributordisplayname`, `sourcenote`.
@@ -375,7 +378,7 @@ diagnosticar es el código.
 
 Los mensajes al usuario y los mensajes al log son distintos a propósito (amenaza I6): el log lleva el
 error completo, y la pantalla dice `"No se pudo <hacer tal cosa>. El detalle quedó en el registro del
-servidor."`
+servidor."` El stack en el navegador es `SHOW_ERROR_STACK=1` (ADR-053), no el default.
 
 ---
 

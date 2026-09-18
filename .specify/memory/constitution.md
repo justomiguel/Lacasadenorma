@@ -1,6 +1,25 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.3.1 → 1.4.0
+Tipo de cambio: MINOR — se amplía el principio X con un toggle de diagnóstico.
+Fecha: 2026-09-18
+
+Motivo: un 401 de `record_email_delivery` no dejó rastro útil en los logs, y
+no había `error.tsx`. El pedido de ver el stack en el navegador no puede ser
+el default en un sitio público en marcha blanca.
+
+  1. "X. Observabilidad" — los errores de servidor se registran con causa y
+     stack. Quien visita ve un mensaje comprensible. El stack en el navegador
+     MUST estar detrás de `SHOW_ERROR_STACK=1` (ADR-053).
+  2. Compuerta: el logger serializa `stack`; `error.tsx` no muestra detalle
+     técnico sin el toggle.
+
+Artefactos actualizados en el mismo commit:
+  ✅ docs/adr/053-stack-detras-de-un-toggle.md
+  ✅ AGENTS.md, docs/security.md, docs/runbook.md, threat-model I6
+  ✅ logger, QueryError, error.tsx, SHOW_ERROR_STACK
+
 Cambio de versión: 1.3.0 → 1.3.1
 Tipo de cambio: PATCH — se precisa colocación y tamaño del pictograma identificador.
 Fecha: 2026-09-16
@@ -296,7 +315,11 @@ Un error importante MUST poder diagnosticarse sin adivinar.
 
 - Logging estructurado con contexto suficiente para reproducir, y **sin datos sensibles**: nunca
   tokens, claves, cookies, ni datos personales.
-- Los errores de servidor se registran con su causa; el usuario ve un mensaje comprensible.
+- Los errores de servidor se registran con su causa **y su stack**. Quien visita ve un mensaje
+  comprensible, no el interior del servidor.
+- El stack en el navegador MUST NOT ser el default en producción. Se prende con `SHOW_ERROR_STACK=1`
+  en el entorno del servidor (ADR-053). Es un toggle de marcha blanca, no una página pública de
+  diagnóstico. Sin el prefijo `NEXT_PUBLIC_`.
 - Health endpoint mínimo para verificar que el despliegue está vivo.
 - Complejidad de observabilidad proporcionada al tamaño del proyecto: no se instala una plataforma
   de telemetría para nueve páginas.
@@ -474,4 +497,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.3.1 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-16
+**Version**: 1.4.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-18

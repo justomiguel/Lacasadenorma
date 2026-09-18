@@ -118,9 +118,21 @@ canje:
    `EmailSender` → `POST https://api.resend.com/emails`. Con el hook habilitado, Auth **no** manda
    por SMTP: un solo correo, el mismo remitente, el texto en `content/*/emails.json`.
 2. **`auth.admin.generateLink`.** Si el hook todavía no está y hay `SUPABASE_SECRET_KEY`, el alta
-   crea la cuenta por esa llamada y manda el correo ella. La clave secreta se usa **sólo** para
-   esto, nunca para leer ni escribir la base (ADR-019). Sin ella —el harness local— el alta es
-   `signUp` y el buzón de prueba lee el token de `auth.users`.
+   crea la cuenta por esa llamada y manda el correo ella. La clave secreta no lee tablas (ADR-019).
+   Sin ella —el harness local— el alta es `signUp` y el buzón de prueba lee el token de
+   `auth.users`.
+
+## Enmienda · Anotar un envío sin sesión (2026-09-18)
+
+`record_email_delivery()` tenía `EXECUTE` sólo para `authenticated`. Quien deja un teléfono no
+tiene sesión: el cliente llama como `anon`, PostgREST responde **401** y el aviso al equipo no se
+anota. El `catch` de FR-233 traga el fallo para no deshacer la reserva.
+
+**Decisión.** `service_role` también tiene `EXECUTE`. La función, sin `auth.uid()`, acepta un
+correo `staff.*` o un correo de persona con `p_user_id`. `anon` sigue sin el privilegio. El
+adaptador usa la clave secreta **sólo** para esa RPC cuando no hay sesión; con sesión sigue el
+cliente de quien donó. Sin clave secreta no llama a PostgREST: registra el 401 en el log en lugar
+de dispararlo.
 
 `enable_confirmations = true` no cambia: sin abrir el enlace no hay sesión, y eso sigue siendo la
 prueba de que la casilla existe.

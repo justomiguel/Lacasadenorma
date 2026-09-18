@@ -3,6 +3,7 @@ import { RevealObserver } from "@/components/motion/reveal-observer";
 import { AnalyticsScript } from "@/components/site/analytics";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { ErrorStackDialog } from "@/components/site/error-stack-dialog";
 import { HelpBar } from "@/components/site/help-bar";
 import { SessionProvider } from "@/components/site/session";
 import { StructuredData } from "@/components/site/structured-data";
@@ -10,6 +11,7 @@ import { WebMcpTools } from "@/components/site/webmcp";
 import { getContent } from "@/content";
 import { localizedHref } from "@/src/i18n/href";
 import { htmlLang, type Locale } from "@/src/i18n/locale";
+import { consumeErrorDiagnostic } from "@/src/infrastructure/logging/diagnostic";
 import {
   graph,
   organizationSchema,
@@ -20,7 +22,7 @@ import { getSiteUrl } from "@/src/infrastructure/site-url";
 import { caveat, inter, playfair, playfairItalic } from "@/app/fonts";
 import "@/app/globals.css";
 
-export function PublicDocument({
+export async function PublicDocument({
   locale,
   children,
 }: {
@@ -29,6 +31,7 @@ export function PublicDocument({
 }) {
   const { site, ui, legal } = getContent(locale);
   const siteUrl = getSiteUrl();
+  const diagnostic = await consumeErrorDiagnostic();
 
   return (
     <html
@@ -71,6 +74,9 @@ export function PublicDocument({
             <HelpBar href={localizedHref("/ayudar", locale)} label={ui.helpCta} />
             <RevealObserver />
             <WebMcpTools />
+            {diagnostic === null ? null : (
+              <ErrorStackDialog copy={ui.errorPage} diagnostic={diagnostic} />
+            )}
           </SessionProvider>
         </UiProvider>
       </body>

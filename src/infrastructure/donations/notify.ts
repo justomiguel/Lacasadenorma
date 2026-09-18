@@ -21,11 +21,12 @@ export async function notifyPledgeClaimed(
   locale: Locale,
 ): Promise<void> {
   const viewer = await readViewer();
-  const recipient = viewer?.email;
 
-  if (recipient === undefined || recipient === null) {
+  if (viewer === null || viewer.email === null) {
     return;
   }
+
+  const recipient = viewer.email;
 
   const sender = getEmailSender();
   const siteUrl = getSiteUrl();
@@ -46,6 +47,7 @@ export async function notifyPledgeClaimed(
     kind: "pledge.confirmed",
     subjectId: pledge.id,
     result: personResult,
+    userId: viewer.userId,
   });
 
   const staffAddress = readStaffAddress();
@@ -68,6 +70,7 @@ export async function notifyPledgeClaimed(
     kind: "staff.new_pledge",
     subjectId: pledge.id,
     result: staffResult,
+    userId: viewer.userId,
   });
 }
 

@@ -106,6 +106,14 @@ export const uiPagesSchema = z.object({
     lead: phrase,
     home: phrase,
   }),
+  errorPage: z.object({
+    title: phrase,
+    lead: phrase,
+    retry: phrase,
+    home: phrase,
+    stackLabel: phrase,
+    close: phrase,
+  }),
   paypalReturn: z.object({
     completed: paypalReturnCopySchema,
     cancelled: paypalReturnCopySchema,

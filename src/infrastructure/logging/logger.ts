@@ -55,10 +55,31 @@ function normalizeKey(key: string): string {
  * `[object Object]`. De paso, si la causa es un objeto con una clave sensible,
  * también se redacta.
  */
+function extraErrorField(
+  error: Error,
+  key: "code" | "details" | "hint" | "status",
+  seen: WeakSet<object>,
+): Record<string, unknown> {
+  if (!(key in error)) {
+    return {};
+  }
+
+  const value = (error as Error & Record<string, unknown>)[key];
+
+  return value === undefined ? {} : { [key]: redact(value, seen) };
+}
+
 function serializeError(error: Error, seen: WeakSet<object>): Record<string, unknown> {
   return {
     name: error.name,
     message: error.message,
+    ...(typeof error.stack === "string" && error.stack.length > 0
+      ? { stack: error.stack }
+      : {}),
+    ...extraErrorField(error, "code", seen),
+    ...extraErrorField(error, "details", seen),
+    ...extraErrorField(error, "hint", seen),
+    ...extraErrorField(error, "status", seen),
     ...(error.cause === undefined ? {} : { cause: redact(error.cause, seen) }),
   };
 }
