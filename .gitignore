@@ -34,6 +34,9 @@ lighthouse-report.*
 # spec kit machine-local state
 .specify/feature.json
 
+# brainstorm companion (mockups + session key)
+.superpowers/
+
 # os
 .DS_Store
 *.pem
