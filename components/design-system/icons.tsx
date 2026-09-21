@@ -298,6 +298,7 @@ export {
   FlagIcon,
   GiftIcon,
   HeartIcon,
+  LockIcon,
   ReceiptIcon,
   SearchIcon,
   TargetIcon,

@@ -93,9 +93,9 @@ const REQUIRED = [
     why: "reservas, la cuenta y el Backoffice llevan pictograma a 1.15 em.",
   },
   {
-    file: path.join("components", "account", "account-settings.tsx"),
+    file: path.join("components", "account", "account-panels.tsx"),
     needles: ["IdentifyingMark"],
-    why: "cómo aparecer, acceso y borrar llevan pictograma en la pestaña.",
+    why: "foto, cómo aparecer, acceso y borrar llevan pictograma en el bloque.",
   },
   {
     file: path.join("components", "site", "language-switch.tsx"),

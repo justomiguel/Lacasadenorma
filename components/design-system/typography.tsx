@@ -87,6 +87,7 @@ export function Paragraphs({
 export function SectionHeading({
   label,
   title,
+  mark,
   id,
   level = 2,
   rule = true,
@@ -94,6 +95,8 @@ export function SectionHeading({
 }: {
   label?: string;
   title: string;
+  /** Pictograma identificador, antes del título (ADR-047). */
+  mark?: ReactNode;
   id?: string;
   level?: 2 | 3;
   /** Sin regla cuando la sección ya está delimitada por su propia banda. */
@@ -111,9 +114,11 @@ export function SectionHeading({
         {...(id === undefined ? {} : { id })}
         className={cn(
           "font-display",
+          mark === undefined ? null : "inline-flex items-center gap-sm",
           level === 2 ? "text-heading" : "text-subheading font-medium",
         )}
       >
+        {mark}
         {title}
       </Heading>
       {level === 2 && rule ? <hr className="mt-md border-t border-rule" /> : null}

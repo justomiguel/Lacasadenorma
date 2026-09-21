@@ -62,5 +62,8 @@ describe("AccountSettings", () => {
     expect(container.querySelector("#aparecer")).not.toBeNull();
     expect(container.querySelector("#acceso")).not.toBeNull();
     expect(container.querySelector("#borrar")).not.toBeNull();
+    expect(container.querySelectorAll(".identifying-mark").length).toBeGreaterThanOrEqual(
+      4,
+    );
   });
 });

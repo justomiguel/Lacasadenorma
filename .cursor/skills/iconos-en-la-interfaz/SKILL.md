@@ -40,7 +40,7 @@ No se espera a que alguien lo pida. No se deja «para después».
 | Salir (pie del menú de trabajo y del menú del teléfono) | Icono + nombre, fondo rojo | `sidebarSignOutClass` |
 | Menú de trabajo (backoffice y `/cuenta`) | Pictograma del grupo | `work-nav.tsx` / `nav-bar.tsx` |
 | Pestañas del backoffice (Campaña, Plata) | Pictograma de la sección | `group-tabs.tsx` |
-| Pestañas de la cuenta (aparecer, acceso, borrar) | Pictograma de la pestaña | `account-settings.tsx` |
+| Bloques de la cuenta (foto, aparecer, acceso, borrar) | Pictograma del bloque | `account-panels.tsx` |
 | Botón con caja (Ayudar, Ingresar, Mi Panel, envío, leer) | Pictograma antes del nombre | `HelpCta` / `PrimaryAction` / `SubmitButton` / `AccountChrome` |
 | Acción (copiar, cerrar, menú, flecha) | 44 px / flecha después | `icons.tsx` + `ICON_ACTION` |
 

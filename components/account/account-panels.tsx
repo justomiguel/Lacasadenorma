@@ -4,6 +4,14 @@ import { OwnPledges } from "@/components/account/own-pledges";
 import { ChangePasswordForm } from "@/components/account/password-form";
 import { PortraitForm } from "@/components/account/portrait-form";
 import { DeleteAccountForm, ProfileForm } from "@/components/account/profile-forms";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
+import {
+  BoxIcon,
+  CameraIcon,
+  EyeIcon,
+  LockIcon,
+  TrashIcon,
+} from "@/components/design-system/icons";
 import { SectionHeading } from "@/components/design-system/typography";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import {
@@ -23,11 +31,13 @@ import type { Locale } from "@/src/i18n/locale";
 function Panel({
   title,
   lead,
+  mark,
   id,
   children,
 }: {
   title: string;
   lead: string;
+  mark: ReactNode;
   id?: string;
   children: ReactNode;
 }) {
@@ -36,7 +46,10 @@ function Panel({
       {...(id === undefined ? {} : { id })}
       className={id === undefined ? undefined : "scroll-mt-header"}
     >
-      <SectionHeading title={title} />
+      <SectionHeading
+        title={title}
+        mark={<IdentifyingMark className="text-olive">{mark}</IdentifyingMark>}
+      />
       <p className="mb-xl max-w-measure text-body text-ink-muted">{lead}</p>
       {children}
     </div>
@@ -57,7 +70,7 @@ export function PledgesPanel({
   items: readonly DonationItem[];
 }) {
   return (
-    <Panel title={copy.pledgesHeading} lead={copy.pledgesLead}>
+    <Panel title={copy.pledgesHeading} lead={copy.pledgesLead} mark={<BoxIcon />}>
       <OwnPledges
         pledges={pledges}
         items={items}
@@ -83,7 +96,12 @@ export function PortraitPanel({
   profile: DonorProfile;
 }) {
   return (
-    <Panel id="foto" title={copy.portraitHeading} lead={copy.portraitLead}>
+    <Panel
+      id="foto"
+      title={copy.portraitHeading}
+      lead={copy.portraitLead}
+      mark={<CameraIcon />}
+    >
       <PortraitForm
         copy={copy}
         errors={errors}
@@ -111,7 +129,12 @@ export function AppearancePanel({
   const name = displayNameOf(profile);
 
   return (
-    <Panel id="aparecer" title={copy.appearanceHeading} lead={copy.appearanceLead}>
+    <Panel
+      id="aparecer"
+      title={copy.appearanceHeading}
+      lead={copy.appearanceLead}
+      mark={<EyeIcon />}
+    >
       {/* El resumen se calcula con la misma función que decide el muro
           (`canAppearNamed`), así que no puede prometer algo distinto de lo que la
           base va a publicar. */}
@@ -143,7 +166,12 @@ export function AccessPanel({
   password: AccountContent["password"];
 }) {
   return (
-    <Panel id="acceso" title={copy.passwordHeading} lead={copy.passwordLead}>
+    <Panel
+      id="acceso"
+      title={copy.passwordHeading}
+      lead={copy.passwordLead}
+      mark={<LockIcon />}
+    >
       <ChangePasswordForm
         copy={password}
         errors={errors}
@@ -165,7 +193,12 @@ export function DeletePanel({
   locale: Locale;
 }) {
   return (
-    <Panel id="borrar" title={copy.deleteHeading} lead={copy.deleteLead}>
+    <Panel
+      id="borrar"
+      title={copy.deleteHeading}
+      lead={copy.deleteLead}
+      mark={<TrashIcon />}
+    >
       <DeleteAccountForm copy={copy} errors={errors} locale={locale} />
     </Panel>
   );
