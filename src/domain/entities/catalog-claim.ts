@@ -14,4 +14,5 @@ export interface CatalogClaim {
   readonly quantity: number;
   readonly donorDisplayName: string;
   readonly fulfilledAt: string | null;
+  readonly hasPortrait: boolean;
 }

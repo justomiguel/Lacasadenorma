@@ -1,10 +1,10 @@
 -- El catálogo de donaciones en especie: qué falta, y que no se puede pedir de más.
 --
 -- Fase C: la tabla, el check de no-sobreventa y la vista pública.
--- Fase D: reservas concurrentes, tope por cuenta, vencimiento sin cron (FR-218).
+-- Fase D: reservas concurrentes, tope por cuenta. El plazo no suelta solo.
 
 begin;
-select plan(61);
+select plan(109);
 
 insert into public.campaigns (id, slug, title, summary, status, published_at) values
   ('c7000000-0000-4000-8000-000000000001', 'obra-catalogo', 'Obra del catálogo', 'Resumen', 'active', now());
@@ -334,6 +334,7 @@ select has_function(
 select has_column('public', 'donation_pledges', 'contact_name', 'la reserva guarda el nombre de contacto');
 select has_column('public', 'donation_pledges', 'contact_phone', 'la reserva guarda el teléfono');
 select has_column('public', 'donation_pledges', 'pickup_address', 'la reserva guarda la dirección de retiro');
+select has_column('public', 'donation_pledges', 'accepted_at', 'la reserva guarda cuándo se aceptó');
 
 select has_function(
   'public', 'cancel_donation_pledge',
@@ -342,9 +343,21 @@ select has_function(
 );
 
 select has_function(
-  'public', 'fulfill_donation_pledge',
+  'public', 'accept_donation_pledge',
   array['uuid', 'text', 'text']::name[],
+  'existe accept_donation_pledge()'
+);
+
+select has_function(
+  'public', 'fulfill_donation_pledge',
+  array['uuid']::name[],
   'existe fulfill_donation_pledge()'
+);
+
+select has_function(
+  'public', 'revert_donation_pledge',
+  array['uuid', 'text']::name[],
+  'existe revert_donation_pledge()'
 );
 
 select has_function(
@@ -472,7 +485,7 @@ select throws_ok(
   'la sexta reserva activa por cuenta se rechaza (FR-219)'
 );
 
--- ── Vencimiento sin cron (FR-218) ───────────────────────────────────────────
+-- ── El plazo no suelta solo ─────────────────────────────────────────────────
 
 reset role;
 
@@ -493,8 +506,18 @@ update public.donation_items
 
 select is(
   public.release_expired_holds('ab700000-0000-4000-8000-000000000005'),
-  1,
-  'release_expired_holds libera la reserva vencida de ese ítem'
+  0,
+  'release_expired_holds ya no libera'
+);
+
+select is(
+  (
+    select p.status
+      from public.donation_pledges p
+     where p.id = 'ab720000-0000-4000-8000-000000000001'
+  ),
+  'reserved',
+  'pasó el plazo y sigue reserved'
 );
 
 select results_eq(
@@ -503,24 +526,9 @@ select results_eq(
       from public.donation_items
      where id = 'ab700000-0000-4000-8000-000000000005'
   $q$,
-  $q$ values (0) $q$,
-  'al vencer, las unidades vuelven al contador'
+  $q$ values (2) $q$,
+  'el plazo no devuelve unidades'
 );
-
-insert into public.donation_pledges (
-  id, item_id, user_id, quantity, status, expires_at
-) values (
-  'ab720000-0000-4000-8000-000000000002',
-  'ab700000-0000-4000-8000-000000000005',
-  'ab710000-0000-4000-8000-0000000000a1',
-  1,
-  'reserved',
-  now() - interval '1 hour'
-);
-
-update public.donation_items
-   set reserved_quantity = 1
- where id = 'ab700000-0000-4000-8000-000000000005';
 
 set local role authenticated;
 set local "request.jwt.claims" =
@@ -528,7 +536,19 @@ set local "request.jwt.claims" =
 
 select lives_ok(
   $q$ select pg_temp.traer('ab700000-0000-4000-8000-000000000005', 1) $q$,
-  'claim_donation_item libera lo vencido del ítem que va a tocar y se lo lleva'
+  'claim_donation_item no depende de liberar lo vencido'
+);
+
+reset role;
+
+select is(
+  (
+    select p.status
+      from public.donation_pledges p
+     where p.id = 'ab720000-0000-4000-8000-000000000001'
+  ),
+  'reserved',
+  'claim no marca vencida una reserva cuyo plazo ya pasó'
 );
 
 -- ── Contador = suma de activas, tras reservar, cancelar, vencer y entregar ──
@@ -539,7 +559,7 @@ select is(
   (
     select i.reserved_quantity = coalesce((
       select sum(p.quantity) from public.donation_pledges p
-       where p.item_id = i.id and p.status = 'reserved'
+       where p.item_id = i.id and p.status in ('reserved', 'accepted')
     ), 0)
     and i.fulfilled_quantity = coalesce((
       select sum(p.quantity) from public.donation_pledges p
@@ -592,10 +612,67 @@ set local "request.jwt.claims" =
 
 select lives_ok(
   $q$
-    select public.fulfill_donation_pledge(
+    select public.accept_donation_pledge(
       (select id from public.donation_pledges
         where item_id = 'ab700000-0000-4000-8000-000000000006'
           and status = 'reserved'
+        limit 1)
+    )
+  $q$,
+  'admin confirma que van a donar'
+);
+
+select is(
+  (select reserved_quantity
+     from public.donation_items
+    where id = 'ab700000-0000-4000-8000-000000000006'),
+  1,
+  'aceptar no mueve el contador'
+);
+
+select throws_ok(
+  $q$
+    select public.fulfill_donation_pledge(
+      (select id from public.donation_pledges
+        where item_id = 'ab700000-0000-4000-8000-000000000005'
+          and status = 'reserved'
+        limit 1)
+    )
+  $q$,
+  'P0002',
+  'no_encontrada',
+  'de reserved no se marca llegada'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$
+    select public.cancel_donation_pledge(
+      (select id from public.donation_pledges
+        where item_id = 'ab700000-0000-4000-8000-000000000006'
+          and status = 'accepted'
+        limit 1)
+    )
+  $q$,
+  '42501',
+  'sin_permiso',
+  'quien donó no suelta una aceptada'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$
+    select public.fulfill_donation_pledge(
+      (select id from public.donation_pledges
+        where item_id = 'ab700000-0000-4000-8000-000000000006'
+          and status = 'accepted'
         limit 1)
     )
   $q$,
@@ -619,7 +696,7 @@ select is(
   (
     select i.reserved_quantity = coalesce((
       select sum(p.quantity) from public.donation_pledges p
-       where p.item_id = i.id and p.status = 'reserved'
+       where p.item_id = i.id and p.status in ('reserved', 'accepted')
     ), 0)
     and i.fulfilled_quantity = coalesce((
       select sum(p.quantity) from public.donation_pledges p
@@ -631,6 +708,163 @@ select is(
   true,
   'después de entregar, el contador coincide con la suma de reservas activas y cumplidas'
 );
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$
+    select public.cancel_donation_pledge(
+      (select id from public.donation_pledges
+        where item_id = 'ab700000-0000-4000-8000-000000000006'
+          and status = 'fulfilled'
+        limit 1),
+      'Me arrepentí.'
+    )
+  $q$,
+  '42501',
+  'sin_permiso',
+  'quien donó no suelta una ya confirmada'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$
+    select public.cancel_donation_pledge(
+      (select id from public.donation_pledges
+        where item_id = 'ab700000-0000-4000-8000-000000000006'
+          and status = 'fulfilled'
+        limit 1),
+      'Se arrepintieron.'
+    )
+  $q$,
+  'admin suelta un sí: donan'
+);
+
+reset role;
+
+select is(
+  (
+    select i.fulfilled_quantity
+      from public.donation_items i
+     where i.id = 'ab700000-0000-4000-8000-000000000006'
+  ),
+  0,
+  'al soltar lo donado, las unidades vuelven a faltar'
+);
+
+select results_eq(
+  $q$
+    select received_minor
+      from public.campaign_totals
+     where campaign_id = 'c7000000-0000-4000-8000-000000000001'
+       and currency = 'ARS'
+  $q$,
+  $q$ select received_minor from total_antes $q$,
+  'soltar una donación en especie no mueve ningún total de dinero'
+);
+
+select is(
+  (
+    select p.fulfilled_at
+      from public.donation_pledges p
+     where p.item_id = 'ab700000-0000-4000-8000-000000000006'
+       and p.status = 'cancelled'
+     limit 1
+  ),
+  null,
+  'al soltar un Donado se limpia fulfilled_at (el muro recorta por esa fecha)'
+);
+
+-- ── Revertir un Donado desde Cerradas ───────────────────────────────────────
+
+insert into public.donation_items (
+  id, campaign_id, title, unit, needed_quantity,
+  reserved_quantity, fulfilled_quantity, published_at
+) values (
+  'ab700000-0000-4000-8000-00000000000e',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para revertir',
+  'unidad',
+  1,
+  0,
+  1,
+  now()
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, expires_at, fulfilled_at
+) values (
+  'ab720000-0000-4000-8000-0000000000ee',
+  'ab700000-0000-4000-8000-00000000000e',
+  'ab710000-0000-4000-8000-0000000000a1',
+  1,
+  'fulfilled',
+  now() + interval '14 days',
+  now()
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.revert_donation_pledge('ab720000-0000-4000-8000-0000000000ee') $q$,
+  '42501',
+  'sin_permiso',
+  'quien donó no revierte una ya confirmada'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$ select public.revert_donation_pledge('ab720000-0000-4000-8000-0000000000ee') $q$,
+  'admin revierte un Donado sin motivo'
+);
+
+reset role;
+
+select is(
+  (
+    select i.fulfilled_quantity
+      from public.donation_items i
+     where i.id = 'ab700000-0000-4000-8000-00000000000e'
+  ),
+  0,
+  'al revertir, las unidades vuelven al catálogo'
+);
+
+select is(
+  (
+    select p.cancel_reason
+      from public.donation_pledges p
+     where p.id = 'ab720000-0000-4000-8000-0000000000ee'
+  ),
+  'Revertida desde Cerradas',
+  'sin motivo se guarda el texto fijo'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select throws_ok(
+  $q$ select public.revert_donation_pledge('ab720000-0000-4000-8000-0000000000ee') $q$,
+  'P0002',
+  'no_encontrada',
+  'revertir una que ya no está Donado no toca nada'
+);
+
+reset role;
 
 -- ── Borrar la cuenta anonimiza la reserva (FR-240) ──────────────────────────
 
@@ -909,6 +1143,570 @@ select is(
   ),
   'mercadopago',
   'cubrir con Mercado Pago queda anotado en la reserva'
+);
+
+-- ── Borrar ítem y donación aunque alguien se haya anotado ───────────────────
+
+reset role;
+
+insert into public.donation_items (
+  id, campaign_id, title, unit, needed_quantity, reserved_quantity, published_at
+) values (
+  'ab700000-0000-4000-8000-00000000000a',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para borrar con reserva',
+  'unidad',
+  4,
+  1,
+  now()
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, expires_at
+) values (
+  'ab720000-0000-4000-8000-0000000000aa',
+  'ab700000-0000-4000-8000-00000000000a',
+  'ab710000-0000-4000-8000-0000000000a1',
+  1,
+  'reserved',
+  now() + interval '14 days'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.delete_donation_pledge('ab720000-0000-4000-8000-0000000000aa') $q$,
+  '42501',
+  null,
+  'quien dona no puede borrar una reserva por la función'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$ select public.delete_donation_pledge('ab720000-0000-4000-8000-0000000000aa') $q$,
+  'admin puede borrar una reserva'
+);
+
+reset role;
+
+select is(
+  (select reserved_quantity from public.donation_items
+    where id = 'ab700000-0000-4000-8000-00000000000a'),
+  0,
+  'al borrar la reserva, las unidades vuelven al contador'
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, expires_at
+) values (
+  'ab720000-0000-4000-8000-0000000000ab',
+  'ab700000-0000-4000-8000-00000000000a',
+  'ab710000-0000-4000-8000-0000000000a1',
+  1,
+  'reserved',
+  now() + interval '14 days'
+);
+
+update public.donation_items
+   set reserved_quantity = 1
+ where id = 'ab700000-0000-4000-8000-00000000000a';
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$ delete from public.donation_items where id = 'ab700000-0000-4000-8000-00000000000a' $q$,
+  'admin puede borrar un ítem que tiene reservas'
+);
+
+reset role;
+
+select is(
+  (select count(*)::integer from public.donation_pledges
+    where item_id = 'ab700000-0000-4000-8000-00000000000a'),
+  0,
+  'borrar el ítem se lleva las reservas'
+);
+
+-- ── Editar una reserved (update_donation_pledge) ────────────────────────────
+-- a1 ya tiene 5 reserved de los casos de arriba: se inserta la fila, no se
+-- llama a claim_donation_item (el tope vive en esa función).
+
+insert into public.donation_items (
+  id, campaign_id, title, unit, needed_quantity, reserved_quantity, published_at
+) values (
+  'ab700000-0000-4000-8000-0000000000ed',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para editar reserva',
+  'unidad',
+  4,
+  1,
+  now()
+), (
+  'ab700000-0000-4000-8000-0000000000ef',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para editar aviso',
+  'unidad',
+  2,
+  1,
+  now()
+), (
+  'ab700000-0000-4000-8000-0000000000ac',
+  'c7000000-0000-4000-8000-000000000001',
+  'Para editar aceptada',
+  'unidad',
+  1,
+  1,
+  now()
+);
+
+insert into public.donation_pledges (
+  id, item_id, user_id, quantity, status, expires_at, contact_name, contact_phone
+) values (
+  'ab720000-0000-4000-8000-0000000000ed',
+  'ab700000-0000-4000-8000-0000000000ed',
+  'ab710000-0000-4000-8000-0000000000a1',
+  1,
+  'reserved',
+  now() + interval '14 days',
+  'Ana',
+  null
+), (
+  'ab720000-0000-4000-8000-0000000000ef',
+  'ab700000-0000-4000-8000-0000000000ef',
+  null,
+  1,
+  'reserved',
+  now() + interval '14 days',
+  'Marta',
+  '1155550000'
+), (
+  'ab720000-0000-4000-8000-0000000000ac',
+  'ab700000-0000-4000-8000-0000000000ac',
+  'ab710000-0000-4000-8000-0000000000a1',
+  1,
+  'reserved',
+  now() + interval '14 days',
+  null,
+  null
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    2
+  ) $q$,
+  'dueño edita la reserva de 1 a 2'
+);
+
+reset role;
+
+select is(
+  (select quantity from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ed'),
+  2,
+  'al subir, quantity queda en 2'
+);
+
+select is(
+  (select reserved_quantity from public.donation_items
+    where id = 'ab700000-0000-4000-8000-0000000000ed'),
+  2,
+  'al subir, reserved_quantity queda en 2'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    1
+  ) $q$,
+  'dueño baja la reserva a 1'
+);
+
+reset role;
+
+select is(
+  (select reserved_quantity from public.donation_items
+    where id = 'ab700000-0000-4000-8000-0000000000ed'),
+  1,
+  'al bajar, reserved_quantity queda en 1'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    0
+  ) $q$,
+  '23514',
+  'cantidad_invalida',
+  'dueño no puede pedir 0'
+);
+
+select throws_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    5
+  ) $q$,
+  '23514',
+  'sin_disponibilidad',
+  'dueño no puede pedir más que needed'
+);
+
+reset role;
+
+select is(
+  (select quantity from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ed'),
+  1,
+  'sin_disponibilidad no cambia quantity'
+);
+
+select is(
+  (select reserved_quantity from public.donation_items
+    where id = 'ab700000-0000-4000-8000-0000000000ed'),
+  1,
+  'sin_disponibilidad no cambia reserved_quantity'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    1,
+    null,
+    null,
+    '11 9999-0000'
+  ) $q$,
+  'dueño manda teléfono'
+);
+
+reset role;
+
+select is(
+  (select contact_phone from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ed'),
+  null,
+  'dueño no reescribe el teléfono'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select lives_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    1,
+    'Traigo el sábado'
+  ) $q$,
+  'dueño cambia solo la nota'
+);
+
+reset role;
+
+select is(
+  (select donor_note from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ed'),
+  'Traigo el sábado',
+  'la nota nueva queda guardada'
+);
+
+select is(
+  (select reserved_quantity from public.donation_items
+    where id = 'ab700000-0000-4000-8000-0000000000ed'),
+  1,
+  'misma cantidad no mueve reserved_quantity'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select lives_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ef',
+    1,
+    null,
+    'Marta López',
+    '11 5555-1111'
+  ) $q$,
+  'admin corrige nombre y teléfono de un aviso'
+);
+
+reset role;
+
+select is(
+  (select contact_name from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ef'),
+  'Marta López',
+  'admin actualiza el nombre de un aviso'
+);
+
+select is(
+  (select contact_phone from public.donation_pledges
+    where id = 'ab720000-0000-4000-8000-0000000000ef'),
+  '11 5555-1111',
+  'admin actualiza el teléfono de un aviso'
+);
+
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000ff", "role": "authenticated", "app_metadata": {"user_role": "admin"}}';
+
+select throws_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ef',
+    1,
+    null,
+    '',
+    '11 5555-1111'
+  ) $q$,
+  '23514',
+  'datos_de_retiro',
+  'admin no puede vaciar el nombre de un aviso'
+);
+
+select lives_ok(
+  $q$ select public.accept_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ac'
+  ) $q$,
+  'admin acepta para el caso de edición'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a1", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ac',
+    1
+  ) $q$,
+  'P0002',
+  'no_encontrada',
+  'dueño no edita una accepted'
+);
+
+reset role;
+set local role authenticated;
+set local "request.jwt.claims" =
+  '{"sub": "ab710000-0000-4000-8000-0000000000a2", "role": "authenticated", "app_metadata": {}}';
+
+select throws_ok(
+  $q$ select public.update_donation_pledge(
+    'ab720000-0000-4000-8000-0000000000ed',
+    1
+  ) $q$,
+  '42501',
+  'sin_permiso',
+  'otro donante no edita la ajena'
+);
+
+reset role;
+
+-- ── Dos sesiones piden la última unidad extra ───────────────────────────────
+
+create temporary table update_concurrent_out (
+  paso text primary key,
+  detalle text
+) on commit drop;
+
+do $editar_concurrencia$
+declare
+  v_conn text := format(
+    'hostaddr=127.0.0.1 port=%s dbname=%s user=%s password=norma_local',
+    current_setting('port'),
+    current_database(),
+    current_user
+  );
+  v_item uuid := 'ab740000-0000-4000-8000-000000000001';
+  v_camp uuid := 'c7400000-0000-4000-8000-000000000001';
+  v_a uuid := 'ab740000-0000-4000-8000-0000000000a1';
+  v_b uuid := 'ab740000-0000-4000-8000-0000000000a2';
+  v_admin uuid := 'ab740000-0000-4000-8000-0000000000ff';
+  v_pledge_a uuid := 'ab750000-0000-4000-8000-0000000000a1';
+  v_pledge_b uuid := 'ab750000-0000-4000-8000-0000000000a2';
+  v_count integer;
+  v_remaining integer;
+begin
+  perform dblink_connect('upd_setup', v_conn);
+  perform dblink_exec('upd_setup', format($s$
+    insert into auth.users (id, email) values
+      (%L, 'editar.a@ejemplo.invalid'),
+      (%L, 'editar.b@ejemplo.invalid'),
+      (%L, 'editar.admin@ejemplo.invalid');
+    insert into public.campaigns (id, slug, title, summary, status, published_at)
+      values (%L, 'obra-editar-concurrencia', 'Obra editar', 'Resumen', 'active', now());
+    insert into public.donation_items (
+      id, campaign_id, title, unit, needed_quantity, reserved_quantity, published_at
+    ) values (%L, %L, 'Última extra', 'unidad', 3, 2, now());
+    insert into public.donor_profiles (
+      id, approval_status, reviewed_at, reviewed_by, default_anonymous
+    ) values
+      (%L, 'approved', now(), %L, true),
+      (%L, 'approved', now(), %L, true);
+    insert into public.donation_pledges (
+      id, item_id, user_id, quantity, status, expires_at
+    ) values
+      (%L, %L, %L, 1, 'reserved', now() + interval '14 days'),
+      (%L, %L, %L, 1, 'reserved', now() + interval '14 days');
+  $s$, v_a, v_b, v_admin, v_camp, v_item, v_camp, v_a, v_admin, v_b, v_admin,
+     v_pledge_a, v_item, v_a, v_pledge_b, v_item, v_b));
+
+  perform dblink_connect('upd_a', v_conn);
+  perform dblink_connect('upd_b', v_conn);
+
+  perform dblink_exec('upd_a', 'begin');
+  perform dblink_exec('upd_b', 'begin');
+  perform dblink_exec('upd_a', 'set role authenticated');
+  perform dblink_exec('upd_b', 'set role authenticated');
+  perform dblink_exec('upd_a', format(
+    $s$ set request.jwt.claims = %L $s$,
+    format(
+      '{"sub": "%s", "role": "authenticated", "app_metadata": {}}',
+      v_a
+    )
+  ));
+  perform dblink_exec('upd_b', format(
+    $s$ set request.jwt.claims = %L $s$,
+    format(
+      '{"sub": "%s", "role": "authenticated", "app_metadata": {}}',
+      v_b
+    )
+  ));
+
+  perform 1
+    from dblink(
+      'upd_a',
+      format(
+        'select 1 from (select public.update_donation_pledge(%L, 2)) s',
+        v_pledge_a
+      )
+    ) as t(ok integer);
+
+  perform dblink_send_query(
+    'upd_b',
+    format(
+      'select 1 from (select public.update_donation_pledge(%L, 2)) s',
+      v_pledge_b
+    )
+  );
+
+  perform pg_sleep(0.2);
+  perform dblink_exec('upd_a', 'commit');
+
+  begin
+    perform 1 from dblink_get_result('upd_b') as t(ok integer);
+    insert into update_concurrent_out values ('b', 'gano');
+  exception
+    when others then
+      insert into update_concurrent_out values (
+        'b',
+        case
+          when sqlerrm like '%sin_disponibilidad%' then 'sin_disponibilidad'
+          else sqlerrm
+        end
+      );
+  end;
+
+  begin
+    perform 1 from dblink_get_result('upd_b') as t(ok integer);
+  exception
+    when others then
+      null;
+  end;
+
+  begin
+    perform dblink_exec('upd_b', 'rollback');
+  exception
+    when others then
+      null;
+  end;
+
+  select count(*) into v_count
+    from public.donation_pledges
+   where item_id = v_item and status = 'reserved';
+
+  select remaining_quantity into v_remaining
+    from public.donation_catalog
+   where id = v_item;
+
+  insert into update_concurrent_out values (
+    'conteo',
+    format('reservas=%s remaining=%s', v_count, v_remaining)
+  );
+
+  perform dblink_exec('upd_setup', format($s$
+    delete from public.donation_pledges where item_id = %L;
+    delete from public.donation_items where id = %L;
+    delete from public.donor_profiles where id in (%L, %L);
+    delete from public.campaigns where id = %L;
+    delete from auth.users where id in (%L, %L, %L);
+  $s$, v_item, v_item, v_a, v_b, v_camp, v_a, v_b, v_admin));
+
+  perform dblink_disconnect('upd_a');
+  perform dblink_disconnect('upd_b');
+  perform dblink_disconnect('upd_setup');
+exception
+  when others then
+    insert into update_concurrent_out values ('error', sqlerrm)
+    on conflict (paso) do update set detalle = excluded.detalle;
+    begin
+      perform dblink_exec('upd_setup', format($s$
+        delete from public.donation_pledges where item_id = %L;
+        delete from public.donation_items where id = %L;
+        delete from public.donor_profiles where id in (%L, %L);
+        delete from public.campaigns where id = %L;
+        delete from auth.users where id in (%L, %L, %L);
+      $s$, v_item, v_item, v_a, v_b, v_camp, v_a, v_b, v_admin));
+    exception
+      when others then null;
+    end;
+    begin perform dblink_disconnect('upd_a'); exception when others then null; end;
+    begin perform dblink_disconnect('upd_b'); exception when others then null; end;
+    begin perform dblink_disconnect('upd_setup'); exception when others then null; end;
+end;
+$editar_concurrencia$;
+
+select is(
+  (select detalle from update_concurrent_out where paso = 'b'),
+  'sin_disponibilidad',
+  'la segunda sesión al pedir la última extra pierde con sin_disponibilidad'
+);
+
+select is(
+  (select detalle from update_concurrent_out where paso = 'conteo'),
+  'reservas=2 remaining=0',
+  'después de la carrera quedan dos reservas y remaining = 0'
+);
+
+select is_empty(
+  $q$ select detalle from update_concurrent_out where paso = 'error' $q$,
+  'la prueba de edición concurrente no se cayó por dblink ni por el entorno'
 );
 
 select * from finish();

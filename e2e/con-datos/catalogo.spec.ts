@@ -6,6 +6,7 @@ import {
   abrirItemDelCatalogo,
   completarTraer,
   confirmarLlegada,
+  revertirDonacion,
   conItemPublicado,
   filaDelCatalogo,
   formularioDeTraer,
@@ -31,21 +32,18 @@ test.describe("fase D · reservas", () => {
     await page.goto(`/catalogo/${ITEM_DEL_FIXTURE}`);
     const articulo = articuloDelCatalogo(page);
 
-    await expect(
-      articulo.getByRole("heading", { name: /cómo donar esto/i }),
-    ).toBeVisible();
+    await expect(articulo.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(articulo.getByRole("img", { name: /foto ilustrativa/i })).toBeVisible();
     await expect(articulo.getByText(/solamente ilustrativa/i)).toBeVisible();
     await expect(articulo.getByText(/no representa el objeto real/i)).toBeVisible();
-    await expect(
-      articulo.getByText(/estimado, no un precio fijo/i).first(),
-    ).toBeVisible();
-    await expect(
-      articulo.getByText(/traer el mismo bien o cubrirlo con plata/i),
-    ).toBeVisible();
+    await expect(articulo.getByText(/estimado/i).first()).toBeVisible();
+    await expect(articulo.getByText(/no fijo/i).first()).toBeVisible();
     await expect(
       articulo.getByRole("radio", { name: /traer el mismo bien/i }),
     ).toBeChecked();
+    await expect(
+      articulo.getByRole("radio", { name: /cubrir con plata/i }),
+    ).toBeVisible();
     await expect(articulo.locator("[data-pay=transfer]")).toBeHidden();
     await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(articulo.locator("[data-pay=paypal]")).toBeHidden();
@@ -55,12 +53,13 @@ test.describe("fase D · reservas", () => {
     await expect(articulo.getByLabel(/dirección donde ir a buscar/i)).toHaveCount(0);
     await expect(articulo.getByRole("button", { name: /quiero donar/i })).toBeVisible();
 
+    await articulo.getByRole("radio", { name: /cubrir con plata/i }).click();
     await articulo.getByRole("radio", { name: /^transferencia$/i }).click();
     await expect(articulo.locator("[data-pay=transfer]")).toBeVisible();
     await expect(articulo.locator("[data-pay=mercadopago]")).toBeHidden();
     await expect(articulo.getByText(/^cbu$/i).first()).toBeVisible();
     await expect(articulo.getByRole("button", { name: /quiero donar/i })).toBeHidden();
-    await expect(articulo.getByText(/no hace falta cuenta ni anotarse/i)).toBeVisible();
+    await expect(articulo.getByText(/no hace falta cuenta ni anotarse/i)).toHaveCount(0);
 
     await articulo.getByRole("radio", { name: /mercado pago/i }).click();
     await expect(articulo.locator("[data-pay=mercadopago]")).toBeVisible();
@@ -81,18 +80,14 @@ test.describe("fase D · reservas", () => {
     ).toBeVisible();
   });
 
-  test("el listado es una tabla en teléfono, con estimado y quiero donar", async ({
+  test("el listado es un inventario en teléfono, con estimado y quiero donar", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.goto("/catalogo");
 
-    await expect(
-      page.getByRole("columnheader", { name: /estimado por unidad/i }).first(),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("columnheader", { name: /^donar$/i }).first(),
-    ).toBeVisible();
+    await expect(page.getByRole("table")).toHaveCount(0);
+    await expect(page.getByRole("columnheader")).toHaveCount(0);
 
     const fila = filaDelCatalogo(page, "Chapas del techo (datos de desarrollo)");
 
@@ -101,16 +96,12 @@ test.describe("fase D · reservas", () => {
     ).toBeVisible();
     await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
     await expect(fila.getByText("$ 150.000")).toBeVisible();
-    await expect(fila.getByText("$ 1.050.000")).toBeVisible();
 
     const desborde = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
 
-    expect(
-      Math.max(0, desborde),
-      "la tabla se desplaza adentro, la página no desborda",
-    ).toBe(0);
+    expect(Math.max(0, desborde), "el inventario no desborda la página").toBe(0);
 
     await expect(
       page.locator("[data-foco-condicional]"),
@@ -212,15 +203,18 @@ test.describe("fase D · reservas", () => {
 
           await completarTraer(formularioDeTraer(articuloA));
           await expect(paginaA).toHaveURL(/\/cuenta$/);
-          await expect(paginaA.getByRole("tab", { name: /reservas/i })).toHaveAttribute(
-            "aria-selected",
-            "true",
-          );
+          await expect(
+            paginaA.getByRole("link", { name: /mis donaciones|my donations/i }),
+          ).toHaveAttribute("aria-current", "page");
           await expect(
             paginaA.getByRole("heading", { name: /lo que te anotaste/i }),
           ).toBeVisible();
-          await expect(paginaA.getByText(titulo)).toBeVisible();
+          await expect(paginaA.getByRole("link", { name: titulo })).toHaveAttribute(
+            "href",
+            `/catalogo/${itemId}`,
+          );
           await expect(paginaA.getByText(/vence el/i)).toBeVisible();
+          await expect(paginaA.getByText(/ya está cubierto/i)).toBeVisible();
 
           await completarTraer(formularioDeTraer(articuloB));
           await expect(paginaB).toHaveURL(
@@ -230,7 +224,8 @@ test.describe("fase D · reservas", () => {
           await expect(articuloB.getByText(/ya está cubierto/i)).toBeVisible();
 
           await paginaA.getByRole("button", { name: /cancelar esta reserva/i }).click();
-          await expect(paginaA.getByText(/la cancelaste/i)).toBeVisible();
+          await expect(paginaA.getByText(/todavía no te anotaste/i)).toBeVisible();
+          await expect(paginaA.getByText(/la cancelaste/i)).not.toBeVisible();
         });
       } finally {
         await contextoA.close();
@@ -267,8 +262,8 @@ test.describe("fase D · reservas", () => {
           await completarTraer(formularioDeTraer(articulo));
           await expect(donantePage).toHaveURL(/\/cuenta$/);
           await expect(
-            donantePage.getByRole("tab", { name: /reservas/i }),
-          ).toHaveAttribute("aria-selected", "true");
+            donantePage.getByRole("link", { name: /mis donaciones|my donations/i }),
+          ).toHaveAttribute("aria-current", "page");
 
           const pledgeId = await donantePage
             .locator('input[name="pledgeId"]')
@@ -323,13 +318,13 @@ test.describe("fase D · reservas", () => {
           await elegirAparecerEnCuenta(pagina, visible);
 
           await confirmarLlegada(staffPage, titulo);
-          await esperarQueAparezca(request, "/catalogo", "donó el 50%");
+          await esperarQueAparezca(request, "/catalogo", "· 5 unidades");
           await esperarQueAparezca(request, "/quienes-ayudaron", "donó el 50%");
 
           await pagina.goto("/catalogo");
           const fila = filaDelCatalogo(pagina, titulo);
 
-          await expect(fila.getByText(`${visible} donó el 50%`)).toBeVisible();
+          await expect(fila.getByText(`${visible} · 5 unidades`)).toBeVisible();
           await expect(fila.getByRole("link", { name: /quiero donar/i })).toBeVisible();
           await expect(fila.getByText(/faltan 5 de 10/i)).toBeVisible();
 
@@ -340,6 +335,56 @@ test.describe("fase D · reservas", () => {
           await expect(
             linea.getByText(`${visible} donó el 50% de ${titulo}`),
           ).toBeVisible();
+        });
+      } finally {
+        await donante.close();
+      }
+    } finally {
+      await ocultarItemSiExiste(staffPage.request, titulo);
+      await staff.close();
+    }
+  });
+
+  test("revertir un Donado lo saca del muro y devuelve las unidades", async ({
+    request,
+    browser,
+  }, info) => {
+    test.setTimeout(90_000);
+    const sufijo = sufijoUnico(info.project.name);
+    const titulo = `Para revertir (${sufijo})`;
+    const visible = `Ana Revierte ${sufijo}`;
+    const email = correoDePrueba(info.project.name, "revertir");
+
+    const staff = await browser.newContext();
+    const staffPage = await staff.newPage();
+
+    try {
+      const donante = await browser.newContext();
+      const pagina = await donante.newPage();
+
+      try {
+        await conItemPublicado(request, staffPage, titulo, 2, async () => {
+          await crearCuenta(pagina, request, email);
+          await pagina.goto("/catalogo");
+          await abrirItemDelCatalogo(pagina, titulo);
+          await completarTraer(formularioDeTraer(articuloDelCatalogo(pagina)));
+          await expect(pagina).toHaveURL(/\/cuenta$/);
+          await elegirAparecerEnCuenta(pagina, visible);
+
+          await confirmarLlegada(staffPage, titulo);
+          await esperarQueAparezca(request, "/catalogo", "· 1 unidad");
+
+          await revertirDonacion(staffPage, titulo);
+          await esperarQueAparezca(request, "/catalogo", "Faltan 2");
+
+          await pagina.goto("/catalogo");
+          const fila = filaDelCatalogo(pagina, titulo);
+
+          await expect(fila.getByText(/faltan 2/i)).toBeVisible();
+          await expect(fila.getByText(visible)).toHaveCount(0);
+
+          await pagina.goto("/quienes-ayudaron");
+          await expect(pagina.getByRole("heading", { name: visible })).toHaveCount(0);
         });
       } finally {
         await donante.close();

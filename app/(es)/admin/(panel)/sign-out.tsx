@@ -1,6 +1,9 @@
 "use client";
 
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
+import { LeaveIcon } from "@/components/design-system/icons";
 import { PendingTextButton } from "@/components/design-system/pending-submit";
+import { sidebarSignOutClass } from "@/components/design-system/work-sidebar";
 
 import { signOut } from "../login/actions";
 
@@ -17,7 +20,12 @@ export function SignOutButton() {
     <form action={signOut}>
       <PendingTextButton
         pendingLabel="Cerrando…"
-        className="inline-flex min-h-touch items-center font-ui text-small text-ink-muted underline decoration-1 underline-offset-4 transition-colors duration-fast hover:text-ink"
+        className={sidebarSignOutClass()}
+        icon={
+          <IdentifyingMark>
+            <LeaveIcon />
+          </IdentifyingMark>
+        }
       >
         Cerrar sesión
       </PendingTextButton>

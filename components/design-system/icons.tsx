@@ -274,3 +274,31 @@ export function VideoIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function BookIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H12v16H6.5A1.5 1.5 0 0 1 5 18.5z" />
+      <path d="M19 5.5A1.5 1.5 0 0 0 17.5 4H12v16h5.5a1.5 1.5 0 0 0 1.5-1.5z" />
+      <path d="M12 4v16" />
+    </Svg>
+  );
+}
+
+export function RefreshIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M20 12a8 8 0 1 1-2.3-5.6" />
+      <path d="M20 4v6h-6" />
+    </Svg>
+  );
+}
+
+export {
+  FlagIcon,
+  GiftIcon,
+  HeartIcon,
+  ReceiptIcon,
+  SearchIcon,
+  TargetIcon,
+} from "./icons-work";

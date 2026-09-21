@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  CatalogItemReferencedError,
-  CatalogOversubscribedError,
-} from "@/src/domain/errors";
+import { CatalogOversubscribedError } from "@/src/domain/errors";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
 import { deleteDonationItem, saveDonationItem } from "./catalog";
@@ -108,23 +105,16 @@ describe("deleteDonationItem", () => {
     expect(fake.audit).toHaveLength(0);
   });
 
-  it("traduce el restrict de las reservas a un mensaje, no al código de Postgres", async () => {
-    const gateway = fakeAdminGateway({
-      failWith: new CatalogItemReferencedError(),
-    });
-    const { deps: owner } = deps("owner", gateway);
-
+  it("borra también un ítem que alguien ya tomó", async () => {
+    const { deps: owner, fake } = deps("owner");
     const result = await deleteDonationItem(owner, {
       id: RECORD,
       title: "Chapas del techo",
     });
 
-    expect(result.status).toBe("invalid");
-    if (result.status !== "invalid") return;
-
-    expect(result.message).toBe(
-      "Hay reservas o entregas de este ítem; no se puede borrar. Despublicarlo lo saca del sitio.",
-    );
-    expect(result.fieldErrors.id).toBe(result.message);
+    expect(result.status).toBe("ok");
+    expect(fake.calls.find((call) => call.name === "deleteItem")).toMatchObject({
+      input: RECORD,
+    });
   });
 });

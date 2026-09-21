@@ -1,19 +1,26 @@
+import { AccountSettings } from "@/components/account/account-settings";
+import { PledgesPanel } from "@/components/account/account-panels";
+import { AccountSignOut } from "@/components/account/account-nav";
 import {
-  AccessPanel,
-  AppearancePanel,
-  DeletePanel,
-  PledgesPanel,
-} from "@/components/account/account-panels";
-import { resolveAccountSection } from "@/components/account/account-section";
-import { AccountTabs } from "@/components/account/account-tabs";
+  isAccountSettingsSection,
+  resolveAccountSection,
+} from "@/components/account/account-section";
 import { AuthShell } from "@/components/account/auth-shell";
-import { SecondaryAction } from "@/components/design-system/actions";
+import { ADMIN_SECTIONS } from "@/components/admin/nav";
 import { Callout } from "@/components/design-system/callout";
+import { WorkNav } from "@/components/design-system/work-nav";
+import { WorkSidebar } from "@/components/design-system/work-sidebar";
 import { getContent } from "@/content";
 import { getOwnAccount } from "@/src/application/accounts/own-account";
+import { getCatalog } from "@/src/application/use-cases/get-catalog";
+import { isVisibleOwnPledge } from "@/src/domain/entities/donation-pledge";
+import { can } from "@/src/domain/permissions";
+import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { isStaff, readViewer } from "@/src/infrastructure/auth/viewer";
+import { getPublicDataLayer } from "@/src/infrastructure/data-layer";
+import { logger } from "@/src/infrastructure/logging/logger";
 import { pageMetadata } from "@/src/infrastructure/seo/metadata";
 
 /**
@@ -21,13 +28,9 @@ import { pageMetadata } from "@/src/infrastructure/seo/metadata";
  *
  * Muestra exactamente lo que el sistema guarda de una persona —el correo, el
  * retrato, el nombre que eligió, si quiere aparecer, en qué idioma se le escribe—
- * y nada más, porque eso es lo que `docs/privacy.md` promete que se puede ver
- * desde acá. Si algún día se guardara un dato más, tiene que aparecer en esta
- * pantalla o la política pasa a ser falsa.
- *
- * El índice son pestañas editoriales (`SectionTabs`): reservas, cómo aparecer,
- * acceso y borrar. Sin JavaScript se apilan. Quien tiene rol ve además el
- * backoffice, porque `/cuenta` ya es dinámica y no tiene que esperar al island.
+ * y nada más. El menú al costado tiene mis donaciones y la cuenta. Cómo aparecer,
+ * la foto, el acceso y borrar son una página. Quien tiene rol ve el backoffice
+ * como submenú, siempre abierto.
  */
 
 export function accountMetadata(locale: Locale) {
@@ -54,14 +57,15 @@ export async function AccountScreen({
   const { account, catalog, ui } = getContent(locale);
   const { profile: copy, fields, errors } = account;
 
-  const [viewer, result] = await Promise.all([
+  const [viewer, result, catalogResult] = await Promise.all([
     readViewer(),
     getOwnAccount(await getAccountDeps(), locale),
+    getCatalog({ dataLayer: getPublicDataLayer(), logger }),
   ]);
 
   if (result.status === "error") {
     return (
-      <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
+      <AuthShell title={copy.title} lead={copy.lead}>
         <Callout tone="warning" title={copy.unavailableTitle}>
           {result.code === "notConfigured" ? copy.unavailableBody : errors[result.code]}
         </Callout>
@@ -71,93 +75,67 @@ export async function AccountScreen({
 
   const donor = result.value.profile;
   const pledges = result.value.pledges;
+  const items = catalogResult.status === "ok" ? catalogResult.data : [];
   const aviso =
     notice !== null && notice in errors ? errors[notice as keyof typeof errors] : null;
-  const approval =
-    donor.approvalStatus === "declined" ? (
-      <Callout tone="warning" title={copy.declinedTitle}>
-        {copy.declinedBody.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
-      </Callout>
-    ) : donor.approvalStatus === "approved" ? (
-      <p className="max-w-measure font-ui text-small text-ink-muted">
-        {copy.approvedNote}
-      </p>
-    ) : (
-      <p className="max-w-measure font-ui text-small text-ink-muted">
-        {copy.pendingNote}
-      </p>
-    );
-  const initial = resolveAccountSection(section, pledges.length > 0);
+  const current = resolveAccountSection(
+    section,
+    pledges.some((pledge) => isVisibleOwnPledge(pledge)),
+  );
+  const adminSections =
+    viewer !== null && isStaff(viewer)
+      ? ADMIN_SECTIONS.filter((item) => can(viewer.role, item.permission))
+      : [];
 
   return (
-    <AuthShell title={copy.title} lead={copy.lead} surface="sunk">
-      {aviso === null ? null : (
-        <Callout tone="warning">
-          <p>{aviso}</p>
-        </Callout>
-      )}
-      {approval}
-
-      {viewer !== null && isStaff(viewer) ? (
-        <SecondaryAction href="/admin" className="mb-lg">
-          {ui.backoffice}
-        </SecondaryAction>
-      ) : null}
-
-      <div className={aviso === null && approval === null ? undefined : "mt-lg"}>
-        <AccountTabs
-          label={copy.tabsLabel}
-          initial={initial}
-          items={[
-            {
-              id: "reservas",
-              label: copy.tabPledges,
-              content: (
-                <PledgesPanel
-                  copy={copy}
-                  catalog={catalog}
-                  locale={locale}
-                  pledges={pledges}
-                />
-              ),
-            },
-            {
-              id: "aparecer",
-              label: copy.tabAppearance,
-              content: (
-                <AppearancePanel
-                  copy={copy}
-                  errors={errors}
-                  fields={fields}
-                  locale={locale}
-                  profile={donor}
-                />
-              ),
-            },
-            {
-              id: "acceso",
-              label: copy.tabAccess,
-              content: (
-                <AccessPanel
-                  copy={copy}
-                  errors={errors}
-                  fields={fields}
-                  locale={locale}
-                  email={viewer?.email ?? "—"}
-                  password={account.password}
-                />
-              ),
-            },
-            {
-              id: "borrar",
-              label: copy.tabDelete,
-              content: <DeletePanel copy={copy} errors={errors} locale={locale} />,
-            },
-          ]}
+    <WorkSidebar
+      accountHref={localizedHref("/cuenta", locale)}
+      emptyName={ui.account}
+      nav={
+        <WorkNav
+          locale={locale}
+          copy={copy}
+          currentAccount={current}
+          adminSections={adminSections}
+          backofficeLabel={ui.backoffice}
         />
-      </div>
-    </AuthShell>
+      }
+      footer={
+        <AccountSignOut
+          locale={locale}
+          label={copy.signOut}
+          pendingLabel={copy.signingOut}
+        />
+      }
+    >
+      {aviso === null ? null : (
+        <div className="mb-xl">
+          <Callout tone="warning">
+            <p>{aviso}</p>
+          </Callout>
+        </div>
+      )}
+
+      {current === "reservas" ? (
+        <PledgesPanel
+          copy={copy}
+          catalog={catalog}
+          locale={locale}
+          pledges={pledges}
+          items={items}
+        />
+      ) : null}
+      {isAccountSettingsSection(current) ? (
+        <AccountSettings
+          locale={locale}
+          copy={copy}
+          errors={errors}
+          fields={fields}
+          profile={donor}
+          password={account.password}
+          initial={current}
+        />
+      ) : null}
+    </WorkSidebar>
   );
 }

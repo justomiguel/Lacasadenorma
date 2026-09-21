@@ -81,8 +81,9 @@ export function buildOwnerMetrics(
       unpublishedExpenseCount: facts.expenses.filter(
         (item) => item.voidedAt === null && item.publishedAt === null,
       ).length,
-      activePledgeCount: facts.pledges.filter((pledge) => pledge.status === "reserved")
-        .length,
+      activePledgeCount: facts.pledges.filter(
+        (pledge) => pledge.status === "reserved" || pledge.status === "accepted",
+      ).length,
       pendingDonorCount: facts.donors.filter(
         (donor) => donor.approvalStatus === "pending",
       ).length,

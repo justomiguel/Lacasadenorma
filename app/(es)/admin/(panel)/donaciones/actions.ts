@@ -6,7 +6,15 @@ import { redirect } from "next/navigation";
 import { revalidateDonationPages } from "@/app/(es)/revalidate-donations";
 
 import type { ActionState } from "@/components/admin/form";
-import { cancelPledge, fulfillPledge } from "@/src/application/admin";
+import {
+  acceptPledge,
+  cancelPledge,
+  deleteOffer,
+  deletePledge,
+  fulfillPledge,
+  revertPledge,
+  updatePledge,
+} from "@/src/application/admin";
 import {
   isStaffPledgeDecision,
   STAFF_CONTACT_REJECT_REASON,
@@ -44,7 +52,7 @@ function mailOf(
       pledgeId,
       result,
     }: {
-      kind: "pledge.fulfilled" | "staff.pledge_cancelled";
+      kind: "pledge.fulfilled" | "pledge.reverted" | "staff.pledge_cancelled";
       pledgeId: string;
       result: Awaited<ReturnType<ReturnType<typeof getEmailSender>["send"]>>;
     }) => {
@@ -56,6 +64,30 @@ function mailOf(
       });
     },
   };
+}
+
+export async function acceptPledgeAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await acceptPledge(
+    deps,
+    Object.fromEntries(formData),
+    mailOf(deps, formData),
+  );
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+  }
+
+  return result;
 }
 
 export async function fulfillPledgeAction(
@@ -106,6 +138,90 @@ export async function cancelPledgeAction(
   return result;
 }
 
+export async function updatePledgeAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await updatePledge(deps, Object.fromEntries(formData), null);
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+  }
+
+  return result;
+}
+
+export async function revertPledgeAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await revertPledge(
+    deps,
+    Object.fromEntries(formData),
+    mailOf(deps, formData),
+  );
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+  }
+
+  return result;
+}
+
+export async function deletePledgeAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await deletePledge(deps, Object.fromEntries(formData));
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+  }
+
+  return result;
+}
+
+export async function deleteOfferAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const deps = await getAdminDeps();
+
+  if (deps === null) {
+    return NOT_CONFIGURED;
+  }
+
+  const result = await deleteOffer(deps, Object.fromEntries(formData));
+
+  if (result.status === "ok") {
+    revalidatePath("/admin/donaciones");
+    revalidateDonationPages();
+  }
+
+  return result;
+}
+
 /**
  * Los dos enlaces del correo: sí donan, o no y se suelta (ADR-051).
  *
@@ -131,7 +247,7 @@ export async function decidePledgeAction(
 
   const result =
     decision === "si"
-      ? await fulfillPledge(deps, Object.fromEntries(formData), mailOf(deps, formData))
+      ? await acceptPledge(deps, Object.fromEntries(formData), mailOf(deps, formData))
       : await cancelPledge(
           deps,
           { id: formData.get("id"), reason: STAFF_CONTACT_REJECT_REASON },

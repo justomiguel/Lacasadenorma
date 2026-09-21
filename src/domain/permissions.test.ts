@@ -99,7 +99,7 @@ describe("can", () => {
       expect(can("admin", "donaciones.escribir")).toBe(true);
     });
 
-    it("borra un ítem del catálogo que nadie tomó", () => {
+    it("borra un ítem del catálogo", () => {
       expect(can("admin", "catalogo.borrar")).toBe(true);
     });
 

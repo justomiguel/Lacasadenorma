@@ -9,10 +9,36 @@ import type { ServerSupabaseClient } from "../server-client";
 import { QueryError } from "./query";
 
 const COLUMNS =
-  "id, display_name, locale, default_anonymous, approval_status, created_at, reviewed_at, review_note";
+  "id, display_name, locale, default_anonymous, approval_status, created_at, reviewed_at, review_note, contact_phone";
 
 export function createDonorsPort(client: ServerSupabaseClient): AdminDonorPort {
   return {
+    async getAccount(userId): Promise<DonorAccountAdminRecord | null> {
+      const { data, error } = await client
+        .from("donor_profiles")
+        .select(COLUMNS)
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new QueryError("leer la cuenta", error);
+      }
+
+      if (data === null) {
+        return null;
+      }
+
+      const { data: email, error: contactError } = await client.rpc("donor_contact", {
+        p_user_id: userId,
+      });
+
+      if (contactError !== null) {
+        throw new QueryError("leer el correo de contacto", contactError);
+      }
+
+      return mapAccount(data, typeof email === "string" ? email : null);
+    },
+
     async listAccounts(): Promise<readonly DonorAccountAdminRecord[]> {
       const { data, error } = await client
         .from("donor_profiles")
@@ -38,6 +64,18 @@ export function createDonorsPort(client: ServerSupabaseClient): AdminDonorPort {
       );
 
       return rows;
+    },
+
+    async provisionProfile(input): Promise<void> {
+      const { error } = await client.rpc("provision_donor_account", {
+        p_user_id: input.userId,
+        p_display_name: input.displayName,
+        p_phone: input.phone as string,
+      });
+
+      if (error !== null) {
+        throw new QueryError("provisionar la cuenta", error);
+      }
     },
 
     async reviewAccount(input): Promise<void> {
@@ -74,6 +112,7 @@ interface AccountRow {
   created_at: string;
   reviewed_at: string | null;
   review_note: string | null;
+  contact_phone: string | null;
 }
 
 function mapAccount(row: AccountRow, email: string | null): DonorAccountAdminRecord {
@@ -89,5 +128,6 @@ function mapAccount(row: AccountRow, email: string | null): DonorAccountAdminRec
     createdAt: row.created_at,
     reviewedAt: row.reviewed_at,
     reviewNote: row.review_note,
+    contactPhone: row.contact_phone,
   };
 }

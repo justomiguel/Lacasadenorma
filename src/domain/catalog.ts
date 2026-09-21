@@ -22,6 +22,7 @@ export {
   DONATION_ITEM_CATEGORY_LABELS,
   DONATION_UNITS,
   DONATION_UNIT_LABELS,
+  isCountableUnit,
 } from "./entities/donation-item";
 
 /**
@@ -60,6 +61,8 @@ export interface NamedTake {
   readonly name: string;
   readonly quantity: number;
   readonly percentOfItem: number | null;
+  readonly claimId: string;
+  readonly hasPortrait: boolean;
 }
 
 export interface ItemTakenStatus {
@@ -76,6 +79,8 @@ export function takenStatus(
   claims: readonly CatalogClaim[],
 ): ItemTakenStatus {
   const quantities = new Map<string, number>();
+  const firstId = new Map<string, string>();
+  const portraits = new Map<string, boolean>();
   const order: string[] = [];
 
   for (const claim of claims) {
@@ -88,10 +93,19 @@ export function takenStatus(
     if (previous === undefined) {
       order.push(claim.donorDisplayName);
       quantities.set(claim.donorDisplayName, claim.quantity);
+      firstId.set(claim.donorDisplayName, claim.id);
+      portraits.set(claim.donorDisplayName, claim.hasPortrait);
       continue;
     }
 
     quantities.set(claim.donorDisplayName, previous + claim.quantity);
+    if (claim.hasPortrait && !(portraits.get(claim.donorDisplayName) ?? false)) {
+      firstId.set(claim.donorDisplayName, claim.id);
+    }
+    portraits.set(
+      claim.donorDisplayName,
+      (portraits.get(claim.donorDisplayName) ?? false) || claim.hasPortrait,
+    );
   }
 
   const taken = item.remainingQuantity < item.neededQuantity;
@@ -103,6 +117,8 @@ export function takenStatus(
           name,
           quantity,
           percentOfItem: shareOfItem(quantity, item.neededQuantity),
+          claimId: firstId.get(name) ?? "",
+          hasPortrait: portraits.get(name) ?? false,
         };
       })
     : [];

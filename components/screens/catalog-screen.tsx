@@ -1,6 +1,6 @@
 import { Unavailable } from "@/components/campaign/unavailable";
-import { CatalogTable } from "@/components/catalog/table";
 import { ConflictNotice } from "@/components/catalog/conflict-notice";
+import { CatalogInventory } from "@/components/catalog/inventory";
 import { WallPreview } from "@/components/catalog/wall-preview";
 import { SecondaryAction } from "@/components/design-system/actions";
 import { EmptyState } from "@/components/design-system/callout";
@@ -48,6 +48,7 @@ export async function CatalogScreen({
   ]);
   const wallEntries = wall.status === "ok" ? wall.data : [];
   const claims = claimsResult.status === "ok" ? claimsResult.data : [];
+  const groups = result.status === "ok" ? groupCatalogByCategory(result.data) : [];
 
   return (
     <>
@@ -68,16 +69,31 @@ export async function CatalogScreen({
           ) : (
             <div>
               {conflictId === null ? null : <ConflictNotice copy={catalog} />}
-              {groupCatalogByCategory(result.data).map((group, groupIndex) => (
+              <nav aria-label={catalog.categoryJumpLabel}>
+                <ul className="mb-lg flex flex-wrap gap-x-md gap-y-sm">
+                  {groups.map((group) => (
+                    <li key={group.category}>
+                      <a
+                        href={`#${group.category}`}
+                        className="text-forest underline decoration-1 underline-offset-2 transition-colors duration-fast hover:text-forest-strong"
+                      >
+                        {catalog.categories[group.category]}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <p className="mb-3xl max-w-measure font-ui text-small text-ink-muted">
+                {catalog.listCaption}
+              </p>
+              {groups.map((group, groupIndex) => (
                 <section
                   key={group.category}
-                  className={groupIndex === 0 ? undefined : "mt-3xl"}
+                  id={group.category}
+                  className={groupIndex === 0 ? "scroll-mt-3xl" : "mt-3xl scroll-mt-3xl"}
                 >
-                  <SectionHeading
-                    title={catalog.categories[group.category]}
-                    id={group.category}
-                  />
-                  <CatalogTable
+                  <SectionHeading title={catalog.categories[group.category]} />
+                  <CatalogInventory
                     items={group.items}
                     claims={claims}
                     copy={catalog}

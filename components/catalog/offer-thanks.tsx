@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 import { ICON_ACTION, PrimaryAction } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
-import { CloseIcon } from "@/components/design-system/icons";
+import { CheckIcon, CloseIcon } from "@/components/design-system/icons";
 import type { CatalogContent } from "@/content/schema";
 
 /**
@@ -104,7 +104,11 @@ export function OfferThanksNotice({
         <p id="gracias-cuerpo" className="mt-md text-body text-ink">
           {copy.offerThanksBody}
         </p>
-        <PrimaryAction href={dismissHref} className="mt-lg sm:w-full">
+        <PrimaryAction
+          href={dismissHref}
+          icon={<CheckIcon />}
+          className="mt-lg sm:w-full"
+        >
           {copy.offerThanksDismiss}
         </PrimaryAction>
       </div>

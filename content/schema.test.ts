@@ -125,8 +125,16 @@ describe("contenido publicado", () => {
 
   it("no afirma que Fundación Norma sea una organización constituida (SC de US5)", () => {
     const legacyText = [legacy.lead, ...legacy.paragraphs].join(" ").toLowerCase();
+    const enText = [
+      getContent("en").legacy.lead,
+      ...getContent("en").legacy.paragraphs,
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    expect(legacyText).toContain("todavía no existe como organización");
+    expect(legacyText).toMatch(/intención|idea|nazca/);
+    expect(legacyText).not.toMatch(/está constituida|tiene personería|es una organización/);
+    expect(enText).not.toMatch(/is an organisation|legal personality|is constituted/);
   });
 
   it("el contacto publicado es Justo Miguel Vargas, sin Saúl", () => {

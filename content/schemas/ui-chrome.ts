@@ -35,6 +35,8 @@ export const uiChromeSchema = z.object({
   otherLanguageName: phrase,
   signIn: phrase,
   account: phrase,
+  myPanel: phrase,
+  pledges: phrase,
   signOut: phrase,
   signingOut: phrase,
   /** El backoffice no se traduce (ADR-023). El href es siempre `/admin`. */
@@ -56,6 +58,7 @@ export const uiChromeSchema = z.object({
     campaign: phrase,
     next: phrase,
     legal: phrase,
+    language: phrase,
   }),
   primaryNav: z.object({
     "/que-paso": navItemSchema,

@@ -122,15 +122,23 @@ export function fakeAdminGateway(
     },
     donors: {
       listAccounts: () => record("listAccounts", null, []),
+      getAccount: (input) => record("getAccount", input, null),
       reviewAccount: (input) => record("reviewAccount", input, undefined),
+      provisionProfile: (input) => record("provisionProfile", input, undefined),
       contactOf: (input) => record("contactOf", input, null),
     },
     donations: {
       listPledges: () => record("listPledges", null, []),
       listOffers: () => record("listOffers", null, []),
+      acceptPledge: (input) => record("acceptPledge", input, undefined),
       fulfillPledge: (input) => record("fulfillPledge", input, undefined),
       cancelPledge: (input) => record("cancelPledge", input, undefined),
+      updatePledge: (input) => record("updatePledge", input, undefined),
+      revertPledge: (input) => record("revertPledge", input, undefined),
       markReminded: (input) => record("markReminded", input, undefined),
+      deletePledge: (input) => record("deletePledge", input, undefined),
+      deleteOffer: (input) => record("deleteOffer", input, undefined),
+      recordArrival: (input) => record("recordArrival", input, id),
     },
     audit: {
       append: (input) => {

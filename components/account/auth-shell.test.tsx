@@ -24,7 +24,7 @@ describe("AuthShell", () => {
     expect(container.querySelector("h1")).toHaveTextContent("Ingresar");
   });
 
-  it("el índice de la cuenta hunde las pestañas en otra superficie, pegadas al encabezado", () => {
+  it("la superficie hundida envuelve el cuerpo, no el título", () => {
     const { container } = render(
       <AuthShell
         title="Tu cuenta"

@@ -2,7 +2,7 @@ import type { CatalogContent } from "@/content/schema";
 import type { DonationUnit } from "@/src/domain/entities";
 
 export function unitLabel(
-  copy: CatalogContent,
+  copy: Pick<CatalogContent, "units">,
   unit: DonationUnit,
   count: number,
 ): string {

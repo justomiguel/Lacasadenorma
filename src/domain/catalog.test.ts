@@ -6,6 +6,7 @@ import {
   canClaim,
   takenStatus,
   estimatedValueOf,
+  isCountableUnit,
   isDonationUnit,
   isDonationItemCategory,
   groupCatalogByCategory,
@@ -88,6 +89,7 @@ describe("takenStatus", () => {
           quantity: 2,
           donorDisplayName: "María",
           fulfilledAt: null,
+          hasPortrait: true,
         },
         {
           id: "b",
@@ -95,6 +97,7 @@ describe("takenStatus", () => {
           quantity: 1,
           donorDisplayName: "María",
           fulfilledAt: "2026-09-14T00:00:00.000Z",
+          hasPortrait: true,
         },
         {
           id: "c",
@@ -102,11 +105,20 @@ describe("takenStatus", () => {
           quantity: 1,
           donorDisplayName: "Ajeno",
           fulfilledAt: null,
+          hasPortrait: false,
         },
       ]),
     ).toEqual({
       taken: true,
-      names: [{ name: "María", quantity: 3, percentOfItem: 60 }],
+      names: [
+        {
+          name: "María",
+          quantity: 3,
+          percentOfItem: 60,
+          claimId: "a",
+          hasPortrait: true,
+        },
+      ],
     });
   });
 
@@ -119,13 +131,56 @@ describe("takenStatus", () => {
           quantity: 5,
           donorDisplayName: "Ana",
           fulfilledAt: "2026-09-17T00:00:00.000Z",
+          hasPortrait: false,
         },
       ]),
     ).toEqual({
       taken: true,
-      names: [{ name: "Ana", quantity: 5, percentOfItem: 50 }],
+      names: [
+        {
+          name: "Ana",
+          quantity: 5,
+          percentOfItem: 50,
+          claimId: "a",
+          hasPortrait: false,
+        },
+      ],
     });
     expect(canClaim({ needed: 10, reserved: 0, fulfilled: 5 })).toBe(true);
+  });
+
+  it("usa el claimId de la primera reserva con foto, no el de la primera línea", () => {
+    expect(
+      takenStatus({ ...item, remainingQuantity: 2 }, [
+        {
+          id: "a",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+          hasPortrait: false,
+        },
+        {
+          id: "b",
+          itemId: "item-1",
+          quantity: 1,
+          donorDisplayName: "María",
+          fulfilledAt: null,
+          hasPortrait: true,
+        },
+      ]),
+    ).toEqual({
+      taken: true,
+      names: [
+        {
+          name: "María",
+          quantity: 2,
+          percentOfItem: 40,
+          claimId: "b",
+          hasPortrait: true,
+        },
+      ],
+    });
   });
 
   it("omite un % truncado a 0 y deja el nombre", () => {
@@ -137,11 +192,20 @@ describe("takenStatus", () => {
           quantity: 1,
           donorDisplayName: "Ana",
           fulfilledAt: "2026-09-17T00:00:00.000Z",
+          hasPortrait: false,
         },
       ]),
     ).toEqual({
       taken: true,
-      names: [{ name: "Ana", quantity: 1, percentOfItem: null }],
+      names: [
+        {
+          name: "Ana",
+          quantity: 1,
+          percentOfItem: null,
+          claimId: "a",
+          hasPortrait: false,
+        },
+      ],
     });
   });
 
@@ -154,9 +218,22 @@ describe("takenStatus", () => {
           quantity: 1,
           donorDisplayName: "María",
           fulfilledAt: null,
+          hasPortrait: false,
         },
       ]),
     ).toEqual({ taken: false, names: [] });
+  });
+});
+
+describe("isCountableUnit", () => {
+  it("bolsas y juegos se cuentan; metros y litros no", () => {
+    expect(isCountableUnit("unidad")).toBe(true);
+    expect(isCountableUnit("bolsa")).toBe(true);
+    expect(isCountableUnit("juego")).toBe(true);
+    expect(isCountableUnit("metro")).toBe(false);
+    expect(isCountableUnit("metro_cuadrado")).toBe(false);
+    expect(isCountableUnit("metro_cubico")).toBe(false);
+    expect(isCountableUnit("litro")).toBe(false);
   });
 });
 

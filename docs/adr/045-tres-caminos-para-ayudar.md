@@ -76,7 +76,7 @@ sigue siendo tres toques desde la home.
   con traer.
 - El mapa no sitúa el lote. Quien va tiene que escribirle a Justo. El día
   que la familia publique el punto, se cambia `contact.mapsUrl`.
-- `HelpTabs` desaparece. `SectionTabs` sigue para la cuenta.
+- `HelpTabs` desaparece. `SectionTabs` queda como patrón, no como el índice de `/cuenta`.
 
 **Compuerta.** Un e2e recorre los tres caminos y afirma que `/ayudar` no tiene
 el tablero de donaciones. `aportes.spec.ts` y `portapapeles.spec.ts` corren en

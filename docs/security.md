@@ -134,7 +134,8 @@ aplicada a datos personales, y su espejo en la base es `private.can_read_donors(
 `roles.escribir` existe en la tabla y **no tiene pantalla**. Los roles se otorgan con SQL contra la
 tabla `user_roles`, y está en [`docs/runbook.md`](./runbook.md#5-dar-y-quitar-acceso). Es deliberado:
 con cuatro personas, una pantalla para la operación más peligrosa del sistema es más superficie de
-ataque que ahorro de trabajo.
+ataque que ahorro de trabajo. Cargar a quien donó por fuera en `/admin/donantes` crea una cuenta
+del público, no otorga un rol: esto no abre `roles.escribir`.
 
 `catalogo.borrar` es `admin` y `owner`, el mismo recorte que la policy `donation_items_delete`. El
 editor carga y corrige el catálogo; no tira una fila. Un ítem con reservas no se borra: la clave
@@ -326,16 +327,17 @@ formulario, ese comentario deja de ser cierto.
 | `NEXT_PUBLIC_ANALYTICS_*` | Sí | Script del proveedor y su origen en la CSP |
 | `ANALYTICS_API_KEY` | **No** | Stats API, sólo para armar `/admin/metricas` (ADR-049) |
 | `ANALYTICS_API_URL` | **No** | Origen del Stats API si no coincide con el del script |
-| `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink`, y `record_email_delivery` cuando no hay sesión (oferta por teléfono). No lee tablas |
+| `SUPABASE_SECRET_KEY` | **No** | `auth.admin.generateLink`, `record_email_delivery` cuando no hay sesión (oferta por teléfono), y bajar un retrato de catálogo después de que la vista anónima autorizó esa reserva. No lista tablas |
 | `RESEND_API_KEY` | **No** | `ResendSender` y, de respaldo, SMTP de Auth |
 | `SEND_EMAIL_HOOK_SECRET` | **No** | Verificar la firma del hook `send_email` |
 | `EMAIL_FROM_ADDRESS` | **No** | Remitente de Resend |
 | `EMAIL_STAFF_ADDRESS` | **No** | Aviso al equipo |
 
 La clave secreta no tiene prefijo `NEXT_PUBLIC_`. En `src/` se lee **sólo** en
-`src/infrastructure/supabase/auth-admin.ts`: el enlace de confirmación, y anotar
-un envío de equipo cuando quien donó no tiene sesión (ADR-028). No se usa para
-leer tablas. Eso lo verifica `npm run check:secrets`, que hace tres cosas:
+`src/infrastructure/supabase/auth-admin.ts`: el enlace de confirmación, anotar
+un envío de equipo cuando quien donó no tiene sesión (ADR-028), y bajar un
+retrato de catálogo después de que la vista anónima autorizó esa reserva.
+No se usa para listar tablas. Eso lo verifica `npm run check:secrets`, que hace tres cosas:
 
 1. Rechaza nombres con forma de secreto que lleven prefijo `NEXT_PUBLIC_` (`SECRET`,
    `SERVICE_ROLE`, `PRIVATE`, `PASSWORD`, `TOKEN`, `API_KEY`).

@@ -7,26 +7,19 @@ import type {
   HelpContent,
   UiContent,
 } from "@/content/schema";
-import {
-  canClaim,
-  catalogItemPhotograph,
-  isCovered,
-  takenStatus,
-} from "@/src/domain/catalog";
+import { canClaim, catalogItemPhotograph, isCovered } from "@/src/domain/catalog";
 import type { CatalogClaim, DonationItem } from "@/src/domain/entities";
 import { fill } from "@/src/i18n/fill";
 import type { Locale } from "@/src/i18n/locale";
 
 import { HowToDonate } from "./cover";
-import { formatTakenNames } from "./taken-names";
+import { CatalogDonors } from "./donors";
+import { formatCatalogEstimate } from "./money";
 import { unitLabel } from "./units";
 
 /**
- * La ficha de un ítem: foto o hueco, cuánto falta, quién se anotó con nombre,
- * y el formulario para reservar cuando queda algo (FR-254).
- *
- * La foto es LCP: sale ya visible. El revelado al scroll la dejaba en opacity 0
- * y se leía el epígrafe sobre un hueco.
+ * La ficha de un ítem: foto a sangrado, etiqueta (título, cuánto falta,
+ * nombres) y dos caminos para donar. El h1 vive acá, no en PageHeader.
  */
 export function CatalogItem({
   item,
@@ -53,56 +46,80 @@ export function CatalogItem({
     fulfilled: item.fulfilledQuantity,
   };
   const covered = isCovered(quantities);
-  const taken = takenStatus(item, claims);
   const unit = unitLabel(
     copy,
     item.unit,
     covered ? item.neededQuantity : item.remainingQuantity,
   );
-  const remainingText = covered
-    ? copy.covered
-    : fill(copy.quantityOf, {
-        remaining: String(item.remainingQuantity),
-        needed: String(item.neededQuantity),
-        unit,
-      });
-  const names = formatTakenNames(taken.names, copy);
   const photo = catalogItemPhotograph<Photograph>(
     item.photo,
     copy.referencePhotos[item.title] ?? null,
   );
+  const estimate =
+    item.estimatedValue === null
+      ? null
+      : fill(copy.estimatedUnit, {
+          amount: formatCatalogEstimate(item.estimatedValue, locale),
+        });
 
   return (
-    <article id={`item-${item.id}`} className="scroll-mt-xl">
-      {photo === null ? (
-        <ReservedSpace
-          ratio="landscape"
-          description={fill(copy.reservedPhoto, { title: item.title })}
-        />
-      ) : (
-        <EditorialImage media={photo} variant="documentary" caption priority={priority} />
-      )}
-      {item.description === null ? null : (
-        <p className="mt-lg max-w-measure text-body text-ink-muted">{item.description}</p>
-      )}
-      <p className="mt-md font-ui text-body tabular-nums">{remainingText}</p>
-      <p className="mt-sm font-ui text-small text-ink-muted">
-        {copy.columnTaken} {taken.taken ? copy.takenYes : copy.takenNo}
-        {". "}
-        {copy.columnName} {names.length === 0 ? copy.nameNone : names}
-      </p>
-      {canClaim(quantities) ? (
-        <HowToDonate
-          itemId={item.id}
-          remaining={item.remainingQuantity}
-          estimated={item.estimatedValue}
-          copy={copy}
-          account={account}
-          help={help}
-          ui={ui}
-          locale={locale}
-        />
-      ) : null}
+    <article
+      id={`item-${item.id}`}
+      data-item-ficha=""
+      className="scroll-mt-xl lg:grid lg:grid-cols-2 lg:items-start lg:gap-3xl"
+    >
+      <div>
+        {photo === null ? (
+          <ReservedSpace
+            ratio="landscape"
+            className="bleed"
+            description={fill(copy.reservedPhoto, { title: item.title })}
+          />
+        ) : (
+          <EditorialImage
+            media={photo}
+            variant="full-bleed"
+            caption
+            priority={priority}
+            sizes="(min-width: 64rem) 40vw, 100vw"
+          />
+        )}
+      </div>
+      <div className="mt-lg lg:mt-0">
+        <h1 className="max-w-measure font-display text-heading">{item.title}</h1>
+        {covered ? (
+          <p className="mt-md font-ui text-body">{copy.covered}</p>
+        ) : (
+          <p className="mt-md font-ui text-body tabular-nums">
+            {fill(copy.remainingFact, { remaining: String(item.remainingQuantity) })}
+            <span className="mt-2xs block text-small text-ink-muted">
+              {fill(copy.remainingOf, {
+                needed: String(item.neededQuantity),
+                unit,
+              })}
+              {estimate === null ? null : ` · ${estimate}`}
+            </span>
+          </p>
+        )}
+        <CatalogDonors item={item} claims={claims} copy={copy} locale={locale} />
+        {canClaim(quantities) ? (
+          <HowToDonate
+            itemId={item.id}
+            remaining={item.remainingQuantity}
+            estimated={item.estimatedValue}
+            copy={copy}
+            account={account}
+            help={help}
+            ui={ui}
+            locale={locale}
+          />
+        ) : null}
+        {item.description === null ? null : (
+          <p className="mt-lg max-w-measure text-body text-ink-muted">
+            {item.description}
+          </p>
+        )}
+      </div>
     </article>
   );
 }

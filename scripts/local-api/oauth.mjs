@@ -11,9 +11,12 @@ import { issueSession } from "./sesion.mjs";
  * `GET /authorize` y `POST /token?grant_type=pkce`. Lo que **no** emula es a
  * Google: no hay un hop a accounts.google.com. El authorize crea una cuenta
  * ya confirmada y redirige al callback del sitio con un `code`, y el canje
- * emite la sesión. Si `email` viene en la query —sólo para el e2e de
- * unificación— reusa esa fila en lugar de inventar una. El hop real se
- * prueba a mano, una vez, y está en el runbook.
+ * emite la sesión.
+ *
+ * La identidad la puede fijar la prueba: `email`, `name`, `picture` y
+ * `sin_correo=1` en la query, o los mismos datos en `x-harness-oauth-*`.
+ * Sin eso se inventa un correo `@local.test`. El hop real se prueba a mano,
+ * una vez, y está en el runbook.
  *
  * El destino del 302 se valida: sólo `/cuenta/oauth` y `/en/cuenta/oauth`,
  * en 127.0.0.1 o localhost. Un authorize que respetara cualquier
@@ -47,7 +50,54 @@ function irA(outgoing, location) {
   outgoing.end();
 }
 
-async function authorize(outgoing, parametros) {
+function encabezado(incoming, nombre) {
+  const valor = incoming.headers[nombre];
+
+  return typeof valor === "string" ? valor.trim() : "";
+}
+
+function textoCorto(valor, maximo) {
+  if (valor.length === 0 || valor.length > maximo || /[\n\r=]/.test(valor)) {
+    return "";
+  }
+
+  return valor;
+}
+
+function fotoDeLaRed(valor) {
+  if (valor.length === 0 || valor.length > 500 || /[\n\r]/.test(valor)) {
+    return "";
+  }
+
+  try {
+    const url = new URL(valor);
+
+    return url.protocol === "https:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+function identidadDe(incoming, parametros) {
+  const email = textoCorto(
+    parametros.get("email")?.trim() || encabezado(incoming, "x-harness-oauth-email"),
+    254,
+  );
+  const nombre = textoCorto(
+    parametros.get("name")?.trim() || encabezado(incoming, "x-harness-oauth-name"),
+    80,
+  );
+  const picture = fotoDeLaRed(
+    parametros.get("picture")?.trim() || encabezado(incoming, "x-harness-oauth-picture"),
+  );
+  const sinCorreo =
+    parametros.get("sin_correo") === "1" ||
+    encabezado(incoming, "x-harness-oauth-sin-correo") === "1";
+
+  return { email, nombre, picture, sinCorreo };
+}
+
+async function authorize(incoming, outgoing, parametros) {
   const provider = (parametros.get("provider") ?? "").trim().toLowerCase();
   const redirectTo = parametros.get("redirect_to") ?? "";
 
@@ -56,12 +106,16 @@ async function authorize(outgoing, parametros) {
     return;
   }
 
-  const emailParam = parametros.get("email")?.trim() ?? "";
-  const email =
-    emailParam.length > 0 && emailParam.includes("@")
-      ? emailParam
+  const identidad = identidadDe(incoming, parametros);
+  const email = identidad.sinCorreo
+    ? null
+    : identidad.email.includes("@")
+      ? identidad.email
       : `oauth.${provider}.${randomUUID()}@local.test`;
-  const row = await createConfirmedOauthUser(email, provider);
+  const row = await createConfirmedOauthUser(email, provider, {
+    fullName: identidad.nombre.length > 0 ? identidad.nombre : undefined,
+    picture: identidad.picture,
+  });
 
   if (row === null) {
     authError(outgoing, 500, "unexpected_failure", "No se pudo crear la cuenta social");
@@ -105,7 +159,7 @@ async function exchange(incoming, outgoing) {
 /** Devuelve `true` si la ruta era de OAuth y ya se contestó. */
 export async function handleOauth(incoming, outgoing, ruta, parametros) {
   if (ruta === "/authorize" && incoming.method === "GET") {
-    await authorize(outgoing, parametros);
+    await authorize(incoming, outgoing, parametros);
     return true;
   }
 

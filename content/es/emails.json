@@ -50,15 +50,26 @@
     "action": "Confirmar la dirección nueva",
     "why": "Recibís este correo porque alguien pidió cambiar el correo de una cuenta en el sitio de la reconstrucción de la casa de Norma."
   },
-  "accountDeclined": {
-    "subject": "Esta vez no vamos a habilitar la cuenta",
-    "preheader": "El equipo revisó el pedido y esta vez no va a habilitarla.",
+  "accountInvite": {
+    "subject": "Tu cuenta en La Casa de Norma",
+    "preheader": "El equipo te dejó una cuenta lista. El enlace vence.",
     "body": [
-      "El equipo revisó el pedido y esta vez no va a habilitar la cuenta. No se reserva nada a tu nombre, y no va a aparecer nada tuyo en el sitio.",
+      "Quien coordina la reconstrucción de la casa de Norma te dejó una cuenta en el sitio. Abrí el enlace para entrar, ver lo anotado a tu nombre y, si querés, anotarte a traer algo más.",
+      "El enlace vence. Si no llega, pedí otro a quien te lo mandó.",
+      "Si no fuiste vos, ignorá este correo."
+    ],
+    "action": "Entrar a tu cuenta",
+    "why": "Recibís este correo porque el equipo cargó esta dirección al anotar una donación en el sitio de la reconstrucción de la casa de Norma."
+  },
+  "accountDeclined": {
+    "subject": "El equipo frenó esta cuenta",
+    "preheader": "No se puede anotar nada a tu nombre.",
+    "body": [
+      "El equipo frenó esta cuenta. No se puede reservar nada a tu nombre, y no va a aparecer nada tuyo en el sitio.",
       "Si fue un error, o si querés que lo miren de nuevo, respondé este correo. La cuenta se puede borrar desde el sitio cuando quieras."
     ],
     "action": "Ver tu cuenta",
-    "why": "Recibís este correo porque habías pedido una cuenta en el sitio de la reconstrucción de la casa de Norma."
+    "why": "Recibís este correo porque tenés una cuenta en el sitio de la reconstrucción de la casa de Norma."
   },
   "pledgeConfirmed": {
     "subject": "Quedó anotado lo que vas a traer",
@@ -93,6 +104,17 @@
     "action": "Ver tu cuenta",
     "why": "Recibís este correo porque trajiste algo para la reconstrucción de la casa de Norma."
   },
+  "pledgeReverted": {
+    "subject": "Esa confirmación se deshizo",
+    "preheader": "Las unidades volvieron al catálogo. Si podés, anotate de nuevo.",
+    "body": [
+      "Habíamos confirmado {what}. Esa confirmación ya no vale: no correspondía o se cargó por error.",
+      "Las unidades volvieron al catálogo. Si tu nombre estaba en la lista de quienes ayudaron, ya no está.",
+      "Si todavía podés traerlo, anotate de nuevo desde el catálogo."
+    ],
+    "action": "Ver el catálogo",
+    "why": "Recibís este correo porque reservaste algo en el sitio de la reconstrucción de la casa de Norma."
+  },
   "staffNewAccount": {
     "subject": "Hay una cuenta para revisar",
     "preheader": "Alguien confirmó el correo. Ya puede anotarse a traer un bien.",
@@ -104,11 +126,11 @@
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   },
   "staffNewPledge": {
-    "subject": "Reserva nueva en el catálogo",
+    "subject": "{who} quiere donar {what}",
     "preheader": "Hay que confirmar si donan o soltar la reserva. El contacto está en el backoffice.",
     "body": [
-      "Alguien quiere donar {what}. La unidad quedó reservada.",
-      "Si te contactaste y van a donar, confirmá: aparece como donado con la fecha de hoy. Si no se concreta, soltá la reserva para que vuelva a la lista. Los datos de contacto están en el backoffice."
+      "{who} quiere donar {what}. La unidad quedó reservada.",
+      "Si te contactaste y van a donar, confirmá. Queda tomada, pendiente de entrega. La llegada se confirma después en el panel. Si no se concreta, soltá la reserva para que vuelva a la lista. Los datos de contacto están en el backoffice."
     ],
     "action": "Sí: donan",
     "rejectAction": "No: soltar la reserva",
@@ -137,13 +159,14 @@
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   },
   "staffPledgeExpired": {
-    "subject": "Venció una reserva sin entregar",
-    "preheader": "El material volvió a la lista. Nadie lo está trayendo.",
+    "subject": "Pasaron 14 días y no confirmaron que van a donar",
+    "preheader": "Sigue reservado. Hay que confirmar si donan o soltar la reserva.",
     "body": [
-      "Venció el plazo de {what} y no se entregó. El material volvió a la lista.",
-      "No hace falta hacer nada: otra persona ya lo puede pedir."
+      "Pasaron 14 días y todavía no confirmaron que van a donar {what}. Sigue reservado.",
+      "Si te contactaste y van a donar, confirmá. Si no se concreta, soltá la reserva para que vuelva a la lista."
     ],
-    "action": "Abrir el catálogo",
+    "action": "Sí: donan",
+    "rejectAction": "No: soltar la reserva",
     "why": "Recibís este correo porque sos parte del equipo de la campaña."
   }
 }

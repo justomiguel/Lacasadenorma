@@ -16,16 +16,19 @@ sólo GoTrue puede emitir. El transporte, a partir de la enmienda de 2026-09-16,
 | Reserva confirmada | API de Resend | `claim_donation_item` exitosa | `content/*/emails.json` |
 | Recordatorio de vencimiento | API de Resend | Proceso diario, 3 días antes | `content/*/emails.json` |
 | Donación recibida | API de Resend | `fulfill_donation_pledge` | `content/*/emails.json` |
+| Confirmación deshecha | API de Resend | `revert_donation_pledge` | `content/*/emails.json` |
 | Aviso al equipo: cuenta nueva | API de Resend | Perfil creado en `/cuenta` | `content/*/emails.json` |
 | Aviso al equipo: reserva nueva | API de Resend | `claim_donation_item` o `offer_donation_item` exitosa | `content/*/emails.json` |
 | Aviso al equipo: pedido por teléfono | API de Resend | `offer_donation_item` exitosa | `content/*/emails.json` |
 | Aviso al equipo: cancelación | API de Resend | `cancel_donation_pledge` | `content/*/emails.json` |
-| Aviso al equipo: vencimiento | API de Resend | `release_expired_holds` | `content/*/emails.json` |
+| Aviso al equipo: plazo cumplido | API de Resend | Cron `remind-pledges.mjs`, 14 días sin confirmar | `content/*/emails.json` |
 
 Los avisos al equipo viajan en el mismo disparador que el correo a la persona, con destinatario
 distinto. El cuerpo **no lleva el correo** de terceros: se lee en el backoffice, con sesión.
-`staff.phone_offer` nombra a quien avisó y lleva un botón de WhatsApp al número que dejó: es el
-motivo de ese camino (ADR-051, FR-237). El resto de los avisos al equipo no lleva teléfono.
+`staff.new_pledge` nombra a quien reservó con el nombre de la cuenta; si la cuenta no tiene
+nombre, dice «Alguien». `staff.phone_offer` nombra a quien avisó y lleva un botón de WhatsApp al
+número que dejó: es el motivo de ese camino (ADR-051, FR-237). El resto de los avisos al equipo
+no lleva teléfono.
 
 Qué **no** manda correo, y el motivo: está en ADR-033. Cambiar el perfil y fallar un envío no
 duplican aviso. Los tres de identidad ahora sí pasan por este puerto: el token lo emite GoTrue, el
@@ -45,6 +48,7 @@ export type EmailKind =
   | "pledge.confirmed"
   | "pledge.reminder"
   | "pledge.fulfilled"
+  | "pledge.reverted"
   | "staff.new_account"
   | "staff.new_pledge"
   | "staff.phone_offer"
@@ -93,8 +97,9 @@ Reglas del cuerpo:
   tabla de cuerpo. Lo afirma `messages.test.ts` contando exactamente dos `<table`.
 - **Sin imágenes remotas y sin pixel de seguimiento.** Georgia y Arial, que ya están en el aparato.
   Es ADR-010 aplicado al correo.
-- **Sin datos de terceros** en los avisos al equipo, salvo `staff.phone_offer` (ADR-051): el
-  nombre, y el número como botón `wa.me`. Sin logo: el correo no lleva imágenes remotas.
+- **Sin correo ni teléfono** de terceros en los avisos al equipo, salvo `staff.phone_offer`
+  (ADR-051): el nombre, y el número como botón `wa.me`. `staff.new_pledge` sí lleva el nombre
+  de la cuenta. Sin logo: el correo no lleva imágenes remotas.
 - El cuerpo de texto se escribe a mano, no se genera desde el HTML.
 - Sin enlaces que autentiquen. El correo lleva a `/cuenta` o a `/admin`, y ahí se pide sesión
   (FR-237). Los dos enlaces de sí/no de una reserva nueva van a

@@ -10,10 +10,10 @@ import { paragraphs, phrase } from "./primitives";
  * repositorio y Resend lo manda (ADR-028). `{link}` es el canje, no una visita.
  *
  * **Las marcas de sustitución son cinco y están cerradas**: `{what}` es lo que se
- * reservó, `{when}` es cuándo vence, `{who}` es el nombre de un aviso por
- * teléfono, `{phone}` es el número de ese aviso y `{link}` es a dónde ir. No hay
- * motor de plantillas. `messages.test.ts` falla si algún correo sale con una
- * marca sin reemplazar.
+ * reservó, `{when}` es cuándo vence, `{who}` es el nombre de quien reservó o de
+ * un aviso por teléfono, `{phone}` es el número de ese aviso y `{link}` es a
+ * dónde ir. No hay motor de plantillas. `messages.test.ts` falla si algún
+ * correo sale con una marca sin reemplazar.
  */
 
 const message = z.object({
@@ -41,15 +41,17 @@ export const emailsSchema = z.object({
   accountApproved: message,
   accountDeclined: message,
   /**
-   * Los tres de identidad. Llevan un token en `{link}` a propósito: sin abrirlo
+   * Los de identidad. Llevan un token en `{link}` a propósito: sin abrirlo
    * no hay prueba de que la casilla existe (ADR-028).
    */
   accountConfirm: message,
   accountRecover: message,
   accountEmailChange: message,
+  accountInvite: message,
   pledgeConfirmed: message,
   pledgeReminder: message,
   pledgeFulfilled: message,
+  pledgeReverted: message,
   /**
    * Los cinco del equipo. Están en los dos archivos y en los dos dicen lo mismo,
    * en castellano, porque el backoffice no se traduce (ADR-014).
@@ -59,7 +61,7 @@ export const emailsSchema = z.object({
   staffNewPledge: message.extend({ rejectAction: phrase }),
   staffPhoneOffer: message.extend({ rejectAction: phrase, extraAction: phrase }),
   staffPledgeCancelled: message,
-  staffPledgeExpired: message,
+  staffPledgeExpired: message.extend({ rejectAction: phrase }),
 });
 
 export type EmailsContent = z.infer<typeof emailsSchema>;

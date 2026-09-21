@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   CampaignExistsError,
+  CatalogNoRoomError,
   CatalogOversubscribedError,
   CatalogItemReferencedError,
   DomainError,
   NotAuthorizedError,
+  PledgeContactRequiredError,
   PledgeUnavailableError,
   TooManyPledgesError,
 } from "./errors";
@@ -64,7 +66,7 @@ describe("CatalogOversubscribedError", () => {
 });
 
 describe("CatalogItemReferencedError", () => {
-  it("traduce el 23503, no el error de Postgres (US4 escenario 7)", () => {
+  it("traduce un 23503 residual, no el error de Postgres", () => {
     const error = new CatalogItemReferencedError();
 
     expect(error).toBeInstanceOf(DomainError);
@@ -85,6 +87,18 @@ describe("PledgeUnavailableError", () => {
   });
 });
 
+describe("PledgeContactRequiredError", () => {
+  it("pide nombre y teléfono, no el código de Postgres", () => {
+    const error = new PledgeContactRequiredError();
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("PledgeContactRequiredError");
+    expect(error.message).toBe(
+      "Escribí el nombre y el teléfono para que el equipo sepa con quién habla.",
+    );
+  });
+});
+
 describe("CampaignExistsError", () => {
   it("dice que no se crea otra, y nombra a qué se imputa lo que sigue", () => {
     const error = new CampaignExistsError();
@@ -93,6 +107,16 @@ describe("CampaignExistsError", () => {
     expect(error.name).toBe("CampaignExistsError");
     expect(error.message).toContain("Ya hay una campaña");
     expect(error.message).toContain("no se crea otra");
+  });
+});
+
+describe("CatalogNoRoomError", () => {
+  it("CatalogNoRoomError habla del cupo", () => {
+    const error = new CatalogNoRoomError();
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error.name).toBe("CatalogNoRoomError");
+    expect(error.message).toBe("Ese ítem no tiene cupo para esa cantidad.");
   });
 });
 

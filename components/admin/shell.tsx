@@ -3,61 +3,53 @@ import type { ReactNode } from "react";
 
 import { Callout } from "@/components/design-system/callout";
 import { cn } from "@/components/design-system/cn";
-import { SiteMark } from "@/components/site/mark";
-import { APP_ROLE_LABELS, type AppRole } from "@/src/domain/entities/role";
+import { WorkNav } from "@/components/design-system/work-nav";
+import { WorkSidebar } from "@/components/design-system/work-sidebar";
+import { getContent } from "@/content";
+import type { AppRole } from "@/src/domain/entities/role";
 import { can } from "@/src/domain/permissions";
 
+import { AdminGroupTabs } from "./group-tabs";
 import { ADMIN_SECTIONS } from "./nav";
-import { AdminNav } from "./nav-bar";
 
 /**
  * El marco del backoffice.
  *
- * Se parece al sitio público —mismas fuentes, mismo papel, misma regla de un píxel—
- * pero es más denso y usa la tipografía de interfaz en lugar de la de lectura. La
- * razón no es estética: quien entra acá está trabajando, muchas veces parado en una
- * obra, y necesita ver muchas filas y tocar objetivos grandes, no leer prosa.
- *
- * Lo que **no** cambia respecto del sitio público: los tokens, el foco visible de
- * dos píxeles y los 44 px de objetivo táctil. Un backoffice inaccesible sería una
- * excepción a la accesibilidad justo en la parte del sistema que una persona usa
- * todos los días.
+ * El mismo menú que `/cuenta`: la cuenta arriba, el backoffice al
+ * costado. Campaña y Plata agrupan hermanas en pestañas; Catálogo,
+ * Donaciones y Donantes son un enlace cada uno.
+ * El `main` lo pone `PublicDocument`; acá no se anida otro.
  */
 export function AdminShell({
   role,
-  email,
+  footer,
   children,
 }: {
   role: AppRole | null;
-  email: string | null;
+  footer: ReactNode;
   children: ReactNode;
 }) {
+  const { account, ui } = getContent("es");
   const sections = ADMIN_SECTIONS.filter((section) => can(role, section.permission));
 
   return (
-    <div className="min-h-dvh bg-paper">
-      <header className="border-b border-rule">
-        <div className="mx-auto flex max-w-page items-center justify-between gap-md px-md py-sm sm:px-lg">
-          <Link
-            href="/admin"
-            className="inline-flex items-center gap-xs font-ui text-label uppercase tracking-label text-ink"
-          >
-            <SiteMark size="lg" />
-            Casa de Norma · Backoffice
-          </Link>
-          <p className="font-ui text-label text-ink-muted">
-            {role === null ? "Sin rol asignado" : APP_ROLE_LABELS[role]}
-            {email === null ? null : <span className="hidden sm:inline"> · {email}</span>}
-          </p>
-        </div>
-
-        <AdminNav sections={sections} />
-      </header>
-
-      <main id="contenido" className="mx-auto max-w-page px-md py-xl sm:px-lg">
-        {children}
-      </main>
-    </div>
+    <WorkSidebar
+      accountHref="/cuenta"
+      emptyName={ui.account}
+      nav={
+        <WorkNav
+          locale="es"
+          copy={account.profile}
+          currentAccount={null}
+          adminSections={sections}
+          backofficeLabel={ui.backoffice}
+        />
+      }
+      footer={footer}
+    >
+      <AdminGroupTabs sections={sections} />
+      {children}
+    </WorkSidebar>
   );
 }
 

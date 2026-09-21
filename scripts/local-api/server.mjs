@@ -30,7 +30,8 @@ async function ensurePostgrest() {
   }
 
   const arch = process.arch === "arm64" ? "aarch64" : "x86-64";
-  const url = `https://github.com/PostgREST/postgrest/releases/download/${POSTGREST_VERSION}/postgrest-${POSTGREST_VERSION}-linux-static-${arch}.tar.xz`;
+  const plataforma = process.platform === "darwin" ? "macos" : "linux-static";
+  const url = `https://github.com/PostgREST/postgrest/releases/download/${POSTGREST_VERSION}/postgrest-${POSTGREST_VERSION}-${plataforma}-${arch}.tar.xz`;
 
   console.error(`Descargando PostgREST ${POSTGREST_VERSION}…`);
 
@@ -123,7 +124,7 @@ export async function startLocalApi() {
       outgoing.writeHead(404, { "content-type": "application/json" });
       outgoing.end(
         JSON.stringify({
-          message: "La API local emula /rest/v1, /auth/v1 y /harness/v1.",
+          message: "La API local emula /rest/v1, /auth/v1 (incluye Admin) y /harness/v1.",
         }),
       );
       return;

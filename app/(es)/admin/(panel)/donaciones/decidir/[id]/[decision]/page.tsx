@@ -11,7 +11,6 @@ import {
 } from "@/components/admin/form";
 import { AdminHeading, Panel } from "@/components/admin/shell";
 import { formatLongDate } from "@/components/design-system/dates";
-import { isActivePledge } from "@/src/domain/entities/donation-pledge";
 import {
   isStaffPledgeDecision,
   type StaffPledgeDecision,
@@ -19,7 +18,7 @@ import {
 import { getAdminScope } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
 
-import { decidePledgeAction } from "../../../actions";
+import { cancelPledgeAction, decidePledgeAction } from "../../../actions";
 
 /**
  * Confirmar o soltar una reserva desde el correo (ADR-051).
@@ -56,19 +55,27 @@ export default async function DecidirReservaPage({
   }
 
   const quien = pledge.contactName ?? pledge.donorDisplayName ?? "quien reservó";
-  const activa = isActivePledge(pledge);
+  const reservada = pledge.status === "reserved";
   const porTelefono = pledge.userId === null;
 
   return (
     <>
       <AdminHeading
-        title={decision === "si" ? "Confirmar que donan" : "Soltar la reserva"}
+        title={
+          pledge.status === "accepted" && decision === "si"
+            ? "Ya está tomada"
+            : pledge.status === "accepted" || pledge.status === "fulfilled"
+              ? "Soltar la reserva"
+              : decision === "si"
+                ? "Confirmar que donan"
+                : "Soltar la reserva"
+        }
       >
         {pledge.itemTitle}. {quien}.
       </AdminHeading>
 
       <Panel id="decidir" title={pledge.itemTitle}>
-        {activa ? (
+        {reservada ? (
           <ActiveDecision
             decision={decision}
             pledgeId={pledge.id}
@@ -76,6 +83,25 @@ export default async function DecidirReservaPage({
             what={pledge.itemTitle}
             quien={quien}
             porTelefono={porTelefono}
+          />
+        ) : pledge.status === "accepted" && decision === "si" ? (
+          <p className="max-w-measure text-body text-ink">
+            Esta reserva ya está tomada, pendiente de entrega. La llegada se
+            confirma en el panel de donaciones.
+          </p>
+        ) : pledge.status === "accepted" ? (
+          <ReleaseAccepted
+            pledgeId={pledge.id}
+            userId={pledge.userId}
+            what={pledge.itemTitle}
+          />
+        ) : pledge.status === "fulfilled" ? (
+          <ReleaseFulfilled
+            pledgeId={pledge.id}
+            userId={pledge.userId}
+            what={pledge.itemTitle}
+            displayName={pledge.donorDisplayName}
+            fulfilledAt={pledge.fulfilledAt}
           />
         ) : (
           <p className="max-w-measure text-body text-ink">
@@ -92,6 +118,82 @@ export default async function DecidirReservaPage({
           </Link>
         </p>
       </Panel>
+    </>
+  );
+}
+
+function ReleaseAccepted({
+  pledgeId,
+  userId,
+  what,
+}: {
+  pledgeId: string;
+  userId: string | null;
+  what: string;
+}) {
+  return (
+    <>
+      <p className="max-w-measure text-body text-ink">
+        Esta reserva ya está tomada, pendiente de entrega. Si no se concreta,
+        soltala: el ítem vuelve a la lista.
+      </p>
+      <div className="mt-lg">
+        <ActionForm action={cancelPledgeAction}>
+          <HiddenValue name="id" value={pledgeId} />
+          <HiddenValue name="userId" value={userId ?? ""} />
+          <HiddenValue name="what" value={what} />
+          <TextAreaField
+            name="reason"
+            label="Motivo de la cancelación"
+            required
+            rows={2}
+            maxLength={300}
+          />
+          <SubmitButton tone="danger" pendingLabel="Soltando…">
+            Soltar la reserva
+          </SubmitButton>
+        </ActionForm>
+      </div>
+    </>
+  );
+}
+
+function ReleaseFulfilled({
+  pledgeId,
+  userId,
+  what,
+  displayName,
+  fulfilledAt,
+}: {
+  pledgeId: string;
+  userId: string | null;
+  what: string;
+  displayName: string | null;
+  fulfilledAt: string | null;
+}) {
+  return (
+    <>
+      <p className="max-w-measure text-body text-ink">
+        {alreadyDecided("fulfilled", displayName, fulfilledAt)} Si te arrepentís,
+        soltala: el ítem vuelve a la lista.
+      </p>
+      <div className="mt-lg">
+        <ActionForm action={cancelPledgeAction}>
+          <HiddenValue name="id" value={pledgeId} />
+          <HiddenValue name="userId" value={userId ?? ""} />
+          <HiddenValue name="what" value={what} />
+          <TextAreaField
+            name="reason"
+            label="Motivo de la cancelación"
+            required
+            rows={2}
+            maxLength={300}
+          />
+          <SubmitButton tone="danger" pendingLabel="Soltando…">
+            Soltar la reserva
+          </SubmitButton>
+        </ActionForm>
+      </div>
     </>
   );
 }

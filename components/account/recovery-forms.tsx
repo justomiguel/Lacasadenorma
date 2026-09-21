@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { requestPasswordReset, setPassword } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
+import { CheckIcon, MailIcon } from "@/components/design-system/icons";
 import type { AccountContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
 
@@ -69,7 +70,9 @@ export function RecoverForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+      <SubmitButton icon={<MailIcon />} pendingLabel={copy.submitting}>
+        {copy.submit}
+      </SubmitButton>
     </form>
   );
 }
@@ -118,7 +121,9 @@ export function PasswordForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+      <SubmitButton icon={<CheckIcon />} pendingLabel={copy.submitting}>
+        {copy.submit}
+      </SubmitButton>
     </form>
   );
 }

@@ -11,6 +11,7 @@ import {
   TextField,
 } from "@/components/account/fields";
 import { fieldError, generalError } from "@/components/account/error-text";
+import { BoxIcon } from "@/components/design-system/icons";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
@@ -103,7 +104,9 @@ export function OfferForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={copy.coverClaiming}>{copy.donateCta}</SubmitButton>
+      <SubmitButton icon={<BoxIcon />} pendingLabel={copy.coverClaiming}>
+        {copy.donateCta}
+      </SubmitButton>
     </form>
   );
 }

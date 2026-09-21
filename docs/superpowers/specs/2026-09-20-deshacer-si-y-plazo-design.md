@@ -26,7 +26,7 @@ reserved ──fulfill──▶ fulfilled ──cancel──▶ cancelled
     └────expire───▶ expired   (no se escribe más)
 ```
 
-- `cancel_donation_pledge` acepta **reserved o fulfilled**. Si estaba reservada, baja `reserved_quantity`. Si estaba donada, baja `fulfilled_quantity`. En los dos: `cancelled`, motivo, `cancelled_at`. `fulfilled_at` se conserva: se confirmó y después se soltó.
+- `cancel_donation_pledge` acepta **reserved o fulfilled**. Si estaba reservada, baja `reserved_quantity`. Si estaba donada, baja `fulfilled_quantity`. En los dos: `cancelled`, motivo, `cancelled_at`. `fulfilled_at` se limpia: el CHECK de la tabla no admite fecha de llegada si ya no está fulfilled.
 - Quien donó no suelta una ya confirmada: sólo el equipo (`admin`+), igual que el sí.
 - Cancelada no tiene salida.
 - `expired` queda para filas viejas. Ninguna función nueva escribe ese estado. `expire` sigue en el dominio como evento histórico; la interfaz no lo ofrece.

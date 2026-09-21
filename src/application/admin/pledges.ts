@@ -1,13 +1,15 @@
 import { z } from "zod";
 
 import { perform, type AdminDeps, type AdminResult } from "@/src/application/admin/core";
+import { REVERT_PLEDGE_DEFAULT_REASON } from "@/src/domain/entities/donation-pledge";
 import type { EmailSender } from "@/src/domain/ports/email";
 import { buildPledgeEmail, buildStaffEmail } from "@/src/application/emails/messages";
+import { localizedHref } from "@/src/i18n/href";
 import type { Locale } from "@/src/i18n/locale";
 
 import { checkbox, optionalText, requiredText, uuid } from "./fields";
 
-const fulfillSchema = z
+const acceptSchema = z
   .object({
     id: uuid("la reserva"),
     aparecer: checkbox,
@@ -29,9 +31,24 @@ const fulfillSchema = z
     note: nota,
   }));
 
+const fulfillSchema = z.object({
+  id: uuid("la reserva"),
+});
+
 const cancelSchema = z.object({
   id: uuid("la reserva"),
   reason: requiredText("el motivo", 300),
+});
+
+const deleteSchema = z.object({
+  id: uuid("la reserva"),
+  title: requiredText("el ítem", 140),
+});
+
+const revertSchema = z.object({
+  id: uuid("la reserva"),
+  title: requiredText("el ítem", 140),
+  reason: optionalText(300),
 });
 
 export interface PledgeMail {
@@ -39,7 +56,7 @@ export interface PledgeMail {
   readonly siteUrl: string;
   readonly staffAddress: string | null;
   readonly record: (input: {
-    kind: "pledge.fulfilled" | "staff.pledge_cancelled";
+    kind: "pledge.fulfilled" | "pledge.reverted" | "staff.pledge_cancelled";
     pledgeId: string;
     result: Awaited<ReturnType<EmailSender["send"]>>;
   }) => Promise<void>;
@@ -47,6 +64,38 @@ export interface PledgeMail {
   readonly localeOf: (userId: string) => Promise<Locale>;
   readonly what: string;
   readonly userId: string | null;
+}
+
+/**
+ * Confirmar que van a donar. No mueve el contador ni manda el correo de
+ * llegada: eso es el segundo paso.
+ */
+export async function acceptPledge(
+  deps: AdminDeps,
+  input: unknown,
+  _mail: PledgeMail | null,
+): Promise<AdminResult<{ id: string }>> {
+  const result = await perform({
+    deps,
+    permission: "donaciones.escribir",
+    describe: "confirmar que van a donar",
+    schema: acceptSchema,
+    input,
+    run: async (parsed) => {
+      await deps.gateway.donations.acceptPledge(parsed);
+
+      return parsed;
+    },
+    success: () => "Quedó tomada. Pendiente de entrega.",
+    audit: (parsed) => ({
+      action: "pledge.accepted",
+      entityTable: "donation_pledges",
+      entityId: parsed.id,
+      diff: null,
+    }),
+  });
+
+  return result;
 }
 
 /**
@@ -166,4 +215,124 @@ export async function cancelPledge(
   }
 
   return result;
+}
+
+/**
+ * Deshace un Donado: vuelve las unidades al catálogo y deja la reserva
+ * cancelada. El correo va a quien donó, no al equipo.
+ */
+export async function revertPledge(
+  deps: AdminDeps,
+  input: unknown,
+  mail: PledgeMail | null,
+): Promise<AdminResult<{ id: string }>> {
+  const result = await perform({
+    deps,
+    permission: "donaciones.escribir",
+    describe: "revertir la donación",
+    schema: revertSchema,
+    input,
+    run: async (parsed) => {
+      const reason = parsed.reason ?? REVERT_PLEDGE_DEFAULT_REASON;
+
+      await deps.gateway.donations.revertPledge({ id: parsed.id, reason });
+
+      return { ...parsed, reason };
+    },
+    success: () => "Donación revertida.",
+    audit: (parsed) => ({
+      action: "pledge.reverted",
+      entityTable: "donation_pledges",
+      entityId: parsed.id,
+      diff: { title: parsed.title },
+    }),
+  });
+
+  if (result.status !== "ok" || mail === null || mail.userId === null) {
+    return result;
+  }
+
+  try {
+    const locale = await mail.localeOf(mail.userId);
+    const recipient = await mail.contactOf(mail.userId);
+
+    if (recipient !== null) {
+      const sent = await mail.sender.send(
+        "pledge.reverted",
+        buildPledgeEmail("pledge.reverted", {
+          pledgeId: result.value.id,
+          recipient,
+          locale,
+          what: mail.what,
+          expiresOn: null,
+          accountUrl: `${mail.siteUrl}${localizedHref("/catalogo", locale)}`,
+        }),
+      );
+
+      await mail.record({
+        kind: "pledge.reverted",
+        pledgeId: result.value.id,
+        result: sent,
+      });
+    }
+  } catch (error) {
+    deps.logger.error("No se pudo avisar la reversión", { error });
+  }
+
+  return result;
+}
+
+export { recordDonorArrival } from "./record-arrival";
+export { updatePledge } from "./update-pledge";
+
+/** Saca la reserva del listado y del muro. Devuelve las unidades si seguían comprometidas. */
+export async function deletePledge(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<{ id: string }>> {
+  return perform({
+    deps,
+    permission: "donaciones.escribir",
+    describe: "borrar la reserva",
+    schema: deleteSchema,
+    input,
+    run: async (parsed) => {
+      await deps.gateway.donations.deletePledge(parsed.id);
+
+      return parsed;
+    },
+    success: () => "Donación borrada.",
+    audit: (parsed) => ({
+      action: "pledge.deleted",
+      entityTable: "donation_pledges",
+      entityId: parsed.id,
+      diff: { title: parsed.title },
+    }),
+  });
+}
+
+/** Saca un aviso por teléfono. */
+export async function deleteOffer(
+  deps: AdminDeps,
+  input: unknown,
+): Promise<AdminResult<{ id: string }>> {
+  return perform({
+    deps,
+    permission: "donaciones.escribir",
+    describe: "borrar el aviso",
+    schema: deleteSchema,
+    input,
+    run: async (parsed) => {
+      await deps.gateway.donations.deleteOffer(parsed.id);
+
+      return parsed;
+    },
+    success: () => "Aviso borrado.",
+    audit: (parsed) => ({
+      action: "pledge.deleted",
+      entityTable: "donation_offers",
+      entityId: parsed.id,
+      diff: { title: parsed.title },
+    }),
+  });
 }

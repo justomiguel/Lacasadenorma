@@ -170,16 +170,6 @@ export function collectSignals(
     count: expiring,
   });
 
-  const expired = facts.pledges.filter((pledge) => pledge.status === "expired").length;
-  push(signals, {
-    id: "pledges_expired",
-    severity: "warning",
-    title: "Reservas vencidas",
-    body: "El material no llegó a tiempo. Las unidades volvieron al catálogo.",
-    href: "/admin/donaciones",
-    count: expired,
-  });
-
   const withoutReceipt = facts.expenses.filter(
     (item) => item.voidedAt === null && item.receiptCount === 0,
   ).length;

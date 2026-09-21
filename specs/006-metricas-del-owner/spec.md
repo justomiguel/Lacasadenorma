@@ -103,9 +103,9 @@ actúa.
    aparece una de tono `danger` que enlaza a `/admin/aportes`. **Given** que nunca se concilió,
    **Then** la señal es de tono `warning` y no se finge un dato viejo (misma distinción que
    FR-010).
-2. **Given** reservas `reserved` que vencen en tres días o menos, o ya vencidas según
+2. **Given** reservas `reserved` que vencen en tres días o menos, o ya pasaron según
    `expires_at`, **When** se arman las señales, **Then** hay una de tono `danger` hacia
-   `/admin/donaciones`. Las `expired` ya cerradas suman una de tono `warning`.
+   `/admin/donaciones`. Las `expired` viejas no suman un aviso de que el material volvió solo.
 3. **Given** cuentas `pending`, gastos vivos sin comprobante, correos `failed`, o ninguna cuenta
    bancaria publicada, **When** se arman las señales, **Then** cada una aparece con su conteo y
    su enlace (`/admin/donantes`, `/admin/gastos`, `/admin/donaciones` no aplica a correo —el

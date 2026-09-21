@@ -18,12 +18,14 @@ export const IDENTITY_EMAIL_KINDS = [
   "account.confirm",
   "account.recover",
   "account.email_change",
+  "account.invite",
 ] as const;
 
 export const PLEDGE_EMAIL_KINDS = [
   "pledge.confirmed",
   "pledge.reminder",
   "pledge.fulfilled",
+  "pledge.reverted",
 ] as const;
 
 export const STAFF_EMAIL_KINDS = [

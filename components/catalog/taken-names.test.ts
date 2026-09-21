@@ -1,26 +1,47 @@
 import { describe, expect, it } from "vitest";
 
-import { formatTakenNames } from "./taken-names";
+import { formatTakenLine } from "./taken-names";
 
 const COPY = {
-  namedShare: "{name} donó el {percent}",
-  nameNone: "—",
+  namedShare: "{name} · {percent}",
+  namedQuantity: "{name} · {quantity} {unit}",
+  units: {
+    unidad: { one: "unidad", other: "unidades" },
+    metro: { one: "metro", other: "metros" },
+    metro_cuadrado: { one: "metro cuadrado", other: "metros cuadrados" },
+    metro_cubico: { one: "metro cúbico", other: "metros cúbicos" },
+    bolsa: { one: "bolsa", other: "bolsas" },
+    litro: { one: "litro", other: "litros" },
+    juego: { one: "juego", other: "juegos" },
+  },
 };
 
-describe("formatTakenNames", () => {
-  it("sin nombres no inventa uno", () => {
-    expect(formatTakenNames([], COPY)).toBe("—");
+const ana = {
+  name: "Ana",
+  quantity: 4,
+  percentOfItem: 40,
+  claimId: "c1",
+  hasPortrait: false,
+};
+
+describe("formatTakenLine", () => {
+  it("en bolsas habla en cantidad", () => {
+    expect(formatTakenLine(ana, "bolsa", COPY)).toBe("Ana · 4 bolsas");
   });
 
-  it("cinco de diez se lee como que donó el 50% de ese ítem", () => {
-    expect(
-      formatTakenNames([{ name: "Ana", quantity: 5, percentOfItem: 50 }], COPY),
-    ).toBe("Ana donó el 50%");
+  it("en metros habla en %", () => {
+    expect(formatTakenLine(ana, "metro", COPY)).toBe("Ana · 40%");
   });
 
-  it("omite el % cuando el truncado es 0 y deja el nombre", () => {
+  it("en una medida sin % deja el nombre", () => {
     expect(
-      formatTakenNames([{ name: "Ana", quantity: 1, percentOfItem: null }], COPY),
+      formatTakenLine({ ...ana, percentOfItem: null }, "litro", COPY),
     ).toBe("Ana");
+  });
+
+  it("una bolsa no pluraliza", () => {
+    expect(
+      formatTakenLine({ ...ana, quantity: 1 }, "bolsa", COPY),
+    ).toBe("Ana · 1 bolsa");
   });
 });

@@ -43,8 +43,9 @@ estar igual en una fintech o en un panel, no va acá.
 Cada decisión se mira primero en 390 px y después en 320, 375, 393, 430, 768, 1024 y 1440. Los
 tokens viven en `app/globals.css` dentro de `@theme`: tipografía semántica (`display`,
 `headline`, `section-title`, `body-large`, `body`, `caption`, `eyebrow`), espacio 4 · 8 · 12 · 16 ·
-24 · 32 · 48 · 64 · 80 · 96 · 120, radios `sm` 6 / `md` 10 / `lg` 16. Nada de valores por
-defecto de Tailwind ni arbitrarios (`text-[13px]`, `aspect-[16/9]`).
+24 · 32 · 48 · 64 · 80 · 96 · 120, radios `sm` 6 / `md` 10 / `lg` 16. El retrato
+del menú de trabajo es `--spacing-avatar` (128 px): no se escribe `size-[128px]`.
+Nada de valores por defecto de Tailwind ni arbitrarios (`text-[13px]`, `aspect-[16/9]`).
 
 ## Recorrido
 
@@ -57,9 +58,10 @@ viene. No hay índice de capítulos: la página es la navegación.
   versales de 12 px (`data-kicker`, sólo acá) y titular grande. Entre momentos separa el aire
   (80/120 px) y el cambio de superficie —papel, bosque, hundido, carbón—, no una caja.
 - **Tres familias de acción, ninguna más.** `PrimaryAction` / `HelpCta`: rectangular, radio
-  `md`, 56 px, una por pantalla, «Ayudar a reconstruir». `SecondaryAction` / `InPageAction`:
-  texto y flecha, sin caja. `ICON_ACTION`: icono de 44 px (copiar, cerrar, menú). Los iconos
-  salen de `components/design-system/icons.tsx` y de ningún otro lado.
+  `md`, 56 px, una por pantalla, «Ayudar a reconstruir», con pictograma **antes** del
+  nombre. `SecondaryAction` / `InPageAction`: texto y flecha, sin caja. `ICON_ACTION`:
+  icono de 44 px (copiar, cerrar, menú). Un botón con caja y nombre no va sin marca.
+  Los iconos salen de `components/design-system/icons.tsx` y de ningún otro lado.
 - **La fotografía estructura.** `EditorialImage` (`full-bleed`, `offset`, `portrait`, `inline`,
   `documentary`) y `DocumentaryGallery`. Las fotos tocan los bordes, salen del grid o se quedan
   en la medida; ninguna se muestra más ancha que su archivo ni dentro de un rectángulo redondeado.
@@ -76,7 +78,9 @@ viene. No hay índice de capítulos: la página es la navegación.
   ancho, sin círculo.
 - **Encabezado** (`SiteHeader` + `MobileMenu`): símbolo 01 ORIGINAL y nombre, menú
   a la derecha, transparente sobre la apertura. En teléfono, Ingresar vive dentro
-  del menú, con el idioma. En escritorio, al lado del idioma, como texto, sin caja.
+  del menú. El idioma está en el pie, con banderas. En escritorio, Ingresar es
+  un botón compacto de contorno; con sesión, el mismo botón dice «Mi Panel»
+  y lleva a `/cuenta`. Ayudar es la primaria compacta rellena.
   **Barra** (`HelpBar`): nativa, papel, safe-area, baja cuando la acción ya está a la vista.
   **Pie** (`SiteFooter`): colofón, no mapa del sitio.
 

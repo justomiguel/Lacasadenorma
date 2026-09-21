@@ -42,7 +42,7 @@ export interface StaffFacts {
   readonly subjectId: string;
   readonly staffAddress: string;
   readonly what: string | null;
-  /** El nombre de un aviso por teléfono. El resto de los avisos al equipo no lo usan. */
+  /** El nombre de quien reservó, o de un aviso por teléfono. */
   readonly who?: string | null;
   /** El número de un aviso por teléfono. Viaja como botón de WhatsApp, no en el resto. */
   readonly phone?: string | null;
@@ -61,6 +61,7 @@ const PLEDGE_COPY: Record<PledgeEmailKind, keyof EmailsContent> = {
   "pledge.confirmed": "pledgeConfirmed",
   "pledge.reminder": "pledgeReminder",
   "pledge.fulfilled": "pledgeFulfilled",
+  "pledge.reverted": "pledgeReverted",
 };
 
 const STAFF_COPY: Record<StaffEmailKind, keyof EmailsContent> = {
@@ -128,7 +129,7 @@ export function buildStaffEmail(kind: StaffEmailKind, facts: StaffFacts): EmailM
     replacements: {
       what: facts.what,
       when: null,
-      who: facts.who ?? null,
+      who: facts.who ?? (kind === "staff.new_pledge" ? "Alguien" : null),
       phone: kind === "staff.phone_offer" ? (facts.phone ?? null) : null,
     },
     highlight: facts.what,
@@ -199,7 +200,8 @@ function compose(input: Composition): EmailMessage {
  *
  * `when` puede no existir —una reserva sin vencimiento—, y en ese caso la frase
  * que la nombraba **se cae entera** en lugar de quedar con un hueco. Lo mismo
- * con `{who}` y `{phone}` si el aviso no es por teléfono.
+ * con `{who}` y `{phone}` si el aviso no los trae. Una reserva con cuenta
+ * sin nombre en el perfil cae en «Alguien».
  */
 function substitute(
   text: string,

@@ -24,6 +24,14 @@ export const ANON_KEY = signJwt({
   exp: 2_072_995_200,
 });
 
+/** La clave secreta del harness. No es un secreto: sólo abre este Postgres local. */
+export const SERVICE_ROLE_KEY = signJwt({
+  role: "service_role",
+  iss: "supabase-local",
+  iat: 1_757_376_000,
+  exp: 2_072_995_200,
+});
+
 /**
  * Verifica firma y vencimiento de un token emitido acá.
  *

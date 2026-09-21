@@ -56,7 +56,7 @@ de rutas. No se toca el cargador.
 
 No hay negociación por `Accept-Language`. Un visitante argentino con el Chrome en inglés no se
 merece que lo saquemos de la página que le compartieron. El idioma lo elige la URL, y la URL la
-elige un enlace «English» / «Castellano» visible. Una cookie que recuerde la elección se puede
+elige un enlace «English» / «Castellano» visible, en el pie. Una cookie que recuerde la elección se puede
 sumar después; no es estructura, es comodidad, y hoy no está.
 
 ### Árbol de rutas
@@ -172,9 +172,10 @@ se piensa en castellano. Un `/en/llms.txt` se puede sumar después; no es estruc
 - Quien abre `/` sigue viendo exactamente lo que veía. El castellano no se mudó.
 - Quien abre `/en` ve el mismo sitio en inglés, con el mismo recorrido, las mismas fotos y los
   mismos números. Los números se formatean con `en-US` (`$1,240,000` y no `$ 1.240.000`).
-- El encabezado gana un enlace de idioma. No es un globo ni una bandera: es la palabra *English*
-  o *Castellano*, en el idioma al que lleva. Una bandera no es un idioma, y el sistema de diseño
-  no usa iconos de relleno (ADR-021).
+- El pie gana el conmutador de idioma: las dos variedades, cada una con su bandera
+  antes del nombre (Argentina para el castellano, Estados Unidos para el inglés: el
+  corredor que lo justifica). El nombre sigue siendo *English* o *Castellano*, en
+  el idioma al que lleva. El encabezado no lo lleva: ahí compite con la acción.
 - Los tests de Playwright sobre las URLs actuales siguen siendo la suite principal. Se suma una
   suite corta que afirma el `html lang`, los `hreflang` y que el conmutador cambia de idioma
   **sin cambiar de sección**.

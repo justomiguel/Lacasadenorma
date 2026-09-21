@@ -153,6 +153,10 @@ export class FakeDonationsPort implements DonationsPort {
     return;
   }
 
+  async updateOwnPledge(): Promise<void> {
+    return;
+  }
+
   async updateOwnAppearance(next: {
     isAnonymous: boolean;
     displayName: string | null;

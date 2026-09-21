@@ -19,6 +19,7 @@ export const COVER_CHANNEL_LABELS: Record<CoverChannel, string> = {
 
 export const PLEDGE_STATUS_LABELS: Record<PledgeStatus, string> = {
   reserved: "En curso",
+  accepted: "Pendiente de entrega",
   fulfilled: "Llegó",
   cancelled: "Cancelada",
   expired: "Vencida",

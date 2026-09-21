@@ -5,7 +5,7 @@ import { getContent } from "@/content";
 import type { CatalogClaim, DonationItem, MediaAsset } from "@/src/domain/entities";
 import { money } from "@/src/domain/money";
 
-import { CatalogTable } from "./table";
+import { CatalogInventory } from "./inventory";
 
 vi.mock("next/image", () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
@@ -54,24 +54,13 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
   };
 }
 
-describe("CatalogTable", () => {
-  it("es una tabla con encabezados también sin apilar, y un quiero donar por fila", () => {
-    render(<CatalogTable items={[item()]} claims={[]} copy={COPY} locale="es" />);
+describe("CatalogInventory", () => {
+  it("es una lista, no una tabla, con un quiero donar por fila", () => {
+    render(<CatalogInventory items={[item()]} claims={[]} copy={COPY} locale="es" />);
 
-    expect(screen.getByRole("table")).toHaveAccessibleName(/lo que falta/i);
-    expect(screen.getByRole("columnheader", { name: "Qué" })).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "Cantidad" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("columnheader", { name: "¿La tomó alguien?" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "Nombre" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("columnheader", { name: "Estimado por unidad" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("columnheader", { name: "Estimado total" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "Donar" })).toBeInTheDocument();
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
+    expect(screen.queryByRole("columnheader")).not.toBeInTheDocument();
+    expect(screen.getByRole("list")).toHaveAccessibleName(/lo que falta/i);
     expect(screen.getByRole("link", { name: "Tina" })).toHaveAttribute(
       "href",
       "/catalogo/item-tina",
@@ -80,16 +69,14 @@ describe("CatalogTable", () => {
       "href",
       "/catalogo/item-tina",
     );
-    expect(screen.getByText("No")).toBeInTheDocument();
-    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
-    expect(screen.getByRole("table")).toHaveAccessibleName(
-      /fotos no representan el objeto real/i,
-    );
+    expect(screen.getByText(/faltan 1/i)).toBeInTheDocument();
+    expect(screen.queryByText("No")).not.toBeInTheDocument();
+    expect(screen.queryByText("—")).not.toBeInTheDocument();
   });
 
-  it("muestra la foto de referencia en Qué, y no reserva un hueco si no hay", () => {
+  it("muestra la foto de referencia junto al título, y no reserva un hueco si no hay", () => {
     const { rerender } = render(
-      <CatalogTable
+      <CatalogInventory
         items={[item({ title: "Bidet" })]}
         claims={[]}
         copy={COPY}
@@ -103,7 +90,7 @@ describe("CatalogTable", () => {
     expect(screen.queryByText(/acá va una foto/i)).not.toBeInTheDocument();
 
     rerender(
-      <CatalogTable
+      <CatalogInventory
         items={[item({ title: "Un ítem que no está en el JSON" })]}
         claims={[]}
         copy={COPY}
@@ -120,7 +107,7 @@ describe("CatalogTable", () => {
 
   it("en el listado la foto subida pisa la de referencia", () => {
     render(
-      <CatalogTable
+      <CatalogInventory
         items={[item({ photo: uploaded() })]}
         claims={[]}
         copy={COPY}
@@ -136,9 +123,9 @@ describe("CatalogTable", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("publica el estimado por unidad y el total de lo que falta, etiquetado en el caption", () => {
+  it("publica el estimado por unidad y el total de lo que falta", () => {
     render(
-      <CatalogTable
+      <CatalogInventory
         items={[
           item({
             neededQuantity: 4,
@@ -152,14 +139,14 @@ describe("CatalogTable", () => {
       />,
     );
 
-    expect(screen.getByText("$ 100")).toBeInTheDocument();
+    expect(screen.getAllByText(/\$ 100/).length).toBeGreaterThan(0);
     expect(screen.getByText("$ 300")).toBeInTheDocument();
-    expect(screen.getByRole("table")).toHaveAccessibleName(/no es un precio fijo/i);
+    expect(screen.getByRole("list")).toHaveAccessibleName(/no es un precio fijo/i);
   });
 
   it("un ítem cubierto no ofrece donar ni inventa un total", () => {
     render(
-      <CatalogTable
+      <CatalogInventory
         items={[
           item({
             remainingQuantity: 0,
@@ -174,8 +161,9 @@ describe("CatalogTable", () => {
     );
 
     expect(screen.queryByRole("link", { name: /quiero donar/i })).not.toBeInTheDocument();
-    expect(screen.getByText("$ 100")).toBeInTheDocument();
-    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
+    expect(screen.getByText(COPY.covered)).toBeInTheDocument();
+    expect(screen.queryByText("$ 300")).not.toBeInTheDocument();
+    expect(screen.queryByText("$ 100")).not.toBeInTheDocument();
   });
 
   it("muestra el nombre de quien eligió aparecer, y no inventa uno si no hay", () => {
@@ -186,11 +174,12 @@ describe("CatalogTable", () => {
         quantity: 1,
         donorDisplayName: "María",
         fulfilledAt: null,
+        hasPortrait: false,
       },
     ];
 
     render(
-      <CatalogTable
+      <CatalogInventory
         items={[item({ remainingQuantity: 0, fulfilledQuantity: 0 })]}
         claims={claims}
         copy={COPY}
@@ -198,8 +187,9 @@ describe("CatalogTable", () => {
       />,
     );
 
-    expect(screen.getByText("Sí")).toBeInTheDocument();
-    expect(screen.getByText("María donó el 100%")).toBeInTheDocument();
+    expect(screen.queryByText("Sí")).not.toBeInTheDocument();
+    expect(screen.getByText("María · 1 unidad")).toBeInTheDocument();
+    expect(screen.queryByText(/donó el/)).not.toBeInTheDocument();
   });
 
   it("una toma parcial nombra el % de ese ítem y sigue ofreciendo donar", () => {
@@ -210,11 +200,12 @@ describe("CatalogTable", () => {
         quantity: 5,
         donorDisplayName: "Ana",
         fulfilledAt: "2026-09-17T00:00:00.000Z",
+        hasPortrait: false,
       },
     ];
 
     render(
-      <CatalogTable
+      <CatalogInventory
         items={[
           item({
             neededQuantity: 10,
@@ -228,8 +219,9 @@ describe("CatalogTable", () => {
       />,
     );
 
-    expect(screen.getByText("Ana donó el 50%")).toBeInTheDocument();
+    expect(screen.getByText("Ana · 5 unidades")).toBeInTheDocument();
+    expect(screen.queryByText(/donó el/)).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quiero donar tina/i })).toBeInTheDocument();
-    expect(screen.getByText(/faltan 5 de 10/i)).toBeInTheDocument();
+    expect(screen.getByText(/faltan 5/i)).toBeInTheDocument();
   });
 });

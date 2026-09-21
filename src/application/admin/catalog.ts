@@ -130,8 +130,7 @@ const deleteSchema = z.object({
 });
 
 /**
- * Saca un ítem que nadie tomó. Si hay reservas, la base lo impide y
- * `perform` traduce el error (ADR-050).
+ * Saca un ítem del catálogo. Si hay reservas o avisos, se van con él.
  */
 export async function deleteDonationItem(
   deps: AdminDeps,

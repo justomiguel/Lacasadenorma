@@ -3,11 +3,7 @@ import type { ReactNode } from "react";
 import { OwnPledges } from "@/components/account/own-pledges";
 import { ChangePasswordForm } from "@/components/account/password-form";
 import { PortraitForm } from "@/components/account/portrait-form";
-import {
-  DeleteAccountForm,
-  ProfileForm,
-  SignOutForm,
-} from "@/components/account/profile-forms";
+import { DeleteAccountForm, ProfileForm } from "@/components/account/profile-forms";
 import { SectionHeading } from "@/components/design-system/typography";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import {
@@ -15,6 +11,7 @@ import {
   displayNameOf,
   type DonorProfile,
 } from "@/src/domain/entities/donor";
+import type { DonationItem } from "@/src/domain/entities";
 import type { OwnPledge } from "@/src/domain/entities/donation-pledge";
 import type { Locale } from "@/src/i18n/locale";
 
@@ -26,14 +23,19 @@ import type { Locale } from "@/src/i18n/locale";
 function Panel({
   title,
   lead,
+  id,
   children,
 }: {
   title: string;
   lead: string;
+  id?: string;
   children: ReactNode;
 }) {
   return (
-    <div>
+    <div
+      {...(id === undefined ? {} : { id })}
+      className={id === undefined ? undefined : "scroll-mt-header"}
+    >
       <SectionHeading title={title} />
       <p className="mb-xl max-w-measure text-body text-ink-muted">{lead}</p>
       {children}
@@ -46,15 +48,49 @@ export function PledgesPanel({
   catalog,
   locale,
   pledges,
+  items,
 }: {
   copy: AccountContent["profile"];
   catalog: CatalogContent;
   locale: Locale;
   pledges: readonly OwnPledge[];
+  items: readonly DonationItem[];
 }) {
   return (
     <Panel title={copy.pledgesHeading} lead={copy.pledgesLead}>
-      <OwnPledges pledges={pledges} copy={copy} catalog={catalog} locale={locale} />
+      <OwnPledges
+        pledges={pledges}
+        items={items}
+        copy={copy}
+        catalog={catalog}
+        locale={locale}
+      />
+    </Panel>
+  );
+}
+
+export function PortraitPanel({
+  copy,
+  errors,
+  fields,
+  locale,
+  profile,
+}: {
+  copy: AccountContent["profile"];
+  errors: AccountContent["errors"];
+  fields: AccountContent["fields"];
+  locale: Locale;
+  profile: DonorProfile;
+}) {
+  return (
+    <Panel id="foto" title={copy.portraitHeading} lead={copy.portraitLead}>
+      <PortraitForm
+        copy={copy}
+        errors={errors}
+        fields={fields}
+        locale={locale}
+        profile={profile}
+      />
     </Panel>
   );
 }
@@ -75,33 +111,21 @@ export function AppearancePanel({
   const name = displayNameOf(profile);
 
   return (
-    <div className="space-y-3xl">
-      <Panel title={copy.appearanceHeading} lead={copy.appearanceLead}>
-        {/* El resumen se calcula con la misma función que decide el muro
-            (`canAppearNamed`), así que no puede prometer algo distinto de lo que la
-            base va a publicar. */}
-        <p className="mb-xl max-w-measure font-ui text-small text-ink">
-          {canAppearNamed(profile) ? `${copy.appearsAs} ${name}` : copy.appearsAnonymous}
-        </p>
-        <ProfileForm
-          copy={copy}
-          errors={errors}
-          fields={fields}
-          locale={locale}
-          profile={profile}
-        />
-      </Panel>
-
-      <Panel title={copy.portraitHeading} lead={copy.portraitLead}>
-        <PortraitForm
-          copy={copy}
-          errors={errors}
-          fields={fields}
-          locale={locale}
-          profile={profile}
-        />
-      </Panel>
-    </div>
+    <Panel id="aparecer" title={copy.appearanceHeading} lead={copy.appearanceLead}>
+      {/* El resumen se calcula con la misma función que decide el muro
+          (`canAppearNamed`), así que no puede prometer algo distinto de lo que la
+          base va a publicar. */}
+      <p className="mb-xl max-w-measure font-ui text-small text-ink">
+        {canAppearNamed(profile) ? `${copy.appearsAs} ${name}` : copy.appearsAnonymous}
+      </p>
+      <ProfileForm
+        copy={copy}
+        errors={errors}
+        fields={fields}
+        locale={locale}
+        profile={profile}
+      />
+    </Panel>
   );
 }
 
@@ -110,35 +134,24 @@ export function AccessPanel({
   errors,
   fields,
   locale,
-  email,
   password,
 }: {
   copy: AccountContent["profile"];
   errors: AccountContent["errors"];
   fields: AccountContent["fields"];
   locale: Locale;
-  email: string;
   password: AccountContent["password"];
 }) {
   return (
-    <div className="space-y-3xl">
-      <div className="max-w-measure space-y-lg">
-        <p className="font-ui text-small text-ink-muted">
-          {copy.signedInAs} <span className="text-ink">{email}</span>
-        </p>
-        <SignOutForm copy={copy} locale={locale} />
-      </div>
-
-      <Panel title={copy.passwordHeading} lead={copy.passwordLead}>
-        <ChangePasswordForm
-          copy={password}
-          errors={errors}
-          fields={fields}
-          locale={locale}
-          saved={copy.saved}
-        />
-      </Panel>
-    </div>
+    <Panel id="acceso" title={copy.passwordHeading} lead={copy.passwordLead}>
+      <ChangePasswordForm
+        copy={password}
+        errors={errors}
+        fields={fields}
+        locale={locale}
+        saved={copy.saved}
+      />
+    </Panel>
   );
 }
 
@@ -152,7 +165,7 @@ export function DeletePanel({
   locale: Locale;
 }) {
   return (
-    <Panel title={copy.deleteHeading} lead={copy.deleteLead}>
+    <Panel id="borrar" title={copy.deleteHeading} lead={copy.deleteLead}>
       <DeleteAccountForm copy={copy} errors={errors} locale={locale} />
     </Panel>
   );

@@ -59,6 +59,13 @@ describe("los correos de identidad", () => {
     );
   });
 
+  it("el invite nombra la cuenta y no deja {link} suelto en el asunto", () => {
+    const message = buildIdentityEmail("account.invite", HECHOS);
+
+    expect(message.subject).toMatch(/cuenta/i);
+    expect(message.subject).not.toContain("{link}");
+  });
+
   it("van en el idioma de quien se registró", () => {
     const castellano = buildIdentityEmail("account.confirm", HECHOS);
     const ingles = buildIdentityEmail("account.confirm", { ...HECHOS, locale: "en" });

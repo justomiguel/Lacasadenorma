@@ -41,11 +41,11 @@ carpetas.
 | `que-paso.json` | `/que-paso` | Tiene un cierre obligatorio, `needNow`, y las notas de prensa en `press` |
 | `reconstruccion.json` | `/reconstruccion` | `scope` es la lista de trabajos, **sin montos** |
 | `ayudar.json` | `/ayudar` y `/ayudar/dinero` | `afterTransfer`: qué pasa después de transferir. `contact.mapsUrl` es el enlace a Google Maps del pueblo, no un pin del lote (ADR-045) |
-| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como tabla, con miniatura en Qué cuando hay foto; la ficha `/catalogo/[id]` lleva la foto completa con epígrafe. Acá van título, bajada, columnas y estados, sin prosa de introducción |
-| `catalogo-fotos.json` | Listado `/catalogo` y ficha `/catalogo/[id]` | Fotos de referencia por título (ADR-043). El archivo vive en `public/fotos/catalogo/`. El epígrafe dice que es solamente ilustrativa y que no representa el objeto real: en la ficha se lee entero; en el listado lo dice el caption de la tabla. La foto subida desde el backoffice pisa esta. El ítem del fixture también tiene entrada |
+| `catalogo.json` | `/catalogo` | Qué falta, en especie. El listado de ítems vive en la base y se muestra como inventario editorial, con miniatura junto al título cuando hay foto; la ficha `/catalogo/[id]` abre con la foto, el título como `h1`, cuánto falta y dos caminos (traer o cubrir con plata). Acá van título, bajada, caption de la lista y estados, sin prosa de introducción |
+| `catalogo-fotos.json` | Listado `/catalogo` y ficha `/catalogo/[id]` | Fotos de referencia por título (ADR-043). El archivo vive en `public/fotos/catalogo/`. El epígrafe dice que es solamente ilustrativa y que no representa el objeto real: en la ficha se lee entero; en el listado lo dice el caption de la lista. La foto subida desde el backoffice pisa esta. El ítem del fixture también tiene entrada |
 | `quienes-ayudaron.json` | `/quienes-ayudaron` | Título, bajada y estados del muro (especie y plata). Los nombres viven en la base; acá no hay una lista de ejemplo ni prosa de introducción |
 | `transparencia.json` | `/transparencia` | `method`: cómo se lleva la cuenta |
-| `legado.json` | `/legado` | Fundación Norma como intención, no como organización. Incluye la única oración verificable sobre Riacho Conecta: que es el nombre del primer programa que se quiere poner en pie |
+| `legado.json` | `/legado` | La intención de que de la casa nazca Fundación Norma: formación gratuita en herramientas digitales para gente de Riacho He Hé |
 | `preguntas.json` | Las preguntas de la home y el `FAQPage` | Como máximo tres |
 | `legales.json` | `/legales/privacidad` y `/legales/terminos` | `updatedOn` se cambia cuando cambia el texto |
 
@@ -111,10 +111,10 @@ Cuando el hueco es una **foto del relato** —Norma, el incendio, la obra—, el
 reserva el espacio con su proporción final y dice qué va ahí. Un espacio vacío con intención se lee
 como respeto; una foto de stock de una casa que no es ésta se lee como mentira.
 
-El catálogo es otra cosa (ADR-043). El listado muestra una miniatura en Qué. Cada ficha muestra
-la foto completa, con epígrafe que dice que es solamente ilustrativa y que no representa el objeto
-real. Si el equipo sube la foto real, esa pisa la de referencia. Si no hay ninguna, la ficha
-reserva el hueco; el listado omite la foto.
+El catálogo es otra cosa (ADR-043). El listado muestra una miniatura junto al título. Cada ficha abre con
+la foto, el título como `h1` y dos caminos (traer o cubrir con plata). El epígrafe dice que es
+solamente ilustrativa y que no representa el objeto real. Si el equipo sube la foto real, esa
+pisa la de referencia. Si no hay ninguna, la ficha reserva el hueco; el listado omite la foto.
 
 ---
 

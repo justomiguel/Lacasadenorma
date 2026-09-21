@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { CatalogContent } from "@/content/schema";
-import type { DonationItem, MediaAsset } from "@/src/domain/entities";
+import type { CatalogClaim, DonationItem, MediaAsset } from "@/src/domain/entities";
+import { money } from "@/src/domain/money";
 
 import { CatalogItem } from "./item";
 
@@ -13,15 +14,24 @@ vi.mock("next/image", () => ({
   ),
 }));
 
+vi.mock("./cover", () => ({
+  HowToDonate: () => <div data-howto="">cómo donar</div>,
+}));
+
 const COPY = {
   reservedPhoto: "Acá va una foto de {title}, cuando haya una.",
   covered: "Ya está cubierto.",
-  quantityOf: "Faltan {remaining} de {needed} {unit}.",
+  remainingFact: "Faltan {remaining}",
+  remainingOf: "de {needed} {unit}",
+  estimatedUnit: "estimado {amount}, no fijo",
   columnTaken: "¿La tomó alguien?",
   columnName: "Nombre",
   takenYes: "Sí",
   takenNo: "No",
   nameNone: "—",
+  namedShare: "{name} · {percent}",
+  namedQuantity: "{name} · {quantity} {unit}",
+  donorsLabel: "Quién tomó esto",
   units: {
     unidad: { one: "unidad", other: "unidades" },
     metro: { one: "metro", other: "metros" },
@@ -82,20 +92,24 @@ function item(partial: Partial<DonationItem> = {}): DonationItem {
   };
 }
 
+function renderItem(partial: Partial<DonationItem> = {}) {
+  return render(
+    <CatalogItem
+      item={item(partial)}
+      claims={[]}
+      copy={COPY}
+      account={{} as never}
+      help={{} as never}
+      ui={{} as never}
+      locale="es"
+      priority
+    />,
+  );
+}
+
 describe("CatalogItem", () => {
   it("muestra la foto de referencia cuando no hay una subida, con el epígrafe (ADR-043)", () => {
-    const { container } = render(
-      <CatalogItem
-        item={item()}
-        claims={[]}
-        copy={COPY}
-        account={{} as never}
-        help={{} as never}
-        ui={{} as never}
-        locale="es"
-        priority
-      />,
-    );
+    const { container } = renderItem();
 
     expect(
       screen.getByRole("img", { name: /foto ilustrativa de tina/i }),
@@ -111,17 +125,7 @@ describe("CatalogItem", () => {
   });
 
   it("la foto subida pisa la de referencia", () => {
-    render(
-      <CatalogItem
-        item={item({ photo: uploaded() })}
-        claims={[]}
-        copy={COPY}
-        account={{} as never}
-        help={{} as never}
-        ui={{} as never}
-        locale="es"
-      />,
-    );
+    renderItem({ photo: uploaded() });
 
     expect(screen.getByRole("img", { name: /la tina que llegó/i })).toHaveAttribute(
       "src",
@@ -132,21 +136,112 @@ describe("CatalogItem", () => {
   });
 
   it("sin foto subida ni de referencia reserva el hueco", () => {
-    render(
-      <CatalogItem
-        item={item({ title: "Ítem de prueba sin ficha" })}
-        claims={[]}
-        copy={COPY}
-        account={{} as never}
-        help={{} as never}
-        ui={{} as never}
-        locale="es"
-      />,
-    );
+    renderItem({ title: "Ítem de prueba sin ficha" });
 
     expect(
       screen.getByText(/acá va una foto de ítem de prueba sin ficha/i),
     ).toBeInTheDocument();
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("el título es el h1, la foto va antes y no se habla como planilla", () => {
+    const { container } = renderItem({
+      remainingQuantity: 4,
+      neededQuantity: 10,
+      fulfilledQuantity: 0,
+      estimatedValue: money(120_000, "ARS"),
+    });
+
+    const heading = screen.getByRole("heading", { level: 1, name: "Tina" });
+    const photo = container.querySelector("[data-reveal-photo]");
+
+    expect(photo).not.toBeNull();
+    if (photo === null) {
+      throw new Error("expected the item photo");
+    }
+    expect(
+      photo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(container.querySelector("[data-item-ficha]")).toHaveClass("lg:grid");
+    expect(screen.getByText("Faltan 4")).toBeInTheDocument();
+    expect(screen.getByText(/de 10 unidades/i)).toBeInTheDocument();
+    expect(screen.getByText(/estimado/i)).toHaveTextContent(/no fijo/i);
+    expect(screen.queryByText(/¿la tomó alguien\?/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Una bañera.")).toBeInTheDocument();
+    expect(container.querySelector("[data-howto]")).not.toBeNull();
+  });
+
+  it("muestra el nombre de quien eligió aparecer, y no inventa uno si no hay", () => {
+    const claims: CatalogClaim[] = [
+      {
+        id: "c1",
+        itemId: "item-tina",
+        quantity: 1,
+        donorDisplayName: "María",
+        fulfilledAt: null,
+        hasPortrait: false,
+      },
+    ];
+
+    render(
+      <CatalogItem
+        item={item({ remainingQuantity: 0, fulfilledQuantity: 0 })}
+        claims={claims}
+        copy={COPY}
+        account={{} as never}
+        help={{} as never}
+        ui={{} as never}
+        locale="es"
+        priority
+      />,
+    );
+
+    expect(screen.queryByText("Sí")).not.toBeInTheDocument();
+    expect(screen.getByText("María · 1 unidad")).toBeInTheDocument();
+    expect(screen.queryByText(/donó el/)).not.toBeInTheDocument();
+  });
+
+  it("una toma parcial nombra las unidades de ese ítem y sigue ofreciendo donar", () => {
+    const claims: CatalogClaim[] = [
+      {
+        id: "c1",
+        itemId: "item-tina",
+        quantity: 5,
+        donorDisplayName: "Ana",
+        fulfilledAt: "2026-09-17T00:00:00.000Z",
+        hasPortrait: false,
+      },
+    ];
+
+    render(
+      <CatalogItem
+        item={item({
+          neededQuantity: 10,
+          remainingQuantity: 5,
+          fulfilledQuantity: 5,
+        })}
+        claims={claims}
+        copy={COPY}
+        account={{} as never}
+        help={{} as never}
+        ui={{} as never}
+        locale="es"
+        priority
+      />,
+    );
+
+    expect(screen.getByText("Ana · 5 unidades")).toBeInTheDocument();
+    expect(screen.getByText("cómo donar")).toBeInTheDocument();
+    expect(screen.getByText("Faltan 5")).toBeInTheDocument();
+  });
+
+  it("cubierto no ofrece caminos y omite el estimado si no hay", () => {
+    renderItem();
+
+    expect(screen.getByRole("heading", { level: 1, name: "Tina" })).toBeInTheDocument();
+    expect(screen.getByText("Ya está cubierto.")).toBeInTheDocument();
+    expect(screen.queryByText(/estimado/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/¿la tomó alguien\?/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("cómo donar")).not.toBeInTheDocument();
   });
 });

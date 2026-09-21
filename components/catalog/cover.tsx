@@ -7,7 +7,7 @@ import { ExternalPayment } from "@/components/campaign/external-payment";
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
 import { IdentifyingMark } from "@/components/design-system/identifying-mark";
-import { BankIcon, BoxIcon } from "@/components/design-system/icons";
+import { ArrowIcon, BankIcon, BanknoteIcon, BoxIcon } from "@/components/design-system/icons";
 import { useChromeSession } from "@/components/site/session";
 import type {
   AccountContent,
@@ -24,13 +24,11 @@ import { ClaimForm } from "./claim-form";
 import { CoverAmounts } from "./cover-amount";
 import { OfferForm } from "./offer-form";
 
+type DonatePath = "bring" | "money";
+
 /**
- * Cómo donar un ítem: traer el mismo bien o cubrirlo con plata sin
- * reservar (ADR-044, ADR-046, ADR-051).
- *
- * Los datos de un medio de pago aparecen sólo cuando ese canal está elegido.
- * Sin JavaScript lo hace `:has()` sobre el radio. El formulario corto es el
- * HTML público; con sesión, al hidratar, un clic reserva (ADR-037, ADR-051).
+ * Cómo donar un ítem: dos caminos a la vista (traer o cubrir con plata).
+ * Los tres medios aparecen sólo en plata. Sin JavaScript lo hace `:has()`.
  */
 export function HowToDonate({
   itemId,
@@ -53,7 +51,8 @@ export function HowToDonate({
 }) {
   const { session } = useChromeSession();
   const [extra, setExtra] = useState("");
-  const [channel, setChannel] = useState<CoverChannel>("bring");
+  const [path, setPath] = useState<DonatePath>("bring");
+  const [channel, setChannel] = useState<CoverChannel>("transfer");
 
   const onCopied = useCallback((campo: string) => {
     track({ name: "dato_copiado", props: { pais: "AR", campo } });
@@ -62,35 +61,20 @@ export function HowToDonate({
   return (
     <section
       className={cn(
-        "mt-2xl border-t border-rule pt-lg",
-        "[&:not(:has([name=canal][value=bring]:checked))_[data-bring]]:hidden",
-        "[&:has([name=canal][value=bring]:checked)_[data-money]]:hidden",
+        "mt-lg",
+        "[&:not(:has([name=camino][value=bring]:checked))_[data-bring]]:hidden",
+        "[&:not(:has([name=camino][value=money]:checked))_[data-money]]:hidden",
         "[&:not(:has([name=canal][value=transfer]:checked))_[data-pay=transfer]]:hidden",
         "[&:not(:has([name=canal][value=mercadopago]:checked))_[data-pay=mercadopago]]:hidden",
         "[&:not(:has([name=canal][value=paypal]:checked))_[data-pay=paypal]]:hidden",
       )}
     >
-      <h2 className="font-ui text-body-large font-medium">{copy.coverTitle}</h2>
-      <p className="mt-sm max-w-measure text-body text-ink-muted">{copy.coverLead}</p>
-      {estimated === null ? (
-        <p className="mt-md max-w-measure font-ui text-body">{copy.coverNoEstimate}</p>
-      ) : (
-        <CoverAmounts
-          unit={estimated}
-          quantity={1}
-          extra={extra}
-          onExtraChange={setExtra}
-          copy={copy}
-          locale={locale}
-          channel={channel}
-        />
-      )}
-      <ChannelRadios copy={copy} onChannel={setChannel} />
+      <PathRadios copy={copy} onPath={setPath} />
       <div data-bring>
         <p className="mt-lg max-w-measure text-body text-ink-muted">
           {session.status === "signed-in" ? copy.bringSignedInLead : copy.bringLead}
         </p>
-        {channel === "bring" ? (
+        {path === "bring" ? (
           session.status === "signed-in" ? (
             <ClaimForm
               itemId={itemId}
@@ -106,54 +90,121 @@ export function HowToDonate({
           )
         ) : null}
       </div>
-      <p data-money className="mt-lg max-w-measure text-body text-ink-muted">
-        {copy.moneyLead}
-      </p>
-      <div className="space-y-lg pt-md">
-        <div data-pay="transfer" className="grid gap-md">
-          <ArgentinaTransfer account={help.accounts.AR} onCopied={onCopied} />
-          <ChileTransfer
-            account={help.accounts.CL}
-            onCopied={(campo) => {
-              track({ name: "dato_copiado", props: { pais: "CL", campo } });
-            }}
+      <div data-money className="mt-lg">
+        {estimated === null ? (
+          <p className="mt-md max-w-measure font-ui text-body">{copy.coverNoEstimate}</p>
+        ) : (
+          <CoverAmounts
+            unit={estimated}
+            quantity={1}
+            extra={extra}
+            onExtraChange={setExtra}
+            copy={copy}
+            locale={locale}
+            channel={channel}
           />
-        </div>
-        <div data-pay="mercadopago" className="grid gap-md">
-          <ExternalPayment
-            brand="mercadopago"
-            name={ui.home.mercadoPago}
-            lead={ui.home.mercadoPagoLead}
-            cta={ui.home.mercadoPagoCta}
-            context={ui.countries.AR}
-            country="AR"
-            url={help.mercadoPagoUrl.AR}
-          />
-          <ExternalPayment
-            brand="mercadopago"
-            name={ui.home.mercadoPago}
-            lead={ui.home.mercadoPagoLead}
-            cta={ui.home.mercadoPagoCta}
-            context={ui.countries.CL}
-            country="CL"
-            url={help.mercadoPagoUrl.CL}
-          />
-        </div>
-        <div data-pay="paypal">
-          <ExternalPayment
-            brand="paypal"
-            name={ui.home.paypal}
-            lead={ui.home.paypalLead}
-            cta={ui.home.paypalCta}
-            url={help.paypalUrl}
-          />
+        )}
+        <PaymentRadios copy={copy} onChannel={setChannel} />
+        <div className="space-y-lg pt-md">
+          <div data-pay="transfer" className="grid gap-md">
+            <ArgentinaTransfer account={help.accounts.AR} onCopied={onCopied} />
+            <ChileTransfer
+              account={help.accounts.CL}
+              onCopied={(campo) => {
+                track({ name: "dato_copiado", props: { pais: "CL", campo } });
+              }}
+            />
+          </div>
+          <div data-pay="mercadopago" className="grid gap-md">
+            <ExternalPayment
+              brand="mercadopago"
+              name={ui.home.mercadoPago}
+              lead={ui.home.mercadoPagoLead}
+              cta={ui.home.mercadoPagoCta}
+              context={ui.countries.AR}
+              country="AR"
+              url={help.mercadoPagoUrl.AR}
+            />
+            <ExternalPayment
+              brand="mercadopago"
+              name={ui.home.mercadoPago}
+              lead={ui.home.mercadoPagoLead}
+              cta={ui.home.mercadoPagoCta}
+              context={ui.countries.CL}
+              country="CL"
+              url={help.mercadoPagoUrl.CL}
+            />
+          </div>
+          <div data-pay="paypal">
+            <ExternalPayment
+              brand="paypal"
+              name={ui.home.paypal}
+              lead={ui.home.paypalLead}
+              cta={ui.home.paypalCta}
+              url={help.paypalUrl}
+            />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function ChannelRadios({
+function PathRadios({
+  copy,
+  onPath,
+}: {
+  copy: CatalogContent;
+  onPath: (path: DonatePath) => void;
+}) {
+  const id = useId();
+  const options: { value: DonatePath; label: string; mark: "bring" | "money" }[] = [
+    { value: "bring", label: copy.coverBringChannel, mark: "bring" },
+    { value: "money", label: copy.coverMoneyPath, mark: "money" },
+  ];
+
+  return (
+    <fieldset>
+      <legend className="sr-only">{copy.coverHow}</legend>
+      <div>
+        {options.map((option) => (
+          <div
+            key={option.value}
+            className="flex min-h-touch items-center gap-sm border-t border-rule"
+          >
+            <input
+              id={`${id}-${option.value}`}
+              name="camino"
+              type="radio"
+              value={option.value}
+              defaultChecked={option.value === "bring"}
+              onChange={(event) => {
+                if (event.target.value === "bring" || event.target.value === "money") {
+                  onPath(event.target.value);
+                }
+              }}
+              className="size-md border-rule accent-forest"
+            />
+            <label
+              htmlFor={`${id}-${option.value}`}
+              className="flex min-h-touch flex-1 items-center justify-between gap-sm font-ui text-body text-ink"
+            >
+              <span className="flex items-center gap-sm">
+                <IdentifyingMark data-path-mark={option.mark} className="text-olive">
+                  {option.mark === "bring" ? <BoxIcon /> : <BanknoteIcon />}
+                </IdentifyingMark>
+                {option.label}
+              </span>
+              <ArrowIcon />
+            </label>
+          </div>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+function PaymentRadios({
   copy,
   onChannel,
 }: {
@@ -165,21 +216,14 @@ function ChannelRadios({
     value: CoverChannel;
     label: string;
     brand: "mercadopago" | "paypal" | null;
-    Icon: typeof BankIcon | typeof BoxIcon | null;
   }[] = [
-    { value: "bring", label: copy.coverBringChannel, brand: null, Icon: BoxIcon },
-    { value: "transfer", label: copy.coverTransferChannel, brand: null, Icon: BankIcon },
-    {
-      value: "mercadopago",
-      label: copy.coverMercadoPagoChannel,
-      brand: "mercadopago",
-      Icon: null,
-    },
-    { value: "paypal", label: copy.coverPaypalChannel, brand: "paypal", Icon: null },
+    { value: "transfer", label: copy.coverTransferChannel, brand: null },
+    { value: "mercadopago", label: copy.coverMercadoPagoChannel, brand: "mercadopago" },
+    { value: "paypal", label: copy.coverPaypalChannel, brand: "paypal" },
   ];
 
   return (
-    <fieldset className="space-y-2xs">
+    <fieldset className="mt-lg space-y-2xs">
       <legend className="font-ui text-small font-medium text-ink">{copy.coverHow}</legend>
       <div className="flex flex-col gap-sm">
         {options.map((option) => (
@@ -189,7 +233,7 @@ function ChannelRadios({
               name="canal"
               type="radio"
               value={option.value}
-              defaultChecked={option.value === "bring"}
+              defaultChecked={option.value === "transfer"}
               onChange={(event) => {
                 if (isCoverChannel(event.target.value)) {
                   onChannel(event.target.value);
@@ -203,14 +247,9 @@ function ChannelRadios({
             >
               {option.brand === null ? (
                 <>
-                  {option.Icon === null ? null : (
-                    <IdentifyingMark
-                      data-channel-mark={option.value}
-                      className="text-olive"
-                    >
-                      <option.Icon />
-                    </IdentifyingMark>
-                  )}
+                  <IdentifyingMark data-channel-mark={option.value} className="text-olive">
+                    <BankIcon />
+                  </IdentifyingMark>
                   {option.label}
                 </>
               ) : (

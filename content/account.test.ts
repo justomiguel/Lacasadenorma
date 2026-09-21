@@ -53,6 +53,20 @@ describe("los mensajes de la cuenta", () => {
     );
   });
 
+  it("el rechazo no habla de un pedido que esta vez no se habilitó", () => {
+    for (const locale of LOCALES) {
+      const aviso = getContent(locale).account.errors.notApproved;
+      const correo = JSON.stringify(getContent(locale).emails.accountDeclined);
+
+      expect(aviso).not.toMatch(/esta vez/i);
+      expect(aviso).not.toMatch(/this time/i);
+      expect(aviso).not.toMatch(/pedido/i);
+      expect(aviso).not.toMatch(/request/i);
+      expect(correo).not.toMatch(/esta vez/i);
+      expect(correo).not.toMatch(/this time/i);
+    }
+  });
+
   it("la cuenta pendiente no publica el aviso de pedido en revisión", () => {
     for (const locale of LOCALES) {
       const publicado = JSON.stringify(getContent(locale).account);
@@ -61,6 +75,12 @@ describe("los mensajes de la cuenta", () => {
       expect(publicado).not.toMatch(/is reviewing your request/i);
       expect(publicado).not.toMatch(/Confirmaste el correo, y eso alcanzó/i);
       expect(publicado).not.toMatch(/You confirmed the email, and that was enough/i);
+      expect(publicado).not.toMatch(/Confirmar el correo era para escribirte/i);
+      expect(publicado).not.toMatch(/not so you wait for an approval/i);
+      expect(publicado).not.toMatch(/El equipo frenó esta cuenta/i);
+      expect(publicado).not.toMatch(/The team stopped this account/i);
+      expect(publicado).not.toMatch(/respondé el correo que te mandamos/i);
+      expect(publicado).not.toMatch(/reply to the email we sent/i);
     }
   });
 
@@ -72,5 +92,27 @@ describe("los mensajes de la cuenta", () => {
   it("el botón de la red lleva el nombre de la marca, no un hueco", () => {
     expect(getContent("es").account.social.continueWith).toContain("{name}");
     expect(getContent("en").account.social.continueWith).toContain("{name}");
+  });
+
+  it("el formulario de editar reserva tiene las etiquetas de guardar y de la nota", () => {
+    expect(getContent("es").account.profile.editPledge).toBe("Guardar cambios");
+    expect(getContent("es").account.profile.savingPledge).toBe("Guardando…");
+    expect(getContent("es").account.profile.pledgeNote).toBe("Nota para la familia");
+    expect(getContent("es").account.profile.pledgeNoteHint).toBe(
+      "Si hay algo que el equipo tenga que saber. Es optativa.",
+    );
+    expect(getContent("en").account.profile.editPledge).toBe("Save changes");
+    expect(getContent("en").account.profile.savingPledge).toBe("Saving…");
+    expect(getContent("en").account.profile.pledgeNote).toBe("Note for the family");
+    expect(getContent("en").account.profile.pledgeNoteHint).toBe(
+      "Anything the team should know. Optional.",
+    );
+  });
+
+  it("la cantidad del formulario reutiliza la del catálogo, no se duplica en la cuenta", () => {
+    expect(getContent("es").catalog.quantity).toBe("Cuántas");
+    expect(getContent("en").catalog.quantity).toBe("How many");
+    expect(getContent("es").account.profile).not.toHaveProperty("quantity");
+    expect(getContent("en").account.profile).not.toHaveProperty("quantity");
   });
 });

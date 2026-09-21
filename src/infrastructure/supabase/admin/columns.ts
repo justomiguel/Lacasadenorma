@@ -5,7 +5,7 @@ export const BUDGET_ITEM_COLUMNS =
   "id, title, description, estimated_amount_minor, currency, sort_order, published_at";
 
 export const CONTRIBUTION_COLUMNS =
-  "id, amount_minor, currency, received_at, payment_method_id, source_note, is_anonymous, contributor_display_name, voided_at, void_reason, recorded_by";
+  "id, amount_minor, currency, received_at, payment_method_id, source_note, is_anonymous, contributor_display_name, voided_at, void_reason, recorded_by, user_id";
 
 export const EXPENSE_ADMIN_COLUMNS =
   "id, amount_minor, currency, spent_at, concept, category, supplier, budget_item_id, receipt_count, voided_at, void_reason, published_at, recorded_by";

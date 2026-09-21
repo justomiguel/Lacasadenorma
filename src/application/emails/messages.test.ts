@@ -140,7 +140,7 @@ describe("los avisos al equipo", () => {
       backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
     });
 
-    expect(message.subject).toBe(getContent("es").emails.staffNewPledge.subject);
+    expect(message.subject).toBe(`Alguien quiere donar ${RESERVA.what}`);
     expect(message.text).toMatch(/quiere donar/i);
   });
 
@@ -194,6 +194,45 @@ describe("los avisos al equipo", () => {
     expect(message.idempotencyKey).toBe(
       idempotencyKeyFor("staff.phone_offer", "40000000-0000-4000-8000-000000000002"),
     );
+  });
+
+  it("el aviso de plazo cumplido pide decidir y no dice que el ítem volvió", () => {
+    const yes =
+      "https://lacasadenorma.example/admin/donaciones/decidir/40000000-0000-4000-8000-000000000003/si";
+    const no =
+      "https://lacasadenorma.example/admin/donaciones/decidir/40000000-0000-4000-8000-000000000003/no";
+    const message = buildStaffEmail("staff.pledge_expired", {
+      subjectId: "40000000-0000-4000-8000-000000000003",
+      staffAddress: "equipo@ejemplo.invalid",
+      what: "Chapas del techo",
+      backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
+      yesUrl: yes,
+      noUrl: no,
+    });
+
+    expect(message.text).toContain("Chapas del techo");
+    expect(message.text).toContain(yes);
+    expect(message.text).toContain(no);
+    expect(message.text).toMatch(/sí: donan/i);
+    expect(message.text).toMatch(/no: soltar la reserva/i);
+    expect(message.text).not.toMatch(/volvió a la lista/i);
+    expect(message.text).not.toMatch(/no hace falta hacer nada/i);
+  });
+
+  it("el aviso de una reserva con cuenta nombra a quien reservó, no dice alguien", () => {
+    const message = buildStaffEmail("staff.new_pledge", {
+      subjectId: RESERVA.pledgeId,
+      staffAddress: "equipo@ejemplo.invalid",
+      what: RESERVA.what,
+      who: "María López",
+      backofficeUrl: "https://lacasadenorma.example/admin/donaciones",
+    });
+
+    expect(message.subject).toContain("María López");
+    expect(message.text).toContain("María López quiere donar 3 bolsas de cemento");
+    expect(message.html).toContain("María López");
+    expect(message.subject).not.toMatch(/alguien/i);
+    expect(message.text).not.toMatch(/alguien quiere donar/i);
   });
 
   it("el aviso de una reserva por cuenta no lleva teléfono ni WhatsApp", () => {

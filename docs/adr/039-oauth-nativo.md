@@ -93,9 +93,12 @@ cuenta de Google es `authenticated` sin rol, igual que una de correo.
   entera de que esa persona usa este sitio. Está escrito en la política de
   privacidad, no disimulado.
 - El harness no habla OAuth de verdad. `scripts/local-api` emula `/authorize` y
-  el canje PKCE, y emite un usuario con el correo ya confirmado. El hop contra
-  el proveedor real se prueba a mano, una vez, cuando se habilita en
-  producción, y el procedimiento está en `docs/runbook.md`.
+  el canje PKCE, y emite un usuario con el correo ya confirmado. La prueba
+  puede fijar correo, nombre, foto y el caso sin dirección (`email`, `name`,
+  `picture`, `sin_correo`, o los encabezados `x-harness-oauth-*`) para
+  recorrer el botón de punta a punta. El hop contra el proveedor real se
+  prueba a mano, una vez, cuando se habilita en producción, y el procedimiento
+  está en `docs/runbook.md`.
 - Una cuenta que nació por OAuth no tiene contraseña hasta que la persona pone
   una en `/cuenta`. Entrar de nuevo es por la misma red, o por la contraseña si
   la fijó.

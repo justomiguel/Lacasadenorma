@@ -53,6 +53,39 @@ export const MAX_ACTIVE_PLEDGES = 5;
 /** El recordatorio sale tres días antes de vencer, una sola vez (FR-235). */
 export const PLEDGE_REMINDER_DAYS = 3;
 
+/** Si quien revierte no escribe motivo, la base igual exige uno. */
+export const REVERT_PLEDGE_DEFAULT_REASON = "Revertida desde Cerradas";
+
 export function isActivePledge(pledge: Pick<DonationPledge, "status">): boolean {
-  return pledge.status === "reserved";
+  return pledge.status === "reserved" || pledge.status === "accepted";
+}
+
+/** El equipo puede soltar una en curso o una ya marcada como entregada. */
+export function canStaffReleasePledge(status: PledgeStatus): boolean {
+  return status === "reserved" || status === "accepted" || status === "fulfilled";
+}
+
+/** Solo anotada: el sí y la llegada cierran la edición. */
+export function canEditPledge(status: PledgeStatus): boolean {
+  return status === "reserved";
+}
+
+/** Los 14 días pasaron y la llegada no se confirmó. */
+export function isPledgePastHold(expiresAt: string, now: Date = new Date()): boolean {
+  const expires = new Date(expiresAt).getTime();
+
+  if (Number.isNaN(expires)) {
+    return false;
+  }
+
+  return expires <= now.getTime();
+}
+
+/** Anotada, tomada o llegada: lo que Mis donaciones todavía tiene que mostrar. */
+export function isVisibleOwnPledge(pledge: Pick<DonationPledge, "status">): boolean {
+  return (
+    pledge.status === "reserved" ||
+    pledge.status === "accepted" ||
+    pledge.status === "fulfilled"
+  );
 }

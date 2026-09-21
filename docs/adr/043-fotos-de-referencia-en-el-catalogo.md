@@ -49,7 +49,7 @@ relato, no.**
    que reconocer el objeto sin abrir cada ficha: es para eso que están las fotos.
    La miniatura (`w-5xl`) va en la misma celda que el título, no en una columna
    nueva —una columna más desborda—. Sin foto no se reserva hueco en la tabla.
-   El epígrafe completo y el crédito viven en la ficha; el caption de la tabla
+   El epígrafe completo y el crédito viven en la ficha; el caption de la lista
    dice que las fotos son ilustrativas y no representan el objeto real.
 5. **Historia, incendio, Norma, obra, novedades: sin cambio.** Stock, IA e
    ilustración de relleno siguen prohibidos ahí. Una foto de una casa

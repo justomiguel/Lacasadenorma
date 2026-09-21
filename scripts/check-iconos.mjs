@@ -5,8 +5,8 @@
  *
  * Comprueba:
  * - cada `CopyField` tiene un `label` declarado en `COPY_FIELD_MARKS`
- * - el selector de país, los caminos, los canales, el contacto y el drawer
- *   envuelven la marca en `IdentifyingMark`
+ * - el selector de país, los caminos, los canales, el contacto, el drawer
+ *   y cada botón con caja envuelven la marca en `IdentifyingMark`
  * - el token `--identifying-mark: 1.15em` está y no hay `size={16}` ni
  *   `1.15em` suelto
  * - no entra un pack de iconos
@@ -49,8 +49,8 @@ const REQUIRED = [
   },
   {
     file: path.join("components", "catalog", "cover.tsx"),
-    needles: ["BankIcon", "BoxIcon", "BrandLabel", "IdentifyingMark"],
-    why: "traer, transferir y los medios llevan marca a 1.15 em.",
+    needles: ["BankIcon", "BanknoteIcon", "BoxIcon", "BrandLabel", "IdentifyingMark"],
+    why: "traer, cubrir con plata, transferir y los medios llevan marca a 1.15 em.",
   },
   {
     file: path.join("components", "campaign", "contact-actions.tsx"),
@@ -75,14 +75,61 @@ const REQUIRED = [
   {
     file: path.join("components", "site", "account-chrome.tsx"),
     needles: ["IdentifyingMark"],
-    why: "cuenta, backoffice, métricas y salir llevan marca a 1.15 em.",
+    why: "donaciones, cuenta, backoffice, métricas y salir llevan marca a 1.15 em.",
+  },
+  {
+    file: path.join("components", "admin", "nav-bar.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "cada grupo del backoffice lleva pictograma a 1.15 em.",
+  },
+  {
+    file: path.join("components", "admin", "group-tabs.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "cada pestaña del grupo lleva pictograma a 1.15 em.",
+  },
+  {
+    file: path.join("components", "design-system", "work-nav.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "reservas, la cuenta y el Backoffice llevan pictograma a 1.15 em.",
+  },
+  {
+    file: path.join("components", "account", "account-settings.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "cómo aparecer, acceso y borrar llevan pictograma en la pestaña.",
+  },
+  {
+    file: path.join("components", "site", "language-switch.tsx"),
+    needles: ["LocaleFlag"],
+    why: "el idioma del pie lleva bandera antes del nombre (ADR-047).",
   },
   {
     file: path.join("components", "admin", "news-media-kind.tsx"),
     needles: ["CameraIcon", "VideoIcon", "IdentifyingMark"],
     why: "foto y video se reconocen de un vistazo al adjuntar (ADR-047).",
   },
+  {
+    file: path.join("components", "campaign", "help-cta.tsx"),
+    needles: ["HelpActionLabel"],
+    why: "Ayudar a reconstruir lleva las manos antes del nombre.",
+  },
+  {
+    file: path.join("components", "design-system", "actions.tsx"),
+    needles: ["IdentifyingMark", "HandsIcon"],
+    why: "PrimaryAction, FileAction y Ayudar envuelven la marca.",
+  },
+  {
+    file: path.join("components", "account", "fields.tsx"),
+    needles: ["IdentifyingMark"],
+    why: "el envío público lleva marca antes del nombre.",
+  },
 ];
+
+const BOXED_ACTION = [
+  "primaryActionClass(",
+  "compactPrimaryActionClass(",
+  "compactOutlineActionClass(",
+];
+const BOXED_MARK = ["IdentifyingMark", "HelpActionLabel", "BrandLabel", "BrandMark"];
 
 const problems = [];
 
@@ -149,6 +196,16 @@ for (const { file, text } of contents) {
     );
   }
 
+  if (BOXED_ACTION.some((needle) => text.includes(needle))) {
+    const marked = BOXED_MARK.some((mark) => text.includes(mark));
+
+    if (!marked) {
+      problems.push(
+        `${file}: un botón con caja lleva marca antes del nombre (ADR-047).`,
+      );
+    }
+  }
+
   for (const match of text.matchAll(/<CopyField\b([^>]*)>/g)) {
     const attrs = match[1];
     const label = attrs.match(/\blabel="([^"]+)"/)?.[1];
@@ -202,5 +259,5 @@ if (problems.length > 0) {
 
 console.log(
   `${String(usedLabels.length)} CopyField con marca, ${String(markKeys.length)} etiquetas en el mapa, ` +
-    `1.15 em, sin packs. País, caminos, canales, contacto, drawer y novedades llevan pictograma.`,
+    `1.15 em, sin packs. País, caminos, canales, contacto, drawer, botones y novedades llevan pictograma.`,
 );

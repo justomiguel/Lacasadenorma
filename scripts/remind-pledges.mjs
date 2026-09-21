@@ -4,17 +4,16 @@ import path from "node:path";
 import process from "node:process";
 
 /**
- * Recordatorios de reservas a tres días del vencimiento.
+ * Recordatorios de reservas a tres días del plazo, y aviso al equipo a los 14
+ * días si no confirmaron la llegada.
  *
  * Vive fuera de la aplicación web a propósito: no usa `SUPABASE_SECRET_KEY` ni
  * corre detrás de una ruta HTTP. Lo dispara un cron (Vercel, systemd, o el
  * panel) con `DATABASE_URL` y, si hay, `RESEND_API_KEY`.
  *
- * La deduplicación permanente son dos: `reminded_at` en la reserva y la fila
- * `sent` de `email_deliveries` para `pledge.reminder` (FR-235, SC-210). El
- * vencimiento de las reservas **no** está acá: lo hace `release_expired_holds()`,
- * agendado con `pg_cron` en producción y llamado por `claim_donation_item()`
- * igual, para no depender del cron (FR-218).
+ * Nada se cancela solo. El plazo avisa. La deduplicación permanente es
+ * `email_deliveries` (`pledge.reminder` y `staff.pledge_expired`) y
+ * `reminded_at` para el correo a quien reservó (FR-235, SC-210).
  */
 
 const DB_URL =
@@ -29,6 +28,8 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 
 const RESEND_URL = "https://api.resend.com/emails";
+
+const STAFF_ADDRESS = process.env.EMAIL_STAFF_ADDRESS?.trim() ?? "";
 
 const DUE = `
   select coalesce((
@@ -53,6 +54,29 @@ const DUE = `
           select 1
             from public.email_deliveries d
            where d.kind = 'pledge.reminder'
+             and d.pledge_id = p.id
+             and d.status = 'sent'
+        )
+      order by p.expires_at
+    ) r
+  ), '[]'::json);
+`;
+
+const OVERDUE = `
+  select coalesce((
+    select json_agg(row_to_json(r))
+    from (
+      select
+        p.id,
+        i.title
+      from public.donation_pledges p
+      join public.donation_items i on i.id = p.item_id
+      where p.status = 'reserved'
+        and p.expires_at <= now()
+        and not exists (
+          select 1
+            from public.email_deliveries d
+           where d.kind = 'staff.pledge_expired'
              and d.pledge_id = p.id
              and d.status = 'sent'
         )
@@ -125,11 +149,11 @@ function formatWhen(iso, locale) {
   }).format(new Date(iso));
 }
 
-async function copyOf(locale) {
+async function copyOf(locale, key) {
   const file = path.join("content", locale, "emails.json");
   const raw = JSON.parse(await readFile(file, "utf8"));
 
-  return raw.pledgeReminder;
+  return raw[key];
 }
 
 async function sendResend(message) {
@@ -176,21 +200,26 @@ async function sendResend(message) {
   return { status: "sent", providerId, error: null };
 }
 
-async function record(pledgeId, email, result) {
-  await query(
-    `
+async function recordDelivery(kind, pledgeId, email, result, markReminded) {
+  const remindSql = markReminded
+    ? `
       update public.donation_pledges
          set reminded_at = now()
        where id = :'id'::uuid
          and status = 'reserved'
          and reminded_at is null;
+    `
+    : "";
 
+  await query(
+    `
+      ${remindSql}
       insert into public.email_deliveries
         (kind, pledge_id, recipient, status, provider_id, error)
       values (
-        'pledge.reminder',
+        :'kind',
         :'id'::uuid,
-        :'email',
+        nullif(:'email', ''),
         :'status',
         nullif(:'provider', ''),
         null
@@ -199,15 +228,16 @@ async function record(pledgeId, email, result) {
       select 'null'::json;
     `,
     {
+      kind,
       id: pledgeId,
-      email,
+      email: email ?? "",
       status: result.status,
       provider: result.providerId ?? "",
     },
   );
 }
 
-async function main() {
+async function remindDonors() {
   const due = await query(DUE);
 
   if (!Array.isArray(due) || due.length === 0) {
@@ -217,7 +247,7 @@ async function main() {
 
   for (const row of due) {
     const locale = row.locale === "en" ? "en" : "es";
-    const copy = await copyOf(locale);
+    const copy = await copyOf(locale, "pledgeReminder");
     const when = formatWhen(row.expires_at, locale);
     const link = `${SITE_URL}${locale === "en" ? "/en" : ""}/cuenta`;
     const values = { what: row.title, when, link };
@@ -244,9 +274,63 @@ async function main() {
       continue;
     }
 
-    await record(row.id, row.email, result);
+    await recordDelivery("pledge.reminder", row.id, row.email, result, true);
     process.stdout.write(`sent ${row.id} ${row.email}\n`);
   }
+}
+
+async function notifyStaffOverdue() {
+  if (STAFF_ADDRESS.length === 0) {
+    process.stdout.write("Sin EMAIL_STAFF_ADDRESS: no se avisa el plazo al equipo.\n");
+    return;
+  }
+
+  const overdue = await query(OVERDUE);
+
+  if (!Array.isArray(overdue) || overdue.length === 0) {
+    process.stdout.write("Sin reservas con el plazo vencido para avisar.\n");
+    return;
+  }
+
+  const copy = await copyOf("es", "staffPledgeExpired");
+
+  for (const row of overdue) {
+    const yes = `${SITE_URL}/admin/donaciones/decidir/${row.id}/si`;
+    const no = `${SITE_URL}/admin/donaciones/decidir/${row.id}/no`;
+    const values = { what: row.title, when: null, link: yes };
+    const subject = fill(copy.subject, values);
+    const text = [
+      ...copy.body.map((paragraph) => fill(paragraph, values)),
+      copy.action,
+      yes,
+      copy.rejectAction,
+      no,
+    ]
+      .filter((line) => line.length > 0)
+      .join("\n\n");
+
+    const result = await sendResend({
+      to: STAFF_ADDRESS,
+      subject,
+      text,
+      idempotencyKey: `staff.pledge_expired/${row.id}`,
+    });
+
+    if (result.status !== "sent") {
+      process.stderr.write(
+        `${result.status} ${row.id}: ${result.error ?? "sin envío"}\n`,
+      );
+      continue;
+    }
+
+    await recordDelivery("staff.pledge_expired", row.id, "", result, false);
+    process.stdout.write(`staff ${row.id}\n`);
+  }
+}
+
+async function main() {
+  await remindDonors();
+  await notifyStaffOverdue();
 }
 
 main().catch((error) => {

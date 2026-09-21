@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 
-import { primaryActionClass, type ActionTone } from "@/components/design-system/actions";
+import {
+  HelpActionLabel,
+  primaryActionClass,
+  type ActionTone,
+} from "@/components/design-system/actions";
 import { localizedHref } from "@/src/i18n/href";
 import { track } from "@/src/infrastructure/analytics/browser";
 
@@ -55,7 +59,7 @@ export function HelpCta({
         onClick={onClick}
         {...(tone === "paper" ? { "data-tone": "paper" as const } : {})}
       >
-        {label}
+        <HelpActionLabel>{label}</HelpActionLabel>
       </a>
     );
   }
@@ -68,7 +72,7 @@ export function HelpCta({
       onClick={onClick}
       {...(tone === "paper" ? { "data-tone": "paper" as const } : {})}
     >
-      {label}
+      <HelpActionLabel>{label}</HelpActionLabel>
     </Link>
   );
 }

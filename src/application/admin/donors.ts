@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 import { perform, type AdminDeps, type AdminResult } from "@/src/application/admin/core";
-import type { EmailSender } from "@/src/domain/ports/email";
 import { buildAccountEmail } from "@/src/application/emails/messages";
+import type { EmailSender } from "@/src/domain/ports/email";
 import { localizeHref } from "@/src/i18n/locale";
+
+export { provisionDonorAccount, regenerateDonorInvite } from "./provision";
+export type { DonorAuthPort, ProvisionedDonor, ProvisionMail } from "./provision";
 
 const inputSchema = z.object({
   userId: z.string().uuid(),

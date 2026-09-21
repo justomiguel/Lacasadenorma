@@ -8,6 +8,7 @@ import { localizedHref } from "@/src/i18n/href";
 import { intlLocale, type Locale } from "@/src/i18n/locale";
 
 import { AccountChrome } from "./account-chrome";
+import { LanguageSwitch } from "./language-switch";
 import { SiteMark } from "./mark";
 import { LEGAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
 
@@ -17,7 +18,8 @@ const LINK =
 /**
  * Pie editorial (ADR-032): un colofón, no un mapa del sitio.
  *
- * El nombre, el lugar, una fila de enlaces chicos y la línea legal. Sobre papel,
+ * El nombre, el lugar, una fila de enlaces chicos, el idioma (banderas) y la
+ * línea legal. Sobre papel,
  * con una regla arriba: el pie no compite con la barra de ayudar del teléfono, que
  * es lo último que se ve.
  */
@@ -68,6 +70,8 @@ export function SiteFooter({
             </li>
           </ul>
         </nav>
+
+        <LanguageSwitch locale={locale} ui={ui} className="mt-lg" />
 
         <div className="mt-lg border-t border-rule pt-md lg:flex lg:items-baseline lg:justify-between lg:gap-xl">
           <ul className="flex flex-wrap gap-x-lg">

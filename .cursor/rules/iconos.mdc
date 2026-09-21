@@ -8,7 +8,9 @@ alwaysApply: false
 
 Donde un control, un campo, un canal, un camino o un ítem de menú se puede
 reconocer de un vistazo, **el icono va antes del nombre**, a `1.15em` de
-esa letra. No se espera a que lo pidan. El nombre no se reemplaza.
+esa letra. Un botón con caja y nombre también: no hay primaria, compacta,
+contorno ni envío público en texto suelto. No se espera a que lo pidan. El
+nombre no se reemplaza.
 
 Leé `.cursor/skills/iconos-en-la-interfaz/SKILL.md`. Si tocás transferencia,
 países o `CopyField`, también `.cursor/skills/iconos-en-transferencia/SKILL.md`.

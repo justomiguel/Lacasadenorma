@@ -1,6 +1,6 @@
 # ADR-044 · El catálogo es una tabla también en el teléfono, con estimado y un «Quiero donar»
 
-**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md), por [ADR-051](./051-dos-puertas-para-traer.md) (el primer clic pide nombre y teléfono o correo; el teléfono reserva) y por [ADR-052](./052-porcentaje-de-ese-item.md): «Quiero donar» sigue mientras falte algo; el nombre, si aparece, va con el % de ese ítem.
+**Estado**: Aceptada · **Fecha**: 2026-09-15 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md), por [ADR-051](./051-dos-puertas-para-traer.md) (el primer clic pide nombre y teléfono o correo; el teléfono reserva), por [ADR-052](./052-porcentaje-de-ese-item.md): «Quiero donar» sigue mientras falte algo; el nombre, si aparece, va con el % de ese ítem, y el 20 de septiembre de 2026: en la ficha el primer pantallazo son dos caminos (traer o cubrir con plata), no cuatro radios. El 20 de septiembre de 2026 el listado público dejó de ser tabla: es un inventario editorial (foto, hecho, donar). La tabla queda en `/admin/catalogo` (ADR-050).
 
 Enmienda a [ADR-041](./041-estimado-publico-y-cubrir-con-plata.md) (el estimado
 también se publica en el listado), a [ADR-032](./032-relato-mobile-editorial.md)
@@ -23,18 +23,21 @@ internet, con Formosa primero cuando hay un número de esa plaza.
 
 ## Decisión
 
-1. **`/catalogo` es una tabla en todo ancho de pantalla.** `thead` visible,
-   cada fila es `table-row`. Si no entra, se desplaza adentro de un
-   `overflow-x-auto`: no se apila y no desborda la página (criterio 10 de
-   `revision-visual.spec.ts`).
-2. **Columnas del listado:** qué, cantidad, si alguien la tomó, nombre,
-   estimado por unidad, estimado total de lo que falta, y al final «Quiero
-   donar». En Qué, una miniatura de la foto (subida o de referencia) junto al
-   título, no una columna más (ADR-043). Sin foto, el título solo: MUST NOT
-   reservar un hueco. El total es `netCoverAmount(unit, remaining)`: lo que
-   queda, no lo pedido original. Ítem cubierto: sin botón y sin total. Una
-   toma parcial no cubre: el nombre, si eligió aparecer, se publica con el
-   porcentaje de ese ítem, y «Quiero donar» sigue (ADR-052).
+1. **`/catalogo` es un inventario editorial.** Cada ítem es una fila de lista:
+   miniatura si hay foto, título, una línea de hecho, el nombre público si
+   alguien eligió aparecer, y «Quiero donar». En el teléfono no hay tabla ni
+   scroll de costado. Desde `lg` la misma fila muestra el total a la derecha.
+   La página no desborda (criterio 10 de `revision-visual.spec.ts`).
+   `/admin/catalogo` sigue siendo tabla (ADR-050).
+2. **Qué dice cada fila:** qué es, cuánto falta, el estimado por unidad
+   cuando hay uno, y en escritorio el estimado total de lo que falta. En Qué,
+   una miniatura de la foto (subida o de referencia) junto al título
+   (ADR-043). Sin foto, el título solo: MUST NOT reservar un hueco. El total
+   es `netCoverAmount(unit, remaining)`: lo que queda, no lo pedido original.
+   Sin estimado se omite el dinero: no se escribe `$ 0` ni un em dash. Ítem
+   cubierto: sin botón y sin total. Una toma parcial no cubre: el nombre, si
+   eligió aparecer, se publica con el porcentaje de ese ítem, y «Quiero
+   donar» sigue (ADR-052). No se escribe «¿La tomó alguien?» ni «No».
 3. **«Quiero donar» es `SecondaryAction`.** Una primaria por pantalla, y esa
    sigue siendo «Ayudar a reconstruir». El CTA de fila abre la ficha
    (`/catalogo/{id}`). El HTML público es idéntico con o sin sesión
@@ -50,14 +53,15 @@ internet, con Formosa primero cuando hay un número de esa plaza.
    nulo. No se scrapea en runtime.
 5. **`formatMoney` en público: `components/catalog/money.ts` y
    `cover-amount.tsx`.** ESLint sigue vedando el resto (ADR-040).
-6. **En la ficha, cuatro canales en radios.** Traer el mismo bien (default),
-   transferencia, Mercado Pago, PayPal. Los datos de un medio —CBU, link,
-   extra de Mercado Pago— se muestran **sólo** cuando ese canal está elegido.
-   Sin JavaScript lo hace `:has()` sobre el radio. Enmenda ADR-046: el
-   formulario de reserva aparece **sólo** en traer el bien. Sin sesión pide
-   nombre y un canal. Con sesión, al hidratar, un clic reserva y manda
-   `staff.new_pledge`: no se pide nombre ni dirección. Cubrir con plata no
-   reserva.
+6. **En la ficha, dos caminos y después los medios.** El primer pantallazo
+   es traer el mismo bien (default) o cubrir con plata, con marca antes del
+   nombre, como en `/ayudar`. Transferencia, Mercado Pago y PayPal aparecen
+   **sólo** en cubrir con plata, un medio a la vez. Sin JavaScript lo hace
+   `:has()` sobre el radio. Enmenda ADR-046: el formulario de reserva
+   aparece **sólo** en traer el bien. Sin sesión pide nombre y un canal. Con
+   sesión, al hidratar, un clic reserva y manda `staff.new_pledge`: no se
+   pide nombre ni dirección. Cubrir con plata no reserva. La foto va
+   primero; el título es el `h1` de la etiqueta, no un `PageHeader`.
 7. **El aviso al equipo es el de siempre.** Quien completa «Quiero donar»
    **a traer** reserva, y `notifyPledgeClaimed` manda `staff.new_pledge` a
    `EMAIL_STAFF_ADDRESS` (el buzón del owner). Un click en el listado no
@@ -83,9 +87,9 @@ Mercado Pago. El owner se entera cuando alguien se anota de verdad.
 
 **Malas y aceptadas.**
 
-- Una tabla ancha en 360 px se desplaza de costado. Es una tabla, no una
-  tarjeta. La miniatura en Qué hace la fila más alta; se queda adentro de
-  `max-w-quote` para no recortar estimado ni donar en 1440.
+- En escritorio el total no cabe en el primer pantallazo de un título
+  largo: la fila crece. No se vuelve a una tabla de siete columnas para
+  compactar.
 - Los estimados se vencen. Se actualizan en el SQL y en la nota de research,
   no en un comentario.
 - Un valor fiscal de Formosa no es el ticket del corralón. La etiqueta de

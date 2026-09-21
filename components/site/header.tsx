@@ -4,39 +4,38 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { secondaryActionClass, ICON_ACTION } from "@/components/design-system/actions";
+import {
+  compactPrimaryActionClass,
+  HelpActionLabel,
+  ICON_ACTION,
+} from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
-import { ArrowIcon, MenuIcon } from "@/components/design-system/icons";
+import { MenuIcon } from "@/components/design-system/icons";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
-import type { Locale } from "@/src/i18n/locale";
-import {
-  htmlLang,
-  otherLocale,
-  stripLocalePrefix,
-  switchLocaleHref,
-} from "@/src/i18n/locale";
+import { stripLocalePrefix, type Locale } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 import { AccountChrome } from "./account-chrome";
 import { SiteMark } from "./mark";
 import { MobileMenu } from "./mobile-menu";
-import { PRIMARY_NAV } from "./navigation";
+import { HEADER_NAV } from "./navigation";
 
-const NAV_HREFS = PRIMARY_NAV.map((item) => item.href);
+const NAV_HREFS = HEADER_NAV.map((item) => item.href);
 
 /**
  * Encabezado editorial (ADR-032, ADR-035): 60 px, el símbolo y el nombre a la
- * izquierda, el menú a la derecha, y nada más en teléfono. El idioma, la cuenta
- * —ingresar, o el nombre y cerrar sesión— y la acción de ayudar viven dentro
- * del menú (ADR-037). La cuenta va arriba de las secciones, porque debajo de
- * las cinco de display no se ve en un teléfono chico.
+ * izquierda, el menú a la derecha, y nada más en teléfono. La cuenta
+ * —ingresar o, con sesión, «Mi Panel»— y la acción de ayudar viven dentro
+ * del menú (ADR-037). Salir también: en el encabezado recorta el nombre.
+ * El idioma no: va en el pie, con banderas. La cuenta va arriba de las
+ * secciones, porque debajo de las de display no se ve en un teléfono chico.
  *
  * En la home arranca transparente sobre la fotografía; al desplazarse gana un
  * fondo de papel con un desenfoque muy leve y una regla casi imperceptible. En
  * las páginas interiores es fijo desde el principio, sobre papel. En escritorio
- * las cinco secciones van en línea, con el idioma, ingresar y la acción como
- * texto.
+ * las secciones van en línea, sin Cómo ayudar: Ingresar o Mi Panel como
+ * botón de contorno y la acción de ayudar como primaria compacta.
  */
 export function SiteHeader({
   locale,
@@ -51,8 +50,6 @@ export function SiteHeader({
   const canonical = stripLocalePrefix(pathname);
   const overlay = canonical === "/";
   const onHelpPage = canonical === "/ayudar" || canonical.startsWith("/ayudar/");
-  const other = otherLocale(locale);
-  const switchHref = switchLocaleHref(pathname, other);
   const helpHref = `${localizedHref("/ayudar", locale)}#donaciones`;
   const chromeLink =
     "inline-flex min-h-touch shrink-0 items-center whitespace-nowrap font-ui text-small text-current opacity-75 hover:opacity-100";
@@ -145,45 +142,31 @@ export function SiteHeader({
           </ul>
         </nav>
 
-        <div className="flex items-center gap-lg">
-          {/* Escritorio: el idioma, ingresar y la acción como texto. El `hidden`
-              va en el envoltorio y no en cada enlace, porque `secondaryActionClass`
-              ya trae `inline-flex` y las dos utilidades de display compiten. */}
-          <div className="hidden items-center gap-lg lg:flex">
-            <AccountChrome
-              locale={locale}
-              ui={ui}
-              variant="header"
-              className={chromeLink}
-            />
+        <div className="flex items-center gap-md lg:gap-lg">
+          <AccountChrome
+            locale={locale}
+            ui={ui}
+            variant="header"
+            tone={transparent ? "paper" : "forest"}
+            className={chromeLink}
+          />
 
-            <Link
-              href={switchHref}
-              hrefLang={htmlLang(other)}
-              lang={htmlLang(other)}
-              className={chromeLink}
-            >
-              {ui.otherLanguageName}
-            </Link>
-
-            {/* En /ayudar la acción llevaría a donde ya se está. */}
-            {onHelpPage ? null : (
+          {/* Escritorio: la acción como primaria compacta. */}
+          {onHelpPage ? null : (
+            <div className="hidden lg:block">
               <a
                 href={helpHref}
                 data-help-primary=""
-                className={cn(
-                  secondaryActionClass("forest"),
-                  "whitespace-nowrap text-small text-current hover:text-current",
-                )}
+                className={compactPrimaryActionClass(transparent ? "paper" : "forest")}
+                {...(transparent ? { "data-tone": "paper" as const } : {})}
                 onClick={() => {
                   track({ name: "ayudar_click", props: { origen: "encabezado" } });
                 }}
               >
-                <span>{ui.helpCta}</span>
-                <ArrowIcon />
+                <HelpActionLabel>{ui.helpCta}</HelpActionLabel>
               </a>
-            )}
-          </div>
+            </div>
+          )}
 
           <button
             type="button"
@@ -192,14 +175,13 @@ export function SiteHeader({
             aria-controls={menuId}
             className={cn(
               ICON_ACTION,
-              "-mr-sm w-auto gap-xs px-sm font-ui text-small font-medium text-current lg:hidden",
+              "-mr-sm text-current lg:hidden",
               transparent ? "hover:bg-forest-strong/40" : "",
             )}
             onClick={() => {
               setMenuFor(pathname);
             }}
           >
-            <span aria-hidden="true">{ui.home.menuShort}</span>
             <MenuIcon size={22} />
           </button>
         </div>
@@ -212,7 +194,6 @@ export function SiteHeader({
           siteName={siteName}
           ui={ui}
           canonical={canonical}
-          switchHref={switchHref}
           helpHref={helpHref}
           closeRef={closeRef}
           onClose={() => {

@@ -64,11 +64,6 @@ export function ContactScreen({ locale }: { locale: Locale }) {
             </a>
           </div>
 
-          <div className="mt-2xl max-w-measure">
-            <h2 className="font-display text-heading">{ui.home.debrisTitle}</h2>
-            <p className="mt-md text-body text-ink-muted">{ui.home.debrisBody}</p>
-          </div>
-
           {help.paragraphs.length === 0 ? null : (
             <div className="mt-2xl">
               <Paragraphs items={help.paragraphs} />

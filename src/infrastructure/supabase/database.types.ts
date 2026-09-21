@@ -158,6 +158,7 @@ export type Database = {
           recorded_by: string | null;
           source_note: string | null;
           updated_at: string;
+          user_id: string | null;
           void_reason: string | null;
           voided_at: string | null;
         };
@@ -174,6 +175,7 @@ export type Database = {
           recorded_by?: string | null;
           source_note?: string | null;
           updated_at?: string;
+          user_id?: string | null;
           void_reason?: string | null;
           voided_at?: string | null;
         };
@@ -190,6 +192,7 @@ export type Database = {
           recorded_by?: string | null;
           source_note?: string | null;
           updated_at?: string;
+          user_id?: string | null;
           void_reason?: string | null;
           voided_at?: string | null;
         };
@@ -371,6 +374,7 @@ export type Database = {
       };
       donation_pledges: {
         Row: {
+          accepted_at: string | null;
           cancel_reason: string | null;
           cancelled_at: string | null;
           contact_name: string | null;
@@ -381,6 +385,7 @@ export type Database = {
           donor_note: string | null;
           expires_at: string;
           fulfilled_at: string | null;
+          has_portrait: boolean;
           id: string;
           is_anonymous: boolean;
           item_id: string;
@@ -391,6 +396,7 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
+          accepted_at?: string | null;
           cancel_reason?: string | null;
           cancelled_at?: string | null;
           contact_name?: string | null;
@@ -401,6 +407,7 @@ export type Database = {
           donor_note?: string | null;
           expires_at: string;
           fulfilled_at?: string | null;
+          has_portrait?: boolean;
           id?: string;
           is_anonymous?: boolean;
           item_id: string;
@@ -411,6 +418,7 @@ export type Database = {
           user_id?: string | null;
         };
         Update: {
+          accepted_at?: string | null;
           cancel_reason?: string | null;
           cancelled_at?: string | null;
           contact_name?: string | null;
@@ -421,6 +429,7 @@ export type Database = {
           donor_note?: string | null;
           expires_at?: string;
           fulfilled_at?: string | null;
+          has_portrait?: boolean;
           id?: string;
           is_anonymous?: boolean;
           item_id?: string;
@@ -450,6 +459,7 @@ export type Database = {
       donor_profiles: {
         Row: {
           approval_status: string;
+          contact_phone: string | null;
           created_at: string;
           default_anonymous: boolean;
           display_name: string | null;
@@ -463,6 +473,7 @@ export type Database = {
         };
         Insert: {
           approval_status?: string;
+          contact_phone?: string | null;
           created_at?: string;
           default_anonymous?: boolean;
           display_name?: string | null;
@@ -476,6 +487,7 @@ export type Database = {
         };
         Update: {
           approval_status?: string;
+          contact_phone?: string | null;
           created_at?: string;
           default_anonymous?: boolean;
           display_name?: string | null;
@@ -1108,6 +1120,7 @@ export type Database = {
         Row: {
           donor_display_name: string | null;
           fulfilled_at: string | null;
+          has_portrait: boolean | null;
           id: string | null;
           item_id: string | null;
           quantity: number | null;
@@ -1115,6 +1128,7 @@ export type Database = {
         Insert: {
           donor_display_name?: string | null;
           fulfilled_at?: string | null;
+          has_portrait?: boolean | null;
           id?: string | null;
           item_id?: string | null;
           quantity?: number | null;
@@ -1122,6 +1136,7 @@ export type Database = {
         Update: {
           donor_display_name?: string | null;
           fulfilled_at?: string | null;
+          has_portrait?: boolean | null;
           id?: string | null;
           item_id?: string | null;
           quantity?: number | null;
@@ -1184,6 +1199,10 @@ export type Database = {
       };
     };
     Functions: {
+      accept_donation_pledge: {
+        Args: { p_display_name?: string; p_note?: string; p_pledge_id: string };
+        Returns: undefined;
+      };
       cancel_donation_pledge: {
         Args: { p_pledge_id: string; p_reason?: string };
         Returns: undefined;
@@ -1201,6 +1220,7 @@ export type Database = {
           p_quantity?: number;
         };
         Returns: {
+          accepted_at: string | null;
           cancel_reason: string | null;
           cancelled_at: string | null;
           contact_name: string | null;
@@ -1211,6 +1231,7 @@ export type Database = {
           donor_note: string | null;
           expires_at: string;
           fulfilled_at: string | null;
+          has_portrait: boolean;
           id: string;
           is_anonymous: boolean;
           item_id: string;
@@ -1228,13 +1249,21 @@ export type Database = {
         };
       };
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      delete_donation_offer: {
+        Args: { p_offer_id: string };
+        Returns: undefined;
+      };
+      delete_donation_pledge: {
+        Args: { p_pledge_id: string };
+        Returns: undefined;
+      };
       delete_own_account: {
         Args: Record<PropertyKey, never>;
         Returns: undefined;
       };
       donor_contact: { Args: { p_user_id: string }; Returns: string };
       fulfill_donation_pledge: {
-        Args: { p_display_name?: string; p_note?: string; p_pledge_id: string };
+        Args: { p_pledge_id: string };
         Returns: undefined;
       };
       mark_pledge_reminded: {
@@ -1257,6 +1286,10 @@ export type Database = {
           pledge_id: string;
         }[];
       };
+      provision_donor_account: {
+        Args: { p_display_name: string; p_phone?: string; p_user_id: string };
+        Returns: undefined;
+      };
       record_audit: {
         Args: {
           p_action: string;
@@ -1265,6 +1298,15 @@ export type Database = {
           p_entity_table: string;
         };
         Returns: undefined;
+      };
+      record_donor_arrival: {
+        Args: {
+          p_display_name?: string;
+          p_item_id: string;
+          p_quantity: number;
+          p_user_id: string;
+        };
+        Returns: string;
       };
       record_email_delivery: {
         Args: {
@@ -1278,8 +1320,22 @@ export type Database = {
         Returns: undefined;
       };
       release_expired_holds: { Args: { p_item_id?: string }; Returns: number };
+      revert_donation_pledge: {
+        Args: { p_pledge_id: string; p_reason?: string };
+        Returns: undefined;
+      };
       review_donor_account: {
         Args: { p_decision: string; p_note?: string; p_user_id: string };
+        Returns: undefined;
+      };
+      update_donation_pledge: {
+        Args: {
+          p_contact_name?: string;
+          p_contact_phone?: string;
+          p_note?: string;
+          p_pledge_id: string;
+          p_quantity: number;
+        };
         Returns: undefined;
       };
     };
@@ -1312,7 +1368,7 @@ export type Database = {
       media_kind: "photo" | "video";
       milestone_status: "pendiente" | "en_curso" | "completado";
       payment_method_kind: "bank_transfer" | "mercado_pago" | "stripe" | "paypal";
-      pledge_status: "reserved" | "fulfilled" | "cancelled" | "expired";
+      pledge_status: "reserved" | "fulfilled" | "cancelled" | "expired" | "accepted";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1467,7 +1523,7 @@ export const Constants = {
       media_kind: ["photo", "video"],
       milestone_status: ["pendiente", "en_curso", "completado"],
       payment_method_kind: ["bank_transfer", "mercado_pago", "stripe", "paypal"],
-      pledge_status: ["reserved", "fulfilled", "cancelled", "expired"],
+      pledge_status: ["reserved", "fulfilled", "cancelled", "expired", "accepted"],
     },
   },
 } as const;

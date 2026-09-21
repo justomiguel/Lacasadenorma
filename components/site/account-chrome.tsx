@@ -6,16 +6,23 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { signOut } from "@/app/(es)/cuenta/actions";
+import { ACCOUNT_SECTION_PARAM } from "@/components/account/account-section";
 import { LocaleField } from "@/components/account/fields";
+import {
+  compactOutlineActionClass,
+  type ActionTone,
+} from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
 import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import {
+  BoxIcon,
   ChartIcon,
   GridIcon,
   LeaveIcon,
   PersonIcon,
 } from "@/components/design-system/icons";
 import { PendingTextButton } from "@/components/design-system/pending-submit";
+import { sidebarSignOutClass } from "@/components/design-system/work-sidebar";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
 import { stripLocalePrefix, type Locale } from "@/src/i18n/locale";
@@ -24,16 +31,15 @@ import { ACCOUNT_HREF } from "./navigation";
 import { useChromeSession } from "./session";
 
 /**
- * Cómo se ve la cuenta en el chrome: ingresar, o nombre + retrato + salir.
+ * Cómo se ve la cuenta en el chrome: ingresar, o «Mi Panel».
  *
- * En el encabezado de escritorio es texto, como «Ingresar». Si hay rol, el
- * tercer enlace recortaba la acción de ayudar, así que «Cerrar sesión» se queda
- * en el menú y en `/cuenta`. En el teléfono es un bloque: retrato rectangular
- * (no un avatar redondo), nombre, correo y las salidas —la cuenta, el
- * backoffice si hay rol, métricas si es owner, y cerrar sesión—, cada una con
- * un icono de trazo para barrer (ADR-037). En el menú ese bloque va arriba de
- * las secciones: las cinco de display llenan 360×640 y lo que queda debajo no
- * se ve (ADR-032, ADR-037). El pie no muestra el backoffice: es un colofón.
+ * En el encabezado, «Ingresar» y «Mi Panel» son el mismo botón de
+ * contorno, sólo en escritorio. Salir no va ahí: recorta el nombre en
+ * un teléfono. En el menú el bloque muestra retrato, nombre, correo y
+ * las salidas —mis donaciones, la cuenta, el backoffice si hay rol,
+ * métricas si es owner—. Cerrar sesión va al pie de ese menú, en rojo
+ * (ADR-037). En el teléfono este bloque reemplaza al menú de trabajo.
+ * El pie del sitio no muestra el backoffice: es un colofón.
  */
 
 const chromeFallback = "inline-flex min-h-touch w-fit items-center font-ui text-small";
@@ -46,12 +52,15 @@ export function AccountChrome({
   variant,
   onNavigate,
   className,
+  tone = "forest",
 }: {
   locale: Locale;
   ui: UiContent;
-  variant: "header" | "drawer" | "footer";
+  variant: "header" | "drawer" | "footer" | "sign-out";
   onNavigate?: () => void;
   className?: string;
+  /** Superficie del encabezado: `paper` sobre la foto, `forest` sobre papel. */
+  tone?: ActionTone;
 }) {
   const { session, portraitSrc } = useChromeSession();
   const accountHref = localizedHref(ACCOUNT_HREF, locale);
@@ -60,10 +69,7 @@ export function AccountChrome({
     canonical === ACCOUNT_HREF || canonical.startsWith(`${ACCOUNT_HREF}/`);
   const onAdmin = canonical === "/admin" || canonical.startsWith("/admin/");
   const current = onAccount ? { "aria-current": "page" as const } : {};
-  // El backoffice ya tiene su propia salida. Mostrar otra acá duplicaba el
-  // botón y, peor, la pública manda a `/cuenta/ingresar` en lugar de a
-  // `/admin/login`.
-  const signedIn = session.status === "signed-in" && !onAdmin;
+  const signedIn = session.status === "signed-in";
   const label = signedIn ? (session.displayName ?? ui.account) : ui.signIn;
 
   if (variant === "drawer" && signedIn) {
@@ -87,7 +93,19 @@ export function AccountChrome({
         </div>
 
         <DrawerLink
-          href={accountHref}
+          href={`${accountHref}?${ACCOUNT_SECTION_PARAM}=reservas`}
+          icon={
+            <IdentifyingMark>
+              <BoxIcon />
+            </IdentifyingMark>
+          }
+          {...(onNavigate === undefined ? {} : { onNavigate })}
+        >
+          {ui.pledges}
+        </DrawerLink>
+
+        <DrawerLink
+          href={`${accountHref}?${ACCOUNT_SECTION_PARAM}=cuenta`}
           icon={
             <IdentifyingMark>
               <PersonIcon />
@@ -108,6 +126,7 @@ export function AccountChrome({
               </IdentifyingMark>
             }
             {...(onNavigate === undefined ? {} : { onNavigate })}
+            {...(onAdmin ? { current: true } : {})}
           >
             {ui.backoffice}
           </DrawerLink>
@@ -126,55 +145,86 @@ export function AccountChrome({
             {ui.metrics}
           </DrawerLink>
         ) : null}
-
-        <SignOutLink
-          locale={locale}
-          label={ui.signOut}
-          pendingLabel={ui.signingOut}
-          className={DRAWER_ITEM}
-          icon={
-            <IdentifyingMark>
-              <LeaveIcon />
-            </IdentifyingMark>
-          }
-        />
       </div>
     );
   }
 
   if (variant === "header" && signedIn) {
     return (
-      <div className="flex items-center gap-lg">
-        {session.staff ? (
-          <Link href="/admin" className={className ?? chromeFallback}>
-            {ui.backoffice}
-          </Link>
-        ) : null}
-        <Link href={accountHref} className={className ?? chromeFallback} {...current}>
-          {label}
+      <div className="hidden lg:block">
+        <Link
+          href={accountHref}
+          className={compactOutlineActionClass(tone)}
+          {...current}
+        >
+          <IdentifyingMark>
+            <PersonIcon />
+          </IdentifyingMark>
+          {ui.myPanel}
         </Link>
-        {session.staff ? null : (
-          <SignOutLink
-            locale={locale}
-            label={ui.signOut}
-            pendingLabel={ui.signingOut}
-            className={className ?? chromeFallback}
-          />
-        )}
       </div>
     );
   }
 
-  return (
+  if (variant === "sign-out") {
+    if (!signedIn) {
+      return null;
+    }
+
+    return (
+      <SignOutLink
+        locale={locale}
+        label={ui.signOut}
+        pendingLabel={ui.signingOut}
+        className={sidebarSignOutClass()}
+        icon={
+          <IdentifyingMark>
+            <LeaveIcon />
+          </IdentifyingMark>
+        }
+      />
+    );
+  }
+
+  if (variant === "footer" && signedIn) {
+    return (
+      <Link
+        href={accountHref}
+        className={className ?? chromeFallback}
+        {...current}
+        {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
+      >
+        {ui.myPanel}
+      </Link>
+    );
+  }
+
+  const unsignedClass =
+    variant === "header"
+      ? compactOutlineActionClass(tone)
+      : (className ?? chromeFallback);
+
+  const unsignedLink = (
     <Link
       href={accountHref}
-      className={className ?? chromeFallback}
+      className={unsignedClass}
       {...current}
       {...(onNavigate === undefined ? {} : { onClick: onNavigate })}
     >
+      {variant === "header" ? (
+        <IdentifyingMark>
+          <PersonIcon />
+        </IdentifyingMark>
+      ) : null}
       {label}
     </Link>
   );
+
+  if (variant === "header") {
+    return <div className="hidden lg:block">{unsignedLink}</div>;
+  }
+
+  return unsignedLink;
 }
 
 function DrawerLink({

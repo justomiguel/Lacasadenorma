@@ -31,6 +31,7 @@ const IDENTITY_COPY: Record<IdentityEmailKind, keyof EmailsContent> = {
   "account.confirm": "accountConfirm",
   "account.recover": "accountRecover",
   "account.email_change": "accountEmailChange",
+  "account.invite": "accountInvite",
 };
 
 const LINK_TYPES = ["signup", "email", "email_change", "recovery", "invite"] as const;

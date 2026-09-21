@@ -22,12 +22,7 @@ npm run db:fixture     # datos de desarrollo, ahora con ítems y reservas de eje
 
 `db:verify` es la compuerta de esta feature: sin pgTAP en verde no se pushea nada de la fase A.
 
-`pg_cron` **no existe** en el Postgres local (ADR-013). Para probar el vencimiento se llama la función
-directo, que es justamente lo que hace la prueba:
-
-```sql
-select public.release_expired_holds();
-```
+El plazo de 14 días **no suelta** el ítem. Avisa al equipo. Para soltarlo, el admin cancela a mano.
 
 ## Verificar sin interfaz, antes de que haya interfaz
 

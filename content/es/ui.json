@@ -15,6 +15,8 @@
   "otherLanguageName": "English",
   "signIn": "Ingresar",
   "account": "Tu cuenta",
+  "myPanel": "Mi Panel",
+  "pledges": "Mis donaciones",
   "signOut": "Cerrar sesión",
   "signingOut": "Cerrando…",
   "backoffice": "Backoffice",
@@ -33,7 +35,8 @@
     "project": "El proyecto y sus términos",
     "campaign": "La campaña",
     "next": "También en el sitio",
-    "legal": "Legales"
+    "legal": "Legales",
+    "language": "Idioma"
   },
   "primaryNav": {
     "/que-paso": {
@@ -168,7 +171,7 @@
   },
   "home": {
     "locationLine": "Riacho He Hé, Formosa",
-    "openingLead": "Un incendio nos quitó mucho, pero no lo más importante: la fuerza de una comunidad que acompaña.",
+    "openingLead": "Un incendio nos quitó mucho, pero no lo más importante: la solidaridad de una comunidad que nos acompaña.",
     "knowStory": "Conocer la historia",
     "chapterWhatHappened": "01. Lo que pasó",
     "fireTitle": "El fuego se llevó\nnuestra casa",
@@ -193,8 +196,6 @@
     "pathArticles": "Donar artículos",
     "pathArticlesLead": "El listado de lo que falta, para no traer de más.",
     "pathArticlesCta": "Ver qué falta",
-    "debrisTitle": "Retirar escombros",
-    "debrisBody": "Si querés dar una mano presencialmente, estamos organizando una cuadrilla para limpiar y retirar escombros.",
     "whatsapp": "WhatsApp",
     "call": "Llamar",
     "email": "Correo",
@@ -218,7 +219,6 @@
     "nextBody": "Cuando la familia tenga dónde vivir, la intención es que esto siga: comunicación y herramientas digitales para otras personas del pueblo. Todavía no es una organización. El sitio lo dice así.",
     "nextNote": "La misma comunidad que hoy ayuda puede crear más oportunidades.",
     "menu": "Abrir el menú",
-    "menuShort": "Menú",
     "closeMenu": "Cerrar el menú",
     "faqHeading": "Lo que suelen preguntarnos"
   },
@@ -352,11 +352,7 @@
     "budgetHeading": "Del presupuesto cotizado"
   },
   "legacyPage": {
-    "seoDescription": "Qué se propone Fundación Norma cuando la casa esté terminada y en qué estado está hoy el proyecto: una intención, todavía sin organización.",
-    "statusTitle": "En qué estado está",
-    "statusBody": "Fundación Norma es una intención, no una entidad. No tiene personería jurídica, ni estatuto, ni CUIT, ni cuenta propia. Los aportes de hoy van a la reconstrucción de la casa.",
-    "accountsLink": "la página de cuentas",
-    "statusTail": "Cuando la fundación exista de verdad, esta página va a decirlo con los papeles a la vista.",
+    "seoDescription": "Qué se propone cuando la casa esté terminada: que de esto nazca Fundación Norma, formación gratuita en herramientas digitales para gente de Riacho He Hé.",
     "houseFirst": "Primero, la casa",
     "houseFirstLead": "Nada de esto empieza antes de que la familia tenga dónde vivir. Ese es el trabajo de ahora."
   },

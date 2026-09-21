@@ -13,12 +13,14 @@ import { getSiteUrl } from "../site-url";
  * Avisa la reserva: a la persona y al equipo (ADR-028, ADR-044).
  *
  * El buzón del owner es `EMAIL_STAFF_ADDRESS`. El hecho es completar
- * «Quiero donar», no el click en el listado. No lanza hacia afuera: un
+ * «Quiero donar», no el click en el listado. `who` es el nombre de la
+ * cuenta; sin nombre el aviso dice «Alguien». No lanza hacia afuera: un
  * fallo de correo no puede deshacer la reserva (FR-233).
  */
 export async function notifyPledgeClaimed(
   pledge: DonationPledge,
   locale: Locale,
+  who: string | null = null,
 ): Promise<void> {
   const viewer = await readViewer();
 
@@ -60,6 +62,7 @@ export async function notifyPledgeClaimed(
     subjectId: pledge.id,
     staffAddress,
     what: pledge.itemTitle,
+    who,
     backofficeUrl: `${siteUrl}/admin/donaciones`,
     yesUrl: `${siteUrl}${staffPledgeDecisionPath(pledge.id, "si")}`,
     noUrl: `${siteUrl}${staffPledgeDecisionPath(pledge.id, "no")}`,

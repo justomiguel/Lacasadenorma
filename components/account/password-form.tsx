@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { changePassword } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
+import { CheckIcon } from "@/components/design-system/icons";
 import type { AccountContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
 
@@ -53,7 +54,9 @@ export function ChangePasswordForm({
       />
       {general === null ? null : <FormError>{general}</FormError>}
       <div className="flex flex-wrap items-center gap-md">
-        <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+        <SubmitButton icon={<CheckIcon />} pendingLabel={copy.submitting}>
+          {copy.submit}
+        </SubmitButton>
         {state.phase === "done" ? (
           <p role="status" className="font-ui text-small text-success">
             {saved}

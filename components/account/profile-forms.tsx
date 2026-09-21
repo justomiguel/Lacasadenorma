@@ -2,10 +2,9 @@
 
 import { useActionState } from "react";
 
-import { signOut } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
 import { deleteAccount, updateProfile } from "@/app/(es)/cuenta/profile-actions";
-import { PendingTextButton } from "@/components/design-system/pending-submit";
+import { CheckIcon, TrashIcon } from "@/components/design-system/icons";
 import type { AccountContent } from "@/content/schema";
 import type { DonorProfile } from "@/src/domain/entities/donor";
 import type { Locale } from "@/src/i18n/locale";
@@ -23,10 +22,9 @@ import {
 /**
  * Lo que una persona puede hacer con su propia cuenta desde el sitio.
  *
- * Los tres formularios están en el mismo archivo porque pertenecen a la misma
- * cuenta: el que decide cómo aparecer, el que cierra la sesión y el que se va del
- * todo. En la pantalla viven en pestañas distintas; acá se lee que son tres
- * salidas de una sola decisión.
+ * Los dos formularios están en el mismo archivo porque pertenecen a la misma
+ * cuenta: el que decide cómo aparecer y el que se va del todo. Cerrar sesión
+ * vive en el chrome, no acá.
  */
 
 function optional(error: string | undefined): { error?: string } {
@@ -90,33 +88,15 @@ export function ProfileForm({
       {general === null ? null : <FormError>{general}</FormError>}
 
       <div className="flex flex-wrap items-center gap-md">
-        <SubmitButton pendingLabel={copy.saving}>{copy.save}</SubmitButton>
+        <SubmitButton icon={<CheckIcon />} pendingLabel={copy.saving}>
+          {copy.save}
+        </SubmitButton>
         {state.phase === "done" ? (
           <p role="status" className="font-ui text-small text-success">
             {copy.saved}
           </p>
         ) : null}
       </div>
-    </form>
-  );
-}
-
-export function SignOutForm({
-  copy,
-  locale,
-}: {
-  copy: AccountContent["profile"];
-  locale: Locale;
-}) {
-  return (
-    <form action={signOut}>
-      <LocaleField locale={locale} />
-      <PendingTextButton
-        pendingLabel={copy.signingOut}
-        className="min-h-touch font-ui text-small text-forest underline decoration-1 underline-offset-2 hover:text-forest-strong"
-      >
-        {copy.signOut}
-      </PendingTextButton>
     </form>
   );
 }
@@ -149,7 +129,7 @@ export function DeleteAccountForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton tone="danger" pendingLabel={copy.deleting}>
+      <SubmitButton icon={<TrashIcon />} tone="danger" pendingLabel={copy.deleting}>
         {copy.delete}
       </SubmitButton>
     </form>

@@ -291,7 +291,7 @@ test.describe("fase D · Quiero donar pide cuenta", () => {
           await staffPage.getByRole("button", { name: /no: soltar la reserva/i }).click();
           await expect(staffPage).toHaveURL(/\/admin\/donaciones/);
 
-          await esperarQueAparezca(request, `/catalogo/${itemId}`, "Faltan 1 de 1");
+          await esperarQueAparezca(request, `/catalogo/${itemId}`, "Faltan 1");
           await expect(async () => {
             await donantePage.goto("/catalogo");
             await expect(filaDelCatalogo(donantePage, titulo)).toContainText(

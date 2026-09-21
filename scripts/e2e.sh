@@ -70,6 +70,10 @@ if [[ "$modo" == "con-datos" ]]; then
   # pareciendo un secreto de verdad.
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$(node scripts/local-api.mjs --print-anon-key)"
   export NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  # El alta de donantes por fuera usa Auth Admin. Sin esta clave el formulario
+  # no se ofrece, y el e2e de con-datos tiene que fallar: la clave es del harness.
+  SUPABASE_SECRET_KEY="$(node scripts/local-api.mjs --print-service-role-key)"
+  export SUPABASE_SECRET_KEY
 else
   export PORT="${PORT:-3210}"
   # Vacías y exportadas, no ausentes: en una máquina de desarrollo `.env.local`

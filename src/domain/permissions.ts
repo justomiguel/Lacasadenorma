@@ -44,7 +44,7 @@ export const PERMISSIONS = [
   "catalogo.escribir",
   /**
    * Borrar un ítem del catálogo. Espejo de `donation_items_delete`: admin y
-   * owner. Un ítem con reservas no se borra: la base lo impide (ADR-050).
+   * owner. Si hay reservas, se van con el ítem.
    */
   "catalogo.borrar",
   /** Ver quién se comprometió a donar qué, con su contacto y su nota privada. */

@@ -36,15 +36,14 @@ SC-213), y «Quiero donar» al lado de un tacho es un error caro.
    `donation_items_delete` (`has_min_role('admin')`). El `editor` crea, edita y
    ve; no ve el tacho. La frontera sigue siendo la policy: el permiso existe
    para no ofrecer el botón que la base va a negar.
-4. **Un ítem con reservas o entregas no se borra.** `donation_pledges.item_id`
-   es `on delete restrict` y las reservas no se borran (FR-222). Postgres
-   responde `23503`; la aplicación lo traduce a un mensaje en castellano
-   (`CatalogItemReferencedError`). Despublicar lo saca del sitio. Un ítem sin
-   ninguna reserva —un alta mal cargada, un duplicado— sí se borra, con rastro
-   `donation_item.deleted`.
+4. **Un ítem se puede borrar aunque tenga reservas.** `donation_pledges.item_id`
+   es `on delete cascade`: se van las reservas y los avisos. El rastro
+   `donation_item.deleted` queda. Quien opera también puede borrar una donación
+   o un aviso desde `/admin/donaciones` (`delete_donation_pledge`,
+   `delete_donation_offer`).
 5. **Esto no es un registro financiero.** «Nada se borra» sigue valiendo para
-   aportes, gastos y reservas: se anulan. El catálogo es el inventario de lo
-   que falta. Borrar una fila que nadie tomó no borra plata ni un compromiso.
+   aportes y gastos: se anulan. El catálogo y las reservas en especie son
+   inventario y compromisos. Borrar no toca plata.
 
 ## Alternativas descartadas
 
@@ -55,7 +54,7 @@ SC-213), y «Quiero donar» al lado de un tacho es un error caro.
 | Seguir con `RecordList` y sumar dos `RowAction` | El pedido es una columna de iconos en la tabla, no tres textos subrayados |
 | Soft-delete con `voided_at` | El catálogo no es el libro. Un ítem que nadie tomó no tiene que quedar como anulado |
 | Dejar borrar también al editor | La policy ya lo niega. Un botón que falla al enviarse es peor que un botón que no aparece |
-| Cascada sobre las reservas | FR-222: una reserva no se borra. El `RESTRICT` es esa regla en la base |
+| Impedir el borrado si alguien se anotó | El owner necesita poder sacar un ítem o una donación cargados por error |
 
 ## Consecuencias
 
@@ -65,9 +64,8 @@ El sitio público no se entera.
 
 **Malas y aceptadas.**
 
-- Un ítem que alguna vez se reservó —aunque la reserva esté cancelada o
-  vencida— no se puede borrar: la fila de `donation_pledges` sigue ahí. Se
-  despublica. Es el costo de no borrar compromisos.
+- Borrar un ítem o una donación los saca también del muro. El correo ya
+  enviado queda, sin la reserva.
 - Ver un borrador abre `/catalogo/{id}` y responde 404: esa ficha no está en
   el sitio. Publicar y volver a ver. No hay una ficha privada de preview.
 - `?editar=` recarga la página. Es el precio de que el modo edición funcione

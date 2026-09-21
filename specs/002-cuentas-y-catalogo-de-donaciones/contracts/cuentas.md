@@ -19,7 +19,7 @@ Castellano sin prefijo, inglés bajo `/en`, slugs sin traducir (ADR-023).
 | `/cuenta/recuperar` | Página + formulario de cliente | Pide el correo de recuperación |
 | `/cuenta/clave` | Página + formulario de cliente | Fija contraseña nueva, con sesión de recuperación |
 | `/cuenta/confirmar` | **Route handler** | Consume el enlace del correo y crea la sesión |
-| `/cuenta` | Server Component | Índice editorial de la cuenta: reservas, cómo aparecer (foto y nombre), acceso y borrar. `?seccion=` recuerda la pestaña abierta. |
+| `/cuenta` | Server Component | Índice de la cuenta: reservas, o Tu cuenta (foto, cómo aparecer, acceso y borrar) en una página. `?seccion=` distingue las dos y ancla el bloque. |
 | `/cuenta/sesion` | **Route handler** | Snapshot privado del chrome: anónima o nombre/correo/si hay retrato/`staff`. **No** crea el perfil |
 | `/cuenta/retrato` | **Route handler** | Sirve el retrato propio. Pide la URL firmada en el servidor y la descarta (ADR-037) |
 
@@ -39,8 +39,12 @@ dos cuentas con el mismo correo confirmado es trabajo de Auth; el harness local 
 `additional_redirect_urls`.
 
 `/cuenta` no es un panel de ajustes aparte (ADR-037): es la misma página de siempre, leída como
-índice. Las pestañas son `SectionTabs` —regla debajo, no píldoras—. Si hay reservas, esa pestaña
-abre primero; si no, abre «cómo aparecer». Sin JavaScript los cuatro paneles se apilan.
+índice. El menú es el mismo chrome del backoffice: mis donaciones y la cuenta al
+costado. Cómo aparecer, la foto, el acceso y borrar son bloques de una página;
+`?seccion=` distingue Mis donaciones de Tu cuenta, y ancla el bloque. Mis
+donaciones es inventario: foto del tipo, tu reserva y el estado del ítem; no
+lista canceladas ni vencidas. Edita cantidad y nota de una `reserved`. Si hay alguna anotada o llegada, esa sección
+abre primero; si no, abre Tu cuenta. Sin JavaScript se lee la página entera.
 
 El enlace del correo se arma con `emailRedirectTo` **del idioma en que la persona se registró**, y esa
 URL tiene que estar en `auth.site_url` o en `additional_redirect_urls`, incluidas las de preview de

@@ -8,13 +8,13 @@ Dos vistas, las dos con `security_invoker = true`, las dos legibles por `anon` y
 | Vista | Devuelve | No devuelve |
 |---|---|---|
 | `donation_catalog` | Ítems con `remaining_quantity` y el estimado de la ficha (ADR-041) | Borradores, nombres |
-| `donation_catalog_claims` | Cinco columnas de reservas y entregas con nombre | Lo anónimo, correo, nota |
-| `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Una reserva, aunque tenga nombre |
+| `donation_catalog_claims` | Seis columnas de reservas y entregas con nombre, incluida `has_portrait` | Lo anónimo, correo, nota, `portrait_path`, `user_id` |
+| `donation_wall` | Cinco columnas de las donaciones entregadas y no anónimas | Una reserva, aunque tenga nombre. El retrato |
 
 El repositorio de infraestructura consulta **las vistas, nunca las tablas**, y con lista de columnas
 explícita como el resto del proyecto.
 
-## Escritura: tres funciones y ninguna otra puerta
+## Escritura: estas funciones y ninguna otra puerta
 
 `authenticated` no tiene `insert` sobre `donation_pledges`. Las firmas completas y sus comprobaciones
 están en [data-model.md](../data-model.md) §5; acá está lo que la capa de aplicación tiene que
@@ -29,15 +29,21 @@ traducir.
 | | | `demasiadas_reservas` | Cuántas tiene y cuáles puede cancelar |
 | | | `cantidad_invalida` | Error asociado al campo |
 | `cancel_donation_pledge` | Su dueña, o `admin`+ | `no_encontrada` | La reserva ya no está activa; se recarga la cuenta |
+| `update_donation_pledge` | Su dueña, o `admin`+ | `sin_sesion` | Se la manda a ingresar |
+| | | `sin_permiso` | No se le ofrece el control |
+| | | `no_encontrada` | La reserva ya no está `reserved`; se recarga |
+| | | `cantidad_invalida` | Error asociado al campo |
+| | | `sin_disponibilidad` | "Alguien se adelantó": estado **diseñado**, con el catálogo actualizado al lado |
+| | | `datos_de_retiro` | Error en nombre o teléfono (admin, reserva por teléfono) |
 | `fulfill_donation_pledge` | `admin`+ | `sin_permiso` | No se le ofrece el control |
+| `revert_donation_pledge` | `admin`+ | `no_encontrada` | La reserva ya no está Donado; se recarga Cerradas |
 
 Y una traducción que no viene de una excepción nuestra sino del motor: bajar `needed_quantity` por
 debajo de lo comprometido falla con `23514` y el nombre del `check`. La capa de aplicación **tiene que
 convertir eso** en "hay tres unidades comprometidas; cancelalas primero" (US4 escenario 5). Si no lo
 hace, el formulario del backoffice muestra un mensaje de Postgres, que es la definición de estado no
-diseñado. Borrar un ítem con reservas o entregas falla con `23503` (`on delete restrict`); **tiene
-que** convertirse en "hay reservas o entregas de este ítem; no se puede borrar" (US4 escenario 7,
-ADR-050).
+diseñado. Borrar un ítem con reservas o entregas las borra también (`on delete cascade`). El
+rastro queda (US4 escenario 7, ADR-050).
 
 ## Reglas de la capa de aplicación
 
@@ -48,7 +54,7 @@ ADR-050).
 - Toda operación sobre el catálogo o sobre una reserva pasa por `perform()` y escribe el rastro con
   `record_audit()` (ADR-020, FR-223). Acciones nuevas: `donation_item.created`,
   `donation_item.updated`, `donation_item.published`, `donation_item.deleted`, `pledge.claimed`,
-  `pledge.cancelled`, `pledge.fulfilled`.
+  `pledge.updated`, `pledge.cancelled`, `pledge.fulfilled`, `pledge.reverted`.
 - La revalidación es explícita al publicar o al cambiar disponibilidad (ADR-017): `/catalogo`,
   `/catalogo/[id]`, `/quienes-ayudaron` y sus equivalentes en `/en`. SC-212 —cinco minutos entre
   confirmar y ver el nombre— se cumple por el ISR de cinco minutos incluso si la invalidación

@@ -91,14 +91,16 @@ test.describe("retorno de PayPal", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(COMPLETADA);
 
-    await page.getByRole("banner").getByRole("link", { name: "English" }).click();
+    const pie = page.getByRole("contentinfo");
+
+    await pie.getByRole("link", { name: "English" }).click();
 
     await expect(page).toHaveURL(/\/en\/ayudar\/paypal\/completada$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       en.paypalReturn.completed.title,
     );
 
-    await page.getByRole("banner").getByRole("link", { name: "Castellano" }).click();
+    await pie.getByRole("link", { name: "Castellano" }).click();
 
     await expect(page).toHaveURL(new RegExp(`${COMPLETADA}$`));
   });

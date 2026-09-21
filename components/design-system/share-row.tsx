@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { useUiOptional } from "@/components/i18n/ui-provider";
 import { BRANDS, type BrandId } from "@/content/brands";
 
 import { BrandMark } from "./brand-mark";
 import { cn } from "./cn";
+
+const NEVER_CHANGES = () => () => undefined;
+
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    NEVER_CHANGES,
+    () => true,
+    () => false,
+  );
+}
 
 /**
  * Compartir.
@@ -16,7 +26,8 @@ import { cn } from "./cn";
  * botón muerto ni un modal propio que imita el del sistema.
  *
  * Los enlaces se renderizan siempre en el HTML servido, así que funcionan sin
- * JavaScript.
+ * JavaScript. El botón nativo espera a hidratar: `navigator.share` no existe
+ * en el servidor y leerlo en el render rompe la hidratación.
  */
 
 export interface ShareTarget {
@@ -103,7 +114,7 @@ export function ShareRow({
     }
   }
 
-  const canShareNatively = typeof navigator !== "undefined" && "share" in navigator;
+  const canShareNatively = useHydrated() && "share" in navigator;
 
   return (
     <div className={cn("flex flex-wrap items-center gap-md", className)}>

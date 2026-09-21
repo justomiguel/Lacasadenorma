@@ -2,8 +2,9 @@
  * Las rutas del sitio, en un solo lugar.
  *
  * El orden es el del mockup aprobado (ADR-025): Historia, Cómo ayudar, Norma,
- * Lo que viene después, Contacto. La acción de ayudar no vive acá: es el CTA
- * del encabezado y apunta a `/ayudar` (ADR-045).
+ * Lo que viene después, Contacto. Cómo ayudar no se lista en el encabezado:
+ * ya está el CTA que apunta a `/ayudar` (ADR-045). `HEADER_NAV` es esa lista
+ * sin esa ruta.
  *
  * Las URLs están en castellano porque el sitio es en castellano (ADR-014).
  */
@@ -39,6 +40,9 @@ export const PRIMARY_NAV = [
     summary: "WhatsApp, correo e Instagram para coordinar.",
   },
 ] as const;
+
+/** Encabezado y menú: las secciones del relato, sin repetir el CTA. */
+export const HEADER_NAV = PRIMARY_NAV.filter((item) => item.href !== "/ayudar");
 
 export const SECONDARY_NAV = [
   { href: "/novedades", label: "Novedades" },

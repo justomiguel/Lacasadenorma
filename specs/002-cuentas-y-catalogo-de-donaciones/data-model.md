@@ -23,7 +23,7 @@ auth.users
 
 campaigns
    └── donation_items        (qué falta, cuánto, cuánto reservado, cuánto entregado)
-          └── donation_pledges   (quién se comprometió a qué; NO públicas salvo cinco columnas)
+          └── donation_pledges   (quién se comprometió a qué; NO públicas salvo seis columnas)
 
 email_deliveries             (cada intento de envío; sólo se agrega)
 donation_offers              (aviso por teléfono: nombre y número, nunca públicos)
@@ -32,10 +32,12 @@ donation_offers              (aviso por teléfono: nombre y número, nunca públ
 Vistas: `donation_catalog` (lo que falta, público), `donation_catalog_claims` (quién tomó y eligió aparecer) y `donation_wall` (quién ayudó, público).
 
 Funciones: `claim_donation_item`, `offer_donation_item`, `cancel_donation_pledge`,
-`fulfill_donation_pledge`, `release_expired_holds`, `record_email_delivery`.
+`update_donation_pledge`, `fulfill_donation_pledge`, `revert_donation_pledge`,
+`release_expired_holds`, `record_email_delivery`, `provision_donor_account`,
+`record_donor_arrival`.
 
-**No se toca** ninguna tabla existente. `campaign_totals` queda igual, y eso es una decisión, no una
-omisión (ADR-031).
+`campaign_totals` no se toca, y eso es una decisión, no una omisión (ADR-031). `contributions`
+gana `user_id` para atar un aporte a la ficha; los de antes quedan nulos.
 
 ---
 
@@ -56,6 +58,7 @@ null default now()`, `published_at` nulo = borrador.
 | `reviewed_at`, `reviewed_by` | | Nulos exactamente cuando el estado es `pending` |
 | `review_note` | `text` nullable | Motivo del rechazo, si alguien lo dejó. No es público |
 | `portrait_path` | `text` **nullable** | Ruta en el bucket privado `avatares`. Nulo = no subió foto. **No se publica** (ADR-037, FR-246) |
+| `contact_phone` | `text` **nullable** | Teléfono de coordinación, optativo. Lo carga el equipo al crear la cuenta. Nunca público |
 | `created_at`, `updated_at` | | |
 
 **Por qué existe y no se usa `auth.users` directo**: `authenticated` no puede leer `auth.users`, y no
@@ -65,9 +68,10 @@ vive en `auth.users` y viaja en el claim `email` del token de su dueño.
 **Invariante**: `default_anonymous = false` requiere `display_name` no vacío. Se valida en la
 aplicación y se refuerza en la reserva, que es donde importa.
 
-**Quién escribe el estado.** El `insert` exige `pending`. El `update` de la persona **no incluye**
-`approval_status`: es privilegio de columna, no una policy. La única vía de cambio es
-`public.review_donor_account()`, acotada a `has_min_role('admin')` (ADR-033).
+**Quién escribe el estado.** El `insert` autenticado exige `pending`. El `update` de la persona **no incluye**
+`approval_status`: es privilegio de columna, no una policy. Las vías de cambio son
+`public.review_donor_account()` y `public.provision_donor_account()`, las dos acotadas a
+`has_min_role('admin')` (ADR-033). La segunda nace `approved`: es quien donó por fuera.
 
 ### `donation_items` — el catálogo
 
@@ -116,16 +120,18 @@ cancelar, vencer y entregar (ADR-029, consecuencias).
 
 | Columna | Tipo | Notas |
 |---|---|---|
-| `item_id` | `uuid` → `donation_items` `on delete restrict` | `restrict`: un ítem con historia no se borra |
+| `item_id` | `uuid` → `donation_items` `on delete cascade` | Borrar el ítem se lleva las reservas |
 | `user_id` | `uuid` **nullable** → `auth.users` `on delete set null` | Nulo = la cuenta se borró (FR-240), o es una reserva por teléfono sin cuenta (ADR-051) |
 | `quantity` | `integer` `check (> 0)` | |
-| `status` | enum `pledge_status` | `reserved` \| `fulfilled` \| `cancelled` \| `expired` |
+| `status` | enum `pledge_status` | `reserved` \| `accepted` \| `fulfilled` \| `cancelled` \| `expired` |
 | `is_anonymous` | `boolean not null default true` | **El default es el anonimato** (FR-225) |
 | `donor_display_name` | `text` nullable | En el mail, lo elige su dueña en `/cuenta`. En el teléfono, se carga en el sí si aceptaron (FR-262) |
 | `donor_note` | `text` nullable | Mensaje privado a la familia. **Nunca público** |
 | `cover_channel` | enum `donation_cover_channel` `not null default 'bring'` | `bring` \| `transfer` \| `mercadopago` \| `paypal`. No se publica (ADR-041) |
 | `expires_at` | `timestamptz not null` | `now() + 14 días`, en un solo lugar del código |
 | `reminded_at` | `timestamptz` nullable | Que el recordatorio salga una sola vez (FR-235) |
+| `accepted_at` | `timestamptz` nullable | El sí. Se conserva al entregar. Se limpia al soltar |
+| `has_portrait` | `boolean not null default false` | Si esa reserva no anónima tiene retrato. Lo mantiene un disparador desde `donor_profiles.portrait_path`. **Sexta columna pública** del catálogo; el muro no la proyecta. `anon` no recibe `portrait_path` ni `user_id` |
 | `fulfilled_at`, `cancelled_at`, `cancel_reason` | | |
 | `created_at` | | |
 
@@ -138,12 +144,15 @@ constraint donation_pledges_named_when_public check (
   or (donor_display_name is not null and length(btrim(donor_display_name)) > 0)
 ),
 
--- Nada se borra: se cancela con motivo (FR-222).
+-- Cancelar sigue pidiendo motivo. Borrar es otra operación, de admin+.
 constraint donation_pledges_cancel_has_reason check (
   (cancelled_at is null) = (cancel_reason is null)
 ),
 constraint donation_pledges_fulfilled_has_date check (
   (status = 'fulfilled') = (fulfilled_at is not null)
+),
+constraint donation_pledges_accepted_has_date check (
+  status <> 'accepted' or accepted_at is not null
 )
 ```
 
@@ -151,14 +160,14 @@ constraint donation_pledges_fulfilled_has_date check (
 `src/domain/pledge-status.ts` para que la interfaz no ofrezca lo imposible:
 
 ```
-reserved ──fulfill──▶ fulfilled   (terminal)
-    │
-    ├────cancel───▶ cancelled     (terminal, con motivo)
-    └────expire───▶ expired       (terminal)
+reserved ──accept──▶ accepted ──fulfill──▶ fulfilled
+    │                     │                      │
+    └─cancel              └─cancel               └─revert / cancel
+                          (deshacer el sí)
 ```
 
-Desde un estado terminal no se sale. Una donación entregada por error se corrige con una fila nueva y
-una cancelación con motivo, igual que un aporte mal registrado no se edita.
+`reserved_quantity` suma `reserved` y `accepted`. `fulfilled_quantity` es sólo la llegada.
+`expire` no se escribe más. Cancelada no tiene salida. Una entrega por error se revierte.
 
 `offer_donation_item()` es la otra vía de insert: crea una reserva con `user_id` nulo, nombre
 público y teléfono de contacto, y una fila en `donation_offers`. `claim_donation_item()` sigue
@@ -168,8 +177,8 @@ siendo la vía con sesión. Nadie tiene `INSERT` sobre `donation_pledges`.
 
 | Columna | Tipo | Notas |
 |---|---|---|
-| `item_id` | `uuid` → `donation_items` `on delete restrict` | |
-| `pledge_id` | `uuid` nullable → `donation_pledges` `on delete restrict` | La reserva que sostiene el ítem. Nulo sólo en filas de prueba |
+| `item_id` | `uuid` → `donation_items` `on delete cascade` | |
+| `pledge_id` | `uuid` nullable → `donation_pledges` `on delete cascade` | La reserva que sostiene el ítem. Nulo si todavía no reservó |
 | `contact_name` | `text not null` | Nombre para llamar. Nunca público |
 | `contact_phone` | `text not null` | Teléfono para llamar. Nunca público |
 | `created_at` | | |
@@ -222,21 +231,22 @@ from public.donation_pledges p
 where p.fulfilled_at is not null;
 ```
 
-Cinco columnas, las mismas cinco del `grant`. La vista no nombra `status` ni `is_anonymous`:
-`anon` no tiene privilegio para esas columnas. El recorte a lo **entregado** usa `fulfilled_at`,
+Cinco columnas, las mismas cinco del muro. La vista no nombra `status`, `is_anonymous` ni
+`has_portrait`: `anon` no las necesita acá. El recorte a lo **entregado** usa `fulfilled_at`,
 que sí está otorgado, para que una reserva con nombre no llegue al muro (D2) aunque la policy de
 `anon` ahora admita reservas con nombre —las necesita el catálogo (FR-255). Lo anónimo lo sigue
 filtrando la policy. El porcentaje de ese ítem no es una columna: se calcula en el dominio sobre
-`quantity` y `needed_quantity`, ambos ya públicos (ADR-052).
+`quantity` y `needed_quantity`, ambos ya públicos (ADR-052). El muro no proyecta el retrato.
 
 ```sql
 create view public.donation_catalog_claims with (security_invoker = true) as
-select p.id, p.item_id, p.quantity, p.donor_display_name, p.fulfilled_at
+select p.id, p.item_id, p.quantity, p.donor_display_name, p.fulfilled_at, p.has_portrait
 from public.donation_pledges p;
 ```
 
-Las mismas cinco columnas. `fulfilled_at` nulo es reserva; con fecha, ya llegó. Lo anónimo no
-existe para `anon`.
+Seis columnas, las mismas seis del `grant`. `fulfilled_at` nulo es reserva; con fecha, ya llegó.
+Lo anónimo no existe para `anon`. `has_portrait` es la sexta: `true` sólo dice que hay archivo;
+la ruta y el `user_id` no salen. El muro no las proyecta.
 
 `security_invoker = true` en las tres, y no es opcional: sin eso la vista corre con los privilegios de
 su dueño y sortea RLS (`research.md` §6).
@@ -252,7 +262,7 @@ leer con atención, porque es la que antes no existía.
 |---|---|---|---|---|---|---|
 | `donor_profiles` | nada | **su propia fila: leer; escribir nombre, idioma y anonimato. No el estado** | leer | nada | leer + habilitar | leer + habilitar |
 | `donation_items` | leer publicados | leer publicados | leer todo | crear/editar | CRUD | CRUD |
-| `donation_pledges` | **5 columnas de reservas y entregas con nombre** | **las propias, completas** | leer todas | **nada** | leer + operar | leer + operar |
+| `donation_pledges` | **6 columnas de reservas y entregas con nombre** | **las propias, completas** | leer todas | **nada** | leer + operar | leer + operar |
 | `email_deliveries` | nada | nada | leer | nada | leer | leer |
 | `donation_catalog` (vista) | leer | leer | leer | leer | leer | leer |
 | `donation_catalog_claims` (vista) | leer | leer | leer | leer | leer | leer |
@@ -310,8 +320,9 @@ grant update (display_name, locale, default_anonymous, portrait_path) on public.
   to authenticated;
 grant select on public.email_deliveries to authenticated;
 
--- El muro: cinco columnas, sólo lectura, y ninguna más (ADR-030).
-grant select (id, item_id, quantity, donor_display_name, fulfilled_at)
+-- Seis columnas públicas, sólo lectura, y ninguna más (ADR-030). El catálogo
+-- proyecta las seis; el muro, las cinco de siempre. Sin `portrait_path` ni `user_id`.
+grant select (id, item_id, quantity, donor_display_name, fulfilled_at, has_portrait)
   on public.donation_pledges to anon;
 
 -- `authenticated` ve su propia reserva completa, y sigue sin poder insertarla.
@@ -342,6 +353,12 @@ en su primera línea**. Las tres primeras son el único camino para mover un con
 
 Hay dos más, de cuentas, que existen desde la fase B y no mueven material:
 
+### `contributions.user_id`
+
+La tabla `contributions` es de la feature 001. Acá gana `user_id` `uuid` **nullable** →
+`auth.users` `on delete set null`. Nulo en los aportes de antes y en los que se cargan
+desde `/admin/aportes` sin elegir persona. La ficha de `/admin/donantes/[id]` lo pone.
+
 ### `review_donor_account(user_id, decision, note)`
 
 `grant execute to authenticated`. La primera línea pide `has_min_role('admin')`. Acepta `approved` o
@@ -365,9 +382,8 @@ no un error que delate que la fila existe.
 3. Si el canal es `bring`, los datos de retiro son optativos. Con sesión no se exigen: la cuenta
    identifica (ADR-051). Si vienen, se guardan. El aviso por teléfono sigue pidiendo nombre
    (`datos_de_retiro` si falta).
-4. `release_expired_holds(item_id)` — el vencimiento auto-sanante de FR-218.
-5. Tope de reservas activas por cuenta, o error (FR-219).
-6. El `update` condicional que resuelve la concurrencia:
+4. Tope de reservas activas por cuenta, o error (FR-219).
+5. El `update` condicional que resuelve la concurrencia:
 
 ```sql
 update public.donation_items
@@ -391,20 +407,57 @@ Probado con dos sesiones concurrentes: la segunda espera el lock, reevalúa, y p
 
 ### `cancel_donation_pledge(pledge_id, reason) → void`
 
-`authenticated`. Cancela si la reserva es **de quien llama** o si quien llama pasa
-`has_min_role('admin')`. Devuelve las unidades al contador. El motivo es obligatorio para el equipo y
-opcional para el dueño de la reserva, que ya dijo lo que tenía que decir cancelando.
+`authenticated`. Cancela `reserved` si es **de quien llama** o si quien llama pasa
+`has_min_role('admin')`. Cancela `accepted` o `fulfilled` sólo con `has_min_role('admin')` y
+motivo. El motivo es obligatorio para el equipo y opcional para el dueño de una reserva propia.
+
+### `update_donation_pledge(pledge_id, quantity, note, contact_name, contact_phone) → void`
+
+`authenticated`. Edita una `reserved` si es **de quien llama** o si quien llama
+pasa `has_min_role('admin')`. Cambia cantidad y nota. `admin`+ también nombre y
+teléfono si `user_id` es nulo. `expires_at` no se toca. El ítem se mueve con
+`reserved_quantity + (nueva − actual)` y el mismo `update` condicional que al
+anotar; delta 0 no mueve el ítem. Sin correo nuevo.
+
+Errores: `sin_sesion`, `sin_permiso`, `no_encontrada` (no existe o no está
+`reserved`), `cantidad_invalida`, `sin_disponibilidad`, `datos_de_retiro`.
+
+### `accept_donation_pledge(pledge_id, display_name?, note?) → void`
+
+`authenticated`, sólo `has_min_role('admin')`. Pasa `reserved` a `accepted` y sella
+`accepted_at`. No mueve cantidades ni publica en el muro.
 
 ### `fulfill_donation_pledge(pledge_id) → void`
 
-`authenticated`, sólo `has_min_role('admin')`. Mueve la cantidad de `reserved` a `fulfilled` y sella
-`fulfilled_at`. Es el momento en que un nombre puede llegar al muro (D2) y el que dispara el
-agradecimiento.
+`authenticated`, sólo `has_min_role('admin')`. Pasa `accepted` a `fulfilled`, mueve la
+cantidad de `reserved` a `fulfilled` y sella `fulfilled_at`. Es el momento en que un
+nombre puede llegar al muro (D2) y el que dispara el agradecimiento. De `reserved`
+no se salta.
+
+### `revert_donation_pledge(pledge_id, reason) → void`
+
+`authenticated`, sólo `has_min_role('admin')`. Pasa un `fulfilled` a `cancelled`, limpia
+`fulfilled_at`, baja `fulfilled_quantity`. El motivo es optativo: si falta, se guarda
+«Revertida desde Cerradas». Dispara el correo a quien donó.
 
 ### `release_expired_holds(item_id default null) → integer`
 
-**Sin `grant execute` a nadie**: la invocan las otras funciones y `pg_cron`. Sin parámetro libera
-todo; con parámetro, un ítem. Devuelve cuántas liberó, para que el cron lo registre.
+**Sin `grant execute` a nadie.** Ya no suelta: devuelve 0. El plazo avisa al equipo;
+cancela el admin. Quedó para no romper a quien todavía la invoca.
+
+### `provision_donor_account(user_id, display_name, phone?) → void`
+
+`grant execute to authenticated`. La primera línea pide `has_min_role('admin')`. Inserta el
+perfil **approved**, `locale = es`, `reviewed_at`/`reviewed_by` = el actor, teléfono si vino.
+Es la única vía para nacer habilitada: el `insert` autenticado sigue exigiendo `pending`.
+
+### `record_donor_arrival(user_id, item_id, quantity, display_name?) → uuid`
+
+`grant execute to authenticated`. Sólo `has_min_role('admin')`. Inserta la reserva
+**fulfilled**, `fulfilled_at = now()`, `accepted_at = now()`, `expires_at = now()`,
+`cover_channel = bring`. Suma `fulfilled_quantity` con el mismo `update` condicional del
+cupo. Si no entra, no anota. No cuenta para el tope de cinco reservas activas. Sin
+nombre, anónima.
 
 ### `record_email_delivery(kind, pledge_id, status, provider_id, error) → void`
 

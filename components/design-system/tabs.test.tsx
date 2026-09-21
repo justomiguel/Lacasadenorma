@@ -16,7 +16,7 @@ const items: readonly TabItem[] = [
   {
     id: "terreno",
     label: "Dar una mano",
-    heading: "Retirar escombros",
+    heading: "Coordinar en el pueblo",
     content: <p>WhatsApp de Justo</p>,
   },
   { id: "materiales", label: "Donar materiales", content: <p>Cemento, cal, arena</p> },
@@ -42,7 +42,7 @@ describe("SectionTabs sin JavaScript", () => {
       <SectionTabs items={items} label="Formas de ayudar" />,
     );
 
-    expect(html).toContain("Retirar escombros");
+    expect(html).toContain("Coordinar en el pueblo");
     expect(html.match(/<h3/g)).toHaveLength(1);
   });
 

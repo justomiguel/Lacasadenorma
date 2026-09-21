@@ -122,7 +122,8 @@ noveno necesita una sesión de administrador, y hasta dónde llega esa sesión e
 La persona **`donante`** de pgTAP es autenticada y no tiene fila en `user_roles`: ve su perfil y
 puede reservar por la función, y no ve el libro. La concurrencia por la última unidad (SC-202) está
 en `supabase/tests/070-catalogo.sql`; el recorrido de reservar, conflicto, cancelar y vencer está en
-`e2e/con-datos/catalogo.spec.ts`. El vencimiento se dispara con `POST /harness/v1/vencer-reserva`,
+`e2e/con-datos/catalogo.spec.ts`. Subir de 1 a 2 una reserved propia está en
+`e2e/con-datos/editar-reserva.spec.ts`. El vencimiento se dispara con `POST /harness/v1/vencer-reserva`,
 porque `authenticated` no puede escribir `expires_at`. Que una entrega con nombre aparezca en el muro
 y una anónima no aparezca en ningún HTML público está en `e2e/con-datos/muro.spec.ts` (SC-204).
 
@@ -262,6 +263,13 @@ pedido, el script **corta con un error** en lugar de correr: un build del otro m
 los tests y falla los tres que miran las URL canónicas, que es la peor forma de fallar porque nadie
 sospecha del build.
 
+El salto a Google vive en `e2e/con-datos/cuenta-google.spec.ts`. El helper
+`entrarConGoogle` recorre el botón; el harness de `scripts/local-api/oauth.mjs`
+emite la identidad. La prueba fija correo, nombre y el caso sin dirección con
+encabezados `x-harness-oauth-*` (o los mismos campos en la query de
+`/authorize`). No habla con Google: el hop real se prueba a mano, una vez, y
+está en el runbook.
+
 La primera vez hay que instalar los navegadores:
 
 ```bash
@@ -389,7 +397,7 @@ Ocho suites sobre PostgreSQL 17 real con un shim que emula lo que Supabase agreg
 | `040-integridad-financiera.sql` | 26 | Que no se pueda borrar un registro financiero, que `audit_log` sea append-only, los CHECK |
 | `050-roles-y-token.sql` | 21 | Que el rol venga de `app_metadata`, que `user_metadata` se ignore, y que el servidor de auth pueda ejecutar el hook |
 | `060-storage.sql` | 27 | `fotos` y `videos` públicos, `comprobantes` y `avatares` privados, y las policies de cada uno |
-| `070-catalogo.sql` | 49 | El `check` de no-sobreventa, la vista pública, dos sesiones concurrentes por la última unidad, el tope de reservas, el vencimiento sin cron, que un `insert` directo falle, que cumplir una reserva no mueva totales de dinero, y que borrar la cuenta anonimice el nombre |
+| `070-catalogo.sql` | 109 | El `check` de no-sobreventa, la vista pública, dos sesiones concurrentes por la última unidad, el tope de reservas, el vencimiento sin cron, que un `insert` directo falle, que aceptar no mueva cantidades, que de reserved no se marque llegada, que cumplir una reserva no mueva totales de dinero, que borrar la cuenta anonimice el nombre, que admin pueda borrar un ítem o una reserva aunque alguien se haya anotado, que revertir un Donado devuelva las unidades, y que el dueño edite cantidad y nota de una reserved |
 | `080-donantes-y-muro.sql` | 56 | Que una cuenta del público vea sólo su fila, que no pueda habilitarse sola, y que `anon` lea exactamente cinco columnas del muro |
 
 La forma de estos tests es distinta de la del resto: casi todos afirman que una operación **falla**.

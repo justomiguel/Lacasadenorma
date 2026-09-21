@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ICON_ACTION, primaryActionClass } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 import { CloseIcon } from "@/components/design-system/icons";
 import {
   formatErrorDiagnostic,
@@ -102,6 +103,9 @@ export function ErrorStackDialog({
           className={cn(primaryActionClass(), "mt-lg sm:w-full")}
           onClick={() => setOpen(false)}
         >
+          <IdentifyingMark>
+            <CloseIcon />
+          </IdentifyingMark>
           {copy.close}
         </button>
       </div>

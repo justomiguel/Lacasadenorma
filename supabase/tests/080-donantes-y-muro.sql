@@ -20,7 +20,7 @@
 -- Las dos cuentas se insertan dentro de la transacción y se revierten al terminar.
 
 begin;
-select plan(68);
+select plan(72);
 
 insert into auth.users (id, email) values
   ('20000000-0000-4000-8000-000000000001', 'quien.dona@ejemplo.invalid'),
@@ -792,8 +792,8 @@ select is(
        and grantee = 'anon'
        and privilege_type = 'SELECT'
   ),
-  array['donor_display_name', 'fulfilled_at', 'id', 'item_id', 'quantity']::text[],
-  'anon lee exactamente las cinco columnas del muro, ni una más'
+  array['donor_display_name', 'fulfilled_at', 'has_portrait', 'id', 'item_id', 'quantity']::text[],
+  'anon lee exactamente las seis columnas públicas, ni una más'
 );
 
 select column_privs_are(
@@ -816,6 +816,10 @@ select column_privs_are(
   'public', 'donation_pledges', 'fulfilled_at', 'anon', array['SELECT']::text[],
   'anon puede leer donation_pledges.fulfilled_at'
 );
+select column_privs_are(
+  'public', 'donation_pledges', 'has_portrait', 'anon', array['SELECT']::text[],
+  'anon puede leer donation_pledges.has_portrait'
+);
 
 set local role anon;
 
@@ -824,6 +828,13 @@ select throws_ok(
   '42501',
   null,
   'nombrar user_id falla: anon no tiene privilegio de esa columna'
+);
+
+select throws_ok(
+  $s$ select portrait_path from public.donation_pledges $s$,
+  '42703',
+  null,
+  'nombrar portrait_path falla: el path no está en la reserva ni se otorga'
 );
 
 select throws_ok(
@@ -887,6 +898,39 @@ select results_eq(
   $q$ select donor_display_name from public.donation_catalog_claims order by donor_display_name $q$,
   $q$ values ('Todavía no llegó'::text), ('Vecina de la esquina'::text) $q$,
   'el catálogo nombra reservas y entregas con nombre; la anónima no existe (FR-255)'
+);
+
+select results_eq(
+  $q$
+    select has_portrait
+      from public.donation_catalog_claims
+     where donor_display_name = 'Vecina de la esquina'
+  $q$,
+  $q$ values (true) $q$,
+  'con retrato puesto, has_portrait es verdadero en la vista (FR-246)'
+);
+
+reset role;
+set local "request.jwt.claims" =
+  '{"sub": "20000000-0000-4000-8000-000000000001", "role": "authenticated", "app_metadata": {}}';
+set local role authenticated;
+
+update public.donor_profiles
+   set portrait_path = null
+ where id = '20000000-0000-4000-8000-000000000001';
+
+reset role;
+set local "request.jwt.claims" = '';
+set local role anon;
+
+select results_eq(
+  $q$
+    select has_portrait
+      from public.donation_catalog_claims
+     where donor_display_name = 'Vecina de la esquina'
+  $q$,
+  $q$ values (false) $q$,
+  'al borrar el retrato, has_portrait pasa a falso en la vista'
 );
 
 reset role;

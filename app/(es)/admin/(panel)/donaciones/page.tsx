@@ -4,23 +4,34 @@ import {
   SubmitButton,
   TextAreaField,
 } from "@/components/admin/form";
+import { PledgeEditFields } from "@/components/admin/pledge-edit";
 import { NoRecords, Record, RecordList, RowAction } from "@/components/admin/records";
 import { AdminHeading, Panel, SinDatos } from "@/components/admin/shell";
-import { Callout } from "@/components/design-system/callout";
 import { formatLongDate } from "@/components/design-system/dates";
 import {
+  canEditPledge,
   isActivePledge,
+  isPledgePastHold,
   type AdminPledgeRecord,
 } from "@/src/domain/entities/donation-pledge";
 import { can } from "@/src/domain/permissions";
 import { getAdminScope } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
 
-import { cancelPledgeAction, fulfillPledgeAction } from "./actions";
+import {
+  acceptPledgeAction,
+  cancelPledgeAction,
+  deleteOfferAction,
+  deletePledgeAction,
+  fulfillPledgeAction,
+  revertPledgeAction,
+  updatePledgeAction,
+} from "./actions";
 
 const STATUS_LABEL = {
   reserved: "Reservada",
-  fulfilled: "Donado",
+  accepted: "Tomada · pendiente de entrega",
+  fulfilled: "Entregada",
   cancelled: "Cancelada",
   expired: "Vencida",
 } as const;
@@ -68,15 +79,6 @@ export default async function AdminDonacionesPage() {
     <>
       {heading}
 
-      <Callout title="Qué se decide acá">
-        <p>
-          Una reserva no es una donación hasta que el equipo confirma. Un aviso por
-          teléfono también reserva: el sí del correo (o Sí: donan) publica el nombre y la
-          fecha en Quiénes ayudaron; el no suelta el ítem. El motivo de una cancelación
-          ajena queda en el rastro.
-        </p>
-      </Callout>
-
       <Panel id="avisos" title={`Avisos por teléfono · ${String(offers.length)}`}>
         {offers.length === 0 ? (
           <NoRecords>Nadie dejó un teléfono todavía.</NoRecords>
@@ -87,7 +89,22 @@ export default async function AdminDonacionesPage() {
                 key={offer.id}
                 title={offer.itemTitle}
                 meta={`${offer.contactName} · ${offer.contactPhone} · ${formatLongDate(offer.createdAt.slice(0, 10))}`}
-              />
+              >
+                {puedeEscribir ? (
+                  <RowAction label="Borrar" tone="danger">
+                    <p className="mb-md font-ui text-small text-ink">
+                      ¿Borrar este aviso de {offer.contactName}?
+                    </p>
+                    <ActionForm action={deleteOfferAction}>
+                      <HiddenValue name="id" value={offer.id} />
+                      <HiddenValue name="title" value={offer.itemTitle} />
+                      <SubmitButton tone="danger" pendingLabel="Borrando…">
+                        Borrar el aviso
+                      </SubmitButton>
+                    </ActionForm>
+                  </RowAction>
+                ) : null}
+              </Record>
             ))}
           </RecordList>
         )}
@@ -99,7 +116,12 @@ export default async function AdminDonacionesPage() {
         ) : (
           <RecordList>
             {activas.map((pledge) => (
-              <PledgeRow key={pledge.id} pledge={pledge} canWrite={puedeEscribir} />
+              <PledgeRow
+                key={pledge.id}
+                pledge={pledge}
+                puedeEscribir={puedeEscribir}
+                canDelete={puedeEscribir}
+              />
             ))}
           </RecordList>
         )}
@@ -111,7 +133,12 @@ export default async function AdminDonacionesPage() {
         ) : (
           <RecordList>
             {otras.map((pledge) => (
-              <PledgeRow key={pledge.id} pledge={pledge} canWrite={false} />
+              <PledgeRow
+                key={pledge.id}
+                pledge={pledge}
+                puedeEscribir={puedeEscribir}
+                canDelete={puedeEscribir}
+              />
             ))}
           </RecordList>
         )}
@@ -122,10 +149,12 @@ export default async function AdminDonacionesPage() {
 
 function PledgeRow({
   pledge,
-  canWrite,
+  puedeEscribir,
+  canDelete = false,
 }: {
   pledge: AdminPledgeRecord;
-  canWrite: boolean;
+  puedeEscribir: boolean;
+  canDelete?: boolean;
 }) {
   const when = formatLongDate(pledge.expiresAt.slice(0, 10));
   const quien = pledge.isAnonymous
@@ -135,12 +164,22 @@ function PledgeRow({
     .filter((value): value is string => value !== null && value.length > 0)
     .join(" · ");
   const retiro = pledge.pickupAddress;
+  const canEdit = puedeEscribir && canEditPledge(pledge.status);
+  const canAccept = puedeEscribir && pledge.status === "reserved";
+  const canFulfill = puedeEscribir && pledge.status === "accepted";
+  const canRelease =
+    puedeEscribir && (pledge.status === "reserved" || pledge.status === "accepted");
+  const canRevert = puedeEscribir && pledge.status === "fulfilled";
+  const pastHold = pledge.status === "reserved" && isPledgePastHold(pledge.expiresAt);
+  const estado = pastHold
+    ? `${STATUS_LABEL[pledge.status]} · Pasaron 14 días`
+    : STATUS_LABEL[pledge.status];
 
   return (
     <Record
       title={pledge.itemTitle}
       meta={`${String(pledge.quantity)} · ${COVER_LABEL[pledge.coverChannel]} · ${quien} · ${contacto.length === 0 ? "sin contacto" : contacto} · vence ${when}`}
-      status={STATUS_LABEL[pledge.status]}
+      status={estado}
     >
       {retiro === null ? null : (
         <p className="mb-md max-w-measure font-ui text-small text-ink-muted">
@@ -157,31 +196,100 @@ function PledgeRow({
           Motivo: {pledge.cancelReason}
         </p>
       )}
-      {canWrite ? (
-        <RowAction label="Resolver esta reserva">
-          <div className="grid gap-lg sm:grid-cols-2">
-            <ActionForm action={fulfillPledgeAction}>
-              <HiddenValue name="id" value={pledge.id} />
-              <HiddenValue name="userId" value={pledge.userId ?? ""} />
-              <HiddenValue name="what" value={pledge.itemTitle} />
-              <SubmitButton pendingLabel="Confirmando…">Sí: donan</SubmitButton>
-            </ActionForm>
-            <ActionForm action={cancelPledgeAction}>
-              <HiddenValue name="id" value={pledge.id} />
-              <HiddenValue name="userId" value={pledge.userId ?? ""} />
-              <HiddenValue name="what" value={pledge.itemTitle} />
-              <TextAreaField
-                name="reason"
-                label="Motivo de la cancelación"
-                required
-                rows={2}
-                maxLength={300}
-              />
-              <SubmitButton tone="danger" pendingLabel="Cancelando…">
-                Cancelar la reserva
-              </SubmitButton>
-            </ActionForm>
+      {canEdit ? (
+        <RowAction label="Editar esta reserva">
+          <ActionForm action={updatePledgeAction}>
+            <PledgeEditFields pledge={pledge} />
+          </ActionForm>
+        </RowAction>
+      ) : null}
+      {canAccept || canFulfill || canRelease ? (
+        <RowAction
+          label={
+            canAccept
+              ? "Resolver esta reserva"
+              : canFulfill
+                ? "Confirmar la llegada"
+                : "Soltar esta donación"
+          }
+        >
+          <div
+            className={
+              canAccept || canFulfill ? "grid gap-lg sm:grid-cols-2" : undefined
+            }
+          >
+            {canAccept ? (
+              <ActionForm action={acceptPledgeAction}>
+                <HiddenValue name="id" value={pledge.id} />
+                <HiddenValue name="userId" value={pledge.userId ?? ""} />
+                <HiddenValue name="what" value={pledge.itemTitle} />
+                <SubmitButton pendingLabel="Confirmando…">Sí: donan</SubmitButton>
+              </ActionForm>
+            ) : null}
+            {canFulfill ? (
+              <ActionForm action={fulfillPledgeAction}>
+                <HiddenValue name="id" value={pledge.id} />
+                <HiddenValue name="userId" value={pledge.userId ?? ""} />
+                <HiddenValue name="what" value={pledge.itemTitle} />
+                <SubmitButton pendingLabel="Confirmando…">Llegó</SubmitButton>
+              </ActionForm>
+            ) : null}
+            {canRelease ? (
+              <ActionForm action={cancelPledgeAction}>
+                <HiddenValue name="id" value={pledge.id} />
+                <HiddenValue name="userId" value={pledge.userId ?? ""} />
+                <HiddenValue name="what" value={pledge.itemTitle} />
+                <TextAreaField
+                  name="reason"
+                  label="Motivo de la cancelación"
+                  required
+                  rows={2}
+                  maxLength={300}
+                />
+                <SubmitButton tone="danger" pendingLabel="Soltando…">
+                  Soltar la reserva
+                </SubmitButton>
+              </ActionForm>
+            ) : null}
           </div>
+        </RowAction>
+      ) : null}
+      {canRevert ? (
+        <RowAction label="Revertir">
+          <p className="mb-md font-ui text-small text-ink">
+            Las unidades vuelven al catálogo y, si figuraba, sale de Quiénes
+            ayudaron. La reserva queda cancelada acá.
+          </p>
+          <ActionForm action={revertPledgeAction}>
+            <HiddenValue name="id" value={pledge.id} />
+            <HiddenValue name="userId" value={pledge.userId ?? ""} />
+            <HiddenValue name="what" value={pledge.itemTitle} />
+            <HiddenValue name="title" value={pledge.itemTitle} />
+            <TextAreaField
+              name="reason"
+              label="Motivo (optativo)"
+              rows={2}
+              maxLength={300}
+            />
+            <SubmitButton pendingLabel="Revirtiendo…">
+              Revertir la donación
+            </SubmitButton>
+          </ActionForm>
+        </RowAction>
+      ) : null}
+      {canDelete ? (
+        <RowAction label="Borrar" tone="danger">
+          <p className="mb-md font-ui text-small text-ink">
+            ¿Borrar esta donación de «{pledge.itemTitle}»? Se saca del listado y
+            del muro.
+          </p>
+          <ActionForm action={deletePledgeAction}>
+            <HiddenValue name="id" value={pledge.id} />
+            <HiddenValue name="title" value={pledge.itemTitle} />
+            <SubmitButton tone="danger" pendingLabel="Borrando…">
+              Borrar la donación
+            </SubmitButton>
+          </ActionForm>
         </RowAction>
       ) : null}
     </Record>

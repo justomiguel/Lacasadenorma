@@ -8,6 +8,8 @@ import {
 } from "./contributions";
 import { CAMPAIGN, RECORD, deps } from "./admin-test-helpers";
 
+const CUENTA = "20000000-0000-4000-8000-000000000006";
+
 // ── Aportes ─────────────────────────────────────────────────────────────────
 
 describe("aportes", () => {
@@ -111,6 +113,19 @@ describe("aportes", () => {
       action: "campaign.reconciled",
       diff: { reconciledAt: "2026-09-01" },
     });
+  });
+
+  it("ata el aporte a la persona sin copiar el userId a la auditoría", async () => {
+    const { deps: admin, fake } = deps("admin");
+    await recordContribution(admin, {
+      campaignId: CAMPAIGN,
+      amount: "10.000",
+      currency: "ARS",
+      receivedAt: "2026-09-01",
+      userId: CUENTA,
+    });
+    expect(fake.calls[0]).toMatchObject({ input: { userId: CUENTA } });
+    expect(JSON.stringify(fake.audit)).not.toContain(CUENTA);
   });
 
   it("anula un aporte con motivo", async () => {

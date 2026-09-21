@@ -32,9 +32,27 @@ export {
 } from "./expenses";
 export { saveMilestone } from "./milestones";
 export { saveDonationItem, deleteDonationItem } from "./catalog";
-export { reviewDonorAccount } from "./donors";
-export type { ReviewAccountMail } from "./donors";
-export { cancelPledge, fulfillPledge } from "./pledges";
+export {
+  provisionDonorAccount,
+  regenerateDonorInvite,
+  reviewDonorAccount,
+} from "./donors";
+export type {
+  DonorAuthPort,
+  ProvisionedDonor,
+  ProvisionMail,
+  ReviewAccountMail,
+} from "./donors";
+export {
+  acceptPledge,
+  cancelPledge,
+  deleteOffer,
+  deletePledge,
+  fulfillPledge,
+  recordDonorArrival,
+  revertPledge,
+  updatePledge,
+} from "./pledges";
 export type { PledgeMail } from "./pledges";
 export { savePaymentMethod, setPaymentMethodPublished } from "./payment-methods";
 export { getOwnerMetrics } from "./metrics";

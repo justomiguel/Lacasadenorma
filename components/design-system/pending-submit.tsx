@@ -25,6 +25,7 @@ export function PendingTextButton({
   icon?: ReactNode;
 }) {
   const { pending } = useFormStatus();
+  const label = pending ? pendingLabel : children;
 
   return (
     <button
@@ -34,7 +35,7 @@ export function PendingTextButton({
       className={cn("disabled:opacity-60", className)}
     >
       {icon}
-      {pending ? pendingLabel : children}
+      {label}
     </button>
   );
 }

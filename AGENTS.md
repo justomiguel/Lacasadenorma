@@ -36,8 +36,8 @@ build, a propósito.
   botón o enlace lleva su logo al lado del nombre. Lo impone `npm run check:marcas`.
 - Donde un control, un campo, un canal, un camino o un ítem de menú se reconoce
   de un vistazo, el icono va **antes** del nombre, a `1.15em` de esa letra
-  (ADR-047). Lo impone `npm run check:iconos`. Skills: `iconos-en-la-interfaz`
-  e `iconos-en-transferencia`.
+  (ADR-047). Un botón con caja y nombre también. Lo impone `npm run check:iconos`.
+  Skills: `iconos-en-la-interfaz` e `iconos-en-transferencia`.
 - Ninguna policy RLS que alcance a `authenticated` sin comprobar rol o propiedad, ninguna
   `for all`, ninguna función `security definer` sin `search_path` y ninguna vista sin
   `security_invoker`. Lo impone `npm run check:rls`, y el motivo está en

@@ -3,26 +3,32 @@
 import Link from "next/link";
 import type { CSSProperties, RefObject } from "react";
 
-import { primaryActionClass, ICON_ACTION } from "@/components/design-system/actions";
+import {
+  HelpActionLabel,
+  ICON_ACTION,
+  primaryActionClass,
+} from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
 import { CloseIcon } from "@/components/design-system/icons";
 import type { UiContent } from "@/content/schema";
 import { localizedHref } from "@/src/i18n/href";
-import { htmlLang, otherLocale, type Locale } from "@/src/i18n/locale";
+import type { Locale } from "@/src/i18n/locale";
 import { track } from "@/src/infrastructure/analytics/browser";
 
 import { AccountChrome } from "./account-chrome";
 import { SiteMark } from "./mark";
-import { PRIMARY_NAV, SECONDARY_NAV } from "./navigation";
+import { HEADER_NAV, SECONDARY_NAV } from "./navigation";
 
 /**
  * El menú del teléfono, a pantalla completa (ADR-032).
  *
  * Es corto a propósito: la cuenta —y Backoffice, si hay rol, y Métricas si es
- * owner— primero, para que no queden debajo de las cinco secciones en un
+ * owner— primero, para que no queden debajo de las secciones en un
  * teléfono chico; después las
- * secciones en la serif de display, los enlaces chicos, el idioma y la acción
- * de ayudar. Respeta las áreas seguras del teléfono con `safe-top` y `safe-bottom`.
+ * secciones en la serif de display (sin Cómo ayudar: ya está el CTA), los
+ * enlaces chicos y la acción de ayudar.
+ * El idioma está en el pie. Respeta las áreas seguras del teléfono con
+ * `safe-top` y `safe-bottom`.
  * Cada ítem entra con un escalón de 40 ms; con `prefers-reduced-motion` no se
  * mueve nada.
  */
@@ -32,7 +38,6 @@ export function MobileMenu({
   siteName,
   ui,
   canonical,
-  switchHref,
   helpHref,
   closeRef,
   onClose,
@@ -42,13 +47,10 @@ export function MobileMenu({
   siteName: string;
   ui: UiContent;
   canonical: string;
-  switchHref: string;
   helpHref: string;
   closeRef: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
 }) {
-  const other = otherLocale(locale);
-
   return (
     <div
       id={id}
@@ -76,7 +78,7 @@ export function MobileMenu({
       </div>
 
       {/*
-       * La cuenta va primero: en 360×640 las cinco secciones de display
+       * La cuenta va primero: en 360×640 las secciones de display
        * llenan la pantalla, y Backoffice / Ingresar debajo no se veían.
        */}
       <div
@@ -95,7 +97,7 @@ export function MobileMenu({
 
       <nav aria-label={ui.nav.primary} className="mt-xl flex-1">
         <ul className="flex flex-col">
-          {PRIMARY_NAV.map((item, index) => {
+          {HEADER_NAV.map((item, index) => {
             const actual = canonical === item.href;
 
             return (
@@ -122,7 +124,7 @@ export function MobileMenu({
 
         <ul
           data-menu-item=""
-          style={{ "--menu-index": PRIMARY_NAV.length + 1 } as CSSProperties}
+          style={{ "--menu-index": HEADER_NAV.length + 1 } as CSSProperties}
           className="mt-lg flex flex-wrap gap-x-lg"
         >
           {SECONDARY_NAV.map((item) => (
@@ -141,19 +143,10 @@ export function MobileMenu({
 
       <div
         data-menu-item=""
-        style={{ "--menu-index": PRIMARY_NAV.length + 2 } as CSSProperties}
-        className="mt-xl flex flex-col gap-lg pb-md"
+        style={{ "--menu-index": HEADER_NAV.length + 2 } as CSSProperties}
+        className="mt-xl flex flex-col gap-md pb-md"
       >
-        <Link
-          href={switchHref}
-          hrefLang={htmlLang(other)}
-          lang={htmlLang(other)}
-          className="inline-flex min-h-touch w-fit items-center font-ui text-small text-paper-muted underline decoration-1 underline-offset-4"
-          onClick={onClose}
-        >
-          {ui.otherLanguageName}
-        </Link>
-
+        <AccountChrome locale={locale} ui={ui} variant="sign-out" />
         <a
           href={helpHref}
           data-help-primary=""
@@ -164,7 +157,7 @@ export function MobileMenu({
             track({ name: "ayudar_click", props: { origen: "menu" } });
           }}
         >
-          {ui.helpCta}
+          <HelpActionLabel>{ui.helpCta}</HelpActionLabel>
         </a>
       </div>
     </div>

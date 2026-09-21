@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
 import { removePortrait, savePortrait } from "@/app/(es)/cuenta/portrait-actions";
+import { CameraIcon } from "@/components/design-system/icons";
 import { useChromeSession } from "@/components/site/session";
 import type { AccountContent } from "@/content/schema";
 import type { DonorProfile } from "@/src/domain/entities/donor";
@@ -76,7 +77,7 @@ export function PortraitForm({
           {...optional(fieldError(saveState, errors, "portrait"))}
         />
         {general === null ? null : <FormError>{general}</FormError>}
-        <SubmitButton pendingLabel={copy.saving}>
+        <SubmitButton icon={<CameraIcon />} pendingLabel={copy.saving}>
           {src === null ? copy.portraitAdd : copy.portraitChange}
         </SubmitButton>
       </form>

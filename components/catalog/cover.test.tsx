@@ -58,16 +58,28 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
-    expect(screen.getByRole("heading", { name: /cómo donar esto/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /cómo donar esto/i })).not.toBeInTheDocument();
     expect(
-      screen.getByText(/traer el mismo bien o cubrirlo con plata/i),
-    ).toBeInTheDocument();
+      screen.queryByText(/traer el mismo bien o cubrirlo con plata/i),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("radio", { name: /traer el mismo bien/i })).toBeChecked();
-    expect(document.querySelector('[data-channel-mark="bring"]')).not.toBeNull();
-    expect(document.querySelector('[data-channel-mark="transfer"]')).not.toBeNull();
+    expect(screen.getByRole("radio", { name: /cubrir con plata/i })).not.toBeChecked();
+    expect(document.querySelector('[data-path-mark="bring"]')).not.toBeNull();
+    expect(document.querySelector('[data-path-mark="money"]')).not.toBeNull();
+    expect(
+      screen.getByRole("radio", { name: /^transferencia$/i }).closest("[data-money]"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("radio", { name: /mercado pago/i }).closest("[data-money]"),
+    ).not.toBeNull();
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /quiero donar/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/^nombre$/i)).toBeRequired();
+    const nombre = screen.getByLabelText(/^nombre$/i);
+    const enviar = screen.getByRole("button", { name: /quiero donar/i });
+
+    expect(nombre.compareDocumentPosition(enviar) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(nombre).toBeRequired();
     expect(screen.getByLabelText(/^teléfono$/i)).not.toBeRequired();
     expect(screen.getByLabelText(/^correo$/i)).not.toBeRequired();
     expect(
@@ -118,6 +130,7 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
+    await user.click(screen.getByRole("radio", { name: /cubrir con plata/i }));
     await user.click(screen.getByRole("radio", { name: /^transferencia$/i }));
 
     expect(screen.queryByLabelText(/sumar más/i)).not.toBeInTheDocument();
@@ -126,7 +139,7 @@ describe("HowToDonate", () => {
     expect(
       screen.queryByRole("button", { name: /quiero donar/i }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText(/no hace falta cuenta ni anotarse/i)).toBeInTheDocument();
+    expect(screen.queryByText(/no hace falta cuenta ni anotarse/i)).not.toBeInTheDocument();
   });
 
   it("al elegir Mercado Pago muestra el extra y no el texto de transferencia", async () => {
@@ -140,6 +153,7 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
+    await user.click(screen.getByRole("radio", { name: /cubrir con plata/i }));
     await user.click(screen.getByRole("radio", { name: /mercado pago/i }));
 
     expect(screen.getByLabelText(/sumar más/i)).toBeInTheDocument();

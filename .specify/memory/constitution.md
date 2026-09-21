@@ -1,6 +1,27 @@
 <!--
 Sync Impact Report
 ==================
+Cambio de versión: 1.4.0 → 1.4.1
+Tipo de cambio: PATCH — se precisa que un botón con caja y nombre lleva marca.
+Fecha: 2026-09-20
+
+Motivo: Ingresar y Ayudar en el encabezado se leían como texto. La dueña pidió
+que todo botón vaya con icono. VIII ya exigía pictograma en un control; ahora
+lo nombra: un botón con caja y nombre MUST llevar marca antes del nombre.
+
+  1. "VIII. Diseño humano" — un botón con caja y nombre (primaria, compacta,
+     contorno, envío público) MUST llevar `IdentifyingMark` o `BrandMark`
+     antes del nombre. `ICON_ACTION` es el icono. La secundaria lleva la
+     flecha después.
+  2. Compuerta: `check:iconos` exige marca en cada archivo que usa una clase
+     de botón con caja.
+
+Artefactos actualizados en el mismo commit:
+  ✅ docs/adr/047-iconos-que-identifican.md
+  ✅ scripts/check-iconos.mjs
+  ✅ PrimaryAction, HelpCta, FileAction, SubmitButton y call sites
+  ✅ Skills, iconos.mdc, AGENTS.md, diseno.mdc
+
 Cambio de versión: 1.3.1 → 1.4.0
 Tipo de cambio: MINOR — se amplía el principio X con un toggle de diagnóstico.
 Fecha: 2026-09-18
@@ -278,9 +299,11 @@ por relleno · layouts repetidos · animaciones sin función · copy corporativo
 
 Un pictograma que **identifica** un control, un campo, un canal, un camino o un ítem de menú
 MUST ir **antes** del nombre, en la misma línea, a `1.15em` de esa letra (ADR-047). No lo
-reemplaza. Sale de `IdentifyingMark` + `icons.tsx`, de `BrandMark` o de `CountryFlag`. Copiar,
-cerrar y el menú siguen siendo `ICON_ACTION`. Un pack (Lucide, Heroicons) o un emoji siguen
-siendo relleno. La compuerta es `npm run check:iconos`.
+reemplaza. Sale de `IdentifyingMark` + `icons.tsx`, de `BrandMark` o de `CountryFlag`. Un
+botón con caja y nombre (primaria, compacta, contorno, envío público) MUST llevar esa marca.
+Copiar, cerrar y el menú siguen siendo `ICON_ACTION`. La secundaria lleva la flecha después
+del texto. Un pack (Lucide, Heroicons) o un emoji siguen siendo relleno. La
+compuerta es `npm run check:iconos`.
 
 Obligatorio: la fotografía tiene protagonismo; hay espacio negativo generoso; la tipografía y la
 jerarquía hacen el trabajo; los detalles son sutiles.
@@ -497,4 +520,4 @@ procedimiento general. Una Skill MUST NOT ser motivo para abrir una rama, propon
 requests o mover una dependencia contra lo que dice este archivo. En el punto donde choca se la
 ignora; en todo lo demás se la sigue.
 
-**Version**: 1.4.0 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-18
+**Version**: 1.4.1 | **Ratified**: 2026-09-09 | **Last Amended**: 2026-09-20

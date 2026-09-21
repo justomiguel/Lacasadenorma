@@ -42,7 +42,9 @@ ofrece hasta que no queda nada.**
    truncado menor a 1 no se publica como 0%. Un valor que se pasa de 100 se
    acota. Lo calcula el dominio sobre cantidades que ya son públicas: no hay
    columna nueva ni `grant` nuevo. La cantidad en unidades sigue existiendo
-   en la vista; la interfaz habla en %.
+   en la vista. La interfaz del **catálogo** habla en unidades cuando el bien
+   es contable (`unidad`, `bolsa`, `juego`) y en % cuando es una medida. El
+   muro sigue en %.
 4. **«Quiero donar» mientras `remaining > 0`.** Que alguien ya haya tomado
    parte no esconde el CTA. Cubierto (`remaining = 0`) sí: no hay qué pedir.
    El sí/no de «¿la tomó alguien?» no gobierna el botón.
@@ -71,3 +73,8 @@ cubrió qué parte de un material, y el resto se puede donar. El 100% de un
   eligió aparecer, sí.
 - Si el ítem dejó de estar publicado, el muro puede no conocer
   `needed_quantity` y omite el % en lugar de inventarlo.
+
+## Enmienda · Unidades en el catálogo (2026-09-20)
+
+La interfaz del **catálogo** ya no habla sólo en %. Contable = unidades;
+medida = %. El muro sigue en % (ADR-042).

@@ -34,12 +34,10 @@ import type { AdminDonationsPort } from "./donations";
  *
  * Tres reglas que la forma de estos tipos impone:
  *
- * 1. **Nada financiero se borra.** No hay ningún método `delete` sobre un aporte,
- *    un gasto ni una reserva. Se **anulan** con motivo y fecha, y dejan de sumar.
- *    Es el requisito de auditoría, y acá se cumple por ausencia de la operación,
- *    no por disciplina. El catálogo es inventario de lo que falta: un ítem que
- *    nadie tomó sí se puede borrar (`deleteItem`, ADR-050). Si hay reservas, la
- *    base lo impide (`on delete restrict`).
+ * 1. **Nada financiero se borra.** No hay ningún método `delete` sobre un aporte
+ *    ni un gasto. Se **anulan** con motivo y fecha, y dejan de sumar. El catálogo
+ *    y las reservas en especie sí se pueden borrar (`deleteItem`, `deletePledge`):
+ *    son inventario y compromisos, no el libro.
  * 2. **`alt` es obligatorio al crear una foto.** No es opcional en el tipo, así que
  *    una foto sin descripción no compila (FR-024).
  * 3. **El registro de auditoría sólo se agrega.** `AuditPort` no tiene forma de
@@ -91,6 +89,7 @@ export interface AdminContributionPort {
     sourceNote: string | null;
     isAnonymous: boolean;
     contributorDisplayName: string | null;
+    userId: string | null;
   }): Promise<string>;
   /**
    * Sólo el nombre público. El monto no se toca: un aporte no se corrige, se
@@ -181,10 +180,7 @@ export interface AdminMilestonePort {
 
 export interface AdminCatalogPort {
   listItems(campaignId: string): Promise<DonationItemAdminRecord[]>;
-  /**
-   * Saca un ítem que nadie tomó. Si hay filas en `donation_pledges`, Postgres
-   * responde `23503` y el puerto lanza `CatalogItemReferencedError`.
-   */
+  /** Saca un ítem. Las reservas y los avisos se van con él. */
   deleteItem(id: string): Promise<void>;
   saveItem(input: {
     campaignId: string;
@@ -223,10 +219,16 @@ export interface AdminPaymentMethodPort {
 
 export interface AdminDonorPort {
   listAccounts(): Promise<readonly DonorAccountAdminRecord[]>;
+  getAccount(userId: string): Promise<DonorAccountAdminRecord | null>;
   reviewAccount(input: {
     userId: string;
     decision: "approved" | "declined";
     note: string | null;
+  }): Promise<void>;
+  provisionProfile(input: {
+    userId: string;
+    displayName: string;
+    phone: string | null;
   }): Promise<void>;
   /** El correo, o nulo si esta sesión no puede leer donantes. */
   contactOf(userId: string): Promise<string | null>;

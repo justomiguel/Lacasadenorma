@@ -4,8 +4,11 @@ import type { AuditAction } from "@/src/domain/entities/audit";
 import {
   CampaignExistsError,
   CatalogItemReferencedError,
+  CatalogNoRoomError,
   CatalogOversubscribedError,
   NotAuthorizedError,
+  PledgeContactRequiredError,
+  PledgeUnavailableError,
 } from "@/src/domain/errors";
 import { can, type Permission } from "@/src/domain/permissions";
 import type { AppRole } from "@/src/domain/entities/role";
@@ -138,6 +141,22 @@ export async function perform<Input, Output>({
         status: "invalid",
         message: error.message,
         fieldErrors: { neededQuantity: error.message },
+      };
+    }
+
+    if (error instanceof CatalogNoRoomError || error instanceof PledgeUnavailableError) {
+      return {
+        status: "invalid",
+        message: error.message,
+        fieldErrors: { quantity: error.message },
+      };
+    }
+
+    if (error instanceof PledgeContactRequiredError) {
+      return {
+        status: "invalid",
+        message: error.message,
+        fieldErrors: { contactName: error.message, contactPhone: error.message },
       };
     }
 

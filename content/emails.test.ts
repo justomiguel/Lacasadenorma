@@ -29,9 +29,11 @@ const DONANTE = [
   "accountConfirm",
   "accountRecover",
   "accountEmailChange",
+  "accountInvite",
   "pledgeConfirmed",
   "pledgeReminder",
   "pledgeFulfilled",
+  "pledgeReverted",
 ] as const;
 
 function todoElTexto(correo: {
@@ -82,6 +84,13 @@ describe("el texto de los correos", () => {
     }
   });
 
+  it("el aviso de una reserva con cuenta nombra a quien reservó", () => {
+    for (const locale of LOCALES) {
+      expect(todoElTexto(getContent(locale).emails.staffNewPledge)).toContain("{who}");
+      expect(getContent(locale).emails.staffNewPledge.subject).toContain("{who}");
+    }
+  });
+
   it("sólo el aviso por teléfono nombra el número", () => {
     for (const locale of LOCALES) {
       expect(todoElTexto(getContent(locale).emails.staffPhoneOffer)).toContain("{phone}");
@@ -114,6 +123,18 @@ describe("el texto de los correos", () => {
           `${locale}/${clase}`,
         ).not.toContain("{when}");
       }
+    }
+  });
+
+  it("el sí del equipo no dice que donaron ni que llegó", () => {
+    for (const locale of LOCALES) {
+      const nuevo = todoElTexto(getContent(locale).emails.staffNewPledge);
+      const vencido = todoElTexto(getContent(locale).emails.staffPledgeExpired);
+
+      expect(nuevo).not.toMatch(/aparece como donado/i);
+      expect(nuevo).not.toMatch(/fecha de hoy/i);
+      expect(vencido).not.toMatch(/no confirmaron la llegada/i);
+      expect(vencido).toMatch(/van a donar/i);
     }
   });
 

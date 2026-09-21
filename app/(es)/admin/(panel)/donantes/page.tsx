@@ -1,30 +1,34 @@
+import Link from "next/link";
+
 import {
   ActionForm,
   HiddenValue,
   SubmitButton,
   TextAreaField,
 } from "@/components/admin/form";
+import { DonorProvisionForm } from "@/components/admin/donor-provision-form";
 import { NoRecords, Record, RecordList, RowAction } from "@/components/admin/records";
 import { AdminHeading, Panel, SinDatos } from "@/components/admin/shell";
-import { Callout } from "@/components/design-system/callout";
 import type { DonorAccountAdminRecord } from "@/src/domain/entities/donor";
 import { can } from "@/src/domain/permissions";
 import { getAdminScope } from "@/src/infrastructure/admin/context";
 import { requirePermission } from "@/src/infrastructure/auth/guards";
+import { getSiteUrl } from "@/src/infrastructure/site-url";
+import { createDonorAuth } from "@/src/infrastructure/supabase/provision-donor";
 
-import { reviewDonorAccountAction } from "./actions";
+import { provisionDonorAction, reviewDonorAccountAction } from "./actions";
 
 /**
  * Las cuentas del público: quién pidió entrar, y quién ya está habilitado.
  *
  * Habilitar es la operación que abre el catálogo para una persona (ADR-033).
- * Guardar y habilitar no son lo mismo: la cuenta existe desde que confirmó el
- * correo, y reservar espera esta pantalla.
+ * Cargar a alguien que donó por fuera crea la cuenta ya habilitada.
  */
 export default async function AdminDonantesPage() {
   const viewer = await requirePermission("donaciones.leer");
   const scope = await getAdminScope();
   const puedeEscribir = can(viewer.role, "donaciones.escribir");
+  const auth = createDonorAuth(getSiteUrl());
 
   const heading = (
     <AdminHeading title="Donantes">
@@ -50,13 +54,16 @@ export default async function AdminDonantesPage() {
     <>
       {heading}
 
-      <Callout title="Qué se decide acá">
-        <p>
-          Confirmar el correo no alcanza: el equipo mira el pedido y habilita o rechaza.
-          El correo de contacto se lee acá, con sesión, y no viaja en el aviso que llega a
-          la bandeja.
-        </p>
-      </Callout>
+      {puedeEscribir && auth !== null ? (
+        <Panel
+          id="alta"
+          title="Cargar a alguien que donó por fuera"
+          tone="sunk"
+          description="Nombre obligatorio. Correo y teléfono, si los hay. Sin correo se inventa uno para entrar; no se publica."
+        >
+          <DonorProvisionForm action={provisionDonorAction} />
+        </Panel>
+      ) : null}
 
       <Panel id="pendientes" title={`Para revisar · ${pendientes.length}`}>
         {pendientes.length === 0 ? (
@@ -81,7 +88,12 @@ export default async function AdminDonantesPage() {
         ) : (
           <RecordList>
             {habilitadas.map((account) => (
-              <AccountRow key={account.userId} account={account} canWrite={false} />
+              <AccountRow
+                key={account.userId}
+                account={account}
+                canWrite={false}
+                href={`/admin/donantes/${account.userId}`}
+              />
             ))}
           </RecordList>
         )}
@@ -112,11 +124,13 @@ function AccountRow({
   canWrite,
   pending = false,
   reconsider = false,
+  href,
 }: {
   account: DonorAccountAdminRecord;
   canWrite: boolean;
   pending?: boolean;
   reconsider?: boolean;
+  href?: string;
 }) {
   const estado =
     account.approvalStatus === "pending"
@@ -124,10 +138,22 @@ function AccountRow({
       : account.approvalStatus === "approved"
         ? "Habilitada"
         : "Rechazada";
+  const nombre = account.displayName ?? "Sin nombre público";
 
   return (
     <Record
-      title={account.displayName ?? "Sin nombre público"}
+      title={
+        href === undefined ? (
+          nombre
+        ) : (
+          <Link
+            href={href}
+            className="underline decoration-1 underline-offset-4 hover:text-aqua-strong"
+          >
+            {nombre}
+          </Link>
+        )
+      }
       meta={`${account.email ?? "sin correo"} · ${account.locale} · ${estado}`}
       status={estado}
     >

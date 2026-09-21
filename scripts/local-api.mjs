@@ -47,7 +47,8 @@
  *
  * Lo que sigue sin existir: recuperación de contraseña más allá de lo emulado,
  * MFA, Storage y Realtime. OAuth está emulado en `/authorize` y el canje PKCE:
- * no hay hop a Google. Cualquier otra ruta de `/auth/v1` responde 501 con un
+ * no hay hop a Google. Auth Admin emula `createUser`, `listUsers` e `invite`
+ * o `recovery` (`generateLink`). Cualquier otra ruta de `/auth/v1` responde 501 con un
  * mensaje explícito en lugar de fallar raro.
  *
  * ## Sobre las credenciales de este archivo
@@ -57,10 +58,11 @@
  * borra entera en cada reset.
  *
  * Uso: node scripts/local-api.mjs
- *      node scripts/local-api.mjs --print-anon-key   (sólo imprime la clave)
+ *      node scripts/local-api.mjs --print-anon-key
+ *      node scripts/local-api.mjs --print-service-role-key
  */
 
-import { ANON_KEY } from "./local-api/jwt.mjs";
+import { ANON_KEY, SERVICE_ROLE_KEY } from "./local-api/jwt.mjs";
 import { startLocalApi } from "./local-api/server.mjs";
 
 /**
@@ -69,6 +71,11 @@ import { startLocalApi } from "./local-api/server.mjs";
  */
 if (process.argv.includes("--print-anon-key")) {
   process.stdout.write(`${ANON_KEY}\n`);
+  process.exit(0);
+}
+
+if (process.argv.includes("--print-service-role-key")) {
+  process.stdout.write(`${SERVICE_ROLE_KEY}\n`);
   process.exit(0);
 }
 

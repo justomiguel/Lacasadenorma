@@ -4,7 +4,7 @@
     "title": "Privacidad",
     "lead": "Qué se recolecta en este sitio, para qué y cuánto tiempo se guarda.",
     "paragraphs": [
-      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y, si los hay, un nombre para mostrar y una foto tuya que no se publica. Si te anotás a traer un bien con esa cuenta, un clic reserva: no se pide de nuevo el nombre ni una dirección. Si dejás sólo un teléfono, sin cuenta, guardamos tu nombre y ese número para llamarte, y el ítem queda reservado a tu nombre hasta que quien coordina confirme. No usamos cookies de terceros y no te seguimos por otras páginas."
+      "La versión corta: para mirar el sitio no te pedimos ningún dato. Si te creás una cuenta, guardamos tu correo y, si los hay, un nombre para mostrar y una foto tuya que puede aparecer en el catálogo si elegís aparecer; no aparece en Quiénes ayudaron. Si te anotás a traer un bien con esa cuenta, un clic reserva: no se pide de nuevo el nombre ni una dirección. Si dejás sólo un teléfono, sin cuenta, guardamos tu nombre y ese número para llamarte, y el ítem queda reservado a tu nombre hasta que quien coordina confirme. No usamos cookies de terceros y no te seguimos por otras páginas."
     ],
     "sections": [
       {
@@ -21,10 +21,10 @@
           "Crear una cuenta es opcional y sirve para una sola cosa: poder decir «esto lo traigo yo» y que quede anotado a tu nombre, para verlo y cancelarlo. Confirmar el correo no es una prueba de que la donación es real: es para escribirte.",
           "De vos guardamos tu correo, el idioma en que preferís que te escribamos, y un nombre y una foto si los hay: los escribís vos, o los trae la red con la que entraste si todavía no había ninguno acá. Tu contraseña no se guarda: se guarda un resultado cifrado del que no se puede volver a tu contraseña. Si esa dirección ya tenía cuenta, entrar con Google (o con otra red) usa ésa: no se crea una segunda.",
           "El nombre para mostrar lo elegís vos —o lo propone la red, y lo podés cambiar—. Nunca se deduce de tu correo. Si no hay ninguno, no hay ninguno.",
-          "La foto, si la subís o si la trajo la red, te identifica cuando estás ingresada. No se publica en ninguna página del sitio, no aparece en Quiénes ayudaron y no se comparte.",
+          "La foto, si la subís o si la trajo la red, te identifica cuando estás ingresada. Puede aparecer en el catálogo si elegís aparecer; no aparece en Quiénes ayudaron y no se comparte.",
           "El correo no se publica en ninguna página, no se comparte con nadie y no se usa para mandarte nada que no sea sobre tu cuenta o sobre algo que vos hayas ofrecido traer.",
           "El servicio que administra las cuentas anota además cuándo iniciás sesión, con la dirección IP y el navegador desde el que entrás. Sirve para detectar intentos de entrar a cuentas ajenas. La familia no usa esa información para nada más.",
-          "Si el sitio ofrece entrar con una red (Google, por ejemplo), esa red se entera de que usaste este sitio: es el trueque de entrar sin inventar una contraseña. Nosotros recibimos tu correo, y si no tenías nombre o foto acá, copiamos los de esa red a tu perfil. No se publican: el muro sigue anónimo hasta que vos decidas aparecer, y la foto no sale del sitio.",
+          "Si el sitio ofrece entrar con una red (Google, por ejemplo), esa red se entera de que usaste este sitio: es el trueque de entrar sin inventar una contraseña. Nosotros recibimos tu correo, y si no tenías nombre o foto acá, copiamos los de esa red a tu perfil. El muro sigue anónimo hasta que vos decidas aparecer. La foto puede aparecer en el catálogo si elegís aparecer; no aparece en Quiénes ayudaron y no sale del sitio.",
           "Tu cuenta se conserva hasta que la borres. Podés borrarla vos desde tu cuenta, sin pedirnos permiso y sin dar explicaciones: se borran tu correo, tu nombre y tu foto en el momento."
         ]
       },
@@ -58,7 +58,7 @@
           "Si dejás un teléfono sin crear cuenta, se guarda tu nombre y ese número, y el ítem queda reservado. El número no se publica. El nombre de contacto tampoco: no es el del muro. Si quien coordina confirma que se contactó y aceptaste aparecer, en esa pantalla se carga el nombre para mostrar y, si querés, una nota privada. Si no confirma, la reserva se suelta.",
           "El nombre con el que querés aparecer, en el camino con cuenta, es optativo y el valor por defecto es no aparecer. Se elige en tu cuenta, no al anotarte. Si lo escribís y desmarcás que preferís no aparecer, se publica en Quiénes ayudaron recién cuando el material llega.",
           "Si borrás la cuenta, se borra tu correo, tu nombre, tu foto, tu teléfono y la dirección de retiro. Las reservas que ya se cumplieron se quedan como un hecho sobre la obra, sin identificarte.",
-          "Los correos que te mandamos son sobre tu cuenta o sobre una reserva tuya: que la recibimos, que quedó anotada, que se acerca el vencimiento, que llegó, o que se canceló. No hay lista ni envíos de difusión."
+          "Los correos que te mandamos son sobre tu cuenta o sobre una reserva tuya: que la recibimos, que quedó anotada, que se acerca el vencimiento, que llegó, que se deshizo una confirmación, o que se canceló. No hay lista ni envíos de difusión."
         ]
       },
       {

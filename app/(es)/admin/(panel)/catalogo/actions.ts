@@ -35,8 +35,7 @@ export async function saveDonationItemAction(
 }
 
 /**
- * Borrar un ítem que nadie tomó. Si hay reservas, el caso de uso traduce el
- * `23503` (ADR-050).
+ * Borrar un ítem del catálogo. Las reservas y los avisos se van con él.
  */
 export async function deleteDonationItemAction(
   _state: ActionState,

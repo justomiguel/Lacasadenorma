@@ -1,6 +1,6 @@
 # ADR-047 · Un icono al lado del nombre, siempre que identifique
 
-**Estado**: Aceptada · **Fecha**: 2026-09-16 · **Enmendada**: 2026-09-16
+**Estado**: Aceptada · **Fecha**: 2026-09-16 · **Enmendada**: 2026-09-20
 
 Enmienda a [ADR-032](./032-relato-mobile-editorial.md) (el selector de país y
 los datos para transferir) y a [ADR-012](./012-design-system.md) (de dónde
@@ -59,10 +59,15 @@ inventar un tamaño más.
    pictograma de banco; «traer el mismo bien», el de caja.
 6. **Los tres caminos de `/ayudar` también.** Ir, donar plata y traer
    artículos llevan su pictograma antes del título, a 1.15 em de ese título.
-7. **La compuerta es `npm run check:iconos`.** Una etiqueta de `CopyField`
+7. **Un botón con caja y nombre lleva marca.** Primaria, compacta, contorno
+   y envío público: el pictograma va **antes** del nombre, en
+   `IdentifyingMark` (o `BrandMark` si es una marca). `ICON_ACTION` ya es el
+   icono. La secundaria sigue con la flecha **después** del texto. El
+   backoffice se pone al día cuando se toca cada pantalla.
+8. **La compuerta es `npm run check:iconos`.** Una etiqueta de `CopyField`
    sin marca, un selector de país sin bandera, un camino de ayudar sin
-   `IdentifyingMark`, un `size={16}` o un `import` de un pack rompen el
-   build. Un párrafo en una Skill no alcanza.
+   `IdentifyingMark`, un botón con caja sin marca, un `size={16}` o un
+   `import` de un pack rompen el build. Un párrafo en una Skill no alcanza.
 
 El 1.15 em no se inventó acá. Apple escala SF Symbols con el texto. Material
 alinea el icono a la izquierda del label y recomienda que el glifo no quede
@@ -94,3 +99,13 @@ de transferencia pide una entrada en `COPY_FIELD_MARKS` o `check:iconos`
 falla. El tab de país ahora tiene bandera: ADR-032 decía que el nombre
 alcanzaba; esta decisión lo enmienda. Un título de sección (`text-section-title`)
 hace el icono visiblemente más grande que una caption: es el punto.
+
+## Enmienda · Botón con caja, marca antes (2026-09-20)
+
+La dueña pidió que todo botón vaya con icono. VIII ya lo cubría como control;
+faltaba nombrarlo y frenarlo. `PrimaryAction` exige `icon`. `HelpCta` y
+`SubmitButton` (cuenta) envuelven la marca. Un archivo que usa
+`primaryActionClass`, `compactPrimaryActionClass` o
+`compactOutlineActionClass` sin `IdentifyingMark`, `HelpActionLabel` ni
+`BrandMark` lo corta `check:iconos`. Ingresar lleva persona; Ayudar, las
+manos. El backoffice no entra en esta pasada.

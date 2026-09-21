@@ -119,16 +119,21 @@ export async function CatalogItemScreen({
 
   return (
     <>
-      <PageHeader title={item.title} />
+      {typeof conflicto === "string" || typeof reservado === "string" ? (
+        <Container>
+          <Section tight>
+            {typeof conflicto === "string" ? <ConflictNotice copy={catalog} /> : null}
+            {typeof reservado === "string" ? (
+              <OfferThanksNotice
+                copy={catalog}
+                dismissHref={localizedHref(`/catalogo/${id}`, locale)}
+              />
+            ) : null}
+          </Section>
+        </Container>
+      ) : null}
       <Container>
-        <Section>
-          {typeof conflicto === "string" ? <ConflictNotice copy={catalog} /> : null}
-          {typeof reservado === "string" ? (
-            <OfferThanksNotice
-              copy={catalog}
-              dismissHref={localizedHref(`/catalogo/${id}`, locale)}
-            />
-          ) : null}
+        <Section className="pt-0 lg:pt-3xl">
           <CatalogItem
             item={item}
             claims={claims}

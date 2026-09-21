@@ -255,7 +255,7 @@ la home sigue diciendo «Ingresar»; una cuenta no lee el retrato de otra.
 - [x] **T075** Puerto, `/cuenta/sesion`, `/cuenta/retrato`, formularios de foto y de contraseña,
       chrome del menú y del encabezado.
 - [x] **T076** [P] `e2e/con-datos/cuenta.spec.ts`: con sesión, el menú tiene el nombre y cerrar
-      sesión; sin sesión sigue «Ingresar».
+      sesión; el encabezado de escritorio muestra «Mi Panel»; sin sesión sigue «Ingresar».
 - [x] **T077** [P] Privacidad pública, `docs/privacy.md` y ADR-037 en el mismo cambio que la
       columna nueva.
 

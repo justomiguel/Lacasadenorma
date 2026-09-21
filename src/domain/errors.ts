@@ -48,10 +48,8 @@ export class CatalogOversubscribedError extends DomainError {
 }
 
 /**
- * Borrar un ítem que todavía tiene filas en `donation_pledges`.
- *
- * Postgres lo rechaza con `23503` porque la clave es `on delete restrict` y
- * las reservas no se borran (FR-222). Este error es la traducción (ADR-050).
+ * Un `23503` al borrar un ítem: quedó alguna referencia que no es una reserva.
+ * Las reservas y los avisos ya se van en cascada.
  */
 export class CatalogItemReferencedError extends DomainError {
   constructor() {
@@ -62,11 +60,34 @@ export class CatalogItemReferencedError extends DomainError {
   }
 }
 
+/**
+ * Anotar una entrega ya llegada por más unidades de las que el ítem admite.
+ * Distinto de `CatalogOversubscribedError`: acá no hay que cancelar nada, el
+ * cupo simplemente no alcanza.
+ */
+export class CatalogNoRoomError extends DomainError {
+  constructor() {
+    super("Ese ítem no tiene cupo para esa cantidad.");
+    this.name = "CatalogNoRoomError";
+  }
+}
+
 /** Alguien se adelantó: el `update` condicional no tocó ninguna fila. */
 export class PledgeUnavailableError extends DomainError {
   constructor() {
     super("Alguien se adelantó.");
     this.name = "PledgeUnavailableError";
+  }
+}
+
+/**
+ * Admin vació nombre o teléfono de una reserva por teléfono.
+ * Postgres levanta `datos_de_retiro`; el formulario lo pega a los dos campos.
+ */
+export class PledgeContactRequiredError extends DomainError {
+  constructor() {
+    super("Escribí el nombre y el teléfono para que el equipo sepa con quién habla.");
+    this.name = "PledgeContactRequiredError";
   }
 }
 

@@ -2,10 +2,10 @@
 --
 -- La función es la única vía. anon puede ejecutarla. Un aviso mueve
 -- reserved_quantity. Un mismo teléfono no deja dos reservas del mismo ítem.
--- El sí del admin cumple y nombra; el no suelta.
+-- El sí del admin acepta y nombra; la llegada es un segundo paso. El no suelta.
 
 begin;
-select plan(26);
+select plan(28);
 
 insert into auth.users (id, email) values
   ('ab810000-0000-4000-8000-0000000000ff', 'avisos.admin@ejemplo.invalid');
@@ -255,14 +255,32 @@ set local "request.jwt.claims" =
 
 select lives_ok(
   $q$
-    select public.fulfill_donation_pledge(
+    select public.accept_donation_pledge(
       (select pledge_id from public.donation_offers
         where item_id = 'ab810000-0000-4000-8000-000000000001'),
       'Ana María',
       'La dejan el sábado.'
     )
   $q$,
-  'el admin confirma que donan y carga el nombre si aceptaron'
+  'el admin confirma que van a donar y carga el nombre si aceptaron'
+);
+
+select is(
+  (select count(*)::integer
+     from public.donation_wall
+    where item_id = 'ab810000-0000-4000-8000-000000000001'),
+  0,
+  'el sí no publica en el muro'
+);
+
+select lives_ok(
+  $q$
+    select public.fulfill_donation_pledge(
+      (select pledge_id from public.donation_offers
+        where item_id = 'ab810000-0000-4000-8000-000000000001')
+    )
+  $q$,
+  'el admin confirma la llegada'
 );
 
 select lives_ok(
@@ -283,7 +301,7 @@ select is(
      from public.donation_wall
     where item_id = 'ab810000-0000-4000-8000-000000000001'),
   'Ana María',
-  'el sí aparece en el muro con el nombre'
+  'la llegada aparece en el muro con el nombre'
 );
 
 select ok(

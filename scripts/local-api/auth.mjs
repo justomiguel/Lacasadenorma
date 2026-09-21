@@ -1,3 +1,4 @@
+import { handleAdmin } from "./admin.mjs";
 import { findUserById, findUserByPassword } from "./db.mjs";
 import { authError, json, readBearer, readBody } from "./http.mjs";
 import { verifyAccessToken } from "./jwt.mjs";
@@ -8,6 +9,12 @@ import { asGoTrueUser, issueSession, refreshTokens } from "./sesion.mjs";
 export async function handleAuth(incoming, outgoing, url) {
   const [ruta, consulta] = url.slice("/auth/v1".length).split("?");
   const parametros = new URLSearchParams(consulta ?? "");
+
+  // Auth Admin: crear una cuenta sin confirmar y emitir el invite. Lo usa
+  // `/admin/donantes` para cargar a quien donó por fuera.
+  if (await handleAdmin(incoming, outgoing, ruta, parametros)) {
+    return;
+  }
 
   // Crear la cuenta, canjear el enlace del correo, pedir la recuperación y cambiar
   // la contraseña. Viven aparte porque llegaron con el registro abierto y porque

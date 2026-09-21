@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { primaryActionClass, SecondaryAction } from "@/components/design-system/actions";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
+import { RefreshIcon } from "@/components/design-system/icons";
 import { Container, Section } from "@/components/design-system/layout";
 import { PageHeader } from "@/components/site/page-header";
 import {
@@ -76,6 +78,9 @@ export function ErrorScreen({
               className={primaryActionClass()}
               onClick={() => retry()}
             >
+              <IdentifyingMark>
+                <RefreshIcon />
+              </IdentifyingMark>
               {copy.retry}
             </button>
             <SecondaryAction href={homeHref}>{copy.home}</SecondaryAction>

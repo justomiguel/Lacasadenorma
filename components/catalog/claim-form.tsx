@@ -11,6 +11,7 @@ import {
   TextField,
 } from "@/components/account/fields";
 import { fieldError, generalError } from "@/components/account/error-text";
+import { BoxIcon } from "@/components/design-system/icons";
 import type { AccountContent, CatalogContent } from "@/content/schema";
 import type { Locale } from "@/src/i18n/locale";
 
@@ -81,7 +82,9 @@ export function ClaimForm({
 
       {general === null ? null : <FormError>{general}</FormError>}
 
-      <SubmitButton pendingLabel={pendingLabel ?? copy.claiming}>{label}</SubmitButton>
+      <SubmitButton icon={<BoxIcon />} pendingLabel={pendingLabel ?? copy.claiming}>
+        {label}
+      </SubmitButton>
     </form>
   );
 }

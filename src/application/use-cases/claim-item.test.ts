@@ -47,6 +47,10 @@ class FakeDonationsPort implements DonationsPort {
     return;
   }
 
+  async updateOwnPledge(): Promise<void> {
+    return;
+  }
+
   async updateOwnAppearance(): Promise<void> {
     return;
   }

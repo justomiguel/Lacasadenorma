@@ -159,10 +159,61 @@ export async function createUnconfirmedUser(email, password, token) {
   return findUserByEmail(email);
 }
 
-/** Una cuenta que nació por OAuth: correo ya confirmado, sin contraseña. */
-export async function createConfirmedOauthUser(email, provider) {
+function metadatosDeLaRed() {
+  return `
+    jsonb_strip_nulls(jsonb_build_object(
+      'full_name', :'full_name',
+      'name', :'full_name',
+      'picture', nullif(:'picture', ''),
+      'avatar_url', nullif(:'picture', '')
+    ))
+  `;
+}
+
+/**
+ * Una cuenta que nació por OAuth: correo ya confirmado, sin contraseña.
+ *
+ * `email` nulo es el caso Apple-sin-correo: la fila existe para que el canje
+ * emita sesión y `/cuenta/oauth` la cierre. `profile.fullName` y `picture`
+ * son lo que la red habría mandado; el e2e los fija.
+ */
+export async function createConfirmedOauthUser(email, provider, profile = {}) {
   if (!/^[a-z][a-z0-9_]*$/.test(provider)) {
     throw new Error(`Proveedor OAuth inesperado: ${provider}`);
+  }
+
+  const full_name =
+    typeof profile.fullName === "string" && profile.fullName.length > 0
+      ? profile.fullName
+      : `Quien entra con ${provider}`;
+  const picture = typeof profile.picture === "string" ? profile.picture : "";
+  const variables = { provider, full_name, picture };
+
+  if (email === null) {
+    return query(
+      `
+        insert into auth.users
+          (email, raw_app_meta_data, raw_user_meta_data, email_confirmed_at)
+        values (
+          null,
+          json_build_object(
+            'provider', :'provider',
+            'providers', jsonb_build_array(:'provider')
+          ),
+          ${metadatosDeLaRed()},
+          now()
+        )
+        returning json_build_object(
+          'id', id,
+          'email', email,
+          'app_metadata', raw_app_meta_data,
+          'user_metadata', raw_user_meta_data,
+          'email_confirmed_at', email_confirmed_at,
+          'created_at', created_at
+        );
+      `,
+      variables,
+    );
   }
 
   const existing = await findUserByEmail(email);
@@ -183,14 +234,12 @@ export async function createConfirmedOauthUser(email, provider) {
               ) as t(p)
             )
           ),
-          raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || jsonb_build_object(
-            'full_name', :'full_name',
-            'name', :'full_name'
-          )
+          raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
+            || ${metadatosDeLaRed()}
         where email = lower(:'email');
         select 'null'::json;
       `,
-      { email, provider, full_name: `Quien entra con ${provider}` },
+      { ...variables, email },
     );
 
     return findUserByEmail(email);
@@ -206,15 +255,12 @@ export async function createConfirmedOauthUser(email, provider) {
           'provider', :'provider',
           'providers', jsonb_build_array(:'provider')
         ),
-        json_build_object(
-          'full_name', :'full_name',
-          'name', :'full_name'
-        ),
+        ${metadatosDeLaRed()},
         now()
       );
       select 'null'::json;
     `,
-    { email, provider, full_name: `Quien entra con ${provider}` },
+    { ...variables, email },
   );
 
   return findUserByEmail(email);

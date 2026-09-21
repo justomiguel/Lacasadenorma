@@ -281,7 +281,10 @@ misma trampa que los enlaces del correo.
 aterrizar en `/cuenta` con el nombre (y la foto, si Google la mandó) ya en el perfil, sin aparecer
 en el muro. La cuenta nace `pending` (el equipo la habilita para reservar); el aviso de revisión no
 se muestra en la pantalla. Si esa dirección ya tenía cuenta, se entra a ésa, no se crea otra. El
-e2e no habla con Google: emula el canje en la API local.
+e2e no habla con Google: emula el canje en la API local. El recorrido
+completo del botón —alta, ingreso, unificación, sin correo, vuelta al
+catálogo, inglés y contraseña después— está en
+`e2e/con-datos/cuenta-google.spec.ts`.
 
 Si el proveedor no entrega un correo (Apple con correo oculto), la pantalla de ingresar dice que sin
 correo no se puede crear la cuenta. No se inventa uno.
@@ -345,7 +348,11 @@ comentario. Lo frena `npm run check:rls`.
 
 No hay pantalla para esto, y es una decisión (ADR-004): otorgar un rol es la operación más sensible del
 sistema, se hace pocas veces, y una pantalla que la haga fácil es una pantalla que la puede hacer un
-atacante que consiguió una sesión de `admin`.
+atacante que consiguió una sesión de `admin`. El primer `owner` sigue siendo SQL (sección 3).
+
+Cargar a quien donó plata o trajo material por fuera **no es esto**. Esa persona es una
+cuenta del público, ya habilitada, y se carga en `/admin/donantes`. No recibe `editor`,
+`admin` ni `owner`, y no entra al backoffice.
 
 ### Dar un rol
 
@@ -432,7 +439,7 @@ Storage o las policies. Requiere el entorno de la sección 3.
 | 2 | Que el rol aparezca en el marco del backoffice | Confirma que el hook está **habilitado en el panel** y no sólo creado en el esquema. Si dice que no hay permisos, mirar la sección 3 antes que cualquier otra cosa |
 | 3 | **Subir una foto a una novedad**, con su descripción | No hay Storage local: el shim no tiene `storage.objects` funcional ni URLs firmadas |
 | 3b | **Subir un retrato desde `/cuenta`** y verlo en el menú | Ídem: el bucket `avatares` es privado y se sirve por URL firmada (ADR-037) |
-| 3c | **Crear una cuenta con Google de verdad** | El harness emula `/authorize` y el canje PKCE; no habla con Google. El procedimiento está más arriba, en Redes sociales |
+| 3c | **Crear una cuenta con Google de verdad** | El harness emula `/authorize` y el canje PKCE; no habla con Google. El e2e del botón está en `cuenta-google.spec.ts`. El hop real está más arriba, en Redes sociales |
 | 4 | **Abrir un comprobante desde `/admin/transparencia`** | Ídem: el enlace firmado y su vencimiento sólo existen en el proyecto real |
 | 5 | **Publicar y ver la vista previa al compartir.** Pegar el enlace en un chat de WhatsApp con uno mismo: título, descripción e imagen | La suite verifica las etiquetas y que la imagen sea una imagen; cómo las renderiza WhatsApp no es verificable desde un test |
 | 6 | Que `/sitemap.xml` en el dominio real incluya la novedad | La suite lo verifica contra la API local. Acá lo que se prueba es la caché de Vercel, no la invalidación de Next |
@@ -573,7 +580,7 @@ desde el resumen del banco.
 | Semana | Tablero de métricas en `/admin/metricas`: señales primero, después el alcance y los gráficos | `owner` |
 | Semana | Una novedad, aunque sea corta. El silencio se lee como que algo salió mal | `editor` |
 | Semana | Pedidos de cuenta pendientes en `/admin/donantes`. Si no se miran, la persona espera | `admin` |
-| Día | Recordatorios de reservas a tres días del vencimiento: `node scripts/remind-pledges.mjs` (sección 12) | Cron, con `DATABASE_URL` y `RESEND_API_KEY` |
+| Día | Recordatorios a quien reservó (3 días) y aviso al equipo si pasaron 14 días: `node scripts/remind-pledges.mjs` (sección 12) | Cron, con `DATABASE_URL`, `RESEND_API_KEY` y `EMAIL_STAFF_ADDRESS` |
 | Mes | Revisar quién tiene qué rol (sección 5) | `owner` |
 | Mes | Revisar los pull requests de Dependabot que quedaron abiertos | Quien mantiene |
 | Antes de cada despliegue que toque `/admin`, la autenticación, Storage o las policies | Lo que la suite no puede afirmar (sección 7) | Quien despliega |
@@ -603,31 +610,30 @@ El detalle de qué dicen esas páginas y por qué no se indexan está en
 `/admin/aportes` después de conciliarlo, igual que una transferencia: el redirect no es un
 comprobante.
 
-## 12. Reservas: vencimiento y recordatorios
+## 12. Reservas: plazo y recordatorios
 
-El plazo es de catorce días. Lo estampa `claim_donation_item()` y no se edita después. Liberar lo
-vencido **no depende del cron**: cada reserva llama `release_expired_holds()` sobre el ítem que va a
-tocar, en la misma transacción. Si el cron está caído se muestra menos disponibilidad, nunca más
-(FR-218, ADR-029).
+El plazo es de catorce días. Lo estampa `claim_donation_item()` y no se edita después. **No suelta
+el ítem**: avisa al equipo (`staff.pledge_expired`) con los dos enlaces de sí / soltar. Cancela el
+admin, a mano. `release_expired_holds()` ya no cambia estado ni contadores.
 
-En producción, si el proyecto tiene `pg_cron`, la migración agenda `release-expired-donation-holds`
-una vez por hora. En el Postgres local la extensión no está; las pruebas llaman la función directo.
-
-Los recordatorios —tres días antes, una sola vez— **no salen de la aplicación web**. Un cron del
-entorno corre:
+Los recordatorios —tres días antes a quien reservó, y a los 14 días al equipo— **no salen de la
+aplicación web**. Un cron del entorno corre:
 
 ```bash
-DATABASE_URL=… RESEND_API_KEY=… EMAIL_FROM_ADDRESS=… SITE_URL=https://lacasadenorma.org \
+DATABASE_URL=… RESEND_API_KEY=… EMAIL_FROM_ADDRESS=… EMAIL_STAFF_ADDRESS=… \
+  SITE_URL=https://lacasadenorma.org \
   node scripts/remind-pledges.mjs
 ```
 
 La aplicación no usa `SUPABASE_SECRET_KEY` para esto. El script habla con Postgres y con Resend. La
 deduplicación permanente es `reminded_at` más la fila `sent` de `email_deliveries` para
-`pledge.reminder` (FR-235). Un reintento de Resend con la misma `Idempotency-Key` no manda dos
-correos; a las 25 horas esa clave ya no vale, y por eso la fila en la base es la que cuenta.
+`pledge.reminder` y `staff.pledge_expired` (FR-235). Un reintento de Resend con la misma
+`Idempotency-Key` no manda dos correos; a las 25 horas esa clave ya no vale, y por eso la fila en
+la base es la que cuenta.
 
 Sin `RESEND_API_KEY` el script no marca el recordatorio: vuelve a intentar en la corrida siguiente.
-Eso es preferible a sellar `reminded_at` sobre un correo que nunca salió.
+Eso es preferible a sellar `reminded_at` sobre un correo que nunca salió. Sin `EMAIL_STAFF_ADDRESS`
+no se avisa el plazo al equipo.
 
 ## Documentos relacionados
 

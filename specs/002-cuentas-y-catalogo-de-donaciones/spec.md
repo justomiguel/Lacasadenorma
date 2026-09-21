@@ -59,9 +59,9 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
 
 **Acceptance Scenarios**:
 
-1. **Given** un catálogo con ítems publicados, **When** alguien lo abre sin sesión, **Then** ve una
-   tabla por categoría: qué es, cuántos faltan de los que hacen falta, si alguien ya la tomó, y el
-   nombre **sólo** si esa persona eligió aparecer. Una reserva anónima se ve como tomada, sin nombre.
+1. **Given** un catálogo con ítems publicados, **When** alguien lo abre sin sesión, **Then** ve un
+   inventario por categoría: qué es, cuántos faltan, el estimado si hay uno, y el
+   nombre **sólo** si esa persona eligió aparecer. Una reserva anónima no inventa un nombre.
 2. **Given** un ítem cuya cantidad necesaria ya está cubierta entre lo reservado y lo entregado,
    **When** se renderiza el catálogo, **Then** ese ítem aparece marcado como cubierto y **no** ofrece
    la acción de reservar.
@@ -71,8 +71,8 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    unidades que las necesarias.
 4. **Given** alguien con sesión que reserva dos de los cinco ejemplares que faltan, **When** guarda,
    **Then** el catálogo pasa a mostrar que faltan tres, su reserva queda visible en su propia
-   cuenta, y «Quiero donar» **sigue** en ese ítem. Si eligió aparecer, el listado nombra que donó
-   el 40% de ese bien (ADR-052).
+   cuenta, y «Quiero donar» **sigue** en ese ítem. Si eligió aparecer, el listado nombra la cifra
+   de FR-255 de ese bien, no siempre el 40%.
 5. **Given** una reserva que nadie entregó, **When** pasa el plazo de la reserva, **Then** el ítem
    vuelve a estar disponible y la persona se enteró antes de que eso pasara.
 6. **Given** alguien sin sesión que toca «Quiero donar» en **traer el mismo bien**, **When** llega a la pantalla de cuenta,
@@ -95,8 +95,8 @@ dos veces en paralelo falla una de las dos con un mensaje comprensible.
    sin ninguna de las dos, **When** abre el listado, **Then** no ve un hueco reservado en esa fila:
    el título alcanza.
 11. **Given** un ítem de diez unidades del que alguien entregó cinco y eligió aparecer, **When** se
-    renderiza el catálogo o Quiénes ayudaron, **Then** se lee que esa persona donó el 50% de ese
-    bien, y el listado **sigue** ofreciendo «Quiero donar». **Given** las diez cubiertas, **Then**
+    renderiza el catálogo o Quiénes ayudaron, **Then** el catálogo puede leer 5 unidades y el muro
+    el 50%; ambos **siguen** ofreciendo «Quiero donar». **Given** las diez cubiertas, **Then**
     el ítem se marca cubierto y ya no ofrece donar.
 
 ---
@@ -135,7 +135,7 @@ no puede leer ni escribir nada de la campaña ni entrar al backoffice.
 8. **Given** una sesión abierta, **When** abre el menú, **Then** ve su nombre (o «Tu cuenta» si
    todavía no eligió uno), su retrato si cargó uno, un enlace a su cuenta y cómo cerrar la sesión.
 9. **Given** alguien en su cuenta, **When** sube una foto suya, **Then** esa foto aparece en el menú
-   y en `/cuenta`, y **no** aparece en ninguna página pública.
+   y en `/cuenta`, y también en `/catalogo` si y sólo si eligió aparecer.
 10. **Given** alguien en su cuenta, **When** cambia la contraseña, **Then** la sesión sigue abierta
     y la contraseña anterior ya no sirve.
 
@@ -183,8 +183,8 @@ para probar las historias 1 y 3. Es la que hace que el catálogo siga siendo cie
 
 **Independent Test**: se prueba desde `/admin/catalogo` en viewport de teléfono, creando un ítem,
 publicándolo, viendo la ficha desde el icono de la fila, editando esa fila, y desde `/admin/donaciones`
-confirmando la llegada de una reserva y cancelando otra con motivo. Un ítem sin reservas se borra
-desde la misma tabla; uno con reservas se rechaza.
+confirmando la llegada de una reserva y cancelando otra con motivo. Un ítem se borra
+desde la misma tabla, también si ya tiene reservas.
 
 **Acceptance Scenarios**:
 
@@ -206,8 +206,8 @@ desde la misma tabla; uno con reservas se rechaza.
 7. **Given** el owner en `/admin/catalogo`, **When** mira la tabla de lo que falta, **Then** cada
    fila tiene una columna Acciones con ver (abre la ficha pública), editar (esa fila entra en modo
    edición) y borrar (pide confirmación). **Given** un editor, **Then** ve ver y editar y **no** ve
-   borrar. **Given** un ítem con reservas o entregas, **When** confirma el borrado, **Then** se
-   rechaza con un mensaje que lo explica y el ítem sigue.
+   borrar. **Given** un ítem con reservas o entregas, **When** confirma el borrado, **Then** el
+   ítem y esas reservas se van, y queda rastro.
 
 ---
 
@@ -270,7 +270,7 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   aportes o reservar a nombre de otro. La base lo niega, no la interfaz.
 - **Un ítem sin foto subida.** El listado y la ficha muestran la foto de referencia del tipo
   (ADR-043). En la ficha, etiquetada con epígrafe y crédito. En el listado, miniatura en Qué,
-  sin epígrafe por fila: el caption de la tabla dice que es ilustrativa. Si tampoco hay
+  sin epígrafe por fila: el caption de la lista dice que es ilustrativa. Si tampoco hay
   referencia, la ficha reserva el espacio y dice qué foto va ahí; el listado omite la foto y
   no reserva un hueco (ADR-021).
 - **Alguien navega sólo con teclado, o con lector de pantalla.** Registrarse, reservar y cambiar el
@@ -307,17 +307,17 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 
 **Catálogo**
 
-- **FR-209**: El sistema MUST publicar un catálogo de lo que falta como tabla en todo ancho de
-  pantalla (también en teléfono: MUST NOT apilar cada columna como lista). Cada ítem tiene qué es,
-  una foto compacta del tipo en la misma celda que el título cuando hay una (la subida o la de
-  referencia; MUST NOT reservar un hueco de foto en la fila), cuántas unidades hacen falta, en qué
-  unidad se cuenta, cuántas siguen faltando, si alguien ya la tomó, el nombre público o la ausencia
-  de nombre —y, si hay nombre, el porcentaje entero de ese ítem que esa persona cubre (ADR-052)—,
-  el estimado por unidad y el estimado total de lo que falta cuando hay un valor
-  cargado, y un control «Quiero donar» al final de la fila que abre la ficha (ADR-043, ADR-044).
-  MUST NOT usar una acción primaria en la fila. MUST NOT agregar una columna sólo para la foto.
-  MUST seguir ofreciendo «Quiero donar» mientras quede algo; MUST NOT esconderlo porque alguien
-  ya tomó parte.
+- **FR-209**: El sistema MUST publicar un catálogo de lo que falta como inventario editorial
+  (también en teléfono: MUST NOT ser una tabla que se desplaza de costado). Cada ítem tiene qué es,
+  una foto compacta del tipo junto al título cuando hay una (la subida o la de
+  referencia; MUST NOT reservar un hueco de foto en la fila), cuántas unidades siguen faltando, el
+  nombre público —y, si hay nombre, la cifra de lo que esa persona cubre según la unidad del ítem
+  (ADR-052, FR-255): cantidad en `unidad`/`bolsa`/`juego`; porcentaje entero de `needed_quantity`
+  en medidas; MUST omitir un % truncado a 0—, el estimado por unidad y, en escritorio, el estimado total de lo que falta cuando hay
+  un valor cargado, y un control «Quiero donar» que abre la ficha (ADR-043, ADR-044).
+  MUST NOT usar una acción primaria en la fila. MUST NOT escribir «¿La tomó alguien?» ni un em dash
+  de precio. MUST seguir ofreciendo «Quiero donar» mientras quede algo; MUST NOT esconderlo porque
+  alguien ya tomó parte.
 - **FR-210**: El sistema MUST calcular lo que falta descontando lo reservado y lo ya entregado, y
   MUST NOT ofrecer para reservar un ítem cubierto. MUST seguir ofreciendo mientras `remaining > 0`.
 - **FR-211**: El sistema MUST hacer **imposible** que queden comprometidas más unidades de las
@@ -325,23 +325,25 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   depender de una comprobación previa en la aplicación.
 - **FR-212**: Un ítem MUST poder llevar una foto con texto alternativo. Si el equipo subió una
   foto real desde el backoffice, esa MUST mostrarse en el listado y en la ficha. Si no, MUST
-  mostrarse la foto de referencia del tipo de material (ADR-043). En la ficha, con epígrafe que
+  mostrarse la foto de referencia del tipo de material (ADR-043).   En la ficha, con epígrafe que
   diga que es solamente ilustrativa y que no representa el objeto real. En el listado, compacta
-  junto al título, sin epígrafe por fila: el caption de la tabla lo dice. Sin ninguna de las dos,
+  junto al título, sin epígrafe por fila: el caption de la lista lo dice. Sin ninguna de las dos,
   la ficha reserva el espacio y declara qué va ahí; el listado omite la foto. MUST NOT usar stock
   ni imagen generada en el relato (historia, incendio, obra).
 - **FR-213**: Un ítem MUST poder asociarse a un rubro del presupuesto existente, para que el catálogo
   y el presupuesto cuenten la misma obra.
 - **FR-214**: Un ítem MUST poder tener un valor estimado con su moneda, o no tenerlo. Si no lo tiene,
-  la interfaz lo omite en lugar de estimarlo (en el listado, un em dash; no un cero). Si lo tiene, el
+  la interfaz lo omite en lugar de estimarlo (en el listado no se escribe cifra; no un cero ni un em
+  dash). Si lo tiene, el
   listado y la ficha MUST publicarlo etiquetado como estimado, no como precio fijo (ADR-041, ADR-044).
   El total del listado MUST ser el estimado de unidad por las unidades que siguen faltando.
 - **FR-215**: El catálogo MUST NOT mostrar un ítem no publicado.
 - **FR-258**: `/admin/catalogo` MUST ser una tabla con una columna Acciones. Ver MUST abrir la ficha
   pública `/catalogo/{id}`. Editar MUST poner esa fila en modo edición con `?editar={id}` y MUST
   funcionar sin JavaScript. Borrar MUST pedir confirmación, MUST estar visible sólo para un rol con
-  `catalogo.borrar` (`admin` y `owner`), MUST fallar si hay reservas o entregas —incluso canceladas—
-  y MUST dejar rastro. MUST NOT aparecer en el HTML de `/catalogo` (ADR-037, ADR-050).
+  `catalogo.borrar` (`admin` y `owner`), y MUST dejar rastro. Si hay reservas o
+  avisos, se van con el ítem. MUST NOT aparecer en el HTML de `/catalogo`
+  (ADR-037, ADR-050).
 - **FR-253**: El catálogo MUST agrupar los ítems publicados por una categoría cerrada
   (`materiales`, `aberturas`, `instalaciones`, `electrodomesticos`, `muebles`, `ajuar`).
   MUST NOT aceptar una categoría libre. `metro_cubico` es una unidad del catálogo, para
@@ -354,8 +356,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-255**: El catálogo MUST mostrar el nombre de quien reservó o entregó un ítem sólo cuando
   esa persona eligió aparecer. MUST NOT mostrar el nombre, el correo ni el identificador de una
   reserva o donación anónima. Lo anónimo se ve sólo como cantidad tomada, sin nombre. Si hay
-  nombre, MUST publicar el porcentaje entero de `needed_quantity` de ese ítem que cubren sus
-  unidades públicas, y MUST omitir un truncado menor a 1% (ADR-052).
+  nombre, MUST mostrar el retrato si `has_portrait`, y la cifra según la unidad: cantidad en
+  `unidad`/`bolsa`/`juego`; porcentaje entero de `needed_quantity` de ese ítem en las medidas
+  (`metro`, `metro_cuadrado`, `metro_cubico`, `litro`). MUST omitir un % truncado a 0 (ADR-052).
 - **FR-256**: Cubrir un ítem con plata MUST ofrecer transferencia (estimado neto), Mercado Pago
   (estimado más 10%, con la posibilidad de sumar más) y PayPal (estimado neto). MUST NOT
   convertir monedas. MUST decir que el monto es estimado, no fijo. MUST NOT mostrar los datos de
@@ -375,39 +378,54 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   para la familia en esa ficha: quién se maneja con el sistema lo elige en `/cuenta` (FR-225, FR-229).
   Si falta un dato (la cantidad, cuando se pide), el sistema MUST llevar el foco y el scroll al
   primer campo inválido y MUST marcar su borde con el color de peligro. MUST NOT enviar el formulario.
-- **FR-217**: Toda reserva MUST tener fecha de vencimiento, y al vencer MUST devolver las unidades al
-  catálogo.
+- **FR-217**: Toda reserva MUST tener fecha de vencimiento de 14 días. Al cumplirse, el equipo MUST
+  recibir un aviso (`staff.pledge_expired`) con los dos enlaces de decidir. MUST NOT cambiar el
+  estado ni devolver unidades: la reserva sigue `reserved` hasta que el admin confirme o suelte.
 - **FR-259**: Alguien sin sesión MUST poder reservar un ítem publicado dejando nombre y teléfono,
   sin crear una cuenta (ADR-051). La reserva MUST quedar anotada a esa persona (`contact_name`) y
   MUST nacer anónima. MUST mover `reserved_quantity`. MUST NOT pedir dirección, nombre para mostrar
   ni nota. Un mismo teléfono MUST NOT sostener dos veces el mismo ítem. El número y el nombre de
   contacto MUST NOT publicarse.
 - **FR-265**: Con sesión, «Quiero donar» MUST reservar y MUST avisar al owner (`staff.new_pledge`)
-  sin pedir nombre, teléfono ni dirección. MUST NOT inventar un nombre a partir del correo.
+  sin pedir nombre, teléfono ni dirección. El aviso MUST nombrar a quien reservó con el nombre de
+  la cuenta. MUST NOT inventar un nombre a partir del correo. Si la cuenta no tiene nombre, el
+  aviso dice «Alguien».
 - **FR-260**: El aviso al equipo de una reserva nueva —por teléfono o por cuenta— MUST incluir dos
   enlaces que piden sesión con `donaciones.escribir` y MUST NOT autenticar por el correo (FR-237):
-  sí confirma que el equipo se contactó y van a donar (`fulfill_donation_pledge`); no suelta la
-  reserva. El GET MUST NOT mutar: la confirmación es un POST con sesión.
-- **FR-261**: Un ítem confirmado por sí MUST aparecer en Quiénes ayudaron con la fecha de esa
-  confirmación (`fulfilled_at`) **sólo** si en esa pantalla cargaron un nombre porque la persona
-  aceptó aparecer (FR-262). MUST NOT publicar el teléfono, el nombre de contacto ni el
-  identificador de la reserva.
+  sí confirma que el equipo se contactó y van a donar (`accept_donation_pledge`); no suelta la
+  reserva. El sí MUST NOT marcar llegada ni publicar en el muro. La llegada es
+  `fulfill_donation_pledge`, un segundo acto desde `accepted`. El GET MUST NOT mutar: la
+  confirmación es un POST con sesión.
+- **FR-261**: Un ítem cuya llegada se confirmó MUST aparecer en Quiénes ayudaron con
+  `fulfilled_at` **sólo** si hay un nombre porque la persona aceptó aparecer (FR-262). MUST NOT
+  publicar el teléfono, el nombre de contacto ni el identificador de la reserva. MUST NOT
+  aparecer en el muro al aceptar.
 - **FR-262**: En el sí de una reserva por teléfono, si la persona aceptó aparecer, el equipo MUST
-  poder cargar el nombre para mostrar y una nota privada. Sin ese nombre, el sí MUST cumplir la
+  poder cargar el nombre para mostrar y una nota privada. Sin ese nombre, el sí MUST aceptar la
   reserva y MUST NOT publicarla. El camino del correo MUST NOT pedir esos campos en esa pantalla:
   se eligen en `/cuenta`.
-- **FR-263**: Una donación en especie con nombre MUST publicarse como el porcentaje entero de las
-  unidades de **ese** ítem (`needed_quantity`) que esa persona cubre. MUST seguir ofreciendo
-  donar el resto hasta cubrir el 100%. MUST NOT esconder «Quiero donar» porque `taken` sea
-  verdadero. MUST NOT convertir esas unidades a plata. Un truncado menor a 1 MUST omitirse.
-- **FR-218**: La liberación de lo vencido MUST ser correcta aunque el proceso programado que la
-  ejecuta no corra.
+- **FR-263**: Una donación en especie con nombre MUST publicarse en el muro y en Quiénes ayudaron
+  como el porcentaje entero de las unidades de **ese** ítem (`needed_quantity`) que esa persona
+  cubre. En el catálogo MUST aplicar FR-255 (cantidad en unidades contables; % en medidas; omitir
+  % truncado a 0). MUST seguir ofreciendo donar el resto hasta cubrir el 100%. MUST NOT esconder
+  «Quiero donar» porque `taken` sea verdadero. MUST NOT convertir esas unidades a plata. Un
+  truncado menor a 1 MUST omitirse donde se publique en %.
+- **FR-218**: MUST NOT haber un proceso que marque vencida una reserva o devuelva unidades sin
+  que el admin cancele. Un cron caído MUST NOT cambiar el catálogo.
 - **FR-219**: El sistema MUST limitar la cantidad de reservas activas por cuenta.
 - **FR-220**: La persona que reservó MUST poder cancelar su reserva desde su cuenta.
+  MAY editar cantidad y nota de una reserva `reserved` propia. MUST NOT editar
+  `accepted` ni `fulfilled`.
 - **FR-221**: Un rol con permiso financiero MUST poder confirmar la llegada de una donación y
-  cancelar una reserva con motivo.
-- **FR-222**: Ninguna reserva ni donación MUST poder borrarse: se cancela o se marca vencida, con
-  motivo y fecha, y el registro queda.
+  cancelar una reserva con motivo, también si ya estaba `fulfilled` (deshacer el sí). Quien donó
+  MUST NOT soltar una ya confirmada.
+- **FR-222**: Una reserva se cancela con motivo y fecha. MUST NOT marcarse `expired` de
+  forma automática. El owner o un admin MAY revertir una entrega confirmada: las
+  unidades vuelven al catálogo, sale del muro, la reserva queda cancelada, el
+  motivo es optativo (si falta se guarda «Revertida desde Cerradas») y se avisa
+  por correo a quien donó. El owner o un admin MAY borrar una reserva, un aviso
+  o un ítem del catálogo —también si ya tiene reservas—: se van las filas hijas.
+  El rastro de auditoría queda. Los aportes y gastos de plata MUST NOT borrarse.
 - **FR-223**: Todo cambio de estado de una reserva y todo cambio en el catálogo MUST registrar autor
   y momento en el rastro de auditoría existente.
 - **FR-224**: Una donación en especie MUST NOT sumarse a los totales de dinero de la campaña ni
@@ -462,8 +480,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **FR-238**: El sistema MUST recolectar el mínimo: correo; nombre para mostrar si la persona
   lo escribe o si entra con una red que lo entrega; una foto de retrato si la persona la
   sube o si esa red entrega una; y, en el camino del teléfono sin cuenta, nombre y teléfono
-  (ADR-051). El local-part del correo MUST NOT usarse como nombre. La foto MUST NOT publicarse.
-  El teléfono MUST NOT publicarse.
+  (ADR-051). El local-part del correo MUST NOT usarse como nombre. La foto MUST NOT
+  publicarse salvo en el catálogo, según FR-246. El teléfono MUST NOT publicarse.
 - **FR-239**: La política de privacidad publicada MUST describir qué se guarda, para qué, cuánto
   tiempo y cómo se borra, en los dos idiomas, **en el mismo despliegue** que habilita el registro.
 - **FR-240**: Borrar la cuenta MUST eliminar los datos personales y MUST conservar la donación como
@@ -487,9 +505,13 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   documento público.
 - **FR-246**: Una persona MUST poder subir, cambiar y borrar una foto de retrato desde `/cuenta`. El
   archivo MUST vivir en un bucket privado, MUST pertenecer sólo a su dueña, y MUST NOT aparecer en
-  el muro ni en ninguna respuesta pública.
-- **FR-247**: El retrato MUST ser un recorte rectangular, no un avatar circular. Sin foto, el espacio
-  se reserva y se dice qué va ahí, sin imagen de archivo ni icono de relleno.
+  el muro ni en una respuesta pública salvo en el catálogo. MUST aparecer en el catálogo si y sólo
+  si esa persona eligió aparecer y `has_portrait`.
+- **FR-247**: En el encabezado público y en el formulario de `/cuenta` el retrato MUST ser
+  un recorte rectangular, no un círculo (ADR-032). En el menú de trabajo de `/cuenta` y
+  `/admin` MUST ser circular, de 128 px (`--spacing-avatar`). Sin foto propia, el
+  formulario reserva el hueco; el menú de trabajo muestra una silueta genérica, no una
+  cara inventada.
 - **FR-248**: Una persona con sesión MUST poder cambiar su contraseña desde `/cuenta`, sin pasar por
   el correo de recuperación.
 
@@ -510,8 +532,9 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 ### Key Entities
 
 - **Cuenta del público**: alguien que se registró para poder reservar. Tiene correo confirmado,
-  idioma de preferencia, nombre para mostrar si decidió aparecer, y un retrato optativo que no se
-  publica. No tiene rol interno, y esa ausencia es lo que la define.
+  idioma de preferencia, nombre para mostrar si decidió aparecer, y un retrato optativo que se
+  publica sólo en el catálogo cuando eligió aparecer. No tiene rol interno, y esa ausencia es lo
+  que la define.
 - **Ítem del catálogo**: algo que hace falta para la obra. Tiene qué es, cantidad necesaria, unidad,
   cuánto está reservado, cuánto entregado, valor estimado opcional, foto opcional, rubro de
   presupuesto opcional y estado de publicación.
@@ -558,7 +581,7 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
 - **SC-214**: Con un proveedor social habilitado, una persona puede crear la cuenta desde el botón
   de esa red y aterrizar en `/cuenta` con sesión, con el nombre de esa red ya en el perfil, anónima
   y `pending`. Si esa dirección ya tenía cuenta, entra a ésa. Verificado en el harness local.
-- **SC-215**: Desde `/admin/catalogo` el owner ve, edita en la fila y borra un ítem sin reservas; el
+- **SC-215**: Desde `/admin/catalogo` el owner ve, edita en la fila y borra un ítem; el
   editor no ve borrar. Verificado en e2e, en viewport de teléfono y de escritorio.
 - **SC-216**: Un aviso por teléfono baja lo que falta; el sí del owner publica nombre y fecha en
   Quiénes ayudaron; el no devuelve el ítem. Verificado en e2e.
@@ -566,9 +589,8 @@ reserva se completa igual, que la pantalla lo dice, y que el fallo queda registr
   «Gracias por donar» y que nos vamos a estar comunicando, y no se puede tocar el resto
   hasta cerrarlo. El correo `staff.phone_offer` incluye `wa.me` con los dígitos de ese
   número. Verificado en el componente, en el armado del correo y en e2e.
-- **SC-217**: Cinco unidades entregadas de un ítem de diez se publican como el 50% de ese bien, y
-  el listado sigue ofreciendo donar; al cubrir las diez, el CTA desaparece. Verificado en dominio
-  y en e2e.
+- **SC-217**: Cinco de diez unidades contables se publican como cantidad en el catálogo y como
+  50% en el muro; el CTA permanece hasta cubrir. Verificado en dominio y en e2e.
 
 ---
 
@@ -605,7 +627,7 @@ el listado y la ficha lo publican etiquetado como estimado, no fijo. El libro no
 | Opción | Qué implica |
 |---|---|
 | No publicarlo | Se guarda para que la familia priorice, y no se muestra. Impide cubrir el ítem con plata |
-| Publicarlo sólo en la ficha | Hay que abrir cada renglón para saber cuánto sale. El pedido es verlo en la tabla |
+| Publicarlo sólo en la ficha | Hay que abrir cada renglón para saber cuánto sale. El pedido es verlo en el listado |
 | **Publicarlo en el listado y la ficha, etiquetado (aplicada)** | Se escanea lo que falta y un estimado. El sitio no afirma que coincida con el mostrador |
 
 ---

@@ -134,4 +134,6 @@ export interface DonorAccountAdminRecord {
   readonly createdAt: string;
   readonly reviewedAt: string | null;
   readonly reviewNote: string | null;
+  /** Teléfono de coordinación. Lo carga el equipo; nulo si no hay. */
+  readonly contactPhone: string | null;
 }

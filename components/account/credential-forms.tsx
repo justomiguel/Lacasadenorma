@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { signIn, signUp } from "@/app/(es)/cuenta/actions";
 import { IDLE, type AccountFormState } from "@/app/(es)/cuenta/form-state";
+import { PersonIcon } from "@/components/design-system/icons";
 import type { AccountContent } from "@/content/schema";
 import type { SocialProviderId } from "@/src/domain/auth/social-providers";
 import type { Locale } from "@/src/i18n/locale";
@@ -101,7 +102,9 @@ export function SignUpForm({
 
         {general === null ? null : <FormError>{general}</FormError>}
 
-        <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+        <SubmitButton icon={<PersonIcon />} pendingLabel={copy.submitting}>
+          {copy.submit}
+        </SubmitButton>
       </form>
       <SocialAuth
         copy={social}
@@ -165,7 +168,9 @@ export function SignInForm({
 
         {general === null ? null : <FormError>{general}</FormError>}
 
-        <SubmitButton pendingLabel={copy.submitting}>{copy.submit}</SubmitButton>
+        <SubmitButton icon={<PersonIcon />} pendingLabel={copy.submitting}>
+          {copy.submit}
+        </SubmitButton>
       </form>
       <SocialAuth
         copy={social}

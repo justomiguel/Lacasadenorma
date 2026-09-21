@@ -2,52 +2,77 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
 
-import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
+import {
+  BankIcon,
+  BookIcon,
+  BoxIcon,
+  ChartIcon,
+  GiftIcon,
+  type IconProps,
+  PersonIcon,
+  SearchIcon,
+} from "@/components/design-system/icons";
+import { sidebarItemClass } from "@/components/design-system/work-sidebar";
 
 import type { AdminSection } from "./nav";
+import {
+  groupHrefForPath,
+  sectionIsCurrent,
+  visibleAdminGroups,
+} from "./nav";
 
-/** `/admin/novedades/id` sigue marcando Novedades; `/admin` no marca a nadie. */
-export function sectionIsCurrent(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
+const GROUP_MARK: Record<string, ComponentType<IconProps>> = {
+  campana: BookIcon,
+  plata: BankIcon,
+  catalogo: BoxIcon,
+  donaciones: GiftIcon,
+  donantes: PersonIcon,
+  metricas: ChartIcon,
+  auditoria: SearchIcon,
+};
 
+export { sectionIsCurrent };
+
+/** Submenú del backoffice: los grupos que el rol puede ver, no las once secciones. */
 export function AdminNav({ sections }: { sections: readonly AdminSection[] }) {
   const pathname = usePathname();
+  const groups = visibleAdminGroups(sections);
 
-  if (sections.length === 0) {
+  if (groups.length === 0) {
     return null;
   }
 
   return (
-    <nav aria-label="Secciones del backoffice" className="border-t border-rule">
-      {/*
-       * Desplazamiento horizontal en el teléfono en lugar de un menú
-       * desplegable: las secciones entran en dos gestos, y un menú agrega un
-       * toque a cada navegación de un trabajo que se hace muchas veces por día.
-       */}
-      <ul className="mx-auto flex max-w-page gap-lg overflow-x-auto px-md py-xs sm:px-lg">
-        {sections.map((section) => {
-          const current = sectionIsCurrent(pathname, section.href);
+    <ul
+      aria-label="Secciones del backoffice"
+      className="mt-2xs flex flex-col gap-xs border-l border-rule pl-sm"
+    >
+      {groups.map((group) => {
+        const current = group.sections.some((section) =>
+          sectionIsCurrent(pathname, section.href),
+        );
+        const Mark = GROUP_MARK[group.id];
 
-          return (
-            <li key={section.href}>
-              <Link
-                href={section.href}
-                {...(current ? { "aria-current": "page" as const } : {})}
-                className={cn(
-                  "inline-flex min-h-touch items-center whitespace-nowrap font-ui text-small transition-colors duration-fast",
-                  current
-                    ? "font-medium text-ink underline decoration-forest decoration-1 underline-offset-6"
-                    : "text-ink-muted hover:text-ink",
-                )}
-              >
-                {section.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+        return (
+          <li key={group.id}>
+            <Link
+              href={groupHrefForPath(pathname, group)}
+              {...(current ? { "aria-current": "page" as const } : {})}
+              className={sidebarItemClass(current)}
+            >
+              {Mark === undefined ? null : (
+                <IdentifyingMark>
+                  <Mark />
+                </IdentifyingMark>
+              )}
+              {group.label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

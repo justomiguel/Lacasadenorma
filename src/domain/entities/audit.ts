@@ -49,9 +49,15 @@ export const AUDIT_ACTION_LABELS = {
   "donation_item.deleted": "borró un ítem del catálogo",
   "donor.approved": "habilitó una cuenta del público",
   "donor.declined": "rechazó una cuenta del público",
+  "donor.provisioned": "cargó una cuenta de quien donó por fuera",
   "pledge.claimed": "registró una reserva del público",
+  "pledge.updated": "editó una reserva",
+  "pledge.accepted": "confirmó que van a donar un artículo",
   "pledge.cancelled": "canceló una reserva",
   "pledge.fulfilled": "confirmó la llegada de una donación en especie",
+  "pledge.reverted": "deshizo la confirmación de una donación en especie",
+  "pledge.recorded": "anotó una entrega ya llegada",
+  "pledge.deleted": "borró una donación en especie",
 } as const satisfies Record<string, string>;
 
 export type AuditAction = keyof typeof AUDIT_ACTION_LABELS;
@@ -82,6 +88,7 @@ export const AUDIT_ENTITY_LABELS: Record<string, string> = {
   milestones: "Hitos",
   donation_items: "Catálogo",
   donation_pledges: "Reservas",
+  donation_offers: "Avisos",
   payment_methods: "Cuentas",
   donor_profiles: "Cuentas del público",
 };

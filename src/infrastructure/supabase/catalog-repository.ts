@@ -24,7 +24,8 @@ import type { ServerSupabaseClient } from "./server-client";
 const CATALOG_COLUMNS =
   "id, campaign_id, budget_item_id, title, description, unit, category, needed_quantity, remaining_quantity, fulfilled_quantity, estimated_unit_amount_minor, currency, photo_media_id, sort_order";
 
-const CLAIM_COLUMNS = "id, item_id, quantity, donor_display_name, fulfilled_at";
+const CLAIM_COLUMNS =
+  "id, item_id, quantity, donor_display_name, fulfilled_at, has_portrait";
 
 type CatalogRow = Database["public"]["Views"]["donation_catalog"]["Row"];
 type ClaimRow = Database["public"]["Views"]["donation_catalog_claims"]["Row"];
@@ -194,5 +195,6 @@ function toClaim(row: ClaimRow): CatalogClaim | null {
     quantity: row.quantity,
     donorDisplayName: row.donor_display_name,
     fulfilledAt: row.fulfilled_at,
+    hasPortrait: row.has_portrait === true,
   };
 }

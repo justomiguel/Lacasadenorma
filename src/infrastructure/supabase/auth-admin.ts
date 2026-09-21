@@ -6,14 +6,16 @@ import type { Database } from "./database.types";
 /**
  * Cliente con la clave secreta.
  *
- * Dos usos, y ninguno lee una tabla (ADR-019, ADR-028):
+ * Tres usos, y ninguno lista una tabla (ADR-019, ADR-028):
  *
  * 1. `auth.admin.generateLink` cuando el hook de correo todavía no está.
  * 2. `record_email_delivery` cuando no hay sesión —la oferta por teléfono—
  *    porque `anon` no tiene `EXECUTE` y PostgREST responde 401.
+ * 3. Bajar un retrato de catálogo después de que la vista anónima autorizó
+ *    esa reserva: un pledge, un path, un signed URL que se descarta.
  *
- * Si no hay clave, el alta cae en `signUp` del cliente de sesión, y el
- * teléfono reserva igual sin anotar el envío.
+ * Si no hay clave, el alta cae en `signUp` del cliente de sesión, el
+ * teléfono reserva igual sin anotar el envío, y el catálogo no sirve la foto.
  */
 export function createAuthAdminClient(): SupabaseClient<Database> | null {
   const config = readSupabaseConfig();

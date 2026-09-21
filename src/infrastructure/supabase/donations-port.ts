@@ -119,6 +119,18 @@ export function createDonationsPort(client: ServerSupabaseClient): DonationsPort
       }
     },
 
+    async updateOwnPledge(input): Promise<void> {
+      const { error } = await client.rpc("update_donation_pledge", {
+        p_pledge_id: input.pledgeId,
+        p_quantity: input.quantity,
+        p_note: input.note as string,
+      });
+
+      if (error !== null) {
+        throw new QueryError("editar la reserva", error);
+      }
+    },
+
     async updateOwnAppearance(next): Promise<void> {
       const userId = await requireUserId();
       const { error } = await client

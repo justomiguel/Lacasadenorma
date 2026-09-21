@@ -69,7 +69,6 @@ describe("MobileMenu", () => {
         siteName="La Casa de Norma"
         ui={ui}
         canonical="/"
-        switchHref="/en"
         helpHref="/ayudar#donaciones"
         closeRef={createRef()}
         onClose={() => undefined}
@@ -77,12 +76,24 @@ describe("MobileMenu", () => {
     );
   }
 
+  it("no lista Cómo ayudar: esa ruta ya es el CTA", () => {
+    renderMenu();
+
+    expect(screen.queryByRole("link", { name: "Cómo ayudar" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Ayudar a reconstruir" })).toBeTruthy();
+  });
+
   it("Backoffice queda arriba de las secciones, no debajo del pliegue", () => {
     renderMenu();
 
+    const pledges = screen.getByRole("link", { name: "Mis donaciones" });
     const backoffice = screen.getByRole("link", { name: "Backoffice" });
     const historia = screen.getByRole("link", { name: "Historia" });
 
+    expect(pledges).toHaveAttribute("href", "/cuenta?seccion=reservas");
+    expect(
+      pledges.compareDocumentPosition(backoffice) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(
       backoffice.compareDocumentPosition(historia) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
@@ -109,5 +120,17 @@ describe("MobileMenu", () => {
       metricas.compareDocumentPosition(historia) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(metricas.querySelector("svg")).not.toBeNull();
+  });
+
+  it("cerrar sesión queda al pie, con fondo rojo", () => {
+    renderMenu();
+
+    const salir = screen.getByRole("button", { name: "Cerrar sesión" });
+    const ayudar = screen.getByRole("link", { name: "Ayudar a reconstruir" });
+
+    expect(salir.className).toMatch(/bg-danger/);
+    expect(
+      salir.compareDocumentPosition(ayudar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

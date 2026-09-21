@@ -15,8 +15,7 @@ import { PageHeader } from "@/components/site/page-header";
  * cuenta?", "olvidé mi contraseña"— va **después** del formulario y no arriba,
  * porque arriba compite con la acción que la persona vino a hacer.
  *
- * `surface="sunk"` es para el índice de `/cuenta`: la bajada cierra el encabezado
- * y las pestañas empiezan en otra superficie, pegadas, no a 64 px de papel vacío.
+ * `surface="sunk"` queda para un cuerpo que empieza pegado al encabezado.
  * Ingresar y crear una cuenta se quedan en papel: son un formulario, no un índice.
  */
 export function AuthShell({

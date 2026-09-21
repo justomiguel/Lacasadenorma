@@ -4,8 +4,8 @@ import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { ChosenFile } from "@/components/design-system/chosen-file";
-
 import { cn } from "@/components/design-system/cn";
+import { IdentifyingMark } from "@/components/design-system/identifying-mark";
 
 /**
  * Los controles de las pantallas de cuenta.
@@ -36,17 +36,21 @@ export function TextField({
   defaultValue,
   error,
   inputMode,
+  max,
+  maxLength,
 }: {
   name: string;
   label: string;
   hint?: string;
-  type?: "text" | "email" | "password";
+  type?: "text" | "email" | "password" | "number";
   autoComplete?: string;
   required?: boolean;
   defaultValue?: string;
   /** El mensaje ya traducido. Ausente cuando el error no es de este campo. */
   error?: string;
   inputMode?: "text" | "numeric" | "decimal" | "email" | "tel";
+  max?: number;
+  maxLength?: number;
 }) {
   const { pending } = useFormStatus();
   const id = useId();
@@ -80,6 +84,8 @@ export function TextField({
         {...(required ? { required: true } : {})}
         {...(autoComplete === undefined ? {} : { autoComplete })}
         {...(defaultValue === undefined ? {} : { defaultValue })}
+        {...(max === undefined ? {} : { max })}
+        {...(maxLength === undefined ? {} : { maxLength })}
         {...(error === undefined ? {} : { "aria-invalid": true })}
         {...(describedBy === undefined ? {} : { "aria-describedby": describedBy })}
       />
@@ -199,10 +205,12 @@ export function SubmitButton({
   children,
   pendingLabel,
   tone = "primary",
+  icon,
 }: {
   children: ReactNode;
   pendingLabel: string;
   tone?: "primary" | "danger";
+  icon: ReactNode;
 }) {
   const { pending } = useFormStatus();
 
@@ -212,13 +220,14 @@ export function SubmitButton({
       disabled={pending}
       aria-busy={pending}
       className={cn(
-        "inline-flex min-h-cta w-full items-center justify-center rounded-md px-lg font-ui text-body font-medium sm:min-h-12 sm:w-auto",
+        "inline-flex min-h-cta w-full items-center justify-center gap-xs rounded-md px-lg font-ui text-body font-medium sm:min-h-12 sm:w-auto",
         "transition-colors duration-fast ease-editorial disabled:opacity-60",
         tone === "primary"
           ? "bg-forest text-paper hover:bg-forest-strong"
           : "border border-danger text-danger hover:bg-paper-sunk",
       )}
     >
+      <IdentifyingMark>{icon}</IdentifyingMark>
       {pending ? pendingLabel : children}
     </button>
   );

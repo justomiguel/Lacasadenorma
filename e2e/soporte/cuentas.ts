@@ -96,20 +96,52 @@ export async function crearCuenta(
 }
 
 /**
- * Abre una pestaña de `/cuenta`.
+ * Abre una sección de `/cuenta`.
  *
- * Con JavaScript la pantalla es un índice: el formulario de la foto no está en
- * el DOM al mismo tiempo que el de borrar. Las pruebas que llenan un campo de
- * otra sección tienen que pedirla antes.
+ * En escritorio Mis donaciones y Tu cuenta están en el menú de trabajo.
+ * En el teléfono ese menú no se pinta: las mismas salidas viven en el
+ * drawer. Tu cuenta es una página: el heading nombra el bloque.
  */
 export async function abrirSeccionDeCuenta(page: Page, seccion: RegExp): Promise<void> {
-  await expect(page.getByRole("tablist")).toBeVisible();
+  const nav = page.getByRole("navigation", {
+    name: /secciones de tu cuenta|account sections/i,
+  });
+  const enElCostado = await nav.isVisible();
 
-  const tab = page.getByRole("tab", { name: seccion });
+  if (!enElCostado) {
+    await page.getByRole("button", { name: /abrir el menú|open the menu/i }).click();
+  }
 
-  await expect(tab).toBeVisible();
-  await tab.click();
-  await expect(tab).toHaveAttribute("aria-selected", "true");
+  const destino = enElCostado ? nav : page.getByRole("dialog");
+
+  if (/donaciones|donations|reservas|reservations/i.test(seccion.source)) {
+    const enlace = destino.getByRole("link", { name: seccion });
+
+    await expect(enlace).toBeVisible();
+    await enlace.click();
+    return;
+  }
+
+  const cuenta = destino.getByRole("link", { name: /tu cuenta|your account/i });
+
+  await expect(cuenta).toBeVisible();
+  await cuenta.click();
+
+  const heading = headingDeCuenta(seccion);
+
+  await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+}
+
+function headingDeCuenta(seccion: RegExp): RegExp {
+  if (/acceso|access/i.test(seccion.source)) {
+    return /contraseña|password/i;
+  }
+
+  if (/borrar|delete/i.test(seccion.source)) {
+    return /borrar la cuenta|delete the account/i;
+  }
+
+  return seccion;
 }
 
 /** Cómo aparecer: se elige en la cuenta, no en la ficha (ADR-051, FR-216). */
@@ -128,34 +160,19 @@ export async function elegirAparecerEnCuenta(page: Page, nombre: string): Promis
 /**
  * Cierra la sesión del público.
  *
- * En escritorio hay un «Cerrar sesión» en el encabezado. En teléfono no: el
- * chrome se esconde a partir de `lg` y salir vive en el menú, después de
- * hidratar el island (ADR-037). Buscar un «Cerrar sesión» visible en el
- * documento entero encuentra el del encabezado, que está en el DOM pero
- * oculto, y Playwright se queda esperándolo hasta el timeout —era el colgado
- * de 90 s en iPhone 15. Sin abrir el menú, el ítem de catálogo queda
- * publicado y la revisión visual cuenta un hueco de más.
+ * Con sesión, el encabezado tiene un icono de salir —en escritorio y en
+ * teléfono— después de hidratar el island (ADR-037). El menú y `/cuenta`
+ * también lo tienen, pero buscar un «Cerrar sesión» en el documento entero
+ * encontraba uno oculto y Playwright se quedaba esperando: era el colgado
+ * de 90 s en iPhone 15.
  */
 export async function cerrarSesion(page: Page): Promise<void> {
   const enElEncabezado = page
     .getByRole("banner")
     .getByRole("button", { name: /cerrar sesión/i });
-  const abrirMenu = page.getByRole("button", { name: /abrir el menú|open the menu/i });
 
-  await expect(enElEncabezado.or(abrirMenu)).toBeVisible({ timeout: 20_000 });
-
-  if (await enElEncabezado.isVisible()) {
-    await enElEncabezado.click();
-  } else {
-    await abrirMenu.click();
-    await expect(
-      page.getByRole("dialog").getByRole("button", { name: /cerrar sesión/i }),
-    ).toBeVisible({ timeout: 20_000 });
-    await page
-      .getByRole("dialog")
-      .getByRole("button", { name: /cerrar sesión/i })
-      .click();
-  }
+  await expect(enElEncabezado).toBeVisible({ timeout: 20_000 });
+  await enElEncabezado.click();
 
   await expect(page).toHaveURL(/\/cuenta\/ingresar/);
 }

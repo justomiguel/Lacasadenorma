@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { primaryActionClass } from "@/components/design-system/actions";
+import { HelpActionLabel, primaryActionClass } from "@/components/design-system/actions";
 import { cn } from "@/components/design-system/cn";
 import { localizedHref } from "@/src/i18n/href";
 import { stripLocalePrefix } from "@/src/i18n/locale";
@@ -119,7 +119,7 @@ export function HelpBar({
             track({ name: "ayudar_click", props: { origen: "barra" } });
           }}
         >
-          {label}
+          <HelpActionLabel>{label}</HelpActionLabel>
         </a>
       </div>
     </>

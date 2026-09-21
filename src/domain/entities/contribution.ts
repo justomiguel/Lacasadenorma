@@ -21,4 +21,6 @@ export interface ContributionAdminRecord extends ContributionRecord {
   readonly contributorDisplayName: string | null;
   readonly voidReason: string | null;
   readonly recordedBy: string | null;
+  /** Persona a la que se ata el aporte. Nulo en los de antes y en Aportes sin ficha. */
+  readonly userId: string | null;
 }

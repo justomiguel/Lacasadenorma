@@ -17,6 +17,7 @@ import {
 import { claimItem } from "@/src/application/use-cases/claim-item";
 import { offerItemByPhone } from "@/src/application/use-cases/offer-item-by-phone";
 import { parseDonateStart } from "@/src/domain/donate-start";
+import { displayNameOf } from "@/src/domain/entities/donor";
 import { isCoverChannel } from "@/src/domain/cover";
 import { getAccountDeps } from "@/src/infrastructure/accounts/context";
 import { notifyPhoneOffer } from "@/src/infrastructure/donations/notify-offer";
@@ -140,10 +141,13 @@ export async function claimItemAction(
   }
 
   const canal = textOf(formData, "canal");
+  const profile =
+    deps.session.status === "ready" ? await deps.session.port.readOwnProfile() : null;
+  const who = profile === null ? null : displayNameOf(profile);
   const result = await claimItem(
     {
       ...deps,
-      afterClaim: (pledge) => notifyPledgeClaimed(pledge, locale),
+      afterClaim: (pledge) => notifyPledgeClaimed(pledge, locale, who),
     },
     {
       itemId,
@@ -175,6 +179,28 @@ export async function cancelOwnPledgeAction(formData: FormData): Promise<void> {
     await getAccountDeps(),
     textOf(formData, "pledgeId"),
   );
+
+  if (result.status === "error") {
+    redirect(
+      `${localizeHref("/cuenta", locale)}?aviso=${encodeURIComponent(result.code)}`,
+    );
+  }
+
+  revalidatePath(localizeHref("/catalogo", locale), "layout");
+  revalidatePath(localizeHref("/cuenta", locale));
+  redirect(localizeHref("/cuenta", locale));
+}
+
+export async function updateOwnPledgeAction(formData: FormData): Promise<void> {
+  const locale = localeOf(formData);
+  const { updateOwnPledge } =
+    await import("@/src/application/accounts/update-own-pledge");
+  const quantityRaw = textOf(formData, "cantidad");
+  const result = await updateOwnPledge(await getAccountDeps(), {
+    pledgeId: textOf(formData, "pledgeId"),
+    quantity: Number.parseInt(quantityRaw, 10),
+    note: textOf(formData, "nota"),
+  });
 
   if (result.status === "error") {
     redirect(

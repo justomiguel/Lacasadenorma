@@ -197,6 +197,7 @@ describe("buildOwnerMetrics", () => {
 
     expect(metrics.pledgePipeline?.bars).toEqual([
       expect.objectContaining({ id: "reserved", value: 1 }),
+      expect.objectContaining({ id: "accepted", value: 0 }),
       expect.objectContaining({ id: "fulfilled", value: 1 }),
       expect.objectContaining({ id: "cancelled", value: 0 }),
       expect.objectContaining({ id: "expired", value: 0 }),

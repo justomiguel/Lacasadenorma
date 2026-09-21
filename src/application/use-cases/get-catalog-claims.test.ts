@@ -15,6 +15,7 @@ const CLAIM: CatalogClaim = {
   quantity: 1,
   donorDisplayName: "María",
   fulfilledAt: null,
+  hasPortrait: false,
 };
 
 describe("getCatalogClaims", () => {

@@ -34,6 +34,7 @@ export function createContributionsPort(
         contributorDisplayName: row.contributor_display_name,
         voidReason: row.void_reason,
         recordedBy: row.recorded_by,
+        userId: row.user_id,
       }));
     },
 
@@ -49,6 +50,7 @@ export function createContributionsPort(
           source_note: input.sourceNote,
           is_anonymous: input.isAnonymous,
           contributor_display_name: input.contributorDisplayName,
+          user_id: input.userId,
         })
         .select("id")
         .single();

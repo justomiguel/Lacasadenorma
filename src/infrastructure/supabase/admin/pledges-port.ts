@@ -1,6 +1,11 @@
 import { isCoverChannel } from "@/src/domain/cover";
 import type { DonationOffer } from "@/src/domain/entities/donation-offer";
 import type { AdminPledgeRecord } from "@/src/domain/entities/donation-pledge";
+import {
+  CatalogNoRoomError,
+  PledgeContactRequiredError,
+  PledgeUnavailableError,
+} from "@/src/domain/errors";
 import { isPledgeStatus } from "@/src/domain/pledge-status";
 import type { AdminDonationsPort } from "@/src/domain/ports/donations";
 
@@ -86,11 +91,21 @@ export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsP
       return data.map((row) => mapOffer(row as OfferWithItem));
     },
 
-    async fulfillPledge(input): Promise<void> {
-      const { error } = await client.rpc("fulfill_donation_pledge", {
+    async acceptPledge(input): Promise<void> {
+      const { error } = await client.rpc("accept_donation_pledge", {
         p_pledge_id: input.id,
         p_display_name: input.displayName as string,
         p_note: input.note as string,
+      });
+
+      if (error !== null) {
+        throw new QueryError("confirmar que van a donar", error);
+      }
+    },
+
+    async fulfillPledge(input): Promise<void> {
+      const { error } = await client.rpc("fulfill_donation_pledge", {
+        p_pledge_id: input.id,
       });
 
       if (error !== null) {
@@ -109,6 +124,39 @@ export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsP
       }
     },
 
+    async updatePledge(input): Promise<void> {
+      const { error } = await client.rpc("update_donation_pledge", {
+        p_pledge_id: input.id,
+        p_quantity: input.quantity,
+        p_note: input.note as string,
+        p_contact_name: input.contactName as string,
+        p_contact_phone: input.contactPhone as string,
+      });
+
+      if (error !== null) {
+        if (error.message === "sin_disponibilidad") {
+          throw new PledgeUnavailableError();
+        }
+
+        if (error.message === "datos_de_retiro") {
+          throw new PledgeContactRequiredError();
+        }
+
+        throw new QueryError("editar la reserva", error);
+      }
+    },
+
+    async revertPledge(input): Promise<void> {
+      const { error } = await client.rpc("revert_donation_pledge", {
+        p_pledge_id: input.id,
+        p_reason: input.reason,
+      });
+
+      if (error !== null) {
+        throw new QueryError("revertir la donación", error);
+      }
+    },
+
     async markReminded(id): Promise<void> {
       const { error } = await client.rpc("mark_pledge_reminded", {
         p_pledge_id: id,
@@ -117,6 +165,51 @@ export function createPledgesPort(client: ServerSupabaseClient): AdminDonationsP
       if (error !== null) {
         throw new QueryError("marcar el recordatorio", error);
       }
+    },
+
+    async deletePledge(id): Promise<void> {
+      const { error } = await client.rpc("delete_donation_pledge", {
+        p_pledge_id: id,
+      });
+
+      if (error !== null) {
+        throw new QueryError("borrar la reserva", error);
+      }
+    },
+
+    async deleteOffer(id): Promise<void> {
+      const { error } = await client.rpc("delete_donation_offer", {
+        p_offer_id: id,
+      });
+
+      if (error !== null) {
+        throw new QueryError("borrar el aviso", error);
+      }
+    },
+
+    async recordArrival(input): Promise<string> {
+      const { data, error } = await client.rpc("record_donor_arrival", {
+        p_user_id: input.userId,
+        p_item_id: input.itemId,
+        p_quantity: input.quantity,
+        p_display_name: input.displayName as string,
+      });
+
+      if (error !== null) {
+        if (error.message === "sin_cupo") {
+          throw new CatalogNoRoomError();
+        }
+
+        throw new QueryError("anotar la llegada", error);
+      }
+
+      if (data === null) {
+        throw new QueryError("anotar la llegada", {
+          message: "la función no devolvió identificador",
+        });
+      }
+
+      return data;
     },
   };
 }

@@ -25,7 +25,9 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
 1. **Se diseña a 390 px primero.** Cada token y cada componente se decide en un
    teléfono y después crece. `--text-display` mide 49 px ahí, `--text-headline` 40,
    el cuerpo 17 con interlínea 1.65. La escala de espacio es 4 · 8 · 12 · 16 · 24 ·
-   32 · 48 · 64 · 80 · 96 · 120 y no hay otro valor. El radio es `sm` 6, `md` 10, `lg`
+   32 · 48 · 64 · 80 · 96 · 120 y no hay otro valor, salvo tamaños con nombre
+   propio (`--spacing-header`, `--spacing-avatar` de 128 px en el menú de
+   trabajo). El radio es `sm` 6, `md` 10, `lg`
    16; `pill` queda para lo que es redondo por significado y hoy no lo usa nada
    público.
 
@@ -43,9 +45,12 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
    desplazarse; fijo sobre papel en las interiores. El símbolo 01 ORIGINAL (el
    círculo verde, recortado, sin el wordmark) va a la izquierda del nombre, a 32 px
    ([ADR-035](./035-simbolo-de-la-marca.md)). En teléfono no hay más botones: el
-   idioma, ingresar y la acción de ayudar viven dentro del menú a pantalla
+   ingresar y la acción de ayudar viven dentro del menú a pantalla
    completa, que respeta las áreas seguras y entra con un escalón de 40 ms por
-   ítem. En escritorio, Ingresar va al lado del idioma, como texto, sin caja.
+   ítem. El idioma está en el pie, con banderas. En escritorio, Ingresar es
+   un botón compacto de contorno (misma caja que Ayudar, sin relleno) para
+   que no se lea como un enlace más de la nav. Ayudar sigue siendo la
+   única primaria rellena. Cómo ayudar no se lista: el CTA ya apunta a `/ayudar`.
 
 4. **La apertura es una foto, no una franja.** 82 svh en teléfono, 90 en escritorio,
    a sangrado. Dirección de arte con `<picture>`: el fotograma vertical de esa noche
@@ -125,3 +130,13 @@ humanitaria. No SaaS, no dashboard, no colección de tarjetas.
   comprueba el retiro por rol e `inert`, no por desmontaje.
 - La QA visual se hace en 320, 375, 390, 393, 430, 768, 1024 y 1440 px, con
   atención especial a 390. «Compila» no es «está».
+
+## Enmienda · Ingresar con caja (2026-09-20)
+
+En escritorio, Ingresar dejó de ser texto suelto. Quien entra lo leía como un
+enlace más de la nav, al lado de Norma y el catálogo. Ahora usa la misma
+geometría que la primaria compacta (`compactOutlineActionClass`), con borde y
+sin relleno, para que se reconozca como control y no compita con «Ayudar a
+reconstruir». En el menú del teléfono y en el pie sigue siendo texto. Con
+sesión, el mismo botón dice «Mi Panel» y lleva a `/cuenta`: el nombre y
+«Cerrar sesión» no van en el encabezado.

@@ -223,13 +223,13 @@ export async function ocultarItemSiExiste(
 }
 
 /**
- * El renglón de la tabla. En WebKit a veces hay un nodo extra: se acota al
+ * El renglón del inventario. En WebKit a veces hay un nodo extra: se acota al
  * contenido.
  */
 export function filaDelCatalogo(page: Page, titulo: string) {
   return page
     .locator("#contenido")
-    .getByRole("row")
+    .getByRole("listitem")
     .filter({ has: page.getByRole("link", { name: titulo, exact: true }) });
 }
 
@@ -329,9 +329,30 @@ export async function confirmarLlegada(page: Page, titulo: string): Promise<void
   await expect(fila).toBeVisible();
   await fila.getByText("Resolver esta reserva").click();
   await fila.getByRole("button", { name: /^sí: donan$/i }).click();
+  await expect(fila.getByText(/pendiente de entrega/i)).toBeVisible();
+  await fila.getByText("Confirmar la llegada").click();
+  await fila.getByRole("button", { name: /^llegó$/i }).click();
   await expect(cerradas.locator("li").filter({ hasText: titulo })).toHaveCount(
     yaCerradas + 1,
   );
+}
+
+export async function revertirDonacion(page: Page, titulo: string): Promise<void> {
+  if (!page.url().includes("/admin/donaciones")) {
+    await page.goto("/admin/donaciones");
+  }
+
+  const fila = page
+    .getByRole("region", { name: /cerradas/i })
+    .locator("li")
+    .filter({ hasText: titulo })
+    .first();
+
+  await expect(fila).toBeVisible();
+  await expect(fila.getByText("Entregada")).toBeVisible();
+  await fila.getByText("Revertir").click();
+  await fila.getByRole("button", { name: /revertir la donación/i }).click();
+  await expect(fila.getByText("Cancelada")).toBeVisible();
 }
 
 export async function habilitarCuenta(page: Page, email: string): Promise<void> {

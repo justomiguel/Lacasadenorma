@@ -1,6 +1,6 @@
 # ADR-033 · Una cuenta del público no reserva nada hasta que el equipo la habilita
 
-**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md): confirmar el correo alcanza para anotarse a traer un bien. `declined` sigue sin reservar. Enmendada por [ADR-051](./051-dos-puertas-para-traer.md): el teléfono reserva sin cuenta; el owner confirma o suelta desde el correo.
+**Estado**: Aceptada · **Fecha**: 2026-09-13 · Enmendada por [ADR-046](./046-compromiso-con-datos-de-retiro.md): confirmar el correo alcanza para anotarse a traer un bien. `declined` sigue sin reservar. Enmendada por [ADR-051](./051-dos-puertas-para-traer.md): el teléfono reserva sin cuenta; el owner confirma o suelta desde el correo. Enmendada: una cuenta que crea el equipo en `/admin/donantes` nace `approved`; quien se anota sola sigue `pending`.
 
 ## Contexto
 
@@ -20,9 +20,15 @@ van vestidas con la dirección visual del sitio (ADR-025), no con un párrafo su
 
 ## Decisión
 
-**Toda cuenta del público nace `pending`.** Confirmar el correo crea el perfil y no
-habilita la reserva. Habilitarla es una operación de `admin` o `owner` en
+**Toda cuenta del público que se anota sola nace `pending`.** Confirmar el correo crea el
+perfil y no habilita la reserva. Habilitarla es una operación de `admin` o `owner` en
 `/admin/donantes`, deja rastro, y manda un correo.
+
+**Una cuenta que crea el equipo no espera esa habilitación.** Quien donó plata o
+trajo material por fuera se carga en `/admin/donantes`: nace `approved`. El
+correo se confirma cuando abren el invite, no al insertar. No es un rol interno.
+El `insert` autenticado sigue exigiendo `pending`; la vía es
+`provision_donor_account()`, acotada a `has_min_role('admin')`.
 
 Estados, y ninguno más:
 
@@ -36,10 +42,11 @@ No hay vuelta de `approved` a `pending`. Si hay que frenar a alguien que ya rese
 se cancelan las reservas con motivo (fase D), no se le saca la habilitación por
 debajo.
 
-**La columna no la escribe quien se registra.** El `insert` exige `pending`. El
-`update` de la persona no incluye `approval_status`: es privilegio de columna, no
-una policy que se pueda olvidar. La única vía de cambio es
-`public.review_donor_account()`, `security definer`, acotada a `has_min_role('admin')`.
+**La columna no la escribe quien se registra.** El `insert` autenticado exige
+`pending`. El `update` de la persona no incluye `approval_status`: es privilegio
+de columna, no una policy que se pueda olvidar. Las vías de cambio son
+`public.review_donor_account()` y `public.provision_donor_account()`, las dos
+`security definer`, acotadas a `has_min_role('admin')`.
 
 **Los correos de este flujo, y los que le siguen.** Se manda correo cuando alguien
 tiene que enterarse o tiene que hacer algo. No se manda correo para confirmar que
@@ -55,8 +62,8 @@ un dato se guardó.
 | Ídem | El equipo | `staff.new_pledge` | **Sí: coordinar la entrega** |
 | Tres días antes del vencimiento | La persona | `pledge.reminder` | Traer o cancelar |
 | La persona cancela | El equipo | `staff.pledge_cancelled` | **Sí: dejar de esperar eso** |
-| Venció sin entregar | El equipo | `staff.pledge_expired` | El ítem volvió a la lista |
-| Llegó el material | La persona | `pledge.fulfilled` | Nada: es el cierre |
+| Pasaron 14 días sin confirmar que van a donar | El equipo | `staff.pledge_expired` | **Sí: aceptar o soltar** |
+| Llegó el material | La persona | `pledge.fulfilled` | Nada: es el cierre. El sí no es este correo |
 
 Lo que **no** manda correo, y el motivo:
 

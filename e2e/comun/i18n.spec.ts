@@ -21,25 +21,23 @@ test.describe("i18n estructural", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("link", { name: "Help rebuild" }).first()).toBeVisible();
 
-    const castellano = page.getByRole("link", { name: "Castellano" });
-
-    if ((await castellano.count()) === 0) {
-      await page.getByRole("button", { name: "Open the menu" }).click();
-    }
-
-    await expect(page.getByRole("link", { name: "Castellano" })).toBeVisible();
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "Castellano" }),
+    ).toBeVisible();
   });
 
   test("el conmutador se queda en la misma sección", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/norma");
 
-    await page.getByRole("banner").getByRole("link", { name: "English" }).click();
+    const pie = page.getByRole("contentinfo");
+
+    await pie.getByRole("link", { name: "English" }).click();
 
     await expect(page).toHaveURL(/\/en\/norma$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
-    await page.getByRole("banner").getByRole("link", { name: "Castellano" }).click();
+    await pie.getByRole("link", { name: "Castellano" }).click();
 
     await expect(page).toHaveURL(/\/norma$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "es-AR");

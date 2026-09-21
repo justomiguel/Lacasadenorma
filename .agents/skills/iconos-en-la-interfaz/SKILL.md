@@ -36,7 +36,12 @@ No se espera a que alguien lo pida. No se deja «para después».
 | Canal (traer, transferir, Mercado Pago, PayPal) | Caja, banco o `BrandLabel` | `cover.tsx` |
 | Camino de `/ayudar` | Manos, billete, caja | `help-paths.tsx` |
 | Llamar / escribir | Teléfono / sobre | `contact-actions.tsx` |
-| Drawer (cuenta, backoffice, métricas, salir) | Persona, grilla, gráfico, salir | `account-chrome.tsx` |
+| Drawer (donaciones, cuenta, backoffice, métricas) | Caja, persona, grilla, gráfico | `account-chrome.tsx` |
+| Salir (pie del menú de trabajo y del menú del teléfono) | Icono + nombre, fondo rojo | `sidebarSignOutClass` |
+| Menú de trabajo (backoffice y `/cuenta`) | Pictograma del grupo | `work-nav.tsx` / `nav-bar.tsx` |
+| Pestañas del backoffice (Campaña, Plata) | Pictograma de la sección | `group-tabs.tsx` |
+| Pestañas de la cuenta (aparecer, acceso, borrar) | Pictograma de la pestaña | `account-settings.tsx` |
+| Botón con caja (Ayudar, Ingresar, Mi Panel, envío, leer) | Pictograma antes del nombre | `HelpCta` / `PrimaryAction` / `SubmitButton` / `AccountChrome` |
 | Acción (copiar, cerrar, menú, flecha) | 44 px / flecha después | `icons.tsx` + `ICON_ACTION` |
 
 El nombre **no se reemplaza**. El icono es `aria-hidden`. Quien no reconoce
@@ -58,12 +63,14 @@ Si falta un pictograma, **se agrega en `icons.tsx` y se envuelve con
 - Un icono al lado de cada párrafo, titular de relato o pie. Eso es relleno
   y lo cierra la constitución VIII.
 - Un icono de relleno (fill) o un pack.
-- Un tab, un radio, un `CopyField` o un camino de ayudar **sin** marca.
+- Un tab, un radio, un `CopyField`, un camino de ayudar o un **botón con caja**
+  **sin** marca.
 - Un `size={16}` o un `1.15em` escrito a mano en el componente.
 - Inventar un cuarto lugar para los SVG.
 
 ## Compuerta
 
 `npm run check:iconos`. Si el campo nuevo no está en `COPY_FIELD_MARKS`, si
-falta `IdentifyingMark`, si hay `size={16}` o si entró un pack, el verify
-falla. Un párrafo en esta Skill no alcanza.
+falta `IdentifyingMark`, si un botón con caja no tiene marca, si hay
+`size={16}` o si entró un pack, el verify falla. Un párrafo en esta Skill
+no alcanza.

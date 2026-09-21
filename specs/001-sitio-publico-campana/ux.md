@@ -400,10 +400,10 @@ responde las nueve preguntas en la secuencia en que una persona las hace:
 | `/ayudar` | Tres caminos a la vista: ir, donar plata, traer lo que falta (ADR-045) |
 | `/ayudar/dinero` | Los tres países en detalle, con instrucciones y qué hacer después de transferir |
 | `/contacto` | WhatsApp, correo e Instagram de Justo, y un enlace a Google Maps del pueblo |
-| `/catalogo` | Qué le falta a la casa, en especie |
+| `/catalogo` | Qué le falta a la casa, en especie: inventario editorial (foto, hecho, donar), no tabla |
 | `/transparencia` | Cifras arriba, libro de gastos abajo, comprobantes indicados, fecha de conciliación, explicación del método |
 | `/novedades` y `/novedades/[slug]` | Diario de la obra: feed cronológico con fecha; cada entrada compartible con su propia vista previa (ADR-034) |
-| `/legado` | Fundación Norma: qué se propone, en qué estado está, y que todavía no existe como organización |
+| `/legado` | Fundación Norma: qué se propone cuando la casa esté terminada |
 | `/legales/privacidad`, `/legales/terminos` | Qué se recolecta, para qué, cuánto se conserva |
 
 ### Navegación
@@ -468,9 +468,11 @@ exigiendo cero `data-figure`.
   que no es ésta se lee como mentira. Pero es un **estado transitorio**: si el material puede
   tardar, la página tiene que verse terminada sin él (sección 12).
 - **El catálogo es la excepción** (ADR-043). El listado muestra una miniatura en la celda Qué
-  cuando hay foto. Cada ficha muestra la foto completa, con epígrafe que dice que es solamente
-  ilustrativa y que no representa el objeto real. La foto subida desde el backoffice pisa esa
-  referencia. Sin ninguna de las dos, la ficha reserva el hueco; el listado no.
+  cuando hay foto. Cada ficha abre con la foto a sangrado (a la izquierda en escritorio),
+  el título como `h1`, cuánto falta y dos caminos —traer o cubrir con plata—. El epígrafe
+  dice que es solamente ilustrativa y que no representa el objeto real. La foto subida
+  desde el backoffice pisa esa referencia. Sin ninguna de las dos, la ficha reserva el
+  hueco; el listado no.
 - **La orientación del material manda.** Lo que se filmó con el teléfono en la mano es 9:16 y no se
   recorta a apaisado sin perder algo: va al ancho completo en teléfono, que es su formato nativo, y al
   margen en escritorio. Estirar una foto de 600 px a 1440 se ve peor que la misma foto chica y bien

@@ -18,11 +18,8 @@ export default async function PanelLayout({ children }: { children: ReactNode })
   const viewer = await requireViewer();
 
   return (
-    <AdminShell role={viewer.role} email={viewer.email}>
+    <AdminShell role={viewer.role} footer={<SignOutButton />}>
       {children}
-      <div className="mt-5xl border-t border-rule pt-lg">
-        <SignOutButton />
-      </div>
     </AdminShell>
   );
 }

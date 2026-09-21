@@ -1,27 +1,36 @@
 import type { NamedTake } from "@/src/domain/catalog";
+import { isCountableUnit } from "@/src/domain/catalog";
+import type { DonationUnit } from "@/src/domain/entities";
 import { formatPercentage } from "@/src/domain/percentage";
 import { fill } from "@/src/i18n/fill";
 
-/**
- * Cómo se nombra a quien tomó parte de un ítem: «Ana donó el 50%».
- * Sin % (truncado a 0, o anónimo que no llega acá) queda el nombre solo.
- */
-export function formatTakenNames(
-  names: readonly NamedTake[],
-  copy: { readonly namedShare: string; readonly nameNone: string },
+import { unitLabel } from "./units";
+
+export function formatTakenLine(
+  entry: NamedTake,
+  unit: DonationUnit,
+  copy: {
+    readonly namedShare: string;
+    readonly namedQuantity: string;
+    readonly units: {
+      readonly [K in DonationUnit]: { readonly one: string; readonly other: string };
+    };
+  },
 ): string {
-  if (names.length === 0) {
-    return copy.nameNone;
+  if (isCountableUnit(unit)) {
+    return fill(copy.namedQuantity, {
+      name: entry.name,
+      quantity: String(entry.quantity),
+      unit: unitLabel(copy, unit, entry.quantity),
+    });
   }
 
-  return names
-    .map((entry) =>
-      entry.percentOfItem === null
-        ? entry.name
-        : fill(copy.namedShare, {
-            name: entry.name,
-            percent: formatPercentage(entry.percentOfItem),
-          }),
-    )
-    .join(", ");
+  if (entry.percentOfItem === null) {
+    return entry.name;
+  }
+
+  return fill(copy.namedShare, {
+    name: entry.name,
+    percent: formatPercentage(entry.percentOfItem),
+  });
 }

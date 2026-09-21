@@ -156,7 +156,7 @@ nombre y número.
 | Nombre para mostrar | `donor_profiles.display_name`, **nullable** | La persona, o la red con la que entró si el campo estaba vacío | Sí, y sólo si además marca una donación como no anónima |
 | Idioma | `donor_profiles.locale` | La persona | No |
 | Preferencia de anonimato | `donor_profiles.default_anonymous`, `default true` | La persona | No. Lo que se publica es su efecto |
-| Retrato | bucket privado `avatares`, ruta en `donor_profiles.portrait_path` | La persona, si sube una foto, o la red con la que entró si no había una | **No.** Ni el muro ni ninguna página pública la nombran. El archivo se sirve por `/cuenta/retrato` a su dueña |
+| Retrato | bucket privado `avatares`, ruta en `donor_profiles.portrait_path` | La persona, si sube una foto, o la red con la que entró si no había una | **Sí, en `/catalogo`**, cuando la donación no es anónima y hay archivo. El muro no la nombra. A su dueña se sirve por `/cuenta/retrato` |
 | Sesiones e inicios de sesión, con IP y user-agent | `auth.sessions` y `auth.audit_log_entries` | Supabase Auth | No |
 
 Decisiones de esta tabla:
@@ -177,9 +177,9 @@ Decisiones de esta tabla:
    de esta tabla que el repositorio no controla, y por eso está escrito también en la página pública:
    una promesa de "no guardamos tu IP" sería falsa desde el día en que se abrió el registro.
 5. **El nombre y la foto de la red se copian al perfil si los campos están vacíos** (ADR-039).
-   No se publican: el retrato sigue siendo privado y el muro pide que desmarque el anonimato.
-   Un nombre o una foto que la persona ya eligió acá no se pisan. El local-part del correo no
-   se usa.
+   El retrato se publica en `/catalogo` cuando la donación no es anónima. El muro pide que
+   desmarque el anonimato y no muestra la cara. Un nombre o una foto que la persona ya eligió
+   acá no se pisan. El local-part del correo no se usa.
 6. **Si se habilita una red, esa red se entera de que la persona usa este sitio.** Es el trueque de
    OAuth. La página pública lo nombra; no se habilita un proveedor sin decirlo.
 
@@ -208,9 +208,10 @@ existe. Desde ADR-046 también guardan cómo encontrar a esa persona para ir a b
 | Si aparece con nombre (`is_anonymous`) | `donation_pledges` | No. Lo que se publica es su efecto, y sólo en entregas cumplidas |
 | `user_id` | `donation_pledges` | **No.** Privilegio de columna |
 
-Los correos del sistema sobre una reserva —que quedó anotada, que se acerca el vencimiento, que llegó
-o que se canceló— son sobre esa reserva, no difusión. Borrar la cuenta deja las entregas cumplidas
-como un hecho sobre la obra, sin correo, sin nombre, sin teléfono y sin dirección.
+Los correos del sistema sobre una reserva —que quedó anotada, que se acerca el vencimiento, que llegó,
+que se deshizo una confirmación o que se canceló— son sobre esa reserva, no difusión. Borrar la cuenta
+deja las entregas cumplidas como un hecho sobre la obra, sin correo, sin nombre, sin teléfono y sin
+dirección.
 
 ---
 
@@ -307,8 +308,8 @@ los tres primeros **no requieren escribirle a nadie**: se ejercen desde `/cuenta
 
 - **Acceso.** Lo que el sistema guarda de una cuenta es lo que su dueña ve en `/cuenta`: no hay un
   segundo lugar con más. Las tablas de la sección 3.bis —el perfil y las reservas— son la lista
-  completa. En la pantalla está partido en pestañas (reservas, cómo aparecer, acceso, borrar) para
-  no apilar los formularios; el contenido es el mismo.
+  completa. En la pantalla, mis donaciones va al menú; cómo aparecer, la foto, el
+  acceso y borrar son bloques de una página.
 - **Rectificación.** El nombre para mostrar y el idioma se cambian desde `/cuenta`. El correo se
   cambia por el flujo de Supabase Auth, que pide confirmar la dirección nueva.
 - **Borrado.** Desde `/cuenta`, sin pedir permiso y sin dar explicaciones (FR-208). Se van el correo,

@@ -43,6 +43,7 @@ const recordSchema = z
     sourceNote: optionalText(200),
     appearOnWall: checkbox,
     contributorDisplayName: optionalText(80),
+    userId: optionalUuid,
   })
   .superRefine((data, ctx) => {
     if (data.appearOnWall && data.contributorDisplayName === null) {
@@ -87,6 +88,7 @@ export async function recordContribution(
         sourceNote: data.sourceNote,
         isAnonymous: data.isAnonymous,
         contributorDisplayName: data.contributorDisplayName,
+        userId: data.userId,
       }),
     }),
     success: () => "Aporte registrado. El total público ya lo incluye.",

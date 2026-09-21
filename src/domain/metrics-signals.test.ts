@@ -130,7 +130,7 @@ describe("collectSignals", () => {
     expect(signals.find((signal) => signal.id === "pledges_expiring")?.count).toBe(1);
   });
 
-  it("reservas expired ya cerradas son warning", () => {
+  it("una expired vieja no avisa que el material volvió solo", () => {
     const signals = collectSignals(
       { goal: money(1, "ARS"), reconciledAt: "2026-09-01T00:00:00.000Z" },
       facts({
@@ -147,13 +147,7 @@ describe("collectSignals", () => {
       NOW,
     );
 
-    expect(signals.find((signal) => signal.id === "pledges_expired")).toEqual(
-      expect.objectContaining({
-        count: 1,
-        severity: "warning",
-        href: "/admin/donaciones",
-      }),
-    );
+    expect(signals.find((signal) => signal.id === "pledges_expired")).toBeUndefined();
   });
 
   it("gastos vivos sin comprobante avisan", () => {
