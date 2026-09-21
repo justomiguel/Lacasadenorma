@@ -60,12 +60,9 @@ describe("nextPledgeStatus", () => {
     expect(nextPledgeStatus("fulfilled", "cancel")).toBe("cancelled");
   });
 
-  it.each(["accept", "fulfill", "expire"] as const)(
-    "fulfilled no admite %s",
-    (event) => {
-      expect(() => nextPledgeStatus("fulfilled", event)).toThrow(DomainError);
-    },
-  );
+  it.each(["accept", "fulfill", "expire"] as const)("fulfilled no admite %s", (event) => {
+    expect(() => nextPledgeStatus("fulfilled", event)).toThrow(DomainError);
+  });
 
   it.each(CERRADAS_SIN_SALIDA)("desde %s no se sale", (status) => {
     for (const event of PLEDGE_EVENTS) {

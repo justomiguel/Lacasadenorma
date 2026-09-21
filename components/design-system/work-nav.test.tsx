@@ -79,7 +79,9 @@ describe("WorkNav", () => {
       "href",
       "/admin",
     );
-    expect(screen.getByRole("list", { name: "Secciones del backoffice" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Secciones del backoffice" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Campaña" })).toHaveAttribute(
       "aria-current",
       "page",

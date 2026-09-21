@@ -76,9 +76,7 @@ test.describe("navegación", () => {
       };
     });
 
-    expect(caja.radio, "Ingresar en el encabezado tiene que tener caja").not.toBe(
-      "0px",
-    );
+    expect(caja.radio, "Ingresar en el encabezado tiene que tener caja").not.toBe("0px");
     expect(
       Number.parseFloat(caja.borde),
       "Ingresar en el encabezado no puede ser texto suelto: lleva borde",

@@ -34,14 +34,10 @@ describe("formatTakenLine", () => {
   });
 
   it("en una medida sin % deja el nombre", () => {
-    expect(
-      formatTakenLine({ ...ana, percentOfItem: null }, "litro", COPY),
-    ).toBe("Ana");
+    expect(formatTakenLine({ ...ana, percentOfItem: null }, "litro", COPY)).toBe("Ana");
   });
 
   it("una bolsa no pluraliza", () => {
-    expect(
-      formatTakenLine({ ...ana, quantity: 1 }, "bolsa", COPY),
-    ).toBe("Ana · 1 bolsa");
+    expect(formatTakenLine({ ...ana, quantity: 1 }, "bolsa", COPY)).toBe("Ana · 1 bolsa");
   });
 });

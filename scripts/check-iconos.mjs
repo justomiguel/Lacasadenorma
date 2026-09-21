@@ -200,9 +200,7 @@ for (const { file, text } of contents) {
     const marked = BOXED_MARK.some((mark) => text.includes(mark));
 
     if (!marked) {
-      problems.push(
-        `${file}: un botón con caja lleva marca antes del nombre (ADR-047).`,
-      );
+      problems.push(`${file}: un botón con caja lleva marca antes del nombre (ADR-047).`);
     }
   }
 

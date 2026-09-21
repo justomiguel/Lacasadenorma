@@ -19,8 +19,8 @@ describe("inventedEmail", () => {
   });
 
   it("si está tomado, suma -2", () => {
-    expect(
-      inventedEmail("María Pérez", new Set(["maria.perez@lacasadenorma.com"])),
-    ).toBe("maria.perez-2@lacasadenorma.com");
+    expect(inventedEmail("María Pérez", new Set(["maria.perez@lacasadenorma.com"]))).toBe(
+      "maria.perez-2@lacasadenorma.com",
+    );
   });
 });

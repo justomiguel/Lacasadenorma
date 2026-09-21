@@ -71,16 +71,20 @@ describe("acceptPledge", () => {
   it("no manda el correo de llegada", async () => {
     const { deps: admin } = deps("admin");
     const send = vi.fn();
-    const result = await acceptPledge(admin, { id: PLEDGE }, {
-      sender: { send },
-      siteUrl: "https://ejemplo.test",
-      staffAddress: "equipo@ejemplo.test",
-      record: vi.fn(),
-      contactOf: async () => "ana@ejemplo.test",
-      localeOf: async () => "es",
-      what: "Chapas",
-      userId: PLEDGE,
-    });
+    const result = await acceptPledge(
+      admin,
+      { id: PLEDGE },
+      {
+        sender: { send },
+        siteUrl: "https://ejemplo.test",
+        staffAddress: "equipo@ejemplo.test",
+        record: vi.fn(),
+        contactOf: async () => "ana@ejemplo.test",
+        localeOf: async () => "es",
+        what: "Chapas",
+        userId: PLEDGE,
+      },
+    );
 
     expect(result.status).toBe("ok");
     expect(send).not.toHaveBeenCalled();

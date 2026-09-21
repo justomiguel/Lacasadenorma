@@ -64,7 +64,9 @@ describe("CatalogAdminTable", () => {
     renderTable({ canDelete: true, editingId: ITEM.id });
 
     expect(screen.getByRole("button", { name: /^borrar$/i })).toBeInTheDocument();
-    expect(screen.getByText(/también se borran las reservas y los avisos/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/también se borran las reservas y los avisos/i),
+    ).toBeInTheDocument();
     expect(screen.getByText("formulario de edición")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /guardar cambios/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /dejar de editar/i })).toHaveAttribute(

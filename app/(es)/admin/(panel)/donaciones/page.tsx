@@ -214,9 +214,7 @@ function PledgeRow({
           }
         >
           <div
-            className={
-              canAccept || canFulfill ? "grid gap-lg sm:grid-cols-2" : undefined
-            }
+            className={canAccept || canFulfill ? "grid gap-lg sm:grid-cols-2" : undefined}
           >
             {canAccept ? (
               <ActionForm action={acceptPledgeAction}>
@@ -257,8 +255,8 @@ function PledgeRow({
       {canRevert ? (
         <RowAction label="Revertir">
           <p className="mb-md font-ui text-small text-ink">
-            Las unidades vuelven al catálogo y, si figuraba, sale de Quiénes
-            ayudaron. La reserva queda cancelada acá.
+            Las unidades vuelven al catálogo y, si figuraba, sale de Quiénes ayudaron. La
+            reserva queda cancelada acá.
           </p>
           <ActionForm action={revertPledgeAction}>
             <HiddenValue name="id" value={pledge.id} />
@@ -271,17 +269,14 @@ function PledgeRow({
               rows={2}
               maxLength={300}
             />
-            <SubmitButton pendingLabel="Revirtiendo…">
-              Revertir la donación
-            </SubmitButton>
+            <SubmitButton pendingLabel="Revirtiendo…">Revertir la donación</SubmitButton>
           </ActionForm>
         </RowAction>
       ) : null}
       {canDelete ? (
         <RowAction label="Borrar" tone="danger">
           <p className="mb-md font-ui text-small text-ink">
-            ¿Borrar esta donación de «{pledge.itemTitle}»? Se saca del listado y
-            del muro.
+            ¿Borrar esta donación de «{pledge.itemTitle}»? Se saca del listado y del muro.
           </p>
           <ActionForm action={deletePledgeAction}>
             <HiddenValue name="id" value={pledge.id} />

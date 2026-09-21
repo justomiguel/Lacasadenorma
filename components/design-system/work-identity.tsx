@@ -16,13 +16,7 @@ const AVATAR = 128;
  * público (ADR-032). Sin foto propia, la silueta genérica: no se inventa
  * una cara.
  */
-export function WorkIdentity({
-  href,
-  emptyName,
-}: {
-  href: string;
-  emptyName: string;
-}) {
+export function WorkIdentity({ href, emptyName }: { href: string; emptyName: string }) {
   const { session, portraitSrc } = useChromeSession();
   const signedIn = session.status === "signed-in";
   const name = signedIn ? (session.displayName ?? emptyName) : emptyName;
@@ -42,7 +36,9 @@ export function WorkIdentity({
         />
       </span>
       <span className="w-full min-w-0">
-        <span className="block truncate font-ui text-body font-medium text-ink">{name}</span>
+        <span className="block truncate font-ui text-body font-medium text-ink">
+          {name}
+        </span>
         {email === null ? null : (
           <span className="mt-3xs block break-all px-identity-gutter font-ui text-small text-ink-muted">
             {email}

@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  PledgeContactRequiredError,
-  PledgeUnavailableError,
-} from "@/src/domain/errors";
+import { PledgeContactRequiredError, PledgeUnavailableError } from "@/src/domain/errors";
 
 import { fakeAdminGateway } from "../test-support/fake-admin-gateway";
 import { RECORD, deps } from "./admin-test-helpers";

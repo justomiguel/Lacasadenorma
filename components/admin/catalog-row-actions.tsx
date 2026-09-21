@@ -63,8 +63,8 @@ function DeleteControl({
       </summary>
       <div className="absolute right-0 z-10 mt-2xs w-measure border border-rule bg-paper p-md">
         <p className="mb-md font-ui text-small text-ink">
-          ¿Borrar «{item.title}» del catálogo? También se borran las reservas y
-          los avisos de este ítem.
+          ¿Borrar «{item.title}» del catálogo? También se borran las reservas y los avisos
+          de este ítem.
         </p>
         <ActionForm action={deleteAction}>
           <HiddenValue name="id" value={item.id} />

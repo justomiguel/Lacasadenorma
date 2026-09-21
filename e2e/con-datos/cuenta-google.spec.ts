@@ -43,7 +43,9 @@ test.describe("fase A · entrar con Google", () => {
     );
 
     await abrirSeccionDeCuenta(page, /acceso/i);
-    await expect(page.getByRole("heading", { name: /^contraseña$|^password$/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^contraseña$|^password$/i }),
+    ).toBeVisible();
   });
 
   test("también se entra desde la pantalla de ingresar", async ({ page }, info) => {
@@ -58,7 +60,9 @@ test.describe("fase A · entrar con Google", () => {
       /vecina con gmail/i,
     );
     await abrirSeccionDeCuenta(page, /acceso/i);
-    await expect(page.getByRole("heading", { name: /^contraseña$|^password$/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^contraseña$|^password$/i }),
+    ).toBeVisible();
   });
 
   test("un correo que ya tenía cuenta no crea una segunda", async ({
@@ -80,7 +84,9 @@ test.describe("fase A · entrar con Google", () => {
       /quien entra con google/i,
     );
     await abrirSeccionDeCuenta(page, /acceso/i);
-    await expect(page.getByRole("heading", { name: /^contraseña$|^password$/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^contraseña$|^password$/i }),
+    ).toBeVisible();
   });
 
   test("un nombre que la persona ya eligió no se pisa", async ({
@@ -193,6 +199,8 @@ test.describe("fase A · entrar con Google", () => {
     });
 
     await abrirSeccionDeCuenta(page, /acceso/i);
-    await expect(page.getByRole("heading", { name: /^contraseña$|^password$/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^contraseña$|^password$/i }),
+    ).toBeVisible();
   });
 });

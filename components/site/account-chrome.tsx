@@ -152,11 +152,7 @@ export function AccountChrome({
   if (variant === "header" && signedIn) {
     return (
       <div className="hidden lg:block">
-        <Link
-          href={accountHref}
-          className={compactOutlineActionClass(tone)}
-          {...current}
-        >
+        <Link href={accountHref} className={compactOutlineActionClass(tone)} {...current}>
           <IdentifyingMark>
             <PersonIcon />
           </IdentifyingMark>

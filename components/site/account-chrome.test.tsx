@@ -98,7 +98,10 @@ describe("AccountChrome", () => {
     expect(panel).toHaveAttribute("href", "/cuenta");
     expect(panel.className).toMatch(/rounded-md/);
     expect(panel.className).toMatch(/\bborder\b/);
-    expect(panel.querySelector("svg"), "Mi Panel lleva persona antes del nombre").not.toBeNull();
+    expect(
+      panel.querySelector("svg"),
+      "Mi Panel lleva persona antes del nombre",
+    ).not.toBeNull();
     expect(screen.queryByRole("button", { name: "Cerrar sesión" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Vecina" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Backoffice" })).toBeNull();
@@ -180,13 +183,14 @@ describe("AccountChrome", () => {
     expect(ingresar.className).toMatch(/rounded-md/);
     expect(ingresar.className).toMatch(/\bborder\b/);
     expect(ingresar.className).not.toMatch(/bg-forest/);
-    expect(ingresar.querySelector("svg"), "Ingresar lleva persona antes del nombre").not.toBeNull();
+    expect(
+      ingresar.querySelector("svg"),
+      "Ingresar lleva persona antes del nombre",
+    ).not.toBeNull();
   });
 
   it("en el pie, Ingresar sigue siendo texto", () => {
-    render(
-      <AccountChrome locale="es" ui={ui} variant="footer" className="text-small" />,
-    );
+    render(<AccountChrome locale="es" ui={ui} variant="footer" className="text-small" />);
 
     expect(screen.getByRole("link", { name: "Ingresar" }).className).not.toMatch(
       /rounded-md/,

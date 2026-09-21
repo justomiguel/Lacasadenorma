@@ -18,11 +18,7 @@ import {
 import { sidebarItemClass } from "@/components/design-system/work-sidebar";
 
 import type { AdminSection } from "./nav";
-import {
-  groupHrefForPath,
-  sectionIsCurrent,
-  visibleAdminGroups,
-} from "./nav";
+import { groupHrefForPath, sectionIsCurrent, visibleAdminGroups } from "./nav";
 
 const GROUP_MARK: Record<string, ComponentType<IconProps>> = {
   campana: BookIcon,

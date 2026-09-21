@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  isAccountSettingsSection,
-  resolveAccountSection,
-} from "./account-section";
+import { isAccountSettingsSection, resolveAccountSection } from "./account-section";
 
 describe("resolveAccountSection", () => {
   it("respeta una sección pedida, y si no hay pedido abre reservas cuando hay", () => {

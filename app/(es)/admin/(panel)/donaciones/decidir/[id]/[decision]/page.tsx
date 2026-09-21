@@ -86,8 +86,8 @@ export default async function DecidirReservaPage({
           />
         ) : pledge.status === "accepted" && decision === "si" ? (
           <p className="max-w-measure text-body text-ink">
-            Esta reserva ya está tomada, pendiente de entrega. La llegada se
-            confirma en el panel de donaciones.
+            Esta reserva ya está tomada, pendiente de entrega. La llegada se confirma en
+            el panel de donaciones.
           </p>
         ) : pledge.status === "accepted" ? (
           <ReleaseAccepted
@@ -134,8 +134,8 @@ function ReleaseAccepted({
   return (
     <>
       <p className="max-w-measure text-body text-ink">
-        Esta reserva ya está tomada, pendiente de entrega. Si no se concreta,
-        soltala: el ítem vuelve a la lista.
+        Esta reserva ya está tomada, pendiente de entrega. Si no se concreta, soltala: el
+        ítem vuelve a la lista.
       </p>
       <div className="mt-lg">
         <ActionForm action={cancelPledgeAction}>
@@ -174,8 +174,8 @@ function ReleaseFulfilled({
   return (
     <>
       <p className="max-w-measure text-body text-ink">
-        {alreadyDecided("fulfilled", displayName, fulfilledAt)} Si te arrepentís,
-        soltala: el ítem vuelve a la lista.
+        {alreadyDecided("fulfilled", displayName, fulfilledAt)} Si te arrepentís, soltala:
+        el ítem vuelve a la lista.
       </p>
       <div className="mt-lg">
         <ActionForm action={cancelPledgeAction}>

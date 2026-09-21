@@ -80,7 +80,10 @@ describe("WorkIdentity", () => {
     expect(portrait).toHaveClass("size-avatar");
     expect(portrait.parentElement).toHaveClass("size-avatar", "rounded-full");
     expect(screen.getByRole("link", { name: /justo/i })).toHaveClass("items-center");
-    expect(screen.getByRole("link", { name: /justo/i })).toHaveAttribute("href", "/cuenta");
+    expect(screen.getByRole("link", { name: /justo/i })).toHaveAttribute(
+      "href",
+      "/cuenta",
+    );
     expect(screen.getByText("justo@ejemplo.invalid")).toHaveClass("px-identity-gutter");
   });
 
@@ -104,6 +107,9 @@ describe("WorkIdentity", () => {
       "src",
       "/ui/retrato-vacio.svg",
     );
-    expect(screen.getByRole("img", { name: "Tu cuenta" })).toHaveAttribute("width", "128");
+    expect(screen.getByRole("img", { name: "Tu cuenta" })).toHaveAttribute(
+      "width",
+      "128",
+    );
   });
 });

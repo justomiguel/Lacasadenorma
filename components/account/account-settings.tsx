@@ -1,5 +1,8 @@
 import { AccountBlockFocus } from "@/components/account/account-block-focus";
-import { accountBlockId, type AccountSettingsSection } from "@/components/account/account-section";
+import {
+  accountBlockId,
+  type AccountSettingsSection,
+} from "@/components/account/account-section";
 import {
   AccessPanel,
   AppearancePanel,

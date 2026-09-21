@@ -109,9 +109,13 @@ describe("OwnPledges", () => {
       "href",
       "/catalogo/item-heladera",
     );
-    expect(screen.getByText(/1 unidad\.\s+vence el 4 de octubre de 2026/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/1 unidad\.\s+vence el 4 de octubre de 2026/i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/faltan 1/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /cancelar esta reserva/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /cancelar esta reserva/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/contacto/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/riacho/i)).not.toBeInTheDocument();
   });
@@ -125,14 +129,18 @@ describe("OwnPledges", () => {
       "500",
     );
     expect(screen.getByRole("button", { name: /guardar cambios/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /cancelar esta reserva/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /cancelar esta reserva/i }),
+    ).toBeInTheDocument();
   });
 
   it("accepted no ofrece editar", () => {
     renderPledges([pledge({ status: "accepted" })], [item()]);
 
     expect(screen.queryByLabelText(/^cuántas$/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /guardar cambios/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /guardar cambios/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("una tomada dice pendiente de entrega y no ofrece cancelar", () => {

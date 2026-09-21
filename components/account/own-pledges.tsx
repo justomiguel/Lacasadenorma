@@ -87,11 +87,7 @@ function OwnPledgeRow({
 }) {
   const dateLocale = locale === "es" ? "es-AR" : "en-US";
   const when = formatLongDate(pledge.expiresAt.slice(0, 10), dateLocale);
-  const unit = unitLabel(
-    catalog,
-    item?.unit ?? "unidad",
-    pledge.quantity,
-  );
+  const unit = unitLabel(catalog, item?.unit ?? "unidad", pledge.quantity);
   const quantity = fill(copy.pledgeQuantity, {
     count: String(pledge.quantity),
     unit,

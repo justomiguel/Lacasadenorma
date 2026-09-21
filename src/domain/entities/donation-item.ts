@@ -21,11 +21,7 @@ export const DONATION_UNITS = [
 
 export type DonationUnit = (typeof DONATION_UNITS)[number];
 
-const COUNTABLE_UNITS: ReadonlySet<DonationUnit> = new Set([
-  "unidad",
-  "bolsa",
-  "juego",
-]);
+const COUNTABLE_UNITS: ReadonlySet<DonationUnit> = new Set(["unidad", "bolsa", "juego"]);
 
 export function isCountableUnit(unit: DonationUnit): boolean {
   return COUNTABLE_UNITS.has(unit);

@@ -173,9 +173,9 @@ test.describe("fase A · la cuenta del público", () => {
     await expect(
       encabezado.getByRole("link", { name: "Vecina de la cuadra" }),
     ).toHaveCount(0);
-    await expect(
-      encabezado.getByRole("button", { name: /cerrar sesión/i }),
-    ).toHaveCount(0);
+    await expect(encabezado.getByRole("button", { name: /cerrar sesión/i })).toHaveCount(
+      0,
+    );
     await expect(encabezado.getByRole("link", { name: /^backoffice$/i })).toHaveCount(0);
 
     const caja = await panel.boundingBox();

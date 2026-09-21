@@ -7,7 +7,12 @@ import { ExternalPayment } from "@/components/campaign/external-payment";
 import { BrandLabel } from "@/components/design-system/brand-mark";
 import { cn } from "@/components/design-system/cn";
 import { IdentifyingMark } from "@/components/design-system/identifying-mark";
-import { ArrowIcon, BankIcon, BanknoteIcon, BoxIcon } from "@/components/design-system/icons";
+import {
+  ArrowIcon,
+  BankIcon,
+  BanknoteIcon,
+  BoxIcon,
+} from "@/components/design-system/icons";
 import { useChromeSession } from "@/components/site/session";
 import type {
   AccountContent,
@@ -247,7 +252,10 @@ function PaymentRadios({
             >
               {option.brand === null ? (
                 <>
-                  <IdentifyingMark data-channel-mark={option.value} className="text-olive">
+                  <IdentifyingMark
+                    data-channel-mark={option.value}
+                    className="text-olive"
+                  >
                     <BankIcon />
                   </IdentifyingMark>
                   {option.label}

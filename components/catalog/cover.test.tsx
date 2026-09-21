@@ -58,7 +58,9 @@ describe("HowToDonate", () => {
 
     renderDonate();
 
-    expect(screen.queryByRole("heading", { name: /cómo donar esto/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /cómo donar esto/i }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(/traer el mismo bien o cubrirlo con plata/i),
     ).not.toBeInTheDocument();
@@ -76,9 +78,9 @@ describe("HowToDonate", () => {
     const nombre = screen.getByLabelText(/^nombre$/i);
     const enviar = screen.getByRole("button", { name: /quiero donar/i });
 
-    expect(nombre.compareDocumentPosition(enviar) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
+    expect(
+      nombre.compareDocumentPosition(enviar) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(nombre).toBeRequired();
     expect(screen.getByLabelText(/^teléfono$/i)).not.toBeRequired();
     expect(screen.getByLabelText(/^correo$/i)).not.toBeRequired();
@@ -139,7 +141,9 @@ describe("HowToDonate", () => {
     expect(
       screen.queryByRole("button", { name: /quiero donar/i }),
     ).not.toBeInTheDocument();
-    expect(screen.queryByText(/no hace falta cuenta ni anotarse/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/no hace falta cuenta ni anotarse/i),
+    ).not.toBeInTheDocument();
   });
 
   it("al elegir Mercado Pago muestra el extra y no el texto de transferencia", async () => {
