@@ -7,8 +7,9 @@
  * pinten: estar disponibles es el punto del catálogo.
  *
  * Lo que sí exige: que el chrome (`SiteMark`) y la tarjeta de compartir usen
- * **original**, y que el login, la cuenta y las legales lo pinten. Si el
- * encabezado, el backoffice o Facebook empiezan a mostrar otra variante, falla.
+ * **original**, y que el login, la cuenta y las legales lo pinten. El
+ * backoffice usa el retrato de quien opera (`WorkSidebar`), no el símbolo
+ * público. Si el encabezado o Facebook empiezan a mostrar otra variante, falla.
  *
  * Corre en `npm run verify` y en CI.
  */
@@ -25,7 +26,7 @@ const SURFACES = [
   { file: "components/site/header.tsx", needle: "SiteMark", why: "el encabezado" },
   { file: "components/site/mobile-menu.tsx", needle: "SiteMark", why: "el menú" },
   { file: "components/site/footer.tsx", needle: "SiteMark", why: "el pie" },
-  { file: "components/admin/shell.tsx", needle: "SiteMark", why: "el backoffice" },
+  { file: "components/admin/shell.tsx", needle: "WorkSidebar", why: "el backoffice" },
   { file: "app/(es)/admin/login/page.tsx", needle: "SiteMark", why: "el login" },
   {
     file: "components/account/auth-shell.tsx",
