@@ -122,7 +122,8 @@ noveno necesita una sesión de administrador, y hasta dónde llega esa sesión e
 La persona **`donante`** de pgTAP es autenticada y no tiene fila en `user_roles`: ve su perfil y
 puede reservar por la función, y no ve el libro. La concurrencia por la última unidad (SC-202) está
 en `supabase/tests/070-catalogo.sql`; el recorrido de reservar, conflicto, cancelar y vencer está en
-`e2e/con-datos/catalogo.spec.ts`. Subir de 1 a 2 una reserved propia está en
+`e2e/con-datos/catalogo.spec.ts`. El inventario y la ficha viven en
+`e2e/con-datos/catalogo-inventario.spec.ts`. Subir de 1 a 2 una reserved propia está en
 `e2e/con-datos/editar-reserva.spec.ts`. El vencimiento se dispara con `POST /harness/v1/vencer-reserva`,
 porque `authenticated` no puede escribir `expires_at`. Que una entrega con nombre aparezca en el muro
 y una anónima no aparezca en ningún HTML público está en `e2e/con-datos/muro.spec.ts` (SC-204).
